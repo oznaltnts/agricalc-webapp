@@ -1,0 +1,27 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml" 
+                xmlns:h="jakarta.faces.html"
+                xmlns:f="jakarta.faces.core"
+                xmlns:ui="jakarta.faces.facelets"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:fr="http://primefaces.org/freya">
+
+<div class="menu-wrapper">
+    <div class="sidebar-logo">
+        <a href="dashboard.xhtml">
+            <p:graphicImage name="images/logo-freya-single.svg" library="freya-layout" />
+        </a>
+        <a href="#" class="sidebar-pin" title="Toggle Menu">
+            <span class="pin"></span>
+        </a>
+       
+    </div>
+    <div class="layout-menu-container">
+        <h:form id="menuform">
+            <fr:menu widgetVar="FreyaMenuWidget">
+                <p:menuitem value="Home" icon="pi pi-home" url="/" />
+            </fr:menu>
+        </h:form>
+    </div>
+</div>
+
+</ui:composition>

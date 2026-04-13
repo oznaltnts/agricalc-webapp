@@ -1,0 +1,94 @@
+joinfaces:
+  faces:
+    webapp-resources-directory: /resources
+    datetimeconverter-default-timezone-is-system-timezone: true
+    validate-empty-fields: true
+    facelets-buffer-size: 65535
+    facelets-libraries: /WEB-INF/primefaces-freya.taglib.xml
+    resource-excludes: .xhtml
+    facelets-view-mappings: /*
+    interpret-empty-string-submitted-values-as-null: true
+    always-perform-validation-when-required-is-true: true
+  primefaces:
+    theme: freya-#{guestPreferences.theme}
+    client-side-validation: true
+    font-awesome: true
+    public-captcha-key:
+    private-captcha-key:
+
+spring:
+  application:
+    name: webapp
+  profiles:
+    active: default
+  pid.file: ${java.io.tmpdir}/ozanbey-agricalc-webapp.pid
+  threads.virtual.enabled: true
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    poolName: ozanbey-agricalc-webapp-dbconnectionpool
+  jpa:
+    database: MYSQL
+    open-in-view: false
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.MySQLDialect
+logging:
+  config: classpath:logback.xml
+---
+spring:
+  config.activate.on-profile: default
+  datasource:
+    url: jdbc:mysql://localhost:3306/agricalc
+    username:
+    password:
+  jpa:
+    show-sql: true
+    hibernate:
+      ddl-auto: validate
+joinfaces:
+  faces:
+    project-stage: Development
+    state-saving-method: server
+server:
+  port: 9000
+logging:
+  file.name: D:\home\fdev\logs\ozanbey-agricalc-webapp.log
+---
+spring:
+  config.activate.on-profile: test
+  datasource:
+    url: jdbc:mysql://localhost:3306/agricalc
+    username:
+    password:
+  jpa:
+    show-sql: true
+    hibernate:
+      ddl-auto: validate
+joinfaces:
+  faces:
+    project-stage: SystemTest
+    state-saving-method: server
+server:
+  port: 9010
+logging:
+  file.name:
+---
+spring:
+  config.activate.on-profile: production
+  datasource:
+    url: jdbc:mysql://localhost:3306/agricalc
+    username:
+    password:
+  jpa:
+    show-sql: false
+    hibernate:
+      ddl-auto: validate
+joinfaces:
+  faces:
+    project-stage: Production
+    state-saving-method: server
+    facelets-skip-comments: true
+server:
+  port: 9020
+logging:
+  file.name:

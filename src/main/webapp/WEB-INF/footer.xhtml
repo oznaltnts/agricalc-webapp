@@ -1,0 +1,59 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="jakarta.faces.html"
+                xmlns:f="jakarta.faces.core"
+                xmlns:ui="jakarta.faces.facelets"
+                xmlns:p="http://primefaces.org/ui">
+
+    <div class="layout-footer">
+        <div class="grid">
+            <div class="col-12 lg:col-4">
+                <div class="grid">
+                    <div class="col-6">
+                        <span class="footer-menutitle">SITE MAP</span>
+                        <ul>
+                            <li><a href="dashboard.xhtml">Dashboard</a></li>
+                            <li><a href="crud.xhtml">Crud</a></li>
+                            <li><a href="invoice.xhtml">Invoice</a></li>
+                            <li><a href="help.xhtml">Help</a></li>
+                        </ul>
+                    </div>
+                    <div class="col-6">
+                        <span class="footer-menutitle"></span>
+                        <ul>
+                            <li><a href="calendar.xhtml">Calendar</a></li>
+                            <li><a href="widgets.xhtml">Widgets</a></li>
+                            <li><a href="documentation.xhtml">Documentation</a></li>
+                            <li><a href="https://www.primefaces.org/store">Buy Now</a></li>
+                        </ul>
+                    </div>
+                </div>
+               
+            </div>
+            <div class="col-12 md:col-6 lg:col-3">
+                <span class="footer-menutitle">CONTACT US</span>
+                <ul>
+                    <li>(415) 931-1624 794</li>
+                    <li>Mcallister St San Francisco,</li>
+                    <li>California(CA), 94102</li>
+                </ul>
+            </div>
+            <div class="col-12 md:col-6 lg:col-5">
+                <span class="footer-menutitle">NEWSLETTER</span>
+                <span class="footer-subtitle">Join our newsletter to get notification about the new features.</span>
+                <h:form>
+                    <div class="newsletter-input">
+                        <p:inputText placeholder="email address" />
+                        <p:commandButton value="Join" styleClass="ui-button-secondary "/>
+                    </div>
+                </h:form>
+            </div>
+            <div class="col-12">
+                <div class="footer-bottom">
+                    <h4>freya</h4>
+                    <h6>Copyright Ⓒ PrimeTek Informatics</h6>
+                </div>
+             
+            </div>
+        </div>
+    </div>
+</ui:composition>

@@ -1,0 +1,93 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:f="jakarta.faces.core"
+                xmlns:h="jakarta.faces.html"
+                xmlns:ui="jakarta.faces.facelets"
+                xmlns:p="http://primefaces.org/ui">
+
+    <a href="#" id="layout-config-button" class="layout-config-button">
+        <i class="pi pi-cog"/>
+    </a>
+
+    <div id="layout-config" class="layout-config">
+        <h:form id="config-form" styleClass="layout-config-form">
+            <h5 style="margin-top: 0">Menu Type</h5>
+            <p:selectOneRadio value="#{guestPreferences.menuMode}" layout="pageDirection"
+                              onchange="PrimeFaces.FreyaConfigurator.changeMenuMode(event.target.value)" >
+                <f:selectItem itemLabel="Horizontal" itemValue="layout-horizontal" />
+                <f:selectItem itemLabel="Sidebar" itemValue="layout-sidebar" />
+                <f:selectItem itemLabel="Slim" itemValue="layout-slim" />
+                <p:ajax listener="#{guestPreferences.onMenuTypeChange}" update="config-form" />
+            </p:selectOneRadio>
+
+            <hr/>
+
+            <h5>Color Scheme</h5>
+            <p:selectOneRadio value="#{guestPreferences.darkMode}" layout="pageDirection"
+                              onchange="PrimeFaces.FreyaConfigurator.changeLayout('#{guestPreferences.componentTheme}', event.target.value)"   >
+                <f:selectItem itemLabel="Light" itemValue="light" />
+                <f:selectItem itemLabel="Dark" itemValue="dark" />
+                <p:ajax onstart="PrimeFaces.FreyaConfigurator.beforeResourceChange()" update="config-form logolink"/>
+            </p:selectOneRadio>
+
+            <p:outputPanel rendered="#{guestPreferences.menuMode eq 'layout-horizontal'}">
+                <hr/>
+                <h5>Topbar and Menu Mode</h5>
+                <p:selectOneRadio value="#{guestPreferences.topbarTheme}" layout="pageDirection"
+                                  onchange="PrimeFaces.FreyaConfigurator.changeSectionTheme(event.target.value , 'layout-topbar');PrimeFaces.FreyaConfigurator.changeSectionTheme(event.target.value , 'layout-menu')"   >
+                    <f:selectItem itemLabel="Light" itemValue="light" itemDisabled="#{guestPreferences.darkMode != 'light'}"  />
+                    <f:selectItem itemLabel="Dark" itemValue="dark" itemDisabled="#{guestPreferences.darkMode != 'light'}"/>
+                    <p:ajax update="logolink config-form"/>
+                </p:selectOneRadio>
+            </p:outputPanel>
+
+            <p:outputPanel rendered="#{guestPreferences.menuMode != 'layout-horizontal'}">
+                <hr/>
+                <h5>Topbar Mode</h5>
+                <p:selectOneRadio value="#{guestPreferences.topbarTheme}" layout="pageDirection"
+                                  onchange="PrimeFaces.FreyaConfigurator.changeSectionTheme(event.target.value , 'layout-topbar')"   >
+                    <f:selectItem itemLabel="Light" itemValue="light" itemDisabled="#{guestPreferences.darkMode != 'light'}"  />
+                    <f:selectItem itemLabel="Dark" itemValue="dark" itemDisabled="#{guestPreferences.darkMode != 'light'}"/>
+                    <p:ajax update="logolink config-form"/>
+                </p:selectOneRadio>
+            </p:outputPanel>
+
+            <p:outputPanel rendered="#{guestPreferences.menuMode != 'layout-horizontal'}">
+                <hr/>
+                <h5>Menu Mode</h5>
+                <p:selectOneRadio value="#{guestPreferences.menuTheme}" layout="pageDirection"
+                                  onchange="PrimeFaces.FreyaConfigurator.changeSectionTheme(event.target.value , 'layout-menu')"   >
+                    <f:selectItem itemLabel="Light" itemValue="light" itemDisabled="#{guestPreferences.darkMode != 'light'}"  />
+                    <f:selectItem itemLabel="Dark" itemValue="dark" itemDisabled="#{guestPreferences.darkMode != 'light'}"/>
+                    <p:ajax update="logolink config-form"/>
+                </p:selectOneRadio>
+            </p:outputPanel>
+
+            <hr/>
+
+            <h5>Input Style</h5>
+            <p:selectOneRadio value="#{guestPreferences.inputStyle}" layout="pageDirection"
+                              onchange="PrimeFaces.FreyaConfigurator.updateInputStyle(event.target.value)">
+                <f:selectItem itemLabel="Outlined" itemValue="outlined" />
+                <f:selectItem itemLabel="Filled" itemValue="filled" />
+                <p:ajax />
+            </p:selectOneRadio>
+
+            <hr/>
+
+            <h5>Theme Colors</h5>
+            <div class="layout-themes">
+                <ui:repeat value="#{guestPreferences.componentThemes}" var="componentTheme">
+                    <div>
+                        <p:commandLink actionListener="#{guestPreferences.setComponentTheme(componentTheme.file)}"
+                                       style="background-color: #{componentTheme.color};" title="#{componentTheme.name}"
+                                       process="@this"
+                                       update="config-form"
+                                       onstart="PrimeFaces.FreyaConfigurator.beforeResourceChange()"
+                                       oncomplete="PrimeFaces.FreyaConfigurator.changeComponentsTheme('#{componentTheme.file}', '#{guestPreferences.darkMode}')">
+                        </p:commandLink>
+                    </div>
+                </ui:repeat>
+            </div>
+        </h:form>
+    </div>
+</ui:composition>

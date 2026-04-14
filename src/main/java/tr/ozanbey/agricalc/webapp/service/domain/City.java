@@ -26,9 +26,9 @@ public class City extends AbstractEntity {
     @ToString.Include
     private String code;
 
-    @Column(name = "name", nullable = false, length = 25)
+    @Column(name = "name", nullable = false)
     @NotBlank(message = "Name cannot be blank")
-    @Size(min = 1, max = 25, message = "Name must be between 1 and 25 characters")
+    @Size(min = 1, max = 255, message = "Name must be between 1 and 255 characters")
     @ToString.Include
     private String name;
 

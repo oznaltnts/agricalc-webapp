@@ -3,19 +3,26 @@ package tr.ozanbey.agricalc.webapp.service.repository;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import tr.ozanbey.agricalc.webapp.service.domain.CityCropQuestion;
-import tr.ozanbey.agricalc.webapp.service.enumtype.EnumStatus;
+import tr.ozanbey.agricalc.webapp.service.dto.QuestionWithFirstAnswer;
 
 import java.util.List;
 
 public interface CityCropQuestionRepository extends JpaRepository<CityCropQuestion, Long> {
 
-    @Query("SELECT ccq FROM CityCropQuestion ccq " +
-            "JOIN FETCH ccq.question q " +
-            "JOIN FETCH ccq.cityCropQuestionAnswerList ccqa " +
-            "WHERE ccq.status = :status " +
-            "AND ccq.cityCrop.id = :cityCropId " +
-            "ORDER BY q.id,  ccqa.insertDate desc")
-    List<CityCropQuestion> findByStatusAndCityCropIdOrderByQuestionId(EnumStatus status, Long cityCropId);
-
+    @Query(value = """
+            SELECT p.question_id AS questionId, c.value AS value
+            FROM agricalc.city_crop_questions p
+                     JOIN (SELECT c1.*
+                           FROM agricalc.city_crop_question_answers c1
+                                    JOIN (SELECT city_crop_question_id, MAX(idate) AS idate
+                                          FROM agricalc.city_crop_question_answers
+                                          GROUP BY city_crop_question_id) x
+                                         ON c1.city_crop_question_id = x.city_crop_question_id
+                                             AND c1.idate = x.idate) c ON c.city_crop_question_id = p.id
+            where p.status = ?1
+              and p.city_crop_id = :cityCropId
+            """, nativeQuery = true)
+    List<QuestionWithFirstAnswer> findDTOsByStatusAndCityCropId(Integer status, @Param("cityCropId") Long cityCropId);
 }

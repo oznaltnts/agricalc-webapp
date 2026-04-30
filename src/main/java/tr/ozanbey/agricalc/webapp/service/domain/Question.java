@@ -4,7 +4,7 @@ import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 import lombok.*;
-import tr.ozanbey.agricalc.webapp.service.enumtype.EnumIncomeQuestionType;
+import tr.ozanbey.agricalc.webapp.service.enumtype.EnumQuestionType;
 
 @Getter
 @Setter
@@ -18,7 +18,7 @@ public class Question extends AbstractStatusEntity {
     @Column(name = "type", nullable = false)
     @Enumerated(EnumType.STRING)
     @ToString.Include
-    private EnumIncomeQuestionType type;
+    private EnumQuestionType type;
 
     @Column(name = "value", nullable = false)
     @NotBlank(message = "Question text cannot be blank")

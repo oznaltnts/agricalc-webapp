@@ -5,14 +5,55 @@
                 xmlns:p="http://primefaces.org/ui"
                 template="/WEB-INF/template.xhtml">
              
-    <ui:define name="title">Empty Page</ui:define>
+    <ui:define name="title">Home Page</ui:define>
     
     <ui:define name="content">
         <div class="grid">
             <div class="col">
                 <div class="card">
-                    <h4>Empty Page</h4>
-                    <p>This is your empty page template to start building beautiful applications.</p>
+                    <h4>Home Page</h4>
+                    <h:form id="homeForm">
+                        <div class="ui-fluid formgrid grid">
+                            <div class="field col-12 md:col-6">
+                                <p:outputLabel for="@next" value="Şehir"/>
+                                <p:selectOneMenu required="true"
+                                                 value="#{homeController.selectedCityId}">
+                                    <f:selectItem itemLabel="Select One" itemValue=""/>
+                                    <f:selectItems value="#{homeController.cityList}"
+                                                   var="city"
+                                                   itemLabel="#{city.name}"
+                                                   itemValue="#{city.id}"/>
+                                    <f:facet name="footer">
+                                        <p:divider styleClass="mt-0" />
+                                        <h:outputText value="#{homeController.cityList.size()}" style="font-weight:bold;"/>
+                                    </f:facet>
+                                </p:selectOneMenu>
+                            </div>
+                            <div class="field col-12 md:col-6">
+                                <p:outputLabel for="@next" value="Ürün"/>
+                                <p:selectOneMenu required="true"
+                                                 value="#{homeController.selectedCropId}">
+                                    <f:selectItem itemLabel="Select One" itemValue=""/>
+                                    <f:selectItems value="#{homeController.cropList}"
+                                                   var="crop"
+                                                   itemLabel="#{crop.name}"
+                                                   itemValue="#{crop.id}"/>
+                                    <f:facet name="footer">
+                                        <p:divider styleClass="mt-0" />
+                                        <h:outputText value="#{homeController.cropList.size()}" style="font-weight:bold;"/>
+                                    </f:facet>
+                                </p:selectOneMenu>
+                            </div>
+                            <div class="field col-12 md:col-12">
+                                <p:commandButton value="Icon Left" icon="pi pi-check" action="#{homeController.calculateIncome()}" update="homeForm" />
+                            </div>
+                            <ui:repeat value="#{homeController.calculateMap}" var="calculate">
+                                <div class="field col-12 md:col-12">
+                                    <p:outputLabel value="#{calculate.key}: #{calculate.value}"/>
+                                </div>
+                            </ui:repeat>
+                        </div>
+                    </h:form>
                 </div>
             </div>
         </div>

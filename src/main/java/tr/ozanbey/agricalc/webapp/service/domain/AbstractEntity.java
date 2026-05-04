@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import lombok.ToString;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
@@ -20,6 +21,7 @@ public abstract class AbstractEntity implements Serializable {
     @Id
     @Column(name = "id", updatable = false, nullable = false)
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @ToString.Include
     private Long id;
 
     @Column(name = "idate", nullable = false, insertable = false, updatable = false)

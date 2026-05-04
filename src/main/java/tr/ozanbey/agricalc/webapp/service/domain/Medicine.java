@@ -1,30 +1,26 @@
 package tr.ozanbey.agricalc.webapp.service.domain;
 
 import jakarta.persistence.Column;
-import jakarta.persistence.Convert;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 import lombok.*;
-import tr.ozanbey.agricalc.webapp.service.converter.LongListConverter;
-
-import java.util.List;
 
 @Getter
 @Setter
 @Entity
-@Table(name = "cities")
+@Table(name = "medicines")
 @NoArgsConstructor
 @AllArgsConstructor
 @ToString(onlyExplicitlyIncluded = true)
-public class City extends AbstractEntity {
+public class Medicine extends AbstractStatusEntity {
 
-    @Column(name = "code", nullable = false, length = 25)
-    @NotBlank(message = "Code cannot be blank")
-    @Size(min = 1, max = 25, message = "Code must be between 1 and 25 characters")
+    @Column(name = "brand", nullable = false)
+    @NotBlank(message = "Brand cannot be blank")
+    @Size(min = 1, max = 255, message = "Brand must be between 1 and 255 characters")
     @ToString.Include
-    private String code;
+    private String brand;
 
     @Column(name = "name", nullable = false)
     @NotBlank(message = "Name cannot be blank")
@@ -32,11 +28,10 @@ public class City extends AbstractEntity {
     @ToString.Include
     private String name;
 
-    @Column(name = "neighbors_ids")
-    @Convert(converter = LongListConverter.class)
-    private List<Long> neighborsIds;
+    @Column(name = "ingredient", nullable = false)
+    @NotBlank(message = "Ingredient cannot be blank")
+    @Size(min = 1, max = 255, message = "Ingredient must be between 1 and 255 characters")
+    @ToString.Include
+    private String ingredient;
 
-    public City(Long selectedCityId) {
-        super.setId(selectedCityId);
-    }
 }

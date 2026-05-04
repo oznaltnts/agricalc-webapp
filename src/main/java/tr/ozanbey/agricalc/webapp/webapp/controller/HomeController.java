@@ -8,9 +8,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 import tr.ozanbey.agricalc.webapp.service.domain.City;
+import tr.ozanbey.agricalc.webapp.service.domain.Crop;
 import tr.ozanbey.agricalc.webapp.service.service.HomeService;
 
+import java.math.BigDecimal;
 import java.util.List;
+import java.util.Map;
 
 @Component("homeController")
 @Scope("view")
@@ -22,9 +25,18 @@ public class HomeController extends BaseController {
     private HomeService homeService;
 
     private List<City> cityList;
+    private Long selectedCityId;
+    private List<Crop> cropList;
+    private Long selectedCropId;
+    private Map<String, BigDecimal> calculateMap;
 
     @PostConstruct
     public void init() {
         cityList = homeService.getAllCities();
+        cropList = homeService.getAllActiveCrops();
+    }
+
+    public void calculateIncome() {
+        calculateMap = homeService.calculate(selectedCityId, selectedCropId);
     }
 }

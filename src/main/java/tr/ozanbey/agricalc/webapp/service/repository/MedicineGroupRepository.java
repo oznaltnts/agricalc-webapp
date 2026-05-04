@@ -1,0 +1,9 @@
+package tr.ozanbey.agricalc.webapp.service.repository;
+
+
+import org.springframework.data.jpa.repository.JpaRepository;
+import tr.ozanbey.agricalc.webapp.service.domain.MedicineGroup;
+
+public interface MedicineGroupRepository extends JpaRepository<MedicineGroup, Long> {
+
+}

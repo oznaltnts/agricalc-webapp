@@ -22,7 +22,8 @@ public class HomeService extends BaseService {
     private final ExpenseService expenseService;
     private final CropCoefficientService cropCoefficientService;
     private final CityDieselDistanceService dieselDistanceService;
-    private final CityCropSeedAndSeedlingNumberService seedSeedlingNumberService;
+    private final CityCropSeedSeedlingNumberService seedSeedlingNumberService;
+    private final CityCropSeedSeedlingPriceService seedSeedlingPriceService;
     private final CityCropFieldHarvestAverageValueService fieldHarvestAverageValueService;
     private final CityFertilizerService cityFertilizerService;
     private final CityCropWateringValueService wateringValueService;
@@ -34,7 +35,8 @@ public class HomeService extends BaseService {
                        ExpenseService expenseService,
                        CropCoefficientService cropCoefficientService,
                        CityDieselDistanceService dieselDistanceService,
-                       CityCropSeedAndSeedlingNumberService seedSeedlingNumberService,
+                       CityCropSeedSeedlingNumberService seedSeedlingNumberService,
+                       CityCropSeedSeedlingPriceService seedSeedlingPriceService,
                        CityCropFieldHarvestAverageValueService fieldHarvestAverageValueService,
                        CityFertilizerService cityFertilizerService,
                        CityCropWateringValueService wateringValueService
@@ -47,6 +49,7 @@ public class HomeService extends BaseService {
         this.cropCoefficientService = cropCoefficientService;
         this.dieselDistanceService = dieselDistanceService;
         this.seedSeedlingNumberService = seedSeedlingNumberService;
+        this.seedSeedlingPriceService = seedSeedlingPriceService;
         this.fieldHarvestAverageValueService = fieldHarvestAverageValueService;
         this.cityFertilizerService = cityFertilizerService;
         this.wateringValueService = wateringValueService;
@@ -75,11 +78,14 @@ public class HomeService extends BaseService {
             returnMap.put("income", income);
             List<CropCoefficientWithFirstValue> cropCoefficientList = cropCoefficientService.getDTOsByStatusAndCropId(EnumStatus.ACTIVE, cityCrop.getCrop().getId());
             List<DieselDistanceWithFirstValue> dieselDistanceWithValueList = dieselDistanceService.getDTOsByCityId(cityCrop.getCity().getId());
-            List<SeedSeedlingNumberWithFirstValue> seedSeedlingNumberWithValueList = seedSeedlingNumberService.getDTOsByStatusAndCityCropId(EnumStatus.ACTIVE, cityCrop.getId());
+            List<SeedSeedlingWithFirstValue> seedSeedlingNumberWithValueList = seedSeedlingNumberService.getDTOsByStatusAndCityCropId(EnumStatus.ACTIVE, cityCrop.getId());
+            List<SeedSeedlingWithFirstValue> seedSeedlingPriceWithValueList = seedSeedlingPriceService.getDTOsByStatusAndCityCropId(EnumStatus.ACTIVE, cityCrop.getId());
             List<CityFertilizerWithFirstValue> cityFertilizerWithValueList = cityFertilizerService.getDTOsByStatusAndCityId(EnumStatus.ACTIVE, cityCrop.getCity().getId());
             double fieldAverageValue = fieldHarvestAverageValueService.getAverageValueByCityCropId(cityCrop.getId());
             Optional<CityCropWateringValue> wateringValueOptional = wateringValueService.getFirstByCityCropIdOrderByInsertDateDesc(cityCrop.getId());
-            BigDecimal expense = expenseService.calculateExpense(questionDTOList, cropCoefficientList, dieselDistanceWithValueList, seedSeedlingNumberWithValueList, cityFertilizerWithValueList, fieldAverageValue, wateringValueOptional);
+            BigDecimal expense = expenseService.calculateExpense(questionDTOList, cropCoefficientList, dieselDistanceWithValueList,
+                    seedSeedlingNumberWithValueList, seedSeedlingPriceWithValueList,
+                    cityFertilizerWithValueList, fieldAverageValue, wateringValueOptional);
             returnMap.put("expense", expense);
         }
         return returnMap;

@@ -26,7 +26,8 @@ public class ExpenseService extends BaseService {
     public BigDecimal calculateExpense(List<QuestionWithFirstAnswer> questionDTOList,
                                        List<CropCoefficientWithFirstValue> cropCoefficientList,
                                        List<DieselDistanceWithFirstValue> dieselDistanceWithValueList,
-                                       List<SeedSeedlingNumberWithFirstValue> seedSeedlingNumberWithValueList,
+                                       List<SeedSeedlingWithFirstValue> seedSeedlingNumberWithValueList,
+                                       List<SeedSeedlingWithFirstValue> seedSeedlingPriceWithValueList,
                                        List<CityFertilizerWithFirstValue> cityFertilizerWithValueList,
                                        double fieldAverageValue,
                                        Optional<CityCropWateringValue> wateringValueOptional) {
@@ -131,7 +132,7 @@ public class ExpenseService extends BaseService {
         BigDecimal cropTotal = cropCountDec.multiply(cropMahineLtDec).multiply(cropMachineTLDec).setScale(3, RoundingMode.HALF_UP);
         BigDecimal landTotalAmount = orderTotal.add(deepTotal).add(overOrderTotal).add(secondaryTotal).add(plantingTotal).add(sewingTotal).add(channelTotal).add(seedTotal).add(cropTotal);
         //Sulama sayısı
-        BigDecimal manHourDec = getAsBigDecimalBySulamaQuestionIdsAndCropType(questionDTOList, 44L, 45L, cropCoefficientList, EnumCropCoefficientType.WATERING);
+        BigDecimal manHourDec = getAsBigDecimalBySulamaQuestionIdsAndCropType(questionDTOList, 46L, 45L, cropCoefficientList, EnumCropCoefficientType.WATERING);
         //Erkek işçi yevmiyesi ne kadardır?
         BigDecimal manTLDec = channelManTL;
         BigDecimal machineLtDec = getAsBigDecimalByMakineSulamaQuestionIdsAndCropType(questionDTOList, 46L, 45L, 47L,
@@ -283,16 +284,17 @@ public class ExpenseService extends BaseService {
         BigDecimal materialTLBaling = getAsBigDecimalByEquipmentQuestionIdAndQuestionId(questionDTOList, 72L, 73L);
         BigDecimal balingTotal = (manHourBaling.multiply(manTLBaling)).add(machineLtBaling.multiply(machineTLBaling)).add(materialKgBaling.multiply(materialTLBaling)).setScale(3, RoundingMode.HALF_UP);
         //Ürün pazara naklediliyormu
-        BigDecimal machineLtMarketTransfer = getAsBigDecimalByQIdAndTypeValue(questionDTOList, 74L, 1L,
+        BigDecimal machineLtMarketTransfer = getAsBigDecimalByQIdAndTypeValueNakil(questionDTOList, 74L, 1L,
                 cropCoefficientList, EnumCropCoefficientType.OTHER_CONSTANTS, EnumCropCoefficientValue.OTHER_CONSTANTS_VEHICLE_CAPACITY);// Araç taşıma kapasitesi
-        BigDecimal machineTLMarketTransfer = getAsBigDecimalByDieselEnumTypes(dieselDistanceWithValueList, EnumDieselDistanceType.HALL_DISTANCE, EnumDieselDistanceType.DIESEL_PRICE, EnumDieselDistanceType.TRANSPORTATION_COEFFICIENT);
+        BigDecimal machineTLMarketTransfer = getAsBigDecimalByDieselEnumTypes(dieselDistanceWithValueList, EnumDieselDistanceType.HALL_DISTANCE,
+                EnumDieselDistanceType.TRANSPORTATION_COEFFICIENT, EnumDieselDistanceType.DIESEL_PRICE);
         BigDecimal marketTransferTotal = (machineLtMarketTransfer.multiply(machineTLMarketTransfer)).setScale(3, RoundingMode.HALF_UP);
         BigDecimal cropCount = getAsBigDecimalByTotalAndEvet(questionDTOList, 44L, 71L);
         BigDecimal machineLtCropCount = getAsBigDecimalByDieselDistancesAndGeneralCoefficients(dieselDistanceWithValueList, EnumDieselDistanceType.PARCEL_DISTANCE, EnumDieselDistanceType.TRACTOR_COEFFICIENT_EMPTY);
         BigDecimal machineTLCropCount = machineTLBaling;
         BigDecimal cropCountTotal = cropCount.multiply(machineLtCropCount).multiply(machineTLCropCount).setScale(3, RoundingMode.HALF_UP);
         BigDecimal harvestTotalAmount = harvestTotal.add(harvestTransferTotal).add(blendTotal).add(haymakerTotal).add(dryingTotal).add(packingTotal).add(balingTotal).add(marketTransferTotal).add(cropCountTotal);
-        BigDecimal inputTotalAmount = getTotalInputValueAsBigDecimal(questionDTOList, seedSeedlingNumberWithValueList);
+        BigDecimal inputTotalAmount = getTotalInputValueAsBigDecimal(questionDTOList, seedSeedlingNumberWithValueList, seedSeedlingPriceWithValueList);
         BigDecimal fertilizerTotalAmount = getFertilizerTotalValueAsBigDecimal(questionDTOList, cityFertilizerWithValueList);
         BigDecimal medicineTotalAmount = getMedicineTotalValueAsBigDecimal(questionDTOList);
         BigDecimal waterPriceTotalAmount = getWaterPriceTotalValueAsBigDecimal(wateringValueOptional);
@@ -405,7 +407,7 @@ public class ExpenseService extends BaseService {
 
     //getManpowerHour
     private BigDecimal getAsBigDecimalByQuestionIdAndValueAndTypesEl2(List<QuestionWithFirstAnswer> questionDTOList, Long questionId,
-                                                                      List<SeedSeedlingNumberWithFirstValue> seedSeedlingNumberWithValueList,
+                                                                      List<SeedSeedlingWithFirstValue> seedSeedlingNumberWithValueList,
                                                                       List<CropCoefficientWithFirstValue> cropCoefficientList, EnumCropCoefficientType type, EnumCropCoefficientValue value1, EnumCropCoefficientValue value2,
                                                                       BigDecimal workingHourValue) {
         Optional<QuestionWithFirstAnswer> dtoOptional = questionDTOList.stream().filter(dto -> dto.getQuestionId().equals(questionId)).findFirst();
@@ -432,7 +434,7 @@ public class ExpenseService extends BaseService {
 
     //getManpowerHour
     private BigDecimal getAsBigDecimalByQuestionIdAndValueAndTypesMibzer(List<QuestionWithFirstAnswer> questionDTOList, Long questionId,
-                                                                         List<SeedSeedlingNumberWithFirstValue> seedSeedlingNumberWithValueList,
+                                                                         List<SeedSeedlingWithFirstValue> seedSeedlingNumberWithValueList,
                                                                          List<CropCoefficientWithFirstValue> cropCoefficientList, EnumCropCoefficientType type, EnumCropCoefficientValue value1, EnumCropCoefficientValue value2,
                                                                          BigDecimal workingHourValue) {
         Optional<QuestionWithFirstAnswer> dtoOptional = questionDTOList.stream().filter(dto -> dto.getQuestionId().equals(questionId)).findFirst();
@@ -458,7 +460,7 @@ public class ExpenseService extends BaseService {
     }
 
     private BigDecimal getSeedAmountInfo(List<QuestionWithFirstAnswer> questionDTOList, Long fideQuestionId, Long teminQuestionId, Long outSourceQuestionId,
-                                         List<SeedSeedlingNumberWithFirstValue> seedSeedlingNumberWithValueList) {
+                                         List<SeedSeedlingWithFirstValue> seedSeedlingNumberWithValueList) {
         BigDecimal seedAmountInfo = BigDecimal.ZERO;
         Optional<QuestionWithFirstAnswer> dtoOptional = questionDTOList.stream().filter(dto -> dto.getQuestionId().equals(fideQuestionId)).findFirst();
         if (dtoOptional.isPresent()) {
@@ -466,25 +468,25 @@ public class ExpenseService extends BaseService {
                 //Fide nasıl temin ediliyor?
                 Optional<QuestionWithFirstAnswer> teminOptional = questionDTOList.stream().filter(dto -> dto.getQuestionId().equals(teminQuestionId)).findFirst();
                 if (teminOptional.isPresent()) {
-                    Optional<SeedSeedlingNumberWithFirstValue> seedSeedlingValue = seedSeedlingNumberWithValueList.stream().filter(ss -> ss.getEnumType().equals(EnumSeedAndSeedlingNumberType.LOCAL_SEED_KG)).findFirst();
+                    Optional<SeedSeedlingWithFirstValue> seedSeedlingValue = seedSeedlingNumberWithValueList.stream().filter(ss -> ss.getEnumType().equals(EnumSeedSeedlingType.LOCAL_SEED_KG)).findFirst();
                     if (dtoOptional.get().getValue().equals("Kendi yetiştiriyor")) {
-                        seedAmountInfo = new BigDecimal(seedSeedlingValue.get().getValue());
+                        seedAmountInfo = seedSeedlingValue.get().getValue();
                     } else {
                         //Dış kaynaktan temin edilen fide özelliği nedir?
                         BigDecimal hybridSeedling = BigDecimal.ZERO;
                         BigDecimal oneGraft = BigDecimal.ZERO;
                         BigDecimal twoGraft = BigDecimal.ZERO;
-                        Optional<SeedSeedlingNumberWithFirstValue> hybridValue = seedSeedlingNumberWithValueList.stream().filter(ss -> ss.getEnumType().equals(EnumSeedAndSeedlingNumberType.HYBRID_SEEDLING)).findFirst();
-                        Optional<SeedSeedlingNumberWithFirstValue> oneGraftValue = seedSeedlingNumberWithValueList.stream().filter(ss -> ss.getEnumType().equals(EnumSeedAndSeedlingNumberType.HYBRID_SEEDLING_ONE_GRAFT)).findFirst();
-                        Optional<SeedSeedlingNumberWithFirstValue> twoGraftValue = seedSeedlingNumberWithValueList.stream().filter(ss -> ss.getEnumType().equals(EnumSeedAndSeedlingNumberType.HYBRID_SEEDLING_TWO_GRAFT)).findFirst();
+                        Optional<SeedSeedlingWithFirstValue> hybridValue = seedSeedlingNumberWithValueList.stream().filter(ss -> ss.getEnumType().equals(EnumSeedSeedlingType.HYBRID_SEEDLING)).findFirst();
+                        Optional<SeedSeedlingWithFirstValue> oneGraftValue = seedSeedlingNumberWithValueList.stream().filter(ss -> ss.getEnumType().equals(EnumSeedSeedlingType.HYBRID_SEEDLING_ONE_GRAFT)).findFirst();
+                        Optional<SeedSeedlingWithFirstValue> twoGraftValue = seedSeedlingNumberWithValueList.stream().filter(ss -> ss.getEnumType().equals(EnumSeedSeedlingType.HYBRID_SEEDLING_TWO_GRAFT)).findFirst();
                         if (hybridValue.isPresent()) {
-                            hybridSeedling = new BigDecimal(hybridValue.get().getValue());
+                            hybridSeedling = hybridValue.get().getValue();
                         }
                         if (oneGraftValue.isPresent()) {
-                            oneGraft = new BigDecimal(hybridValue.get().getValue());
+                            oneGraft = oneGraftValue.get().getValue();
                         }
                         if (twoGraftValue.isPresent()) {
-                            twoGraft = new BigDecimal(hybridValue.get().getValue());
+                            twoGraft = twoGraftValue.get().getValue();
                         }
                         Optional<QuestionWithFirstAnswer> outSourceOptional = questionDTOList.stream().filter(dto -> dto.getQuestionId().equals(outSourceQuestionId)).findFirst();
                         if (outSourceOptional.isPresent()) {
@@ -805,7 +807,7 @@ public class ExpenseService extends BaseService {
     private BigDecimal getAsBigDecimalByQuestionIdsAndCoefficientCapalama(List<QuestionWithFirstAnswer> questionDTOList, Long questionId, Long capalamaQuestionId, Long capalamaCountId,
                                                                           List<CropCoefficientWithFirstValue> cropCoefficientList, EnumCropCoefficientValue value1, EnumCropCoefficientValue value2) {
         Optional<QuestionWithFirstAnswer> dtoOptional = questionDTOList.stream().filter(dto -> dto.getQuestionId().equals(questionId)).findFirst();
-        if (dtoOptional.isPresent() && dtoOptional.get().getValue().equals("Çapa")) {
+        if (dtoOptional.isPresent() && dtoOptional.get().getValue().contains("Çapa")) {
             //Çapalama sayısı
             BigDecimal weedingCount = getAsBigDecimalByQuestionId(questionDTOList, capalamaQuestionId);
             //El ile çapa ("sıra üzeri") – insan
@@ -831,7 +833,7 @@ public class ExpenseService extends BaseService {
     private BigDecimal getAsBigDecimalByQIDAndTypeAndValueMalclama(List<QuestionWithFirstAnswer> questionDTOList, Long questionId,
                                                                    List<CropCoefficientWithFirstValue> cropCoefficientList, EnumCropCoefficientType type, EnumCropCoefficientValue value) {
         Optional<QuestionWithFirstAnswer> dtoOptional = questionDTOList.stream().filter(dto -> dto.getQuestionId().equals(questionId)).findFirst();
-        if (dtoOptional.isPresent() && dtoOptional.get().getValue().equals("Malçlama")) {
+        if (dtoOptional.isPresent() && dtoOptional.get().getValue().contains("Malçlama")) {
             return getAsBigDecimalByValueAndType(cropCoefficientList, type, value).setScale(3, RoundingMode.HALF_UP);
         }
         return BigDecimal.ZERO;
@@ -880,7 +882,7 @@ public class ExpenseService extends BaseService {
         //yabani ot kontrolü
         BigDecimal value8 = BigDecimal.ZERO;
         Optional<QuestionWithFirstAnswer> dto8Optional = questionDTOList.stream().filter(dto -> dto.getQuestionId().equals(question8Id)).findFirst();
-        if (dto8Optional.isPresent() && dto8Optional.get().getValue().equals("Malçlama")) {
+        if (dto8Optional.isPresent() && dto8Optional.get().getValue().contains("Malçlama")) {
             value8 = BigDecimal.ONE;
         }
         return wateringCount.add(fertilizingCount).add(value2).add(value3).add(value4).add(value5).add(value6).add(value7).add(value8);
@@ -1288,20 +1290,20 @@ public class ExpenseService extends BaseService {
     }
 
     private BigDecimal getTotalInputValueAsBigDecimal(List<QuestionWithFirstAnswer> questionDTOList,
-                                                      List<SeedSeedlingNumberWithFirstValue> seedSeedlingNumberWithValueList) {
+                                                      List<SeedSeedlingWithFirstValue> seedSeedlingNumberWithValueList, List<SeedSeedlingWithFirstValue> seedSeedlingPriceWithValueList) {
         //Üretim materyali
-        BigDecimal seedKgInput = getAsBigDecimalByQIDsAndSeedSeedling(questionDTOList, 30L, 31L, 32L, seedSeedlingNumberWithValueList);
+        BigDecimal seedKgInput = getAsBigDecimalByQIDsAndSeedSeedlingKg(questionDTOList, 30L, 31L, 32L, seedSeedlingNumberWithValueList);
         //Üretim materyali
-        BigDecimal seedTLInput = getAsBigDecimalByQIDsAndSeedSeedling(questionDTOList, 30L, 31L, 32L, seedSeedlingNumberWithValueList);
+        BigDecimal seedTLInput = getAsBigDecimalByQIDsAndSeedSeedlingTL(questionDTOList, 30L, 31L, 32L, seedSeedlingPriceWithValueList);
         BigDecimal seedTotal = seedKgInput.multiply(seedTLInput).setScale(3, RoundingMode.HALF_UP);
-        BigDecimal seedlingKgInput = getAsBigDecimalByIDsAndSeedSeedling(questionDTOList, 30L, 33L, seedSeedlingNumberWithValueList);
-        BigDecimal seedlingTLInput = getAsBigDecimalByIDsAndSeedSeedling(questionDTOList, 30L, 33L, seedSeedlingNumberWithValueList);
+        BigDecimal seedlingKgInput = getAsBigDecimalByIDsAndSeedSeedlingKg(questionDTOList, 30L, 33L, seedSeedlingNumberWithValueList);
+        BigDecimal seedlingTLInput = getAsBigDecimalByIDsAndSeedSeedlingTL(questionDTOList, 30L, 33L, seedSeedlingPriceWithValueList);
         BigDecimal seedlingTotal = seedlingKgInput.multiply(seedlingTLInput).setScale(3, RoundingMode.HALF_UP);
         return seedTotal.add(seedlingTotal);
     }
 
-    private BigDecimal getAsBigDecimalByIDsAndSeedSeedling(List<QuestionWithFirstAnswer> questionDTOList, Long questionId, Long fideQuestionId,
-                                                           List<SeedSeedlingNumberWithFirstValue> seedSeedlingNumberWithValueList) {
+    private BigDecimal getAsBigDecimalByIDsAndSeedSeedlingKg(List<QuestionWithFirstAnswer> questionDTOList, Long questionId, Long fideQuestionId,
+                                                             List<SeedSeedlingWithFirstValue> seedSeedlingNumberWithValueList) {
         //Üretim materyali
         Optional<QuestionWithFirstAnswer> dtoOptional = questionDTOList.stream().filter(dto -> dto.getQuestionId().equals(questionId)).findFirst();
         if (dtoOptional.isPresent()) {
@@ -1310,19 +1312,19 @@ public class ExpenseService extends BaseService {
                 Optional<QuestionWithFirstAnswer> fideOptional = questionDTOList.stream().filter(dto -> dto.getQuestionId().equals(fideQuestionId)).findFirst();
                 if (fideOptional.isPresent()) {
                     BigDecimal seedlingPrice = BigDecimal.ZERO;
-                    Optional<SeedSeedlingNumberWithFirstValue> seedSeedlingValue = seedSeedlingNumberWithValueList.stream().filter(ss -> ss.getEnumType().equals(EnumSeedAndSeedlingNumberType.HYBRID_SEEDLING)).findFirst();
+                    Optional<SeedSeedlingWithFirstValue> seedSeedlingValue = seedSeedlingNumberWithValueList.stream().filter(ss -> ss.getEnumType().equals(EnumSeedSeedlingType.HYBRID_SEEDLING)).findFirst();
                     if (seedSeedlingValue.isPresent()) {
-                        seedlingPrice = new BigDecimal(seedSeedlingValue.get().getValue());
+                        seedlingPrice = seedSeedlingValue.get().getValue();
                     }
                     BigDecimal oneGraft = BigDecimal.ZERO;
-                    Optional<SeedSeedlingNumberWithFirstValue> oneGraftSeedlingValue = seedSeedlingNumberWithValueList.stream().filter(ss -> ss.getEnumType().equals(EnumSeedAndSeedlingNumberType.HYBRID_SEEDLING_ONE_GRAFT)).findFirst();
+                    Optional<SeedSeedlingWithFirstValue> oneGraftSeedlingValue = seedSeedlingNumberWithValueList.stream().filter(ss -> ss.getEnumType().equals(EnumSeedSeedlingType.HYBRID_SEEDLING_ONE_GRAFT)).findFirst();
                     if (oneGraftSeedlingValue.isPresent()) {
-                        oneGraft = new BigDecimal(oneGraftSeedlingValue.get().getValue());
+                        oneGraft = oneGraftSeedlingValue.get().getValue();
                     }
                     BigDecimal twoGraft = BigDecimal.ZERO;
-                    Optional<SeedSeedlingNumberWithFirstValue> twoGraftSeedlingValue = seedSeedlingNumberWithValueList.stream().filter(ss -> ss.getEnumType().equals(EnumSeedAndSeedlingNumberType.HYBRID_SEEDLING_TWO_GRAFT)).findFirst();
+                    Optional<SeedSeedlingWithFirstValue> twoGraftSeedlingValue = seedSeedlingNumberWithValueList.stream().filter(ss -> ss.getEnumType().equals(EnumSeedSeedlingType.HYBRID_SEEDLING_TWO_GRAFT)).findFirst();
                     if (twoGraftSeedlingValue.isPresent()) {
-                        twoGraft = new BigDecimal(twoGraftSeedlingValue.get().getValue());
+                        twoGraft = twoGraftSeedlingValue.get().getValue();
                     }
                     if (fideOptional.get().getValue().equals("Aşısız")) {
                         return seedlingPrice.setScale(3, RoundingMode.HALF_UP);
@@ -1340,43 +1342,156 @@ public class ExpenseService extends BaseService {
         return BigDecimal.ZERO;
     }
 
-    private BigDecimal getAsBigDecimalByQIDsAndSeedSeedling(List<QuestionWithFirstAnswer> questionDTOList, Long questionId, Long tohumQuestionId, Long fideQuestionId,
-                                                            List<SeedSeedlingNumberWithFirstValue> seedSeedlingNumberWithValueList) {
+    private BigDecimal getAsBigDecimalByIDsAndSeedSeedlingTL(List<QuestionWithFirstAnswer> questionDTOList, Long questionId, Long fideQuestionId,
+                                                             List<SeedSeedlingWithFirstValue> seedSeedlingNumberWithValueList) {
+        //Üretim materyali
         Optional<QuestionWithFirstAnswer> dtoOptional = questionDTOList.stream().filter(dto -> dto.getQuestionId().equals(questionId)).findFirst();
         if (dtoOptional.isPresent()) {
-            //Tohum çeşidi
-            Optional<QuestionWithFirstAnswer> tohumOptional = questionDTOList.stream().filter(dto -> dto.getQuestionId().equals(tohumQuestionId)).findFirst();
-            if (tohumOptional.isPresent()) {
-                if (dtoOptional.get().getValue().equals("Tohum")) {
-                    if (tohumOptional.get().getValue().equals("Yerel")) {
-                        BigDecimal localSeedPrice = BigDecimal.ZERO;
-                        Optional<SeedSeedlingNumberWithFirstValue> seedSeedlingValue = seedSeedlingNumberWithValueList.stream().filter(ss -> ss.getEnumType().equals(EnumSeedAndSeedlingNumberType.LOCAL_SEED_KG)).findFirst();
-                        if (seedSeedlingValue.isPresent()) {
-                            localSeedPrice = new BigDecimal(seedSeedlingValue.get().getValue());
-                        }
-                        return localSeedPrice.setScale(3, RoundingMode.HALF_UP);
-                    } else if (tohumOptional.get().getValue().equals("Hibrit")) {
-                        BigDecimal hybridSeedPrice = BigDecimal.ZERO;
-                        Optional<SeedSeedlingNumberWithFirstValue> seedSeedlingValue = seedSeedlingNumberWithValueList.stream().filter(ss -> ss.getEnumType().equals(EnumSeedAndSeedlingNumberType.HYBRID_SEED_KG)).findFirst();
-                        if (seedSeedlingValue.isPresent()) {
-                            hybridSeedPrice = new BigDecimal(seedSeedlingValue.get().getValue());
-                        }
-                        return hybridSeedPrice.setScale(3, RoundingMode.HALF_UP);
+            if (dtoOptional.get().getValue().equals("Fide")) {
+                //Dış kaynaktan temin edilen fide
+                Optional<QuestionWithFirstAnswer> fideOptional = questionDTOList.stream().filter(dto -> dto.getQuestionId().equals(fideQuestionId)).findFirst();
+                if (fideOptional.isPresent()) {
+                    BigDecimal seedlingPrice = BigDecimal.ZERO;
+                    Optional<SeedSeedlingWithFirstValue> seedSeedlingValue = seedSeedlingNumberWithValueList.stream().filter(ss -> ss.getEnumType().equals(EnumSeedSeedlingType.HYBRID_SEEDLING)).findFirst();
+                    if (seedSeedlingValue.isPresent()) {
+                        seedlingPrice = seedSeedlingValue.get().getValue();
                     }
-                } else if (dtoOptional.get().getValue().equals("Fide")) {
-                    //Fide nasıl temin ediliyor.
-                    Optional<QuestionWithFirstAnswer> fideOptional = questionDTOList.stream().filter(dto -> dto.getQuestionId().equals(fideQuestionId)).findFirst();
-                    if (fideOptional.isPresent()) {
-                        if (!fideOptional.get().getValue().equals("Dış kaynak")) {
+                    BigDecimal oneGraft = BigDecimal.ZERO;
+                    Optional<SeedSeedlingWithFirstValue> oneGraftSeedlingValue = seedSeedlingNumberWithValueList.stream().filter(ss -> ss.getEnumType().equals(EnumSeedSeedlingType.HYBRID_SEEDLING_ONE_GRAFT)).findFirst();
+                    if (oneGraftSeedlingValue.isPresent()) {
+                        oneGraft = oneGraftSeedlingValue.get().getValue();
+                    }
+                    BigDecimal twoGraft = BigDecimal.ZERO;
+                    Optional<SeedSeedlingWithFirstValue> twoGraftSeedlingValue = seedSeedlingNumberWithValueList.stream().filter(ss -> ss.getEnumType().equals(EnumSeedSeedlingType.HYBRID_SEEDLING_TWO_GRAFT)).findFirst();
+                    if (twoGraftSeedlingValue.isPresent()) {
+                        twoGraft = twoGraftSeedlingValue.get().getValue();
+                    }
+                    if (fideOptional.get().getValue().equals("Aşısız")) {
+                        return seedlingPrice.setScale(3, RoundingMode.HALF_UP);
+                    } else if (fideOptional.get().getValue().equals("Tek aşılı")) {
+                        return oneGraft.setScale(3, RoundingMode.HALF_UP);
+                    } else if (fideOptional.get().getValue().equals("Çift aşılı")) {
+                        return twoGraft.setScale(3, RoundingMode.HALF_UP);
+                    } else if (fideOptional.get().getValue().equals("Karışık")) {
+                        BigDecimal result = seedlingPrice.add(oneGraft.add(twoGraft));
+                        return (result.divide(new BigDecimal(3))).setScale(3, RoundingMode.HALF_UP);
+                    }
+                }
+            }
+        }
+        return BigDecimal.ZERO;
+    }
+
+    private BigDecimal getAsBigDecimalByQIDsAndSeedSeedlingKg(List<QuestionWithFirstAnswer> questionDTOList, Long questionId, Long tohumQuestionId, Long fideQuestionId,
+                                                              List<SeedSeedlingWithFirstValue> seedSeedlingNumberWithValueList) {
+        Optional<QuestionWithFirstAnswer> dtoOptional = questionDTOList.stream().filter(dto -> dto.getQuestionId().equals(questionId)).findFirst();
+        if (dtoOptional.isPresent()) {
+            if (dtoOptional.get().getValue().equals("Tohum")) {
+                Optional<QuestionWithFirstAnswer> tohumOptional = questionDTOList.stream().filter(dto -> dto.getQuestionId().equals(tohumQuestionId)).findFirst();
+                if (tohumOptional.isPresent()) {
+                    if (tohumOptional.get().getValue().equals("Yerel")) {
+                        Optional<SeedSeedlingWithFirstValue> seedSeedlingValue = seedSeedlingNumberWithValueList
+                                .stream()
+                                .filter(ss -> ss.getEnumType().equals(EnumSeedSeedlingType.LOCAL_SEED_KG))
+                                .findFirst();
+                        if (seedSeedlingValue.isPresent()) {
+                            BigDecimal localSeed = seedSeedlingValue.get().getValue();
+                            return localSeed.setScale(3, RoundingMode.HALF_UP);
+                        }
+                    } else if (tohumOptional.get().getValue().equals("Hibrit")) {
+                        Optional<SeedSeedlingWithFirstValue> seedSeedlingValue = seedSeedlingNumberWithValueList
+                                .stream()
+                                .filter(ss -> ss.getEnumType().equals(EnumSeedSeedlingType.HYBRID_SEED_KG))
+                                .findFirst();
+                        if (seedSeedlingValue.isPresent()) {
+                            BigDecimal hybridSeed = seedSeedlingValue.get().getValue();
+                            return hybridSeed.setScale(3, RoundingMode.HALF_UP);
+                        }
+                    }
+                }
+            } else if (dtoOptional.get().getValue().equals("Fide")) {
+                Optional<QuestionWithFirstAnswer> fideOptional = questionDTOList.stream().filter(dto -> dto.getQuestionId().equals(fideQuestionId)).findFirst();
+                if (fideOptional.isPresent()) {
+                    if (!fideOptional.get().getValue().equals("Dış kaynak")) {
+                        Optional<QuestionWithFirstAnswer> tohumOptional = questionDTOList.stream().filter(dto -> dto.getQuestionId().equals(tohumQuestionId)).findFirst();
+                        if (tohumOptional.isPresent()) {
                             if (tohumOptional.get().getValue().equals("Yerel")) {
-                                Optional<SeedSeedlingNumberWithFirstValue> seedSeedlingValue = seedSeedlingNumberWithValueList.stream().filter(ss -> ss.getEnumType().equals(EnumSeedAndSeedlingNumberType.LOCAL_SEED_KG)).findFirst();
+                                Optional<SeedSeedlingWithFirstValue> seedSeedlingValue = seedSeedlingNumberWithValueList
+                                        .stream()
+                                        .filter(ss -> ss.getEnumType().equals(EnumSeedSeedlingType.LOCAL_SEED_KG))
+                                        .findFirst();
                                 if (seedSeedlingValue.isPresent()) {
-                                    return new BigDecimal(seedSeedlingValue.get().getValue());
+                                    BigDecimal localSeed = seedSeedlingValue.get().getValue();
+                                    return localSeed.setScale(3, RoundingMode.HALF_UP);
                                 }
                             } else if (tohumOptional.get().getValue().equals("Hibrit")) {
-                                Optional<SeedSeedlingNumberWithFirstValue> seedSeedlingValue = seedSeedlingNumberWithValueList.stream().filter(ss -> ss.getEnumType().equals(EnumSeedAndSeedlingNumberType.HYBRID_SEED_KG)).findFirst();
+                                Optional<SeedSeedlingWithFirstValue> seedSeedlingValue = seedSeedlingNumberWithValueList
+                                        .stream()
+                                        .filter(ss -> ss.getEnumType().equals(EnumSeedSeedlingType.HYBRID_SEED_KG))
+                                        .findFirst();
                                 if (seedSeedlingValue.isPresent()) {
-                                    return new BigDecimal(seedSeedlingValue.get().getValue());
+                                    BigDecimal hybridSeed = seedSeedlingValue.get().getValue();
+                                    return hybridSeed.setScale(3, RoundingMode.HALF_UP);
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        return BigDecimal.ZERO;
+    }
+
+    private BigDecimal getAsBigDecimalByQIDsAndSeedSeedlingTL(List<QuestionWithFirstAnswer> questionDTOList, Long questionId, Long tohumQuestionId, Long fideQuestionId,
+                                                              List<SeedSeedlingWithFirstValue> seedSeedlingPriceWithValueList) {
+        Optional<QuestionWithFirstAnswer> dtoOptional = questionDTOList.stream().filter(dto -> dto.getQuestionId().equals(questionId)).findFirst();
+        if (dtoOptional.isPresent()) {
+            if (dtoOptional.get().getValue().equals("Tohum")) {
+                Optional<QuestionWithFirstAnswer> tohumOptional = questionDTOList.stream().filter(dto -> dto.getQuestionId().equals(tohumQuestionId)).findFirst();
+                if (tohumOptional.isPresent()) {
+                    if (tohumOptional.get().getValue().equals("Yerel")) {
+                        Optional<SeedSeedlingWithFirstValue> seedSeedlingValue = seedSeedlingPriceWithValueList
+                                .stream()
+                                .filter(ss -> ss.getEnumType().equals(EnumSeedSeedlingType.LOCAL_SEED_KG))
+                                .findFirst();
+                        if (seedSeedlingValue.isPresent()) {
+                            BigDecimal localSeedPrice = seedSeedlingValue.get().getValue();
+                            return localSeedPrice.setScale(3, RoundingMode.HALF_UP);
+                        }
+                    } else if (tohumOptional.get().getValue().equals("Hibrit")) {
+                        Optional<SeedSeedlingWithFirstValue> seedSeedlingValue = seedSeedlingPriceWithValueList
+                                .stream()
+                                .filter(ss -> ss.getEnumType().equals(EnumSeedSeedlingType.HYBRID_SEED_KG))
+                                .findFirst();
+                        if (seedSeedlingValue.isPresent()) {
+                            BigDecimal hybridSeedPrice = seedSeedlingValue.get().getValue();
+                            return hybridSeedPrice.setScale(3, RoundingMode.HALF_UP);
+                        }
+                    }
+                }
+            } else if (dtoOptional.get().getValue().equals("Fide")) {
+                Optional<QuestionWithFirstAnswer> fideOptional = questionDTOList.stream().filter(dto -> dto.getQuestionId().equals(fideQuestionId)).findFirst();
+                if (fideOptional.isPresent()) {
+                    if (!fideOptional.get().getValue().equals("Dış kaynak")) {
+                        Optional<QuestionWithFirstAnswer> tohumOptional = questionDTOList.stream().filter(dto -> dto.getQuestionId().equals(tohumQuestionId)).findFirst();
+                        if (tohumOptional.isPresent()) {
+                            if (tohumOptional.get().getValue().equals("Yerel")) {
+                                Optional<SeedSeedlingWithFirstValue> seedSeedlingValue = seedSeedlingPriceWithValueList
+                                        .stream()
+                                        .filter(ss -> ss.getEnumType().equals(EnumSeedSeedlingType.LOCAL_SEED_KG))
+                                        .findFirst();
+                                if (seedSeedlingValue.isPresent()) {
+                                    BigDecimal localSeedPrice = seedSeedlingValue.get().getValue();
+                                    return localSeedPrice.setScale(3, RoundingMode.HALF_UP);
+                                }
+                            } else if (tohumOptional.get().getValue().equals("Hibrit")) {
+                                Optional<SeedSeedlingWithFirstValue> seedSeedlingValue = seedSeedlingPriceWithValueList
+                                        .stream()
+                                        .filter(ss -> ss.getEnumType().equals(EnumSeedSeedlingType.HYBRID_SEED_KG))
+                                        .findFirst();
+                                if (seedSeedlingValue.isPresent()) {
+                                    BigDecimal hybridSeedPrice = seedSeedlingValue.get().getValue();
+                                    return hybridSeedPrice.setScale(3, RoundingMode.HALF_UP);
                                 }
                             }
                         }
@@ -1398,7 +1513,7 @@ public class ExpenseService extends BaseService {
             if (!typeOptional.get().getValue().equals("0")) {
                 Optional<CityFertilizerWithFirstValue> fertilizerOptional = cityFertilizerWithValueList.stream().filter(cf ->
                         cf.getEnumType().equals(EnumFertilizerType.NITROGEN_FERTILIZERS) &&
-                                cf.getFertilizerId().equals(Long.valueOf(typeOptional.get().getValue()))).findFirst();
+                                cf.getOldFertilizerId().equals(Long.valueOf(typeOptional.get().getValue()))).findFirst();
                 if (fertilizerOptional.isPresent()) {
                     fertilizerPrice = fertilizerOptional.get().getPrice();
                 }
@@ -1411,13 +1526,13 @@ public class ExpenseService extends BaseService {
         //Azotlu gübre 2 öneriniz ne kadardır?
         BigDecimal value3 = getAsBigDecimalByQuestionId(questionDTOList, 82L);
         //Azotlu gübre 2 öneriniz hangi gübre çeşidi içindir?
-        Optional<QuestionWithFirstAnswer> type2Optional = questionDTOList.stream().filter(dto -> dto.getQuestionId().equals(82L)).findFirst();
+        Optional<QuestionWithFirstAnswer> type2Optional = questionDTOList.stream().filter(dto -> dto.getQuestionId().equals(83L)).findFirst();
         BigDecimal fertilizer2Price = BigDecimal.ZERO;
         if (type2Optional.isPresent()) {
             if (!type2Optional.get().getValue().equals("0")) {
                 Optional<CityFertilizerWithFirstValue> fertilizerOptional = cityFertilizerWithValueList.stream().filter(cf ->
                         cf.getEnumType().equals(EnumFertilizerType.NITROGEN_FERTILIZERS) &&
-                                cf.getFertilizerId().equals(Long.valueOf(type2Optional.get().getValue()))).findFirst();
+                                cf.getOldFertilizerId().equals(Long.valueOf(type2Optional.get().getValue()))).findFirst();
                 if (fertilizerOptional.isPresent()) {
                     fertilizer2Price = fertilizerOptional.get().getPrice();
                 }
@@ -1433,7 +1548,7 @@ public class ExpenseService extends BaseService {
             if (!type3Optional.get().getValue().equals("0")) {
                 Optional<CityFertilizerWithFirstValue> fertilizerOptional = cityFertilizerWithValueList.stream().filter(cf ->
                         cf.getEnumType().equals(EnumFertilizerType.PHOSPHOR_FERTILIZERS) &&
-                                cf.getFertilizerId().equals(Long.valueOf(type3Optional.get().getValue()))).findFirst();
+                                cf.getOldFertilizerId().equals(Long.valueOf(type3Optional.get().getValue()))).findFirst();
                 if (fertilizerOptional.isPresent()) {
                     fertilizer3Price = fertilizerOptional.get().getPrice();
                 }
@@ -1452,7 +1567,7 @@ public class ExpenseService extends BaseService {
             if (!type4Optional.get().getValue().equals("0")) {
                 Optional<CityFertilizerWithFirstValue> fertilizerOptional = cityFertilizerWithValueList.stream().filter(cf ->
                         cf.getEnumType().equals(EnumFertilizerType.POTASSIUM_FERTILIZERS) &&
-                                cf.getFertilizerId().equals(Long.valueOf(type4Optional.get().getValue()))).findFirst();
+                                cf.getOldFertilizerId().equals(Long.valueOf(type4Optional.get().getValue()))).findFirst();
                 if (fertilizerOptional.isPresent()) {
                     fertilizer4Price = fertilizerOptional.get().getPrice();
                 }
@@ -1471,7 +1586,7 @@ public class ExpenseService extends BaseService {
             if (!type5Optional.get().getValue().equals("0")) {
                 Optional<CityFertilizerWithFirstValue> fertilizerOptional = cityFertilizerWithValueList.stream().filter(cf ->
                         cf.getEnumType().equals(EnumFertilizerType.COMPOUND_FERTILIZERS) &&
-                                cf.getFertilizerId().equals(Long.valueOf(type5Optional.get().getValue()))).findFirst();
+                                cf.getOldFertilizerId().equals(Long.valueOf(type5Optional.get().getValue()))).findFirst();
                 if (fertilizerOptional.isPresent()) {
                     fertilizer5Price = fertilizerOptional.get().getPrice();
                 }
@@ -1572,6 +1687,22 @@ public class ExpenseService extends BaseService {
     private BigDecimal getWaterPriceTotalValueAsBigDecimal(Optional<CityCropWateringValue> wateringValueOptional) {
         if (wateringValueOptional.isPresent()) {
             return wateringValueOptional.get().getMaintenance().setScale(3, RoundingMode.HALF_UP);
+        }
+        return BigDecimal.ZERO;
+    }
+
+    private BigDecimal getAsBigDecimalByQIdAndTypeValueNakil(List<QuestionWithFirstAnswer> questionDTOList, Long questionId, Long verimQuestionId,
+                                                             List<CropCoefficientWithFirstValue> cropCoefficientList, EnumCropCoefficientType type, EnumCropCoefficientValue value) {
+        Optional<QuestionWithFirstAnswer> dtoOptional = questionDTOList.stream().filter(dto -> dto.getQuestionId().equals(questionId)).findFirst();
+        if (dtoOptional.isPresent()) {
+            if (dtoOptional.get().getValue().equals("Evet")) {
+                //Verim ne kadar
+                BigDecimal efficiency = getAsBigDecimalByQuestionId(questionDTOList, verimQuestionId);
+                BigDecimal haymakerCapacity = getAsBigDecimalByValueAndType(cropCoefficientList, type, value);
+                if (haymakerCapacity.compareTo(BigDecimal.ZERO) > 0) {
+                    return efficiency.divide(haymakerCapacity, 3, RoundingMode.HALF_UP);
+                }
+            }
         }
         return BigDecimal.ZERO;
     }

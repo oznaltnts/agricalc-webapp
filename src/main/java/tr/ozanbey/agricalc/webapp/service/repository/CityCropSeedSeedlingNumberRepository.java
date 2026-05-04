@@ -4,13 +4,12 @@ package tr.ozanbey.agricalc.webapp.service.repository;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
-import tr.ozanbey.agricalc.webapp.service.domain.CityCropSeedAndSeedlingNumber;
-import tr.ozanbey.agricalc.webapp.service.dto.CropCoefficientWithFirstValue;
-import tr.ozanbey.agricalc.webapp.service.dto.SeedSeedlingNumberWithFirstValue;
+import tr.ozanbey.agricalc.webapp.service.domain.CityCropSeedSeedlingNumber;
+import tr.ozanbey.agricalc.webapp.service.dto.SeedSeedlingWithFirstValue;
 
 import java.util.List;
 
-public interface CityCropSeedAndSeedlingNumberRepository extends JpaRepository<CityCropSeedAndSeedlingNumber, Long> {
+public interface CityCropSeedSeedlingNumberRepository extends JpaRepository<CityCropSeedSeedlingNumber, Long> {
 
     @Query(value = """
             SELECT p.type  as enumType,
@@ -26,5 +25,5 @@ public interface CityCropSeedAndSeedlingNumberRepository extends JpaRepository<C
             WHERE p.status = ?1
               AND p.city_crop_id = :cityCropId
             """, nativeQuery = true)
-    List<SeedSeedlingNumberWithFirstValue> findDTOsByStatusAndCityCropId(Integer status, @Param("cityCropId") Long cityCropId);
+    List<SeedSeedlingWithFirstValue> findDTOsByStatusAndCityCropId(Integer status, @Param("cityCropId") Long cityCropId);
 }

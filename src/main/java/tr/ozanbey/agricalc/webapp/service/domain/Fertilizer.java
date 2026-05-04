@@ -42,4 +42,9 @@ public class Fertilizer extends AbstractEntity {
     @NotBlank(message = "Potassium percent cannot be blank")
     @ToString.Include
     private BigDecimal potassiumPercent;
+
+    @Column(name = "old_fertilizer_id", updatable = false)
+    @ToString.Include
+    private Long oldFertilizerId;
+
 }

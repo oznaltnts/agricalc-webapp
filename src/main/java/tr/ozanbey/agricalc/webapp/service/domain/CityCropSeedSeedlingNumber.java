@@ -2,7 +2,7 @@ package tr.ozanbey.agricalc.webapp.service.domain;
 
 import jakarta.persistence.*;
 import lombok.*;
-import tr.ozanbey.agricalc.webapp.service.enumtype.EnumSeedAndSeedlingNumberType;
+import tr.ozanbey.agricalc.webapp.service.enumtype.EnumSeedSeedlingType;
 
 import java.util.List;
 
@@ -14,7 +14,7 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @ToString(onlyExplicitlyIncluded = true)
-public class CityCropSeedAndSeedlingNumber extends AbstractStatusEntity {
+public class CityCropSeedSeedlingNumber extends AbstractStatusEntity {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "city_crop_id", referencedColumnName = "id", nullable = false)
@@ -23,9 +23,9 @@ public class CityCropSeedAndSeedlingNumber extends AbstractStatusEntity {
     @Column(name = "type", nullable = false)
     @Enumerated(EnumType.STRING)
     @ToString.Include
-    private EnumSeedAndSeedlingNumberType type;
+    private EnumSeedSeedlingType type;
 
     @OneToMany(mappedBy = "seedSeedlingNumber", fetch = FetchType.LAZY)
-    private List<CityCropSeedAndSeedlingNumberValue> cityCropSeedAndSeedlingNumberValueList;
+    private List<CityCropSeedSeedlingNumberValue> cityCropSeedSeedlingNumberValueList;
 
 }

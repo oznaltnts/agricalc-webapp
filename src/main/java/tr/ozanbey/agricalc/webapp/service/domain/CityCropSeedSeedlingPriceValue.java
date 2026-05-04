@@ -10,15 +10,15 @@ import java.math.BigDecimal;
 @Getter
 @Setter
 @Entity
-@Table(name = "city_crop_seed_and_seedling_number_values")
+@Table(name = "city_crop_seed_and_seedling_price_values")
 @NoArgsConstructor
 @AllArgsConstructor
 @ToString(onlyExplicitlyIncluded = true)
-public class CityCropSeedAndSeedlingNumberValue extends AbstractEntity {
+public class CityCropSeedSeedlingPriceValue extends AbstractEntity {
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "city_crop_seed_and_seedling_number_id", referencedColumnName = "id", nullable = false)
-    private CityCropSeedAndSeedlingNumber seedSeedlingNumber;
+    @JoinColumn(name = "city_crop_seed_and_seedling_price_id", referencedColumnName = "id", nullable = false)
+    private CityCropSeedSeedlingPrice seedSeedlingPrice;
 
     @Column(name = "value", nullable = false)
     @NotBlank(message = "Value cannot be blank")

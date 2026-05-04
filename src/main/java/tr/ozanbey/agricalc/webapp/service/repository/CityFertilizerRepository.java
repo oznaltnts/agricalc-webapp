@@ -13,6 +13,7 @@ public interface CityFertilizerRepository extends JpaRepository<CityFertilizer, 
 
     @Query(value = """
             SELECT f.id                AS fertilizerId,
+                   f.old_fertilizer_id AS oldFertilizerId,
                    f.type              AS enumType,
                    f.name              AS name,
                    f.nitrogen_percent  AS nitrogenPercent,

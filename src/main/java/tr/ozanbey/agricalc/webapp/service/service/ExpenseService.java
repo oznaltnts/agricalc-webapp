@@ -1678,12 +1678,6 @@ public class ExpenseService extends BaseService {
         return BigDecimal.ZERO;
     }
 
-    public BigDecimal calculateAverageCost(BigDecimal medicinePriceRate) {
-        BigDecimal averageCost = BigDecimal.ZERO;
-
-        return averageCost.multiply(medicinePriceRate);
-    }
-
     private BigDecimal getWaterPriceTotalValueAsBigDecimal(Optional<CityCropWateringValue> wateringValueOptional) {
         if (wateringValueOptional.isPresent()) {
             return wateringValueOptional.get().getMaintenance().setScale(3, RoundingMode.HALF_UP);

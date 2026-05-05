@@ -1,8 +1,6 @@
 package tr.ozanbey.agricalc.webapp.service.domain;
 
 import jakarta.persistence.*;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.Size;
 import lombok.*;
 
 
@@ -20,8 +18,6 @@ public class CropCoefficientAnswer extends AbstractEntity {
     private CropCoefficient cropCoefficient;
 
     @Column(name = "value", nullable = false)
-    @NotBlank(message = "Value cannot be blank")
-    @Size(min = 1, max = 255, message = "Value must be between 1 and 255 characters")
     @ToString.Include
     private String value;
 }

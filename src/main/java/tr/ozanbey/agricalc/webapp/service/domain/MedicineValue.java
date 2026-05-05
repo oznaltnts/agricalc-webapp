@@ -1,7 +1,6 @@
 package tr.ozanbey.agricalc.webapp.service.domain;
 
 import jakarta.persistence.*;
-import jakarta.validation.constraints.NotBlank;
 import lombok.*;
 
 import java.math.BigDecimal;
@@ -21,12 +20,10 @@ public class MedicineValue extends AbstractEntity {
     private Medicine medicine;
 
     @Column(name = "packaging_size", nullable = false)
-    @NotBlank(message = "Packaging size cannot be blank")
     @ToString.Include
     private BigDecimal packagingSize;
 
     @Column(name = "price", nullable = false)
-    @NotBlank(message = "Price cannot be blank")
     @ToString.Include
     private BigDecimal price;
 

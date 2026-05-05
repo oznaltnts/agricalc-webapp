@@ -87,8 +87,19 @@ public class HomeService extends BaseService {
                     seedSeedlingNumberWithValueList, seedSeedlingPriceWithValueList,
                     cityFertilizerWithValueList, fieldAverageValue, wateringValueOptional);
             returnMap.put("expense", expense);
+
+            BigDecimal maturity = calculateMaturity(questionDTOList);
+            returnMap.put("maturity", maturity);
         }
         return returnMap;
+    }
+
+    private BigDecimal calculateMaturity(List<QuestionWithFirstAnswer> questionDTOList) {
+        Optional<QuestionWithFirstAnswer> dtoOptional = questionDTOList.stream().filter(dto -> dto.getQuestionId().equals(20L)).findFirst();
+        if (dtoOptional.isPresent()) {//TODO
+            String answerValue = dtoOptional.get().getValue();
+        }
+        return BigDecimal.ONE;
     }
 
     private List<BigDecimal> calculateYield(List<QuestionWithFirstAnswer> selectedDTOList) {

@@ -1,7 +1,6 @@
 package tr.ozanbey.agricalc.webapp.service.domain;
 
 import jakarta.persistence.*;
-import jakarta.validation.constraints.NotBlank;
 import lombok.*;
 
 import java.math.BigDecimal;
@@ -21,7 +20,6 @@ public class CityCropSeedSeedlingNumberValue extends AbstractEntity {
     private CityCropSeedSeedlingNumber seedSeedlingNumber;
 
     @Column(name = "value", nullable = false)
-    @NotBlank(message = "Value cannot be blank")
     @ToString.Include
     private BigDecimal value;
 

@@ -1,7 +1,6 @@
 package tr.ozanbey.agricalc.webapp.service.domain;
 
 import jakarta.persistence.*;
-import jakarta.validation.constraints.NotBlank;
 import lombok.*;
 
 import java.math.BigDecimal;
@@ -21,12 +20,10 @@ public class CropMedicineGroupMedicineValue extends AbstractEntity {
     private CropMedicineGroupMedicine cropMedicineGroupMedicine;
 
     @Column(name = "amount", nullable = false)
-    @NotBlank(message = "Amount cannot be blank")
     @ToString.Include
     private BigDecimal amount;
 
     @Column(name = "water_amount", nullable = false)
-    @NotBlank(message = "Water amount cannot be blank")
     @ToString.Include
     private BigDecimal waterAmount;
 

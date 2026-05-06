@@ -32,6 +32,14 @@ spring:
     properties:
       hibernate:
         dialect: org.hibernate.dialect.MySQLDialect
+server:
+  servlet:
+    session:
+      cookie:
+        http-only: true
+        name: AGRICALCSESSION
+        same-site: strict
+      timeout: 3600
 logging:
   config: classpath:logback.xml
 ---
@@ -51,6 +59,10 @@ joinfaces:
     state-saving-method: server
 server:
   port: 9000
+  servlet:
+    session:
+      cookie:
+        secure: false
 logging:
   file.name: D:\home\fdev\logs\ozanbey-agricalc-webapp.log
 ---
@@ -70,6 +82,10 @@ joinfaces:
     state-saving-method: server
 server:
   port: 9010
+  servlet:
+    session:
+      cookie:
+        secure: true
 logging:
   file.name:
 ---
@@ -90,5 +106,9 @@ joinfaces:
     facelets-skip-comments: true
 server:
   port: 9020
+  servlet:
+    session:
+      cookie:
+        secure: true
 logging:
   file.name:

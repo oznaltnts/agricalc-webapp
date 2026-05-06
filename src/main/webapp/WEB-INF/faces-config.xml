@@ -19,6 +19,12 @@
         </resource-bundle>
     </application>
 
+    <lifecycle>
+        <phase-listener id="JSFAjaxTimeoutPhaseListener">
+            tr.ozanbey.agricalc.webapp.webapp.security.JsfAjaxTimeoutPhaseListener
+        </phase-listener>
+    </lifecycle>
+
     <factory>
         <exception-handler-factory>tr.ozanbey.agricalc.webapp.webapp.util.CustomExceptionHandlerFactory</exception-handler-factory>
     </factory>

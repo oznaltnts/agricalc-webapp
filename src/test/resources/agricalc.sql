@@ -326,26 +326,80 @@ CREATE TABLE `city_fertilizer_values`
     ENGINE = InnoDB
     AUTO_INCREMENT = 1;
 
+CREATE TABLE `users`
+(
+    `id`           BIGINT       NOT NULL AUTO_INCREMENT,
+    `idate`        DATETIME     NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    `udate`        DATETIME              DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP,
+    `status`       TINYINT      NOT NULL DEFAULT 0 COMMENT '-1: deleted, 0:passive, 1:active',
+    `name_surname` VARCHAR(255)          DEFAULT NULL,
+    `tckn`         VARCHAR(255)          DEFAULT NULL,
+    `email`        VARCHAR(255)          DEFAULT NULL,
+    `phone`        VARCHAR(25)  NOT NULL,
+    `password`     VARCHAR(255) NOT NULL,
+    `city_id`      BIGINT                DEFAULT NULL,
+    PRIMARY KEY (`id`),
+    CONSTRAINT `FK_users_cities` FOREIGN KEY (`city_id`) REFERENCES `cities` (`id`),
+    UNIQUE (`email`, `phone`)
+)
+    ENGINE = InnoDB
+    AUTO_INCREMENT = 1;
 
+CREATE TABLE `user_roles`
+(
+    `id`      BIGINT   NOT NULL AUTO_INCREMENT,
+    `idate`   DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    `user_id` BIGINT   NOT NULL,
+    `role`    TINYINT  NOT NULL DEFAULT 2 COMMENT '1:ADMIN, 2:USER',
+    PRIMARY KEY (`id`),
+    CONSTRAINT `FK_user_roles_users` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`)
+)
+    ENGINE = InnoDB
+    AUTO_INCREMENT = 1;
 
+CREATE TABLE `user_login_failures`
+(
+    `id`         BIGINT      NOT NULL AUTO_INCREMENT,
+    `idate`      DATETIME    NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    `udate`      DATETIME             DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP,
+    `status`     TINYINT     NOT NULL DEFAULT 1 COMMENT '-1:deleted, 0:passive, 1:active',
+    `user_id`    BIGINT      NOT NULL,
+    `ip_address` VARCHAR(25) NOT NULL,
+    PRIMARY KEY (`id`),
+    CONSTRAINT `FK_user_login_failures_users` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`)
+)
+    ENGINE = InnoDB
+    AUTO_INCREMENT = 1;
 
+CREATE TABLE `user_login_successes`
+(
+    `id`         BIGINT      NOT NULL AUTO_INCREMENT,
+    `idate`      DATETIME    NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    `user_id`    BIGINT      NOT NULL,
+    `ip_address` VARCHAR(25) NOT NULL,
+    PRIMARY KEY (`id`),
+    CONSTRAINT `FK_user_login_successes_users` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`)
+)
+    ENGINE = InnoDB
+    AUTO_INCREMENT = 1;
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+CREATE TABLE `user_preferences`
+(
+    `id`              BIGINT      NOT NULL AUTO_INCREMENT,
+    `idate`           DATETIME    NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    `user_id`         BIGINT      NOT NULL,
+    `menu_mode`       VARCHAR(25) NOT NULL,
+    `dark_mode`       VARCHAR(25) NOT NULL,
+    `component_theme` VARCHAR(25) NOT NULL,
+    `topbar_theme`    VARCHAR(25) NOT NULL,
+    `menu_theme`      VARCHAR(25) NOT NULL,
+    `input_style`     VARCHAR(25) NOT NULL,
+    `light_logo`      TINYINT     NOT NULL DEFAULT 0,
+    PRIMARY KEY (`id`),
+    CONSTRAINT `FK_user_preferences_users` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`)
+)
+    ENGINE = InnoDB
+    AUTO_INCREMENT = 1;
 
 
 

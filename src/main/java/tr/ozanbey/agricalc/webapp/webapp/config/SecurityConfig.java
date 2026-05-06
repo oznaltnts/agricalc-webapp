@@ -34,7 +34,7 @@ public class SecurityConfig {
         http
                 // JSF için CSRF açık olmalı
                 .csrf(csrf -> csrf
-                        .ignoringRequestMatchers("/javax.faces.resource/**")
+                        .ignoringRequestMatchers("/javax.faces.resource/**", "/public/**", "/common/**")
                 )
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/jakarta.faces.resource/**").permitAll()
@@ -54,10 +54,13 @@ public class SecurityConfig {
                         .permitAll()
                 )
                 .logout(logout -> logout
-                        .logoutUrl("/logout")
+                        .logoutRequestMatcher(request ->
+                                request.getRequestURI().equals(request.getContextPath() + "/logout")
+                        )
                         .deleteCookies("AGRICALCSESSION", "agricalc-remember-me")
                         .invalidateHttpSession(true)
                         .logoutSuccessUrl("/")
+                        .clearAuthentication(true)
                         .permitAll()
                 )
                 .sessionManagement(session -> session
@@ -66,6 +69,7 @@ public class SecurityConfig {
                 )
                 .rememberMe(remember -> remember
                         .tokenValiditySeconds(1209600)
+                        .useSecureCookie(true)
                         .rememberMeCookieName("agricalc-remember-me")
                         .key("")
                 )

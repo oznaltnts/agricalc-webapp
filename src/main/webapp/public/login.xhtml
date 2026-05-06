@@ -8,27 +8,39 @@
     <ui:define name="title">Giriş Yap</ui:define>
 
     <ui:define name="login">
-        <f:event type="preRenderView" listener="#{navigationController.redirectToHome()}"/>
+        <f:event type="preRenderView"
+                 listener="#{navigationController.redirectToHome()}"/>
     </ui:define>
     
     <ui:define name="content">
         <div class="grid">
             <div class="col">
                 <div class="card">
-                    <h:form id="loginForm">
-                        <div class="login-form">
-                            <h2>Sisteme giriş yapın</h2>
-                            <p>Hesabınız mı yok? <a href="/public/register"> Kayıt olun</a></p>
-                            <p:panelGrid layout="flex" columns="1">
-                                <p:inputText id="phone" placeholder="Telefon numaranız"
-                                             name="phone"/>
-                                <p:password id="password" placeholder="Şifreniz"
-                                            name="password"/>
-                                <p:commandButton value="Giriş yapın" type="button"
-                                                 onclick="$('#loginForm').submit();"/>
-                            </p:panelGrid>
-                        </div>
-                        <p>Sorun mu var? <a href="#">Buraya</a> basın ve bize bildirin.</p>
+                    <h:form id="loginForm"
+                            class="login-form">
+                        <p:focus context="loginPanelGrid"/>
+                        <h2>Sisteme giriş yapın</h2>
+                        <p>Hesabınız mı yok?
+                            <a href="/public/register">
+                                Kayıt olun
+                            </a>
+                        </p>
+                        <p:panelGrid id="loginPanelGrid"
+                                     layout="flex"
+                                     columns="1">
+                            <p:inputMask id="phone"
+                                         placeholder="Telefon numaranız"
+                                         name="phone"
+                                         mask="(599) 999 99 99"
+                                         validateMask="true"/>
+                            <p:password id="password"
+                                        placeholder="Şifreniz"
+                                        name="password"/>
+                            <p:commandButton value="Giriş yapın"
+                                             type="button"
+                                             onclick="$('#loginForm').submit();"/>
+                        </p:panelGrid>
+                        <p>Sorunuz mu var? <a href="#">Buraya</a> basın ve bize bildirin.</p>
                     </h:form>
                 </div>
             </div>

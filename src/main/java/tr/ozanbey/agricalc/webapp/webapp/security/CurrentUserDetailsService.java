@@ -17,8 +17,9 @@ public class CurrentUserDetailsService implements UserDetailsService {
     @Override
     public UserDetails loadUserByUsername(String phone) throws UsernameNotFoundException {
 
-        User user = loginController.getUserByPhoneAndStatus(phone, EnumStatus.ACTIVE)
-                .orElseThrow(() -> new UsernameNotFoundException((String.format("User with phone=%s was not found", phone))));
+        String formatted = "+90" + phone.replaceAll("\\D", "");
+        User user = loginController.getUserByPhoneAndStatus(formatted, EnumStatus.ACTIVE)
+                .orElseThrow(() -> new UsernameNotFoundException((String.format("User with phone=%s was not found", formatted))));
         return new CurrentUser(user);
     }
 

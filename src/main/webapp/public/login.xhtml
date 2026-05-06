@@ -1,0 +1,37 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="jakarta.faces.html"
+                xmlns:f="jakarta.faces.core"
+                xmlns:ui="jakarta.faces.facelets"
+                xmlns:p="http://primefaces.org/ui"
+                template="/templates/template.xhtml">
+             
+    <ui:define name="title">Giriş Yap</ui:define>
+
+    <ui:define name="login">
+        <f:event type="preRenderView" listener="#{navigationController.redirectToHome()}"/>
+    </ui:define>
+    
+    <ui:define name="content">
+        <div class="grid">
+            <div class="col">
+                <div class="card">
+                    <h:form id="loginForm">
+                        <div class="login-form">
+                            <h2>Sisteme giriş yapın</h2>
+                            <p>Hesabınız mı yok? <a href="/public/register"> Kayıt olun</a></p>
+                            <p:panelGrid layout="flex" columns="1">
+                                <p:inputText id="phone" placeholder="Telefon numaranız"
+                                             name="phone"/>
+                                <p:password id="password" placeholder="Şifreniz"
+                                            name="password"/>
+                                <p:commandButton value="Giriş yapın" type="button"
+                                                 onclick="$('#loginForm').submit();"/>
+                            </p:panelGrid>
+                        </div>
+                        <p>Sorun mu var? <a href="#">Buraya</a> basın ve bize bildirin.</p>
+                    </h:form>
+                </div>
+            </div>
+        </div>
+    </ui:define>
+</ui:composition>

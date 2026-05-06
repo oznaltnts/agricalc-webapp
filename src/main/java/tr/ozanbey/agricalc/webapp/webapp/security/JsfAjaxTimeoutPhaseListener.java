@@ -71,7 +71,7 @@ public class JsfAjaxTimeoutPhaseListener implements PhaseListener {
     }
 
     public boolean checkRequestComingFromSecurePages(String path) {
-        return !path.startsWith("/public");
+        return !path.startsWith("/public") || !path.startsWith("/common");
     }
 
 }

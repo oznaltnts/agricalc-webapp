@@ -16,7 +16,7 @@ public class ControllerConfig implements WebMvcConfigurer {
     @Override
     public void addViewControllers(ViewControllerRegistry registry) {
         registry.addViewController("/").setViewName("forward:/public/home.xhtml");
-        registry.addViewController("/public/public").setViewName("forward:/public/public.xhtml");
+        registry.addViewController("/public/login").setViewName("forward:/public/login.xhtml");
         registry.addViewController("/secured/secured").setViewName("forward:/secured/secured.xhtml");
         registry.addViewController("/common/access-denied").setViewName("forward:/common/access.xhtml");
         registry.addViewController("/common/error").setViewName("forward:/common/error.xhtml");

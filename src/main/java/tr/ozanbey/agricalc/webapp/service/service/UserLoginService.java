@@ -30,7 +30,7 @@ public class UserLoginService extends BaseService {
 
     @Transactional
     public void clearLoginFailures(Long userId) {
-        userLoginFailureRepository.updateStatusByUserId(userId, EnumStatus.DELETED.getValue());
+        userLoginFailureRepository.updateStatusByUserId(userId, EnumStatus.DELETED);
     }
 
     @Transactional
@@ -46,8 +46,8 @@ public class UserLoginService extends BaseService {
         UserLoginFailure userLoginFailure = new UserLoginFailure();
         userLoginFailure.setUser(new User(userId));
         userLoginFailure.setIpAddress(getIpAddress());
+        userLoginFailure.setStatus(EnumStatus.ACTIVE);
         userLoginFailureRepository.save(userLoginFailure);
-
     }
 
 }

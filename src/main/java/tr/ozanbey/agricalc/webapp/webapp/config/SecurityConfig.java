@@ -55,9 +55,10 @@ public class SecurityConfig {
                 )
                 .logout(logout -> logout
                         .logoutUrl("/logout")
+                        .deleteCookies("AGRICALCSESSION", "agricalc-remember-me")
                         .invalidateHttpSession(true)
-                        .deleteCookies("AGRICALCSESSION")
                         .logoutSuccessUrl("/")
+                        .permitAll()
                 )
                 .sessionManagement(session -> session
                         .sessionFixation().migrateSession()
@@ -69,7 +70,7 @@ public class SecurityConfig {
                         .key("")
                 )
                 .exceptionHandling(ex -> ex
-                        .accessDeniedPage("/access-denied.xhtml")
+                        .accessDeniedPage("/common/access-denied")
                 )
                 .authenticationProvider(authenticationProvider());
         return http.build();
@@ -87,4 +88,5 @@ public class SecurityConfig {
     public PasswordEncoder customPasswordEncoder() {
         return new CustomPasswordEncoder();
     }
+
 }

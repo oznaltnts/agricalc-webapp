@@ -15,6 +15,6 @@ public interface UserLoginFailureRepository extends JpaRepository<UserLoginFailu
 
     @Modifying
     @Query("UPDATE UserLoginFailure lf SET lf.status = :status WHERE lf.user.id = :userId AND lf.status = 1")
-    void updateStatusByUserId(@Param("userId") Long userId, @Param("status") int status);
+    void updateStatusByUserId(@Param("userId") Long userId, @Param("status") EnumStatus status);
 
 }

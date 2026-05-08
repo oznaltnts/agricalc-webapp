@@ -1,0 +1,110 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="jakarta.faces.html"
+                xmlns:f="jakarta.faces.core"
+                xmlns:ui="jakarta.faces.facelets"
+                xmlns:p="http://primefaces.org/ui"
+                template="/templates/template.xhtml">
+             
+    <ui:define name="title">Kayıt Ol</ui:define>
+
+    <ui:define name="login">
+        <f:event type="preRenderView"
+                 listener="#{navigationController.redirectToHome()}"/>
+    </ui:define>
+
+    <ui:define name="content">
+        <div class="grid">
+            <div class="col">
+                <div class="card">
+                    <h:form>
+                        <p:growl id="growl"
+                                 showDetail="true"
+                                 severity="info warn error">
+                            <p:autoUpdate/>
+                        </p:growl>
+
+                        <p:focus context="registerPanelGrid"/>
+
+                        <h2>Sisteme kayıt olun</h2>
+                        <p>Hesabınız var mı?
+                            <a href="/public/login">
+                                Giriş yapın
+                            </a>
+                        </p>
+                        <p:panelGrid id="registerPanelGrid"
+                                     layout="flex"
+                                     columns="1">
+                            <p:outputPanel styleClass="ui-float-label">
+                                <p:inputText id="emailInput"
+                                             placeholder="E-mail"
+                                             validatorMessage="Email formatına uygun olarak giriniz"
+                                             style="width: 200px"
+                                             value="#{registerController.email}">
+                                    <p:ajax update="emailInput phone"/>
+                                </p:inputText>
+                                <p:outputLabel for="@previous" value="E-mail" style="margin-left: 0.3rem"/>
+                                <p:message for="emailInput"/>
+                                <h:outputText value="#{registerController.email}"/>
+                            </p:outputPanel>
+                            <p:outputPanel styleClass="ui-float-label">
+                                <p:inputMask id="phone"
+                                             placeholder="Telefon numaranız"
+                                             mask="(599) 999 99 99"
+                                             required="true"
+                                             requiredMessage="Telefon numaranızı uygun olarak olarak giriniz"
+                                             style="width: 200px"
+                                             validateMask="true"
+                                             validatorMessage="Telefon numaranızı uygun olarak olarak giriniz"
+                                             value="#{registerController.phone}">
+                                    <p:ajax update="emailInput phone"/>
+                                </p:inputMask>
+                                <p:outputLabel for="@previous" value="Telefon numaranız" style="margin-left: 0.3rem"/>
+                                <p:message for="phone"/>
+                            </p:outputPanel>
+                            <p:outputPanel styleClass="ui-float-label">
+                                <p:password id="pwd1"
+                                            placeholder="Şifreniz"
+                                            required="true"
+                                            requiredMessage="Şifreniz uygun olarak olarak giriniz"
+                                            match="pwd2"
+                                            feedback="true"
+                                            toggleMask="true"
+                                            label="Password 1"
+                                            promptLabel="Lütfen şifre giriniz"
+                                            weakLabel="Zayıf"
+                                            goodLabel="Orta"
+                                            strongLabel="Güçlü"
+                                            value="#{registerController.password}">
+                                    <f:validateRegex pattern="#{registerController.regexPattern}" />
+                                </p:password>
+                                <p:outputLabel for="@previous" value="Şifreniz" style="margin-left: 0.3rem"/>
+                                <p:message for="pwd1"/>
+                            </p:outputPanel>
+                            <p:outputPanel styleClass="ui-float-label">
+                                <p:password id="pwd2"
+                                            placeholder="Şifre tekrar"
+                                            required="true"
+                                            requiredMessage="Şifre tekrarını uygun olarak olarak giriniz"
+                                            toggleMask="true"
+                                            label="Password 2"
+                                            value="#{registerController.password}"/>
+                                <p:outputLabel for="@previous" value="Şifre tekrar" style="margin-left: 0.3rem"/>
+                                <p:message for="pwd2"/>
+                            </p:outputPanel>
+                        </p:panelGrid>
+                        <p:commandButton value="Kayıt ol"
+                                         icon="pi pi-check"
+                                         style="width: 200px"
+                                         process="@form"
+                                         update="@form"
+                                         action="#{registerController.register}"
+                                         validateClient="true"
+                                         styleClass="m-2" />
+                    </h:form>
+                    <br/>
+                    <p>Sorunuz mu var? <a href="#">Buraya</a> basın ve bize bildirin.</p>
+                </div>
+            </div>
+        </div>
+    </ui:define>
+</ui:composition>

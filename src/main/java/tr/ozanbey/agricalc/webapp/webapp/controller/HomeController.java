@@ -2,10 +2,10 @@ package tr.ozanbey.agricalc.webapp.webapp.controller;
 
 
 import jakarta.annotation.PostConstruct;
+import jakarta.faces.view.ViewScoped;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 import tr.ozanbey.agricalc.webapp.service.domain.City;
 import tr.ozanbey.agricalc.webapp.service.domain.Crop;
@@ -16,7 +16,7 @@ import java.util.List;
 import java.util.Map;
 
 @Component("homeController")
-@Scope("view")
+@ViewScoped
 @Getter
 @Setter
 public class HomeController extends BaseController {

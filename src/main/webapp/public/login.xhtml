@@ -22,7 +22,7 @@
                         <p>Hesabınız mı yok?
                             <a href="/public/register">
                                 Kayıt olun
-                            </a><br/>* işaretliler zorunludur.
+                            </a>
                         </p>
                         <p:panelGrid id="loginPanelGrid"
                                      layout="flex"
@@ -31,6 +31,7 @@
                                 <p:inputMask id="phone"
                                              required="true"
                                              placeholder="Telefon numaranız"
+                                             style="width: 200px"
                                              name="phone"
                                              mask="(599) 999 99 99"
                                              validateMask="true"/>
@@ -39,6 +40,7 @@
                             <p:outputPanel styleClass="ui-float-label">
                                 <p:password id="password"
                                             placeholder="Şifreniz"
+                                            style="width: 200px"
                                             required="true"
                                             name="password"/>
                                 <p:outputLabel for="@previous" value="Şifreniz" style="margin-left: 0.3rem"/>
@@ -47,10 +49,12 @@
                                                      itemLabel="Beni hatırla"/>
                         </p:panelGrid>
                         <p:commandButton value="Giriş yapın"
+                                         style="width: 200px"
                                          type="button"
                                          onclick="$('#loginForm').submit();"/>
-                        <p>Sorunuz mu var? <a href="#">Buraya</a> basın ve bize bildirin.</p>
                     </h:form>
+                    <br/>
+                    <p>Sorunuz mu var? <a href="#">Buraya</a> basın ve bize bildirin.</p>
                 </div>
             </div>
         </div>

@@ -17,13 +17,6 @@ import java.util.Objects;
 @ToString(onlyExplicitlyIncluded = true)
 public class User extends AbstractStatusEntity {
 
-    @Column(name = "name_surname")
-    @ToString.Include
-    private String nameSurname;
-
-    @Column(name = "tckn")
-    private String tckn;
-
     @Column(name = "email", unique = true)
     @ToString.Include
     private String email;
@@ -45,7 +38,6 @@ public class User extends AbstractStatusEntity {
     public EnumRole getUserRole() {
         return this.getRoleList().iterator().next().getRole();
     }
-
 
     @Override
     public boolean equals(Object o) {

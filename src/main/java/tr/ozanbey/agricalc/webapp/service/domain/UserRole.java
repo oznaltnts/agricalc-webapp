@@ -1,6 +1,7 @@
 package tr.ozanbey.agricalc.webapp.service.domain;
 
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -12,6 +13,7 @@ import tr.ozanbey.agricalc.webapp.service.enumtype.EnumRole;
 @Entity
 @Table(name = "user_roles")
 @NoArgsConstructor
+@AllArgsConstructor
 public class UserRole extends AbstractEntity {
 
     @ManyToOne(fetch = FetchType.LAZY)

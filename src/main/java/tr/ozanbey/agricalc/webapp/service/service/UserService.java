@@ -1,15 +1,22 @@
 package tr.ozanbey.agricalc.webapp.service.service;
 
+import jakarta.transaction.Transactional;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import tr.ozanbey.agricalc.webapp.service.domain.User;
 import tr.ozanbey.agricalc.webapp.service.domain.UserPreference;
+import tr.ozanbey.agricalc.webapp.service.domain.UserRole;
+import tr.ozanbey.agricalc.webapp.service.enumtype.EnumRole;
 import tr.ozanbey.agricalc.webapp.service.enumtype.EnumStatus;
+import tr.ozanbey.agricalc.webapp.service.repository.UserInformationRepository;
 import tr.ozanbey.agricalc.webapp.service.repository.UserPreferenceRepository;
 import tr.ozanbey.agricalc.webapp.service.repository.UserRepository;
 import tr.ozanbey.agricalc.webapp.service.repository.UserRoleRepository;
+import tr.ozanbey.agricalc.webapp.webapp.util.io.CryptoUtils;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -20,17 +27,66 @@ public class UserService extends BaseService {
     private UserRepository userRepository;
 
     @Autowired
-    private UserRoleRepository userRoleRepository;
+    private UserRoleRepository roleRepository;
 
     @Autowired
-    private UserPreferenceRepository userPreferenceRepository;
+    private UserPreferenceRepository preferenceRepository;
+
+    @Autowired
+    private UserInformationRepository informationRepository;
 
     public UserPreference getPreferenceByUserId(Long userId) {
-        return userPreferenceRepository.findByUserId(userId);
+        return preferenceRepository.findByUserId(userId);
     }
 
     public Optional<User> getUserIdByPhoneAndStatus(String phone, EnumStatus status) {
         return userRepository.findByPhoneAndStatus(phone, status);
+    }
+
+    @Transactional
+    public void registerUser(String email, String phone, String password) throws Exception {
+        String formatted = "+90" + phone.replaceAll("\\D", "");
+        if (checkUserExistByPhone(formatted)) {
+            throw new Exception("Bu numara ile kullanıcı mevcut");
+        }
+        if (email != null && !email.isEmpty() && checkUserExistByEmail(email)) {
+            throw new Exception("Bu email ile kullanıcı mevcut");
+        }
+
+        User user = saveUser(email, formatted, password);
+        generatePreferenceForUser(user);
+    }
+
+    private User saveUser(String email, String formatted, String password) {
+        User user = new User();
+        user.setStatus(EnumStatus.ACTIVE);
+        user.setEmail(email);
+        user.setPhone(formatted);
+        user.setPassword(CryptoUtils.oneWayHash(password));
+        assignRoleToUser(user, EnumRole.USER);
+        return userRepository.save(user);
+    }
+
+    private void assignRoleToUser(User user, EnumRole enumRole) {
+        List<UserRole> userRoleList = new ArrayList<>();
+        UserRole role = new UserRole(user, enumRole);
+        userRoleList.add(role);
+        user.setRoleList(userRoleList);
+    }
+
+    private boolean checkUserExistByPhone(String phone) {
+        Optional<User> optionalUser = userRepository.findByPhone(phone);
+        return optionalUser.isPresent();
+    }
+
+    private boolean checkUserExistByEmail(String email) {
+        Optional<User> optionalUser = userRepository.findByEmail(email);
+        return optionalUser.isPresent();
+    }
+
+    private void generatePreferenceForUser(User user) {
+        UserPreference userPreference = UserPreference.createWithTemplateData(user);
+        preferenceRepository.save(userPreference);
     }
 
 }

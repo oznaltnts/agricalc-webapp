@@ -2,9 +2,9 @@ package tr.ozanbey.agricalc.webapp.webapp.controller;
 
 
 import jakarta.faces.context.FacesContext;
+import jakarta.faces.view.ViewScoped;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
@@ -19,7 +19,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.Objects;
 
 @Component("baseController")
-@Scope("view")
+@ViewScoped
 public class BaseController implements Serializable {
 
     @Autowired

@@ -18,7 +18,7 @@ joinfaces:
 
 spring:
   application:
-    name: webapp
+    name: agricalc-webapp
   profiles:
     active: default
   pid.file: ${java.io.tmpdir}/ozanbey-agricalc-webapp.pid

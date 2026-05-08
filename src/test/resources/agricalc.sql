@@ -337,9 +337,7 @@ CREATE TABLE `users`
     `email`        VARCHAR(255)          DEFAULT NULL,
     `phone`        VARCHAR(25)  NOT NULL,
     `password`     VARCHAR(255) NOT NULL,
-    `city_id`      BIGINT                DEFAULT NULL,
     PRIMARY KEY (`id`),
-    CONSTRAINT `FK_users_cities` FOREIGN KEY (`city_id`) REFERENCES `cities` (`id`),
     UNIQUE (`email`, `phone`)
 )
     ENGINE = InnoDB

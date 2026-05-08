@@ -34,6 +34,7 @@ public class GuestPreferences implements Serializable {
     @Setter
     private String inputStyle = "outlined";
 
+    @Setter
     private boolean lightLogo = true;
 
     private final List<ComponentTheme> componentThemes = new ArrayList<>();

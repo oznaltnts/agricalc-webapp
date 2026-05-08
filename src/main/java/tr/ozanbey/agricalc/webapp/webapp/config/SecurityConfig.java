@@ -5,7 +5,6 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import tr.ozanbey.agricalc.webapp.webapp.security.CurrentUserDetailsService;
 import tr.ozanbey.agricalc.webapp.webapp.security.CustomPasswordEncoder;
@@ -30,17 +29,16 @@ public class SecurityConfig {
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-
         http
                 // JSF için CSRF açık olmalı
                 .csrf(csrf -> csrf
-                        .ignoringRequestMatchers("/javax.faces.resource/**", "/public/**", "/common/**")
+                        .ignoringRequestMatchers("/jakarta.faces.resource/**", "/public/**", "/common/**")
                 )
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/jakarta.faces.resource/**").permitAll()
                         .requestMatchers("/", "/common/**", "/public/**").permitAll()
-                        // tüm secured sayfalar
-                        .requestMatchers("/secured/**").hasAnyRole("USER", "ADMIN")
+                        // user özel
+                        .requestMatchers("/secured/**").hasAnyRole("USER")
                         // admin özel
                         .requestMatchers("/secured/admin/**").hasRole("ADMIN")
                         .anyRequest().authenticated()
@@ -83,14 +81,9 @@ public class SecurityConfig {
     @Bean
     public DaoAuthenticationProvider authenticationProvider() {
         DaoAuthenticationProvider provider = new DaoAuthenticationProvider();
+        provider.setPasswordEncoder(new CustomPasswordEncoder());
         provider.setUserDetailsService(userDetailsService);
-        provider.setPasswordEncoder(customPasswordEncoder());
         return provider;
-    }
-
-    @Bean
-    public PasswordEncoder customPasswordEncoder() {
-        return new CustomPasswordEncoder();
     }
 
 }

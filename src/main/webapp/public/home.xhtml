@@ -45,7 +45,10 @@
                                 </p:selectOneMenu>
                             </div>
                             <div class="field col-12 md:col-12">
-                                <p:commandButton value="Icon Left" icon="pi pi-check" action="#{homeController.calculateIncome()}" update="homeForm" />
+                                <p:commandButton value="Icon Left"
+                                                 icon="pi pi-check"
+                                                 action="#{homeController.calculateIncome}"
+                                                 update="homeForm" />
                             </div>
                             <ui:repeat value="#{homeController.calculateMap}" var="calculate">
                                 <div class="field col-12 md:col-12">

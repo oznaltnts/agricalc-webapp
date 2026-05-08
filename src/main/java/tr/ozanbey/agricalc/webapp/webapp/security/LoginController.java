@@ -1,5 +1,7 @@
 package tr.ozanbey.agricalc.webapp.webapp.security;
 
+import lombok.Getter;
+import lombok.Setter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import tr.ozanbey.agricalc.webapp.service.domain.User;
@@ -13,7 +15,11 @@ import tr.ozanbey.agricalc.webapp.webapp.view.GuestPreferences;
 import java.util.Optional;
 
 @Component
+@Getter
+@Setter
 public class LoginController {
+
+    private boolean rememberMe;
 
     @Autowired
     private UserService userService;
@@ -34,7 +40,7 @@ public class LoginController {
         guestPreferences.setTopbarTheme(userPreference.getTopbarTheme());
         guestPreferences.setMenuTheme(userPreference.getMenuTheme());
         guestPreferences.setInputStyle(userPreference.getInputStyle());
-//        guestPreferences.setLightLogo(userPreference.isLightLogo());
+        guestPreferences.setLightLogo(userPreference.isLightLogo());
     }
 
     public void clearLoginFailures(Long userId) {

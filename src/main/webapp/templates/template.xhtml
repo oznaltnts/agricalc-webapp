@@ -6,6 +6,7 @@
       xmlns:p="http://primefaces.org/ui"
       xmlns:sec="https://joinfaces.org/security"
       lang="en">
+<f:view locale="#{localeController.locale}">
 
     <h:head>
         <f:facet name="first">
@@ -48,12 +49,12 @@
                     <h:outputText value="" />
                 </f:facet>
             </p:ajaxStatus>
-            <div class="layout-mask modal-in"></div>
+            <div class="layout-mask modal-in"/>
         </div>
         <h:outputStylesheet name="css/primeicons.css" library="freya-layout" />
         <h:outputStylesheet name="css/primeflex.min.css" library="freya-layout" />
         <h:outputStylesheet name="css/#{guestPreferences.layout}.css" library="freya-layout" />
         <h:outputStylesheet name="css/demo-#{guestPreferences.darkMode}.css" library="demo" />
     </h:body>
-
+</f:view>
 </html>

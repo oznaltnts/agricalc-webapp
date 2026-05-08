@@ -16,30 +16,39 @@
         <div class="grid">
             <div class="col">
                 <div class="card">
-                    <h:form id="loginForm"
-                            class="login-form">
+                    <h:form id="loginForm">
                         <p:focus context="loginPanelGrid"/>
                         <h2>Sisteme giriş yapın</h2>
                         <p>Hesabınız mı yok?
                             <a href="/public/register">
                                 Kayıt olun
-                            </a>
+                            </a><br/>* işaretliler zorunludur.
                         </p>
                         <p:panelGrid id="loginPanelGrid"
                                      layout="flex"
                                      columns="1">
-                            <p:inputMask id="phone"
-                                         placeholder="Telefon numaranız"
-                                         name="phone"
-                                         mask="(599) 999 99 99"
-                                         validateMask="true"/>
-                            <p:password id="password"
-                                        placeholder="Şifreniz"
-                                        name="password"/>
-                            <p:commandButton value="Giriş yapın"
-                                             type="button"
-                                             onclick="$('#loginForm').submit();"/>
+                            <p:outputPanel styleClass="ui-float-label">
+                                <p:inputMask id="phone"
+                                             required="true"
+                                             placeholder="Telefon numaranız"
+                                             name="phone"
+                                             mask="(599) 999 99 99"
+                                             validateMask="true"/>
+                                <p:outputLabel for="@previous" value="Telefon numaranız" style="margin-left: 0.3rem"/>
+                            </p:outputPanel>
+                            <p:outputPanel styleClass="ui-float-label">
+                                <p:password id="password"
+                                            placeholder="Şifreniz"
+                                            required="true"
+                                            name="password"/>
+                                <p:outputLabel for="@previous" value="Şifreniz" style="margin-left: 0.3rem"/>
+                            </p:outputPanel>
+                            <p:selectBooleanCheckbox name="remember-me"
+                                                     itemLabel="Beni hatırla"/>
                         </p:panelGrid>
+                        <p:commandButton value="Giriş yapın"
+                                         type="button"
+                                         onclick="$('#loginForm').submit();"/>
                         <p>Sorunuz mu var? <a href="#">Buraya</a> basın ve bize bildirin.</p>
                     </h:form>
                 </div>

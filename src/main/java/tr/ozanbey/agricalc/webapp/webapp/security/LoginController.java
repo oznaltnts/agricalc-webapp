@@ -64,4 +64,8 @@ public class LoginController {
         return userService.getUserIdByPhoneAndStatus(phone, status);
     }
 
+    public void updateLastLoginInfo(User user) {
+        userService.updateLastLoginInfo(user);
+    }
+
 }

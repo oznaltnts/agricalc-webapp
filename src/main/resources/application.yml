@@ -46,9 +46,9 @@ logging:
 spring:
   config.activate.on-profile: default
   datasource:
-    url: jdbc:mysql://localhost:3306/agricalc
     username:
     password:
+    url: jdbc:mysql://localhost:3306/tektarim
   jpa:
     show-sql: true
     hibernate:
@@ -69,7 +69,7 @@ logging:
 spring:
   config.activate.on-profile: test
   datasource:
-    url: jdbc:mysql://localhost:3306/agricalc
+    url: jdbc:mysql://localhost:3306/
     username:
     password:
   jpa:

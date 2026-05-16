@@ -5,7 +5,6 @@ import jakarta.annotation.PostConstruct;
 import jakarta.faces.application.FacesMessage;
 import jakarta.faces.context.FacesContext;
 import jakarta.faces.view.ViewScoped;
-import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
 import lombok.Getter;
@@ -25,10 +24,8 @@ public class RegisterController extends BaseController {
 
     private final String regexPattern = "^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=\\S+$).{8,}$";
 
-    @Email(message = "Email formatına uygun olarak giriniz")
-    private String email;
-
     //^\(5:(5 ile başlamalı,[0-9]{2}: 2 rakam,\) :parantez ve boşluk,[0-9]{3} :3 rakam ve boşluk,[0-9]{2} : 2 rakam ve boşluk,[0-9]{2}$:2 rakam
+    @NotBlank(message = "Telefon numaranısı formatına uygun olarak olarak giriniz")
     @Pattern(regexp = "^\\(5[0-9]{2}\\) [0-9]{3} [0-9]{2} [0-9]{2}$", message = "Telefon numaranısı formatına uygun olarak olarak giriniz")
     private String phone;
 
@@ -42,7 +39,7 @@ public class RegisterController extends BaseController {
 
     public void register() {
         try {
-            userService.registerUser(email, phone, password);
+            userService.registerUser(phone, password);
             FacesContext.getCurrentInstance().addMessage(null,
                     new FacesMessage(FacesMessage.SEVERITY_INFO, "Kayıt başarılı", "5 saniye içinde giriş ekranına yönlendirileceksiniz."));
             NavigationController.redirectToLoginWithDuration(5000);

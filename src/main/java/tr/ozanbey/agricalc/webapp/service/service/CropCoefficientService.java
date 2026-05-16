@@ -4,8 +4,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import tr.ozanbey.agricalc.webapp.service.dto.CropCoefficientWithFirstValue;
 import tr.ozanbey.agricalc.webapp.service.enumtype.EnumStatus;
-import tr.ozanbey.agricalc.webapp.service.repository.CropCoefficientAnswerRepository;
 import tr.ozanbey.agricalc.webapp.service.repository.CropCoefficientRepository;
+import tr.ozanbey.agricalc.webapp.service.repository.CropCoefficientValueRepository;
 
 import java.util.List;
 
@@ -16,9 +16,10 @@ public class CropCoefficientService extends BaseService {
     private CropCoefficientRepository cropCoefficientRepository;
 
     @Autowired
-    private CropCoefficientAnswerRepository cropCoefficientAnswerRepository;
+    private CropCoefficientValueRepository cropCoefficientValueRepository;
 
     public List<CropCoefficientWithFirstValue> getDTOsByStatusAndCropId(EnumStatus status, Long cropId) {
         return cropCoefficientRepository.findDTOsByStatusAndCropId(status.getValue(), cropId);
     }
+
 }

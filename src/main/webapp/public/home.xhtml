@@ -5,20 +5,40 @@
                 xmlns:p="http://primefaces.org/ui"
                 template="/templates/template.xhtml">
              
-    <ui:define name="title">Home Page</ui:define>
+    <ui:define name="title">Ana sayfa</ui:define>
     
     <ui:define name="content">
         <div class="grid">
             <div class="col">
                 <div class="card">
-                    <h4>Home Page</h4>
-                    <h:form id="homeForm">
-                        <div class="ui-fluid formgrid grid">
-                            <div class="field col-12 md:col-6">
-                                <p:outputLabel for="@next" value="Şehir"/>
-                                <p:selectOneMenu required="true"
+                    <h4>Ana sayfa</h4>
+                    <h:form>
+                        <p:growl id="growl"
+                                 showDetail="true"
+                                 severity="info warn">
+                            <p:autoUpdate/>
+                        </p:growl>
+
+                        <p:focus context="homePanelGrid"/>
+
+                        <h2>Şehir - ürün seçerek hesaplama yapın</h2>
+                        <p>Hesabınız var mı?
+                            <a href="/public/login">
+                                Giriş yapın
+                            </a>
+                        </p>
+                        <p:panelGrid id="homePanelGrid"
+                                     layout="flex"
+                                     columns="1">
+                            <p:outputPanel styleClass="ui-float-label">
+                                <p:selectOneMenu id="cityMenu"
+                                                 required="true"
+                                                 requiredMessage="Lütfen şehir seçimi yapınız"
+                                                 style="width: 200px"
+                                                 filter="true"
+                                                 filterMatchMode="startsWith"
                                                  value="#{homeController.selectedCityId}">
-                                    <f:selectItem itemLabel="Select One" itemValue=""/>
+                                    <f:selectItem itemLabel="Şehir seçiniz" itemValue=""/>
                                     <f:selectItems value="#{homeController.cityList}"
                                                    var="city"
                                                    itemLabel="#{city.name}"
@@ -28,28 +48,41 @@
                                         <h:outputText value="#{homeController.cityList.size()}" style="font-weight:bold;"/>
                                     </f:facet>
                                 </p:selectOneMenu>
-                            </div>
-                            <div class="field col-12 md:col-6">
-                                <p:outputLabel for="@next" value="Ürün"/>
-                                <p:selectOneMenu required="true"
+                                <p:outputLabel for="@previous" value="Şehir seçiniz" style="margin-left: 0.3rem"/>
+                                <p:message for="cityMenu"/>
+                            </p:outputPanel>
+                            <p:outputPanel styleClass="ui-float-label">
+                                <p:selectOneMenu id="cropMenu"
+                                                 required="true"
+                                                 requiredMessage="Lütfen ürün seçimi yapınız"
+                                                 style="width: 200px"
+                                                 filter="true"
+                                                 filterMatchMode="contains"
                                                  value="#{homeController.selectedCropId}">
-                                    <f:selectItem itemLabel="Select One" itemValue=""/>
+                                    <f:selectItem itemLabel="Ürün seçiniz" itemValue=""/>
                                     <f:selectItems value="#{homeController.cropList}"
                                                    var="crop"
-                                                   itemLabel="#{crop.name}"
+                                                   itemLabel="#{crop.groupName} - #{crop.name}"
                                                    itemValue="#{crop.id}"/>
                                     <f:facet name="footer">
                                         <p:divider styleClass="mt-0" />
                                         <h:outputText value="#{homeController.cropList.size()}" style="font-weight:bold;"/>
                                     </f:facet>
                                 </p:selectOneMenu>
-                            </div>
-                            <div class="field col-12 md:col-12">
-                                <p:commandButton value="Icon Left"
-                                                 icon="pi pi-check"
-                                                 action="#{homeController.calculateIncome}"
-                                                 update="homeForm" />
-                            </div>
+                                <p:outputLabel for="@previous" value="Ürün seçiniz" style="margin-left: 0.3rem"/>
+                                <p:message for="cropMenu"/>
+                            </p:outputPanel>
+                        </p:panelGrid>
+                        <p:commandButton value="Hesapla"
+                                         icon="pi pi-check"
+                                         process="@form"
+                                         style="width: 200px"
+                                         update="@form"
+                                         action="#{homeController.calculateIncome}"
+                                         validateClient="true"
+                                         styleClass="m-2"  />
+
+                        <div class="ui-fluid formgrid grid">
                             <ui:repeat value="#{homeController.calculateMap}" var="calculate">
                                 <div class="field col-12 md:col-12">
                                     <p:outputLabel value="#{calculate.key}: #{calculate.value}"/>

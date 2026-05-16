@@ -1,6 +1,6 @@
 package tr.ozanbey.agricalc.webapp.service.dto;
 
-public interface QuestionWithFirstAnswer {
+public interface QuestionWithFirstValue {
     Long getQuestionId();
     String getValue();
 }

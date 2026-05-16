@@ -24,6 +24,6 @@ public class CropCoefficient extends AbstractStatusEntity {
     private Coefficient coefficient;
 
     @OneToMany(mappedBy = "cropCoefficient", fetch = FetchType.LAZY)
-    private List<CropCoefficientAnswer> cropCoefficientAnswerList;
+    private List<CropCoefficientValue> cropCoefficientValueList;
 
 }

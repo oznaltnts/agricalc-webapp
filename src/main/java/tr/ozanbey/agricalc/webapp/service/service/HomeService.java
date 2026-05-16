@@ -67,8 +67,8 @@ public class HomeService extends BaseService {
         Map<String, BigDecimal> returnMap = new HashMap<>();
         CityCrop cityCrop = cityCropService.getByStatusAndCityIdAndCropId(EnumStatus.ACTIVE, selectedCityId, selectedCropId);
         if (cityCrop != null) {
-            List<QuestionWithFirstAnswer> questionDTOList = cityCropQuestionService.getDTOsByStatusAndCityCropId(EnumStatus.ACTIVE, cityCrop.getId());
-            List<QuestionWithFirstAnswer> selectedDTOList = questionDTOList.stream().filter(dto -> new ArrayList<>(List.of(1L, 3L, 4L)).contains(dto.getQuestionId())).toList();
+            List<QuestionWithFirstValue> questionDTOList = cityCropQuestionService.getDTOsByStatusAndCityCropId(EnumStatus.ACTIVE, cityCrop.getId());
+            List<QuestionWithFirstValue> selectedDTOList = questionDTOList.stream().filter(dto -> new ArrayList<>(List.of(1L, 3L, 4L)).contains(dto.getQuestionId())).toList();
             List<BigDecimal> yieldList = calculateYield(selectedDTOList);
             returnMap.put("yield", yieldList.getFirst());
             selectedDTOList = questionDTOList.stream().filter(dto -> new ArrayList<>(List.of(10L, 12L, 16L)).contains(dto.getQuestionId())).toList();
@@ -94,27 +94,27 @@ public class HomeService extends BaseService {
         return returnMap;
     }
 
-    private BigDecimal calculateMaturity(List<QuestionWithFirstAnswer> questionDTOList) {
-        Optional<QuestionWithFirstAnswer> dtoOptional = questionDTOList.stream().filter(dto -> dto.getQuestionId().equals(20L)).findFirst();
+    private BigDecimal calculateMaturity(List<QuestionWithFirstValue> questionDTOList) {
+        Optional<QuestionWithFirstValue> dtoOptional = questionDTOList.stream().filter(dto -> dto.getQuestionId().equals(20L)).findFirst();
         if (dtoOptional.isPresent()) {//TODO
-            String answerValue = dtoOptional.get().getValue();
+            String questionValue = dtoOptional.get().getValue();
         }
         return BigDecimal.ONE;
     }
 
-    private List<BigDecimal> calculateYield(List<QuestionWithFirstAnswer> selectedDTOList) {
+    private List<BigDecimal> calculateYield(List<QuestionWithFirstValue> selectedDTOList) {
         List<BigDecimal> yieldList = new ArrayList<>();
-        BigDecimal answer1 = BigDecimal.ZERO;
+        BigDecimal questionValue1 = BigDecimal.ZERO;
         BigDecimal returnVal1 = BigDecimal.ZERO;
         BigDecimal returnVal2 = BigDecimal.ZERO;
         BigDecimal returnVal3 = BigDecimal.ZERO;
-        for (QuestionWithFirstAnswer dto : selectedDTOList) {
+        for (QuestionWithFirstValue dto : selectedDTOList) {
             BigDecimal value = new BigDecimal(dto.getValue()).setScale(3, RoundingMode.HALF_UP);
             if (dto.getQuestionId().equals(1L)) {
                 returnVal1 = value;
             } else if (dto.getQuestionId().equals(3L)) {
-                BigDecimal divide = value.multiply(answer1).divide(new BigDecimal(100), 3, RoundingMode.HALF_UP);
-                returnVal1 = answer1.subtract(divide);
+                BigDecimal divide = value.multiply(questionValue1).divide(new BigDecimal(100), 3, RoundingMode.HALF_UP);
+                returnVal1 = questionValue1.subtract(divide);
                 returnVal2 = divide;
             } else if (dto.getQuestionId().equals(4L)) {
                 returnVal3 = value;
@@ -127,13 +127,13 @@ public class HomeService extends BaseService {
         return yieldList;
     }
 
-    private List<BigDecimal> calculatePrice(List<QuestionWithFirstAnswer> selectedDTOList) {
+    private List<BigDecimal> calculatePrice(List<QuestionWithFirstValue> selectedDTOList) {
         List<BigDecimal> priceList = new ArrayList<>();
         BigDecimal returnVal1 = BigDecimal.ZERO;
         BigDecimal returnVal2 = BigDecimal.ZERO;
         BigDecimal returnVal3 = BigDecimal.ZERO;
         BigDecimal returnVal4 = BigDecimal.ZERO;
-        for (QuestionWithFirstAnswer dto : selectedDTOList) {
+        for (QuestionWithFirstValue dto : selectedDTOList) {
             BigDecimal value = new BigDecimal(dto.getValue()).setScale(3, RoundingMode.HALF_UP);
             if (dto.getQuestionId().equals(10L)) {
                 returnVal1 = value;

@@ -19,7 +19,7 @@
                     <h:form>
                         <p:growl id="growl"
                                  showDetail="true"
-                                 severity="info warn error">
+                                 severity="info warn">
                             <p:autoUpdate/>
                         </p:growl>
 
@@ -35,18 +35,6 @@
                                      layout="flex"
                                      columns="1">
                             <p:outputPanel styleClass="ui-float-label">
-                                <p:inputText id="emailInput"
-                                             placeholder="E-mail"
-                                             validatorMessage="Email formatına uygun olarak giriniz"
-                                             style="width: 200px"
-                                             value="#{registerController.email}">
-                                    <p:ajax update="emailInput phone"/>
-                                </p:inputText>
-                                <p:outputLabel for="@previous" value="E-mail" style="margin-left: 0.3rem"/>
-                                <p:message for="emailInput"/>
-                                <h:outputText value="#{registerController.email}"/>
-                            </p:outputPanel>
-                            <p:outputPanel styleClass="ui-float-label">
                                 <p:inputMask id="phone"
                                              placeholder="Telefon numaranız"
                                              mask="(599) 999 99 99"
@@ -55,9 +43,7 @@
                                              style="width: 200px"
                                              validateMask="true"
                                              validatorMessage="Telefon numaranızı uygun olarak olarak giriniz"
-                                             value="#{registerController.phone}">
-                                    <p:ajax update="emailInput phone"/>
-                                </p:inputMask>
+                                             value="#{registerController.phone}"/>
                                 <p:outputLabel for="@previous" value="Telefon numaranız" style="margin-left: 0.3rem"/>
                                 <p:message for="phone"/>
                             </p:outputPanel>

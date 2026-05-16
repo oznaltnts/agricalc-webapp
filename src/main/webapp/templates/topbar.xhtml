@@ -3,6 +3,7 @@
                 xmlns:f="jakarta.faces.core"
                 xmlns:ui="jakarta.faces.facelets"
                 xmlns:p="http://primefaces.org/ui"
+                xmlns:sec="https://joinfaces.org/security"
                 xmlns:po="http://primefaces.org/freya">
 
     <div class="layout-topbar">
@@ -20,57 +21,45 @@
 
             <div class="layout-topbar-right">
                 <ul class="layout-topbar-actions">
-                    <li class="topbar-item search-item ">
-                        <a href="#">
-                            <i class="topbar-icon pi pi-search"/>
-                        </a>
-                        <h:form>
-                            <h:panelGroup styleClass="search-input-wrapper">
-                                <p:inputText placeholder="Search..." />
-                                <i class="pi pi-search"/>
-                            </h:panelGroup>
-                        </h:form>
-                        <ul>
-                            <h:form onsubmit="return false;">
-                                <h:panelGroup styleClass="search-input-wrapper">
-                                    <p:inputText placeholder="Search..." />
-                                    <i class="pi pi-search"/>
-                                </h:panelGroup>
-                            </h:form>
-                        </ul>
-                    </li>
-                    <li class="topbar-item user-profile">
-                        <a href="#">
-                            <p:graphicImage name="images/avatar-profilemenu.png" library="freya-layout" />
-                        </a>
-                        <ul>
-                            <li>
-                                <a href="#">
-                                    <span>Profile</span>
-                                </a>
-                            </li>
-                            <li>
-                                <a href="#">
-                                    <span>Settings</span>
-                                </a>
-                            </li>
-                            <li>
-                                <a href="#">
-                                    <span>Messages</span>
-                                </a>
-                            </li>
-                            <li>
-                                <a href="#">
-                                    <span>Notifications</span>
-                                </a>
-                            </li>
-                        </ul>
-                    </li>
-                 
+                    <sec:authorize access="!isAuthenticated()">
+                        <li class="user-profile">
+                            <a href="#{request.contextPath}/public/login">
+                                <span style="white-space: nowrap;font-weight: 600;">Giriş yap</span>
+                            </a>
+                            <a href="#{request.contextPath}/public/register">
+                                <span style="white-space: nowrap;font-weight: 600;">Üye ol</span>
+                            </a>
+                        </li>
+                    </sec:authorize>
+                    <sec:authorize access="isAuthenticated()">
+                        <li class="topbar-item user-profile">
+                            <a href="#">
+                                <p:graphicImage name="images/avatar-profilemenu.png" library="freya-layout" />
+                            </a>
+                            <ul>
+                                <li>
+                                    <a href="#">
+                                        <span>Profil</span>
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="#">
+                                        <span>Şifre</span>
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="#{request.contextPath}/logout">
+                                        <span>Çıkış yap</span>
+                                    </a>
+                                </li>
+                            </ul>
+                        </li>
+                    </sec:authorize>
+
                 </ul>
-                <a href="#" class="layout-rightpanel-button">
+                <!--a href="#" class="layout-rightpanel-button">
                     <i class="pi pi-arrow-left"/>
-                </a>
+                </a-->
             </div>
         </div>
        

@@ -24,5 +24,6 @@ public class CityCropQuestion extends AbstractStatusEntity {
     private Question question;
 
     @OneToMany(mappedBy = "cityCropQuestion", fetch = FetchType.LAZY)
-    private List<CityCropQuestionAnswer> cityCropQuestionAnswerList;
+    private List<CityCropQuestionValue> cityCropQuestionValueList;
+
 }

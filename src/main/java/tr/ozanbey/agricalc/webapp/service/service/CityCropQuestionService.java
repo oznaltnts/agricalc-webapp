@@ -2,10 +2,10 @@ package tr.ozanbey.agricalc.webapp.service.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import tr.ozanbey.agricalc.webapp.service.dto.QuestionWithFirstAnswer;
+import tr.ozanbey.agricalc.webapp.service.dto.QuestionWithFirstValue;
 import tr.ozanbey.agricalc.webapp.service.enumtype.EnumStatus;
-import tr.ozanbey.agricalc.webapp.service.repository.CityCropQuestionAnswerRepository;
 import tr.ozanbey.agricalc.webapp.service.repository.CityCropQuestionRepository;
+import tr.ozanbey.agricalc.webapp.service.repository.CityCropQuestionValueRepository;
 
 import java.util.List;
 
@@ -16,9 +16,9 @@ public class CityCropQuestionService extends BaseService {
     private CityCropQuestionRepository cityCropQuestionRepository;
 
     @Autowired
-    private CityCropQuestionAnswerRepository cityCropQuestionAnswerRepository;
+    private CityCropQuestionValueRepository cityCropQuestionValueRepository;
 
-    public List<QuestionWithFirstAnswer> getDTOsByStatusAndCityCropId(EnumStatus status, Long cityCropId) {
+    public List<QuestionWithFirstValue> getDTOsByStatusAndCityCropId(EnumStatus status, Long cityCropId) {
         return cityCropQuestionRepository.findDTOsByStatusAndCityCropId(status.getValue(), cityCropId);
     }
 

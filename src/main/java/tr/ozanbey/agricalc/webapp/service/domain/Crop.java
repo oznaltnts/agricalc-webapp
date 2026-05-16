@@ -1,6 +1,8 @@
 package tr.ozanbey.agricalc.webapp.service.domain;
 
-import jakarta.persistence.*;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Table;
 import lombok.*;
 
 @Getter
@@ -12,9 +14,9 @@ import lombok.*;
 @ToString(onlyExplicitlyIncluded = true)
 public class Crop extends AbstractStatusEntity {
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "crop_group_id", referencedColumnName = "id", nullable = false)
-    private CropGroup cropGroup;
+    @Column(name = "group_name", nullable = false)
+    @ToString.Include
+    private String groupName;
 
     @Column(name = "name", nullable = false)
     @ToString.Include

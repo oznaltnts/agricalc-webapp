@@ -38,12 +38,10 @@ public class JsfAjaxTimeoutPhaseListener implements PhaseListener {
         if (!(o instanceof CurrentUser)) {
             // user credential not found.
             // considered to be a Timeout case
-
             if (ec.isResponseCommitted()) {
                 // redirect is not possible
                 return;
             }
-
             try {
                 if (checkRequestComingFromSecurePages(request.getRequestURI())
                         && ((pr != null && pr.isAjaxRequest()) || (fc.getPartialViewContext().isPartialRequest()))
@@ -57,7 +55,6 @@ public class JsfAjaxTimeoutPhaseListener implements PhaseListener {
                     fc.setResponseWriter(responseWriter);
                     ec.redirect("/");
                 }
-
             } catch (IOException e) {
                 throw new FacesException(e);
             }

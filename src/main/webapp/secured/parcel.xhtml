@@ -1,0 +1,28 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="jakarta.faces.html"
+                xmlns:f="jakarta.faces.core"
+                xmlns:ui="jakarta.faces.facelets"
+                xmlns:p="http://primefaces.org/ui"
+                template="/templates/template.xhtml">
+             
+    <ui:define name="title">Parsel Sayfası</ui:define>
+    
+    <ui:define name="content">
+        <div class="grid">
+            <div class="col">
+                <div class="card">
+                    <h:form>
+                        <p:growl id="growl"
+                                 showDetail="true"
+                                 severity="info warn">
+                            <p:autoUpdate/>
+                        </p:growl>
+                    </h:form>
+                    <br/>
+                    <p>Sorunuz mu var? <a href="#">Buraya</a> basın ve bize bildirin.</p>
+                </div>
+            </div>
+        </div>
+    </ui:define>
+
+</ui:composition>

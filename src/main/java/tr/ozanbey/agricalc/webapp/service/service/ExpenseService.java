@@ -23,7 +23,7 @@ public class ExpenseService extends BaseService {
         this.generalCoefficientService = generalCoefficientService;
     }
 
-    public BigDecimal calculateExpense(List<QuestionWithFirstAnswer> questionDTOList,
+    public BigDecimal calculateExpense(List<QuestionWithFirstValue> questionDTOList,
                                        List<CropCoefficientWithFirstValue> cropCoefficientList,
                                        List<DieselDistanceWithFirstValue> dieselDistanceWithValueList,
                                        List<SeedSeedlingWithFirstValue> seedSeedlingNumberWithValueList,
@@ -303,15 +303,15 @@ public class ExpenseService extends BaseService {
     }
 
     //getOperationCount
-    private BigDecimal getAsBigDecimalByQuestionId(List<QuestionWithFirstAnswer> questionDTOList, Long questionId) {
-        Optional<QuestionWithFirstAnswer> dtoOptional = questionDTOList.stream().filter(dto -> dto.getQuestionId().equals(questionId)).findFirst();
+    private BigDecimal getAsBigDecimalByQuestionId(List<QuestionWithFirstValue> questionDTOList, Long questionId) {
+        Optional<QuestionWithFirstValue> dtoOptional = questionDTOList.stream().filter(dto -> dto.getQuestionId().equals(questionId)).findFirst();
         return dtoOptional.map(questionWithFirstAnswer -> new BigDecimal(questionWithFirstAnswer.getValue())).orElse(BigDecimal.ZERO);
     }
 
     //getMachinePowerLt
-    private BigDecimal getAsBigDecimalByQuestionIdAndValueAndType(List<QuestionWithFirstAnswer> questionDTOList, Long questionId,
+    private BigDecimal getAsBigDecimalByQuestionIdAndValueAndType(List<QuestionWithFirstValue> questionDTOList, Long questionId,
                                                                   List<CropCoefficientWithFirstValue> cropCoefficientList, EnumCropCoefficientType type, EnumCropCoefficientValue value) {
-        Optional<QuestionWithFirstAnswer> dtoOptional = questionDTOList.stream().filter(dto -> dto.getQuestionId().equals(questionId)).findFirst();
+        Optional<QuestionWithFirstValue> dtoOptional = questionDTOList.stream().filter(dto -> dto.getQuestionId().equals(questionId)).findFirst();
         if (dtoOptional.isPresent()) {
             if ("Sahipli".equals(dtoOptional.get().getValue())) {
                 return getAsBigDecimalByValueAndType(cropCoefficientList, type, value);
@@ -321,7 +321,7 @@ public class ExpenseService extends BaseService {
     }
 
     //getMachinePowerTL
-    private BigDecimal getAsBigDecimalByQuestionIdAndDieselDistancesAndGeneralCoefficients(List<QuestionWithFirstAnswer> questionDTOList, Long questionId,
+    private BigDecimal getAsBigDecimalByQuestionIdAndDieselDistancesAndGeneralCoefficients(List<QuestionWithFirstValue> questionDTOList, Long questionId,
                                                                                            List<DieselDistanceWithFirstValue> dieselDistanceWithValueList, EnumDieselDistanceType dieselPrice, EnumDieselDistanceType plowingField,
                                                                                            BigDecimal workingHourValue, BigDecimal amortizationValue) {
         Optional<DieselDistanceWithFirstValue> dieselPriceOptional = dieselDistanceWithValueList.stream().filter(dd -> dd.getEnumType().equals(dieselPrice)).findFirst();
@@ -349,8 +349,8 @@ public class ExpenseService extends BaseService {
     }
 
     //getMaterials
-    private BigDecimal getAsBigDecimalByEquipmentQuestionIdAndQuestionId(List<QuestionWithFirstAnswer> questionDTOList, Long equipmentQuestionId, Long questionId) {
-        Optional<QuestionWithFirstAnswer> dtoOptional = questionDTOList.stream().filter(dto -> dto.getQuestionId().equals(equipmentQuestionId)).findFirst();
+    private BigDecimal getAsBigDecimalByEquipmentQuestionIdAndQuestionId(List<QuestionWithFirstValue> questionDTOList, Long equipmentQuestionId, Long questionId) {
+        Optional<QuestionWithFirstValue> dtoOptional = questionDTOList.stream().filter(dto -> dto.getQuestionId().equals(equipmentQuestionId)).findFirst();
         if (dtoOptional.isPresent()) {
             if (dtoOptional.get().getValue().equals("Kiralık")) {
                 return getAsBigDecimalByQuestionId(questionDTOList, questionId);
@@ -360,9 +360,9 @@ public class ExpenseService extends BaseService {
     }
 
     //getManpowerHour
-    private BigDecimal getAsBigDecimalByQuestionIdAndValueAndTypesEl(List<QuestionWithFirstAnswer> questionDTOList, Long questionId,
+    private BigDecimal getAsBigDecimalByQuestionIdAndValueAndTypesEl(List<QuestionWithFirstValue> questionDTOList, Long questionId,
                                                                      List<CropCoefficientWithFirstValue> cropCoefficientList, EnumCropCoefficientType type, EnumCropCoefficientValue value1, EnumCropCoefficientValue value2) {
-        Optional<QuestionWithFirstAnswer> dtoOptional = questionDTOList.stream().filter(dto -> dto.getQuestionId().equals(questionId)).findFirst();
+        Optional<QuestionWithFirstValue> dtoOptional = questionDTOList.stream().filter(dto -> dto.getQuestionId().equals(questionId)).findFirst();
         if (dtoOptional.isPresent()) {
             if (dtoOptional.get().getValue().equals("El")) {
                 return getAsBigDecimalByValueAndType(cropCoefficientList, type, value1);
@@ -379,7 +379,7 @@ public class ExpenseService extends BaseService {
     }
 
     //getManPowerTL
-    private BigDecimal getAsBigDecimalByQuestionIdAndWorkingValue(List<QuestionWithFirstAnswer> questionDTOList, Long questionId, BigDecimal workingHourValue) {
+    private BigDecimal getAsBigDecimalByQuestionIdAndWorkingValue(List<QuestionWithFirstValue> questionDTOList, Long questionId, BigDecimal workingHourValue) {
         BigDecimal firstParam = getAsBigDecimalByQuestionId(questionDTOList, questionId);
         BigDecimal secondParam = BigDecimal.ZERO;
         if (workingHourValue != null) {
@@ -392,9 +392,9 @@ public class ExpenseService extends BaseService {
     }
 
     //getMachinePowerLt
-    private BigDecimal getAsBigDecimalByQuestionIdAndValueAndTypesMibzer(List<QuestionWithFirstAnswer> questionDTOList, Long questionId,
+    private BigDecimal getAsBigDecimalByQuestionIdAndValueAndTypesMibzer(List<QuestionWithFirstValue> questionDTOList, Long questionId,
                                                                          List<CropCoefficientWithFirstValue> cropCoefficientList, EnumCropCoefficientType type, EnumCropCoefficientValue value1, EnumCropCoefficientValue value2) {
-        Optional<QuestionWithFirstAnswer> dtoOptional = questionDTOList.stream().filter(dto -> dto.getQuestionId().equals(questionId)).findFirst();
+        Optional<QuestionWithFirstValue> dtoOptional = questionDTOList.stream().filter(dto -> dto.getQuestionId().equals(questionId)).findFirst();
         if (dtoOptional.isPresent()) {
             if (dtoOptional.get().getValue().equals("Mibzer")) {
                 return getAsBigDecimalByValueAndType(cropCoefficientList, type, value1);
@@ -406,11 +406,11 @@ public class ExpenseService extends BaseService {
     }
 
     //getManpowerHour
-    private BigDecimal getAsBigDecimalByQuestionIdAndValueAndTypesEl2(List<QuestionWithFirstAnswer> questionDTOList, Long questionId,
+    private BigDecimal getAsBigDecimalByQuestionIdAndValueAndTypesEl2(List<QuestionWithFirstValue> questionDTOList, Long questionId,
                                                                       List<SeedSeedlingWithFirstValue> seedSeedlingNumberWithValueList,
                                                                       List<CropCoefficientWithFirstValue> cropCoefficientList, EnumCropCoefficientType type, EnumCropCoefficientValue value1, EnumCropCoefficientValue value2,
                                                                       BigDecimal workingHourValue) {
-        Optional<QuestionWithFirstAnswer> dtoOptional = questionDTOList.stream().filter(dto -> dto.getQuestionId().equals(questionId)).findFirst();
+        Optional<QuestionWithFirstValue> dtoOptional = questionDTOList.stream().filter(dto -> dto.getQuestionId().equals(questionId)).findFirst();
         BigDecimal seedAmount = BigDecimal.ZERO;
         if (dtoOptional.isPresent()) {
             //Üretim materyali nedir?
@@ -433,11 +433,11 @@ public class ExpenseService extends BaseService {
     }
 
     //getManpowerHour
-    private BigDecimal getAsBigDecimalByQuestionIdAndValueAndTypesMibzer(List<QuestionWithFirstAnswer> questionDTOList, Long questionId,
+    private BigDecimal getAsBigDecimalByQuestionIdAndValueAndTypesMibzer(List<QuestionWithFirstValue> questionDTOList, Long questionId,
                                                                          List<SeedSeedlingWithFirstValue> seedSeedlingNumberWithValueList,
                                                                          List<CropCoefficientWithFirstValue> cropCoefficientList, EnumCropCoefficientType type, EnumCropCoefficientValue value1, EnumCropCoefficientValue value2,
                                                                          BigDecimal workingHourValue) {
-        Optional<QuestionWithFirstAnswer> dtoOptional = questionDTOList.stream().filter(dto -> dto.getQuestionId().equals(questionId)).findFirst();
+        Optional<QuestionWithFirstValue> dtoOptional = questionDTOList.stream().filter(dto -> dto.getQuestionId().equals(questionId)).findFirst();
         BigDecimal seedAmount = BigDecimal.ZERO;
         if (dtoOptional.isPresent()) {
             //Üretim materyali nedir?
@@ -459,14 +459,14 @@ public class ExpenseService extends BaseService {
         return seedAmount;
     }
 
-    private BigDecimal getSeedAmountInfo(List<QuestionWithFirstAnswer> questionDTOList, Long fideQuestionId, Long teminQuestionId, Long outSourceQuestionId,
+    private BigDecimal getSeedAmountInfo(List<QuestionWithFirstValue> questionDTOList, Long fideQuestionId, Long teminQuestionId, Long outSourceQuestionId,
                                          List<SeedSeedlingWithFirstValue> seedSeedlingNumberWithValueList) {
         BigDecimal seedAmountInfo = BigDecimal.ZERO;
-        Optional<QuestionWithFirstAnswer> dtoOptional = questionDTOList.stream().filter(dto -> dto.getQuestionId().equals(fideQuestionId)).findFirst();
+        Optional<QuestionWithFirstValue> dtoOptional = questionDTOList.stream().filter(dto -> dto.getQuestionId().equals(fideQuestionId)).findFirst();
         if (dtoOptional.isPresent()) {
             if (dtoOptional.get().getValue().equals("Fide")) {
                 //Fide nasıl temin ediliyor?
-                Optional<QuestionWithFirstAnswer> teminOptional = questionDTOList.stream().filter(dto -> dto.getQuestionId().equals(teminQuestionId)).findFirst();
+                Optional<QuestionWithFirstValue> teminOptional = questionDTOList.stream().filter(dto -> dto.getQuestionId().equals(teminQuestionId)).findFirst();
                 if (teminOptional.isPresent()) {
                     Optional<SeedSeedlingWithFirstValue> seedSeedlingValue = seedSeedlingNumberWithValueList.stream().filter(ss -> ss.getEnumType().equals(EnumSeedSeedlingType.LOCAL_SEED_KG)).findFirst();
                     if (dtoOptional.get().getValue().equals("Kendi yetiştiriyor")) {
@@ -488,7 +488,7 @@ public class ExpenseService extends BaseService {
                         if (twoGraftValue.isPresent()) {
                             twoGraft = twoGraftValue.get().getValue();
                         }
-                        Optional<QuestionWithFirstAnswer> outSourceOptional = questionDTOList.stream().filter(dto -> dto.getQuestionId().equals(outSourceQuestionId)).findFirst();
+                        Optional<QuestionWithFirstValue> outSourceOptional = questionDTOList.stream().filter(dto -> dto.getQuestionId().equals(outSourceQuestionId)).findFirst();
                         if (outSourceOptional.isPresent()) {
                             if (outSourceOptional.get().getValue().equals("Aşısız")) {
                                 seedAmountInfo = hybridSeedling;
@@ -508,9 +508,9 @@ public class ExpenseService extends BaseService {
     }
 
     //getManpowerHour
-    private BigDecimal getAsBigDecimalByQuestionIdAndValueAndTypesVahsi(List<QuestionWithFirstAnswer> questionDTOList, Long questionId,
+    private BigDecimal getAsBigDecimalByQuestionIdAndValueAndTypesVahsi(List<QuestionWithFirstValue> questionDTOList, Long questionId,
                                                                         List<CropCoefficientWithFirstValue> cropCoefficientList, EnumCropCoefficientType type, EnumCropCoefficientValue value) {
-        Optional<QuestionWithFirstAnswer> dtoOptional = questionDTOList.stream().filter(dto -> dto.getQuestionId().equals(questionId)).findFirst();
+        Optional<QuestionWithFirstValue> dtoOptional = questionDTOList.stream().filter(dto -> dto.getQuestionId().equals(questionId)).findFirst();
         if (dtoOptional.isPresent()) {
             if (dtoOptional.get().getValue().equals("Vahşi sulama")) {
                 return getAsBigDecimalByValueAndType(cropCoefficientList, type, value);
@@ -520,9 +520,9 @@ public class ExpenseService extends BaseService {
     }
 
     //getManpowerHour
-    private BigDecimal getAsBigDecimalByQuestionIdAndValueAndTypesKendi(List<QuestionWithFirstAnswer> questionDTOList, Long questionId,
+    private BigDecimal getAsBigDecimalByQuestionIdAndValueAndTypesKendi(List<QuestionWithFirstValue> questionDTOList, Long questionId,
                                                                         List<CropCoefficientWithFirstValue> cropCoefficientList, EnumCropCoefficientType type, EnumCropCoefficientValue value) {
-        Optional<QuestionWithFirstAnswer> dtoOptional = questionDTOList.stream().filter(dto -> dto.getQuestionId().equals(questionId)).findFirst();
+        Optional<QuestionWithFirstValue> dtoOptional = questionDTOList.stream().filter(dto -> dto.getQuestionId().equals(questionId)).findFirst();
         if (dtoOptional.isPresent()) {
             if (dtoOptional.get().getValue().equals("Kendi yetiştiriyor")) {
                 return getAsBigDecimalByValueAndType(cropCoefficientList, type, value);
@@ -550,11 +550,11 @@ public class ExpenseService extends BaseService {
     }
 
     //getManPowerHourForMaintenance
-    private BigDecimal getAsBigDecimalBySulamaQuestionIdsAndCropType(List<QuestionWithFirstAnswer> questionDTOList, Long sulamaQuestionId, Long countQuestionId,
+    private BigDecimal getAsBigDecimalBySulamaQuestionIdsAndCropType(List<QuestionWithFirstValue> questionDTOList, Long sulamaQuestionId, Long countQuestionId,
                                                                      List<CropCoefficientWithFirstValue> cropCoefficientList, EnumCropCoefficientType type) {
-        Optional<QuestionWithFirstAnswer> dtoOptional = questionDTOList.stream().filter(dto -> dto.getQuestionId().equals(sulamaQuestionId)).findFirst();
+        Optional<QuestionWithFirstValue> dtoOptional = questionDTOList.stream().filter(dto -> dto.getQuestionId().equals(sulamaQuestionId)).findFirst();
         if (dtoOptional.isPresent()) {
-            Optional<QuestionWithFirstAnswer> countDtoOptional = questionDTOList.stream().filter(dto -> dto.getQuestionId().equals(countQuestionId)).findFirst();
+            Optional<QuestionWithFirstValue> countDtoOptional = questionDTOList.stream().filter(dto -> dto.getQuestionId().equals(countQuestionId)).findFirst();
             BigDecimal wateringCount = BigDecimal.ZERO;
             if (countDtoOptional.isPresent()) {
                 wateringCount = new BigDecimal(countDtoOptional.get().getValue());
@@ -576,11 +576,11 @@ public class ExpenseService extends BaseService {
     }
 
     //getMachinePowerLtForMaintenance
-    private BigDecimal getAsBigDecimalByMakineSulamaQuestionIdsAndCropType(List<QuestionWithFirstAnswer> questionDTOList, Long sulamaQuestionId, Long countQuestionId, Long energyQuestionId,
+    private BigDecimal getAsBigDecimalByMakineSulamaQuestionIdsAndCropType(List<QuestionWithFirstValue> questionDTOList, Long sulamaQuestionId, Long countQuestionId, Long energyQuestionId,
                                                                            List<CropCoefficientWithFirstValue> cropCoefficientList, EnumCropCoefficientType type) {
-        Optional<QuestionWithFirstAnswer> dtoOptional = questionDTOList.stream().filter(dto -> dto.getQuestionId().equals(sulamaQuestionId)).findFirst();
+        Optional<QuestionWithFirstValue> dtoOptional = questionDTOList.stream().filter(dto -> dto.getQuestionId().equals(sulamaQuestionId)).findFirst();
         if (dtoOptional.isPresent()) {
-            Optional<QuestionWithFirstAnswer> countDtoOptional = questionDTOList.stream().filter(dto -> dto.getQuestionId().equals(countQuestionId)).findFirst();
+            Optional<QuestionWithFirstValue> countDtoOptional = questionDTOList.stream().filter(dto -> dto.getQuestionId().equals(countQuestionId)).findFirst();
             BigDecimal wateringCount = BigDecimal.ZERO;
             if (countDtoOptional.isPresent()) {
                 wateringCount = new BigDecimal(countDtoOptional.get().getValue());
@@ -596,7 +596,7 @@ public class ExpenseService extends BaseService {
                 //vahsı – insan
                 coefDec = getAsBigDecimalByValueAndType(cropCoefficientList, type, EnumCropCoefficientValue.WATERING_WILD_MACHINE);
             }
-            Optional<QuestionWithFirstAnswer> energyDtoOptional = questionDTOList.stream().filter(dto -> dto.getQuestionId().equals(energyQuestionId)).findFirst();
+            Optional<QuestionWithFirstValue> energyDtoOptional = questionDTOList.stream().filter(dto -> dto.getQuestionId().equals(energyQuestionId)).findFirst();
             BigDecimal powerCoef = BigDecimal.ZERO;
             if (energyDtoOptional.isPresent()) {
                 if (energyDtoOptional.get().getValue().equals("Elektrik")) {
@@ -625,10 +625,10 @@ public class ExpenseService extends BaseService {
     }
 
     //getMaterialTLForMaintenance
-    private BigDecimal getAsBigDecimalBySulamaQuestionIdAndCountQuestionId(List<QuestionWithFirstAnswer> questionDTOList, Long questionId, Long countQuestionId) {
-        Optional<QuestionWithFirstAnswer> dtoOptional = questionDTOList.stream().filter(dto -> dto.getQuestionId().equals(questionId)).findFirst();
+    private BigDecimal getAsBigDecimalBySulamaQuestionIdAndCountQuestionId(List<QuestionWithFirstValue> questionDTOList, Long questionId, Long countQuestionId) {
+        Optional<QuestionWithFirstValue> dtoOptional = questionDTOList.stream().filter(dto -> dto.getQuestionId().equals(questionId)).findFirst();
         if (dtoOptional.isPresent()) {
-            Optional<QuestionWithFirstAnswer> countDtoOptional = questionDTOList.stream().filter(dto -> dto.getQuestionId().equals(countQuestionId)).findFirst();
+            Optional<QuestionWithFirstValue> countDtoOptional = questionDTOList.stream().filter(dto -> dto.getQuestionId().equals(countQuestionId)).findFirst();
             BigDecimal wateringCount = BigDecimal.ZERO;
             if (countDtoOptional.isPresent()) {
                 wateringCount = new BigDecimal(countDtoOptional.get().getValue());
@@ -652,7 +652,7 @@ public class ExpenseService extends BaseService {
     }
 
     //manHourFertilizerDec
-    private BigDecimal getAsBigDecimalByQuestionListAndCoefficientList(List<QuestionWithFirstAnswer> questionDTOList, List<CropCoefficientWithFirstValue> cropCoefficientList) {
+    private BigDecimal getAsBigDecimalByQuestionListAndCoefficientList(List<QuestionWithFirstValue> questionDTOList, List<CropCoefficientWithFirstValue> cropCoefficientList) {
         //el ile – insan
         BigDecimal coefDec = getAsBigDecimalByValueAndType(cropCoefficientList, EnumCropCoefficientType.FERTILIZER, EnumCropCoefficientValue.FERTILIZER_HAND_HUMAN);
         BigDecimal fertilizingCountHand = getFertilizingCountWithHand(questionDTOList).multiply(coefDec);
@@ -668,7 +668,7 @@ public class ExpenseService extends BaseService {
         return (fertilizingCountHand.add(fertilizingCountMachine).add(fertilizingCountSeedling).add(fertilizingCountWatering)).setScale(3, RoundingMode.HALF_UP);
     }
 
-    private BigDecimal getFertilizingCountWithHand(List<QuestionWithFirstAnswer> questionDTOList) {
+    private BigDecimal getFertilizingCountWithHand(List<QuestionWithFirstValue> questionDTOList) {
         BigDecimal fertilizingOpCount = new BigDecimal(0);
         fertilizingOpCount = fertilizingOpCount.add(getAsBigDecimalByQuestionId(questionDTOList, 91L));
         fertilizingOpCount = fertilizingOpCount.add(getAsBigDecimalByQuestionId(questionDTOList, 95L));
@@ -679,7 +679,7 @@ public class ExpenseService extends BaseService {
         return fertilizingOpCount;
     }
 
-    private BigDecimal getFertilizingCountWithMachine(List<QuestionWithFirstAnswer> questionDTOList) {
+    private BigDecimal getFertilizingCountWithMachine(List<QuestionWithFirstValue> questionDTOList) {
         BigDecimal fertilizingOpCount = new BigDecimal(0);
         fertilizingOpCount = fertilizingOpCount.add(getAsBigDecimalByQuestionId(questionDTOList, 92L));
         fertilizingOpCount = fertilizingOpCount.add(getAsBigDecimalByQuestionId(questionDTOList, 96L));
@@ -690,7 +690,7 @@ public class ExpenseService extends BaseService {
         return fertilizingOpCount;
     }
 
-    private BigDecimal getFertilizingCountWithWatering(List<QuestionWithFirstAnswer> questionDTOList) {
+    private BigDecimal getFertilizingCountWithWatering(List<QuestionWithFirstValue> questionDTOList) {
         BigDecimal fertilizingOpCount = new BigDecimal(0);
         fertilizingOpCount = fertilizingOpCount.add(getAsBigDecimalByQuestionId(questionDTOList, 93L));
         fertilizingOpCount = fertilizingOpCount.add(getAsBigDecimalByQuestionId(questionDTOList, 97L));
@@ -701,7 +701,7 @@ public class ExpenseService extends BaseService {
         return fertilizingOpCount;
     }
 
-    private BigDecimal getFertilizingCountWithSeedling(List<QuestionWithFirstAnswer> questionDTOList) {
+    private BigDecimal getFertilizingCountWithSeedling(List<QuestionWithFirstValue> questionDTOList) {
         BigDecimal fertilizingOpCount = new BigDecimal(0);
         fertilizingOpCount = fertilizingOpCount.add(getAsBigDecimalByQuestionId(questionDTOList, 94L));
         fertilizingOpCount = fertilizingOpCount.add(getAsBigDecimalByQuestionId(questionDTOList, 98L));
@@ -712,7 +712,7 @@ public class ExpenseService extends BaseService {
         return fertilizingOpCount;
     }
 
-    private BigDecimal getAsBigDecimalByQuestionListAndCoefficientListMachine(List<QuestionWithFirstAnswer> questionDTOList, List<CropCoefficientWithFirstValue> cropCoefficientList) {
+    private BigDecimal getAsBigDecimalByQuestionListAndCoefficientListMachine(List<QuestionWithFirstValue> questionDTOList, List<CropCoefficientWithFirstValue> cropCoefficientList) {
         //El ile – makine
         BigDecimal coefDec = getAsBigDecimalByValueAndType(cropCoefficientList, EnumCropCoefficientType.FERTILIZER, EnumCropCoefficientValue.FERTILIZER_HAND_MACHINE);
         BigDecimal fertilizingCountHand = getFertilizingCountWithHand(questionDTOList).multiply(coefDec);
@@ -728,7 +728,7 @@ public class ExpenseService extends BaseService {
         return fertilizingCountHand.add(fertilizingCountMachine).add(fertilizingCountSeedling).add(fertilizingCountWatering);
     }
 
-    private BigDecimal getAsBigDecimalByQuestionListAndCoefficientListPest(List<QuestionWithFirstAnswer> questionDTOList, List<CropCoefficientWithFirstValue> cropCoefficientList) {
+    private BigDecimal getAsBigDecimalByQuestionListAndCoefficientListPest(List<QuestionWithFirstValue> questionDTOList, List<CropCoefficientWithFirstValue> cropCoefficientList) {
         //el ile – insan
         BigDecimal coefDec = getAsBigDecimalByValueAndType(cropCoefficientList, EnumCropCoefficientType.PEST_CONTROL, EnumCropCoefficientValue.FERTILIZER_HAND_HUMAN);
         BigDecimal medicineCountHand = getMedicineCountWithHand(questionDTOList).multiply(coefDec);
@@ -744,7 +744,7 @@ public class ExpenseService extends BaseService {
         return (medicineCountHand.add(medicineCountMachine).add(medicineCountWatering).add(medicineCountTractor)).setScale(3, RoundingMode.HALF_UP);
     }
 
-    private BigDecimal getMedicineCountWithHand(List<QuestionWithFirstAnswer> questionDTOList) {
+    private BigDecimal getMedicineCountWithHand(List<QuestionWithFirstValue> questionDTOList) {
         BigDecimal fertilizingOpCount = new BigDecimal(0);
         fertilizingOpCount = fertilizingOpCount.add(getAsBigDecimalByQuestionId(questionDTOList, 118L));
         fertilizingOpCount = fertilizingOpCount.add(getAsBigDecimalByQuestionId(questionDTOList, 122L));
@@ -755,7 +755,7 @@ public class ExpenseService extends BaseService {
         return fertilizingOpCount;
     }
 
-    private BigDecimal getMedicineCountWithMachine(List<QuestionWithFirstAnswer> questionDTOList) {
+    private BigDecimal getMedicineCountWithMachine(List<QuestionWithFirstValue> questionDTOList) {
         BigDecimal fertilizingOpCount = new BigDecimal(0);
         fertilizingOpCount = fertilizingOpCount.add(getAsBigDecimalByQuestionId(questionDTOList, 116L));
         fertilizingOpCount = fertilizingOpCount.add(getAsBigDecimalByQuestionId(questionDTOList, 120L));
@@ -766,7 +766,7 @@ public class ExpenseService extends BaseService {
         return fertilizingOpCount;
     }
 
-    private BigDecimal getMedicineCountWithWatering(List<QuestionWithFirstAnswer> questionDTOList) {
+    private BigDecimal getMedicineCountWithWatering(List<QuestionWithFirstValue> questionDTOList) {
         BigDecimal fertilizingOpCount = new BigDecimal(0);
         fertilizingOpCount = fertilizingOpCount.add(getAsBigDecimalByQuestionId(questionDTOList, 119L));
         fertilizingOpCount = fertilizingOpCount.add(getAsBigDecimalByQuestionId(questionDTOList, 123L));
@@ -777,7 +777,7 @@ public class ExpenseService extends BaseService {
         return fertilizingOpCount;
     }
 
-    private BigDecimal getMedicineCountWithTractor(List<QuestionWithFirstAnswer> questionDTOList) {
+    private BigDecimal getMedicineCountWithTractor(List<QuestionWithFirstValue> questionDTOList) {
         BigDecimal fertilizingOpCount = new BigDecimal(0);
         fertilizingOpCount = fertilizingOpCount.add(getAsBigDecimalByQuestionId(questionDTOList, 117L));
         fertilizingOpCount = fertilizingOpCount.add(getAsBigDecimalByQuestionId(questionDTOList, 121L));
@@ -788,7 +788,7 @@ public class ExpenseService extends BaseService {
         return fertilizingOpCount;
     }
 
-    private BigDecimal getAsBigDecimalByQuestionListAndCoefficientListPestMachine(List<QuestionWithFirstAnswer> questionDTOList, List<CropCoefficientWithFirstValue> cropCoefficientList) {
+    private BigDecimal getAsBigDecimalByQuestionListAndCoefficientListPestMachine(List<QuestionWithFirstValue> questionDTOList, List<CropCoefficientWithFirstValue> cropCoefficientList) {
         //El ile – makine
         BigDecimal coefDec = getAsBigDecimalByValueAndType(cropCoefficientList, EnumCropCoefficientType.PEST_CONTROL, EnumCropCoefficientValue.FERTILIZER_HAND_MACHINE);
         BigDecimal medicineCountHand = getMedicineCountWithHand(questionDTOList).multiply(coefDec);
@@ -804,9 +804,9 @@ public class ExpenseService extends BaseService {
         return (medicineCountHand.add(medicineCountMachine).add(medicineCountTractor).add(medicineCountWatering)).setScale(3, RoundingMode.HALF_UP);
     }
 
-    private BigDecimal getAsBigDecimalByQuestionIdsAndCoefficientCapalama(List<QuestionWithFirstAnswer> questionDTOList, Long questionId, Long capalamaQuestionId, Long capalamaCountId,
+    private BigDecimal getAsBigDecimalByQuestionIdsAndCoefficientCapalama(List<QuestionWithFirstValue> questionDTOList, Long questionId, Long capalamaQuestionId, Long capalamaCountId,
                                                                           List<CropCoefficientWithFirstValue> cropCoefficientList, EnumCropCoefficientValue value1, EnumCropCoefficientValue value2) {
-        Optional<QuestionWithFirstAnswer> dtoOptional = questionDTOList.stream().filter(dto -> dto.getQuestionId().equals(questionId)).findFirst();
+        Optional<QuestionWithFirstValue> dtoOptional = questionDTOList.stream().filter(dto -> dto.getQuestionId().equals(questionId)).findFirst();
         if (dtoOptional.isPresent() && dtoOptional.get().getValue().contains("Çapa")) {
             //Çapalama sayısı
             BigDecimal weedingCount = getAsBigDecimalByQuestionId(questionDTOList, capalamaQuestionId);
@@ -821,25 +821,25 @@ public class ExpenseService extends BaseService {
         return BigDecimal.ZERO;
     }
 
-    private BigDecimal getAsBigDecimalByQIdAndCoefficientTypeAndValue(List<QuestionWithFirstAnswer> questionDTOList, Long questionId,
+    private BigDecimal getAsBigDecimalByQIdAndCoefficientTypeAndValue(List<QuestionWithFirstValue> questionDTOList, Long questionId,
                                                                       List<CropCoefficientWithFirstValue> cropCoefficientList, EnumCropCoefficientType type, EnumCropCoefficientValue value) {
-        Optional<QuestionWithFirstAnswer> dtoOptional = questionDTOList.stream().filter(dto -> dto.getQuestionId().equals(questionId)).findFirst();
+        Optional<QuestionWithFirstValue> dtoOptional = questionDTOList.stream().filter(dto -> dto.getQuestionId().equals(questionId)).findFirst();
         if (dtoOptional.isPresent() && dtoOptional.get().getValue().equals("Evet")) {
             return getAsBigDecimalByValueAndType(cropCoefficientList, type, value).setScale(3, RoundingMode.HALF_UP);
         }
         return BigDecimal.ZERO;
     }
 
-    private BigDecimal getAsBigDecimalByQIDAndTypeAndValueMalclama(List<QuestionWithFirstAnswer> questionDTOList, Long questionId,
+    private BigDecimal getAsBigDecimalByQIDAndTypeAndValueMalclama(List<QuestionWithFirstValue> questionDTOList, Long questionId,
                                                                    List<CropCoefficientWithFirstValue> cropCoefficientList, EnumCropCoefficientType type, EnumCropCoefficientValue value) {
-        Optional<QuestionWithFirstAnswer> dtoOptional = questionDTOList.stream().filter(dto -> dto.getQuestionId().equals(questionId)).findFirst();
+        Optional<QuestionWithFirstValue> dtoOptional = questionDTOList.stream().filter(dto -> dto.getQuestionId().equals(questionId)).findFirst();
         if (dtoOptional.isPresent() && dtoOptional.get().getValue().contains("Malçlama")) {
             return getAsBigDecimalByValueAndType(cropCoefficientList, type, value).setScale(3, RoundingMode.HALF_UP);
         }
         return BigDecimal.ZERO;
     }
 
-    private BigDecimal getAsBigDecimalByQuestionIds(List<QuestionWithFirstAnswer> questionDTOList,
+    private BigDecimal getAsBigDecimalByQuestionIds(List<QuestionWithFirstValue> questionDTOList,
                                                     Long question1Id, Long question31Id, Long question32Id, Long question4Id,
                                                     Long question5Id, Long question6Id, Long question7Id, Long question8Id) {
         //Sulama sayısı
@@ -860,19 +860,19 @@ public class ExpenseService extends BaseService {
         BigDecimal value3 = weedingCount.setScale(3, RoundingMode.HALF_UP);
         //Budama yapılmakta mıdır?
         BigDecimal value4 = BigDecimal.ZERO;
-        Optional<QuestionWithFirstAnswer> dto4Optional = questionDTOList.stream().filter(dto -> dto.getQuestionId().equals(question4Id)).findFirst();
+        Optional<QuestionWithFirstValue> dto4Optional = questionDTOList.stream().filter(dto -> dto.getQuestionId().equals(question4Id)).findFirst();
         if (dto4Optional.isPresent() && dto4Optional.get().getValue().equals("Evet")) {
             value4 = BigDecimal.ONE;
         }
         //Meyve seyreltmesi yapılmakta mıdır?
         BigDecimal value5 = BigDecimal.ZERO;
-        Optional<QuestionWithFirstAnswer> dto5Optional = questionDTOList.stream().filter(dto -> dto.getQuestionId().equals(question5Id)).findFirst();
+        Optional<QuestionWithFirstValue> dto5Optional = questionDTOList.stream().filter(dto -> dto.getQuestionId().equals(question5Id)).findFirst();
         if (dto5Optional.isPresent() && dto5Optional.get().getValue().equals("Evet")) {
             value5 = BigDecimal.ONE;
         }
         //Yaprak seyreltmesi yapılmakta mıdır?
         BigDecimal value6 = BigDecimal.ZERO;
-        Optional<QuestionWithFirstAnswer> dto6Optional = questionDTOList.stream().filter(dto -> dto.getQuestionId().equals(question6Id)).findFirst();
+        Optional<QuestionWithFirstValue> dto6Optional = questionDTOList.stream().filter(dto -> dto.getQuestionId().equals(question6Id)).findFirst();
         if (dto6Optional.isPresent() && dto6Optional.get().getValue().equals("Evet")) {
             value6 = BigDecimal.ONE;
         }
@@ -881,14 +881,14 @@ public class ExpenseService extends BaseService {
         //malçlama
         //yabani ot kontrolü
         BigDecimal value8 = BigDecimal.ZERO;
-        Optional<QuestionWithFirstAnswer> dto8Optional = questionDTOList.stream().filter(dto -> dto.getQuestionId().equals(question8Id)).findFirst();
+        Optional<QuestionWithFirstValue> dto8Optional = questionDTOList.stream().filter(dto -> dto.getQuestionId().equals(question8Id)).findFirst();
         if (dto8Optional.isPresent() && dto8Optional.get().getValue().contains("Malçlama")) {
             value8 = BigDecimal.ONE;
         }
         return wateringCount.add(fertilizingCount).add(value2).add(value3).add(value4).add(value5).add(value6).add(value7).add(value8);
     }
 
-    private BigDecimal getAgriculturalOp(List<QuestionWithFirstAnswer> questionDTOList) {
+    private BigDecimal getAgriculturalOp(List<QuestionWithFirstValue> questionDTOList) {
         BigDecimal operationCount = getAgriculturalOpWithHand(questionDTOList);
         operationCount = operationCount.add(getAgriculturalOpWithMachine(questionDTOList));
         operationCount = operationCount.add(getAgriculturalOpWithTractor(questionDTOList));
@@ -898,7 +898,7 @@ public class ExpenseService extends BaseService {
         return operationCount;
     }
 
-    private BigDecimal getAgriculturalOpWithHand(List<QuestionWithFirstAnswer> questionDTOList) {
+    private BigDecimal getAgriculturalOpWithHand(List<QuestionWithFirstValue> questionDTOList) {
         BigDecimal operationCount = BigDecimal.ZERO;
         operationCount = operationCount.add(getAsBigDecimalByQuestionId(questionDTOList, 118L));
         operationCount = operationCount.add(getAsBigDecimalByQuestionId(questionDTOList, 122L));
@@ -909,7 +909,7 @@ public class ExpenseService extends BaseService {
         return operationCount;
     }
 
-    private BigDecimal getAgriculturalOpWithMachine(List<QuestionWithFirstAnswer> questionDTOList) {
+    private BigDecimal getAgriculturalOpWithMachine(List<QuestionWithFirstValue> questionDTOList) {
         BigDecimal operationCount = BigDecimal.ZERO;
         operationCount = operationCount.add(getAsBigDecimalByQuestionId(questionDTOList, 116L));
         operationCount = operationCount.add(getAsBigDecimalByQuestionId(questionDTOList, 120L));
@@ -920,7 +920,7 @@ public class ExpenseService extends BaseService {
         return operationCount;
     }
 
-    private BigDecimal getAgriculturalOpWithTractor(List<QuestionWithFirstAnswer> questionDTOList) {
+    private BigDecimal getAgriculturalOpWithTractor(List<QuestionWithFirstValue> questionDTOList) {
         BigDecimal operationCount = BigDecimal.ZERO;
         operationCount = operationCount.add(getAsBigDecimalByQuestionId(questionDTOList, 117L));
         operationCount = operationCount.add(getAsBigDecimalByQuestionId(questionDTOList, 121L));
@@ -931,7 +931,7 @@ public class ExpenseService extends BaseService {
         return operationCount;
     }
 
-    private BigDecimal getAgriculturalOpWithWatering(List<QuestionWithFirstAnswer> questionDTOList) {
+    private BigDecimal getAgriculturalOpWithWatering(List<QuestionWithFirstValue> questionDTOList) {
         BigDecimal operationCount = BigDecimal.ZERO;
         operationCount = operationCount.add(getAsBigDecimalByQuestionId(questionDTOList, 119L));
         operationCount = operationCount.add(getAsBigDecimalByQuestionId(questionDTOList, 123L));
@@ -942,7 +942,7 @@ public class ExpenseService extends BaseService {
         return operationCount;
     }
 
-    private BigDecimal getFertilizingCount(List<QuestionWithFirstAnswer> questionDTOList) {
+    private BigDecimal getFertilizingCount(List<QuestionWithFirstValue> questionDTOList) {
         BigDecimal fertilizingOpCount = getFertilizingCountWithHand(questionDTOList);
         fertilizingOpCount = fertilizingOpCount.add(getFertilizingCountWithMachine(questionDTOList));
         fertilizingOpCount = fertilizingOpCount.add(getFertilizingCountWithWatering(questionDTOList));
@@ -950,10 +950,10 @@ public class ExpenseService extends BaseService {
         return fertilizingOpCount;
     }
 
-    private BigDecimal getAsBigDecimalByQIDsAndTypeValueAndAverageValue(List<QuestionWithFirstAnswer> questionDTOList, Long questionId, Long makineQuestionId,
+    private BigDecimal getAsBigDecimalByQIDsAndTypeValueAndAverageValue(List<QuestionWithFirstValue> questionDTOList, Long questionId, Long makineQuestionId,
                                                                         List<CropCoefficientWithFirstValue> cropCoefficientList, EnumCropCoefficientType type, EnumCropCoefficientValue value,
                                                                         double fieldAverageValue) {
-        Optional<QuestionWithFirstAnswer> dtoOptional = questionDTOList.stream().filter(dto -> dto.getQuestionId().equals(questionId)).findFirst();
+        Optional<QuestionWithFirstValue> dtoOptional = questionDTOList.stream().filter(dto -> dto.getQuestionId().equals(questionId)).findFirst();
         if (dtoOptional.isPresent()) {
             //Verim ne kadar
             BigDecimal efficiency = getAsBigDecimalByQuestionId(questionDTOList, makineQuestionId);
@@ -974,9 +974,9 @@ public class ExpenseService extends BaseService {
     }
 
     //getManPowerTLForHarvest
-    private BigDecimal getAsBigDecimalByGenderIdAndWorkingHour(List<QuestionWithFirstAnswer> questionDTOList, Long questionId, Long womanQuestionId, Long manQuestionId, Long commonQuestionId,
+    private BigDecimal getAsBigDecimalByGenderIdAndWorkingHour(List<QuestionWithFirstValue> questionDTOList, Long questionId, Long womanQuestionId, Long manQuestionId, Long commonQuestionId,
                                                                BigDecimal workingHourValue) {
-        Optional<QuestionWithFirstAnswer> dtoOptional = questionDTOList.stream().filter(dto -> dto.getQuestionId().equals(questionId)).findFirst();
+        Optional<QuestionWithFirstValue> dtoOptional = questionDTOList.stream().filter(dto -> dto.getQuestionId().equals(questionId)).findFirst();
         if (dtoOptional.isPresent()) {
             if (dtoOptional.get().getValue().equals("Kadın")) {
                 //Kadın yevmiyesi
@@ -995,9 +995,9 @@ public class ExpenseService extends BaseService {
         return BigDecimal.ZERO;
     }
 
-    private BigDecimal getAsBigDecimalByQIdsAndTypeValues(List<QuestionWithFirstAnswer> questionDTOList, Long questionId, Long hasatQuestionId,
+    private BigDecimal getAsBigDecimalByQIdsAndTypeValues(List<QuestionWithFirstValue> questionDTOList, Long questionId, Long hasatQuestionId,
                                                           List<CropCoefficientWithFirstValue> cropCoefficientList, EnumCropCoefficientType type, EnumCropCoefficientValue value1, EnumCropCoefficientValue value2) {
-        Optional<QuestionWithFirstAnswer> dtoOptional = questionDTOList.stream().filter(dto -> dto.getQuestionId().equals(questionId)).findFirst();
+        Optional<QuestionWithFirstValue> dtoOptional = questionDTOList.stream().filter(dto -> dto.getQuestionId().equals(questionId)).findFirst();
         if (dtoOptional.isPresent()) {
             BigDecimal coefDec = BigDecimal.ZERO;
             if (dtoOptional.get().getValue().equals("Makine (sahipli)")) {
@@ -1012,8 +1012,8 @@ public class ExpenseService extends BaseService {
         return BigDecimal.ZERO;
     }
 
-    private BigDecimal getAsBigDecimalByQIDs(List<QuestionWithFirstAnswer> questionDTOList, Long questionId, Long verimQuestionId, Long ambalajQuestionId) {
-        Optional<QuestionWithFirstAnswer> dtoOptional = questionDTOList.stream().filter(dto -> dto.getQuestionId().equals(questionId)).findFirst();
+    private BigDecimal getAsBigDecimalByQIDs(List<QuestionWithFirstValue> questionDTOList, Long questionId, Long verimQuestionId, Long ambalajQuestionId) {
+        Optional<QuestionWithFirstValue> dtoOptional = questionDTOList.stream().filter(dto -> dto.getQuestionId().equals(questionId)).findFirst();
         if (dtoOptional.isPresent()) {
             if (dtoOptional.get().getValue().equals("Götürü işçilik çuval vb.")) {
                 //Verim ne kadar
@@ -1028,9 +1028,9 @@ public class ExpenseService extends BaseService {
         return BigDecimal.ZERO;
     }
 
-    private BigDecimal getAsBigDecimalByQIDsAndGoturu(List<QuestionWithFirstAnswer> questionDTOList, Long questionId, Long goturuQuestionId, Long hasatQuestionId, Long birimQuestionId) {
+    private BigDecimal getAsBigDecimalByQIDsAndGoturu(List<QuestionWithFirstValue> questionDTOList, Long questionId, Long goturuQuestionId, Long hasatQuestionId, Long birimQuestionId) {
         //Hasat şekli
-        Optional<QuestionWithFirstAnswer> dtoOptional = questionDTOList.stream().filter(dto -> dto.getQuestionId().equals(questionId)).findFirst();
+        Optional<QuestionWithFirstValue> dtoOptional = questionDTOList.stream().filter(dto -> dto.getQuestionId().equals(questionId)).findFirst();
         if (dtoOptional.isPresent()) {
             if (dtoOptional.get().getValue().equals("Makine (götürü)")) {
                 //Götürü
@@ -1047,10 +1047,10 @@ public class ExpenseService extends BaseService {
         return BigDecimal.ZERO;
     }
 
-    private BigDecimal getAsBigDecimalByQIDsAndDieselTypesAndCoefficientTypeValue(List<QuestionWithFirstAnswer> questionDTOList, Long questionId, Long verimQuestionId,
+    private BigDecimal getAsBigDecimalByQIDsAndDieselTypesAndCoefficientTypeValue(List<QuestionWithFirstValue> questionDTOList, Long questionId, Long verimQuestionId,
                                                                                   List<DieselDistanceWithFirstValue> dieselDistanceWithValueList, EnumDieselDistanceType parcelDistanceType, EnumDieselDistanceType coefFullType,
                                                                                   List<CropCoefficientWithFirstValue> cropCoefficientList, EnumCropCoefficientType type, EnumCropCoefficientValue value) {
-        Optional<QuestionWithFirstAnswer> dtoOptional = questionDTOList.stream().filter(dto -> dto.getQuestionId().equals(questionId)).findFirst();
+        Optional<QuestionWithFirstValue> dtoOptional = questionDTOList.stream().filter(dto -> dto.getQuestionId().equals(questionId)).findFirst();
         if (dtoOptional.isPresent()) {
             if (dtoOptional.get().getValue().equals("Evet")) {
                 BigDecimal param1 = BigDecimal.ZERO;
@@ -1081,9 +1081,9 @@ public class ExpenseService extends BaseService {
         return BigDecimal.ZERO;
     }
 
-    private BigDecimal getAsBigDecimalByCoefficientTypeValues(List<QuestionWithFirstAnswer> questionDTOList, Long questionId,
+    private BigDecimal getAsBigDecimalByCoefficientTypeValues(List<QuestionWithFirstValue> questionDTOList, Long questionId,
                                                               List<CropCoefficientWithFirstValue> cropCoefficientList, EnumCropCoefficientType type, EnumCropCoefficientValue value1, EnumCropCoefficientValue value2) {
-        Optional<QuestionWithFirstAnswer> dtoOptional = questionDTOList.stream().filter(dto -> dto.getQuestionId().equals(questionId)).findFirst();
+        Optional<QuestionWithFirstValue> dtoOptional = questionDTOList.stream().filter(dto -> dto.getQuestionId().equals(questionId)).findFirst();
         if (dtoOptional.isPresent()) {
             if (dtoOptional.get().getValue().equals("El")) {
                 return getAsBigDecimalByValueAndType(cropCoefficientList, type, value1);
@@ -1094,7 +1094,7 @@ public class ExpenseService extends BaseService {
         return BigDecimal.ZERO;
     }
 
-    private BigDecimal getAsBigDecimalByWorkingHourValue(List<QuestionWithFirstAnswer> questionDTOList, Long questionId, BigDecimal workingHourValue) {
+    private BigDecimal getAsBigDecimalByWorkingHourValue(List<QuestionWithFirstValue> questionDTOList, Long questionId, BigDecimal workingHourValue) {
         BigDecimal manWage = getAsBigDecimalByQuestionId(questionDTOList, questionId);
         if (workingHourValue.compareTo(BigDecimal.ZERO) > 0) {
             return manWage.divide(workingHourValue, 3, RoundingMode.HALF_UP);
@@ -1102,8 +1102,8 @@ public class ExpenseService extends BaseService {
         return BigDecimal.ZERO;
     }
 
-    private BigDecimal getAsBigDecimalByGoturuQuestionId(List<QuestionWithFirstAnswer> questionDTOList, Long questionId, Long goturuQuestionId) {
-        Optional<QuestionWithFirstAnswer> dtoOptional = questionDTOList.stream().filter(dto -> dto.getQuestionId().equals(questionId)).findFirst();
+    private BigDecimal getAsBigDecimalByGoturuQuestionId(List<QuestionWithFirstValue> questionDTOList, Long questionId, Long goturuQuestionId) {
+        Optional<QuestionWithFirstValue> dtoOptional = questionDTOList.stream().filter(dto -> dto.getQuestionId().equals(questionId)).findFirst();
         if (dtoOptional.isPresent()) {
             if (dtoOptional.get().getValue().equals("Götürü")) {
                 //Götürü harman fiyat
@@ -1113,9 +1113,9 @@ public class ExpenseService extends BaseService {
         return BigDecimal.ZERO;
     }
 
-    private BigDecimal getAsBigDecimalByQIDAndTypeValue(List<QuestionWithFirstAnswer> questionDTOList, Long questionId,
+    private BigDecimal getAsBigDecimalByQIDAndTypeValue(List<QuestionWithFirstValue> questionDTOList, Long questionId,
                                                         List<CropCoefficientWithFirstValue> cropCoefficientList, EnumCropCoefficientType type, EnumCropCoefficientValue value) {
-        Optional<QuestionWithFirstAnswer> dtoOptional = questionDTOList.stream().filter(dto -> dto.getQuestionId().equals(questionId)).findFirst();
+        Optional<QuestionWithFirstValue> dtoOptional = questionDTOList.stream().filter(dto -> dto.getQuestionId().equals(questionId)).findFirst();
         if (dtoOptional.isPresent()) {
             if (dtoOptional.get().getValue().equals("Makine sahipli")) {
                 //İşçilik
@@ -1125,9 +1125,9 @@ public class ExpenseService extends BaseService {
         return BigDecimal.ZERO;
     }
 
-    private BigDecimal getAsBigDecimalByQIdsAndTypeValue(List<QuestionWithFirstAnswer> questionDTOList, Long questionId, Long verimQuestionId,
+    private BigDecimal getAsBigDecimalByQIdsAndTypeValue(List<QuestionWithFirstValue> questionDTOList, Long questionId, Long verimQuestionId,
                                                          List<CropCoefficientWithFirstValue> cropCoefficientList, EnumCropCoefficientType type, EnumCropCoefficientValue value) {
-        Optional<QuestionWithFirstAnswer> dtoOptional = questionDTOList.stream().filter(dto -> dto.getQuestionId().equals(questionId)).findFirst();
+        Optional<QuestionWithFirstValue> dtoOptional = questionDTOList.stream().filter(dto -> dto.getQuestionId().equals(questionId)).findFirst();
         if (dtoOptional.isPresent()) {
             if (dtoOptional.get().getValue().equals("Makine götürü")) {
                 return BigDecimal.ONE;
@@ -1143,8 +1143,8 @@ public class ExpenseService extends BaseService {
         return BigDecimal.ZERO;
     }
 
-    private BigDecimal getAsBigDecimalByQIDsAndMakine(List<QuestionWithFirstAnswer> questionDTOList, Long questionId, Long goturuQuestionId, Long saatlikQuestionId) {
-        Optional<QuestionWithFirstAnswer> dtoOptional = questionDTOList.stream().filter(dto -> dto.getQuestionId().equals(questionId)).findFirst();
+    private BigDecimal getAsBigDecimalByQIDsAndMakine(List<QuestionWithFirstValue> questionDTOList, Long questionId, Long goturuQuestionId, Long saatlikQuestionId) {
+        Optional<QuestionWithFirstValue> dtoOptional = questionDTOList.stream().filter(dto -> dto.getQuestionId().equals(questionId)).findFirst();
         if (dtoOptional.isPresent()) {
             if (dtoOptional.get().getValue().equals("Makine götürü")) {
                 //Götürü ücreti
@@ -1157,9 +1157,9 @@ public class ExpenseService extends BaseService {
         return BigDecimal.ZERO;
     }
 
-    private BigDecimal getAsBigDecimalByQIdAndTypeValue(List<QuestionWithFirstAnswer> questionDTOList, Long questionId, Long verimQuestionId,
+    private BigDecimal getAsBigDecimalByQIdAndTypeValue(List<QuestionWithFirstValue> questionDTOList, Long questionId, Long verimQuestionId,
                                                         List<CropCoefficientWithFirstValue> cropCoefficientList, EnumCropCoefficientType type, EnumCropCoefficientValue value) {
-        Optional<QuestionWithFirstAnswer> dtoOptional = questionDTOList.stream().filter(dto -> dto.getQuestionId().equals(questionId)).findFirst();
+        Optional<QuestionWithFirstValue> dtoOptional = questionDTOList.stream().filter(dto -> dto.getQuestionId().equals(questionId)).findFirst();
         if (dtoOptional.isPresent()) {
             if (dtoOptional.get().getValue().equals("Evet")) {
                 //Verim ne kadar
@@ -1173,8 +1173,8 @@ public class ExpenseService extends BaseService {
         return BigDecimal.ZERO;
     }
 
-    private BigDecimal getAsBigDecimalByQIDsAndEvet(List<QuestionWithFirstAnswer> questionDTOList, Long questionId, Long verimQuestionId) {
-        Optional<QuestionWithFirstAnswer> dtoOptional = questionDTOList.stream().filter(dto -> dto.getQuestionId().equals(questionId)).findFirst();
+    private BigDecimal getAsBigDecimalByQIDsAndEvet(List<QuestionWithFirstValue> questionDTOList, Long questionId, Long verimQuestionId) {
+        Optional<QuestionWithFirstValue> dtoOptional = questionDTOList.stream().filter(dto -> dto.getQuestionId().equals(questionId)).findFirst();
         if (dtoOptional.isPresent()) {
             if (dtoOptional.get().getValue().equals("Evet")) {
                 //Malzeme birim fiyatı
@@ -1184,8 +1184,8 @@ public class ExpenseService extends BaseService {
         return BigDecimal.ZERO;
     }
 
-    private BigDecimal getAsBigDecimalByQIDsAndUretici(List<QuestionWithFirstAnswer> questionDTOList, Long questionId, Long verimQuestionId, Long answerQuestionId) {
-        Optional<QuestionWithFirstAnswer> dtoOptional = questionDTOList.stream().filter(dto -> dto.getQuestionId().equals(questionId)).findFirst();
+    private BigDecimal getAsBigDecimalByQIDsAndUretici(List<QuestionWithFirstValue> questionDTOList, Long questionId, Long verimQuestionId, Long answerQuestionId) {
+        Optional<QuestionWithFirstValue> dtoOptional = questionDTOList.stream().filter(dto -> dto.getQuestionId().equals(questionId)).findFirst();
         if (dtoOptional.isPresent()) {
             if (dtoOptional.get().getValue().equals("Üretici")) {
                 //Verim ne kadar
@@ -1197,9 +1197,9 @@ public class ExpenseService extends BaseService {
         return BigDecimal.ZERO;
     }
 
-    private BigDecimal getAsBigDecimalByQIDsAndBale(List<QuestionWithFirstAnswer> questionDTOList, Long questionId, Long verimQuestionId,
+    private BigDecimal getAsBigDecimalByQIDsAndBale(List<QuestionWithFirstValue> questionDTOList, Long questionId, Long verimQuestionId,
                                                     List<CropCoefficientWithFirstValue> cropCoefficientList, EnumCropCoefficientType type, EnumCropCoefficientValue value) {
-        Optional<QuestionWithFirstAnswer> dtoOptional = questionDTOList.stream().filter(dto -> dto.getQuestionId().equals(questionId)).findFirst();
+        Optional<QuestionWithFirstValue> dtoOptional = questionDTOList.stream().filter(dto -> dto.getQuestionId().equals(questionId)).findFirst();
         if (dtoOptional.isPresent()) {
             if (dtoOptional.get().getValue().equals("Sahipli")) {
                 //İşçilik
@@ -1218,17 +1218,17 @@ public class ExpenseService extends BaseService {
         return BigDecimal.ZERO;
     }
 
-    private BigDecimal getAsBigDecimalByQIDsAndVerim14(List<QuestionWithFirstAnswer> questionDTOList, Long questionId, Long balyaQuestionId, Long urunQuestionId, Long verimQuestionId, Long verim4QuestionId,
+    private BigDecimal getAsBigDecimalByQIDsAndVerim14(List<QuestionWithFirstValue> questionDTOList, Long questionId, Long balyaQuestionId, Long urunQuestionId, Long verimQuestionId, Long verim4QuestionId,
                                                        List<CropCoefficientWithFirstValue> cropCoefficientList, EnumCropCoefficientType type, EnumCropCoefficientValue value) {
-        Optional<QuestionWithFirstAnswer> dtoOptional = questionDTOList.stream().filter(dto -> dto.getQuestionId().equals(questionId)).findFirst();
+        Optional<QuestionWithFirstValue> dtoOptional = questionDTOList.stream().filter(dto -> dto.getQuestionId().equals(questionId)).findFirst();
         if (dtoOptional.isPresent()) {
             if (dtoOptional.get().getValue().equals("Evet")) {
                 //Balya sahiplik
-                Optional<QuestionWithFirstAnswer> balyaOptional = questionDTOList.stream().filter(dto -> dto.getQuestionId().equals(balyaQuestionId)).findFirst();
+                Optional<QuestionWithFirstValue> balyaOptional = questionDTOList.stream().filter(dto -> dto.getQuestionId().equals(balyaQuestionId)).findFirst();
                 if (balyaOptional.isPresent()) {
                     if (dtoOptional.get().getValue().equals("Kiralık")) {
                         // ana/yan ürün
-                        Optional<QuestionWithFirstAnswer> urunOptional = questionDTOList.stream().filter(dto -> dto.getQuestionId().equals(urunQuestionId)).findFirst();
+                        Optional<QuestionWithFirstValue> urunOptional = questionDTOList.stream().filter(dto -> dto.getQuestionId().equals(urunQuestionId)).findFirst();
                         if (urunOptional.isPresent()) {
                             BigDecimal efficiency;
                             if (dtoOptional.get().getValue().equals("Ana ürün")) {
@@ -1275,12 +1275,12 @@ public class ExpenseService extends BaseService {
         return BigDecimal.ZERO;
     }
 
-    private BigDecimal getAsBigDecimalByTotalAndEvet(List<QuestionWithFirstAnswer> questionDTOList, Long questionId, Long question6Id) {
+    private BigDecimal getAsBigDecimalByTotalAndEvet(List<QuestionWithFirstValue> questionDTOList, Long questionId, Long question6Id) {
         //Hasat sayısı
         BigDecimal value0 = getAsBigDecimalByQuestionId(questionDTOList, questionId);
         BigDecimal value6 = BigDecimal.ZERO;
         //Balyalama yapılmaktamıdır
-        Optional<QuestionWithFirstAnswer> dtoOptional = questionDTOList.stream().filter(dto -> dto.getQuestionId().equals(question6Id)).findFirst();
+        Optional<QuestionWithFirstValue> dtoOptional = questionDTOList.stream().filter(dto -> dto.getQuestionId().equals(question6Id)).findFirst();
         if (dtoOptional.isPresent()) {
             if (dtoOptional.get().getValue().equals("Evet")) {
                 value6 = BigDecimal.ONE;
@@ -1289,7 +1289,7 @@ public class ExpenseService extends BaseService {
         return value0.add(value6);
     }
 
-    private BigDecimal getTotalInputValueAsBigDecimal(List<QuestionWithFirstAnswer> questionDTOList,
+    private BigDecimal getTotalInputValueAsBigDecimal(List<QuestionWithFirstValue> questionDTOList,
                                                       List<SeedSeedlingWithFirstValue> seedSeedlingNumberWithValueList, List<SeedSeedlingWithFirstValue> seedSeedlingPriceWithValueList) {
         //Üretim materyali
         BigDecimal seedKgInput = getAsBigDecimalByQIDsAndSeedSeedlingKg(questionDTOList, 30L, 31L, 32L, seedSeedlingNumberWithValueList);
@@ -1302,14 +1302,14 @@ public class ExpenseService extends BaseService {
         return seedTotal.add(seedlingTotal);
     }
 
-    private BigDecimal getAsBigDecimalByIDsAndSeedSeedlingKg(List<QuestionWithFirstAnswer> questionDTOList, Long questionId, Long fideQuestionId,
+    private BigDecimal getAsBigDecimalByIDsAndSeedSeedlingKg(List<QuestionWithFirstValue> questionDTOList, Long questionId, Long fideQuestionId,
                                                              List<SeedSeedlingWithFirstValue> seedSeedlingNumberWithValueList) {
         //Üretim materyali
-        Optional<QuestionWithFirstAnswer> dtoOptional = questionDTOList.stream().filter(dto -> dto.getQuestionId().equals(questionId)).findFirst();
+        Optional<QuestionWithFirstValue> dtoOptional = questionDTOList.stream().filter(dto -> dto.getQuestionId().equals(questionId)).findFirst();
         if (dtoOptional.isPresent()) {
             if (dtoOptional.get().getValue().equals("Fide")) {
                 //Dış kaynaktan temin edilen fide
-                Optional<QuestionWithFirstAnswer> fideOptional = questionDTOList.stream().filter(dto -> dto.getQuestionId().equals(fideQuestionId)).findFirst();
+                Optional<QuestionWithFirstValue> fideOptional = questionDTOList.stream().filter(dto -> dto.getQuestionId().equals(fideQuestionId)).findFirst();
                 if (fideOptional.isPresent()) {
                     BigDecimal seedlingPrice = BigDecimal.ZERO;
                     Optional<SeedSeedlingWithFirstValue> seedSeedlingValue = seedSeedlingNumberWithValueList.stream().filter(ss -> ss.getEnumType().equals(EnumSeedSeedlingType.HYBRID_SEEDLING)).findFirst();
@@ -1342,14 +1342,14 @@ public class ExpenseService extends BaseService {
         return BigDecimal.ZERO;
     }
 
-    private BigDecimal getAsBigDecimalByIDsAndSeedSeedlingTL(List<QuestionWithFirstAnswer> questionDTOList, Long questionId, Long fideQuestionId,
+    private BigDecimal getAsBigDecimalByIDsAndSeedSeedlingTL(List<QuestionWithFirstValue> questionDTOList, Long questionId, Long fideQuestionId,
                                                              List<SeedSeedlingWithFirstValue> seedSeedlingNumberWithValueList) {
         //Üretim materyali
-        Optional<QuestionWithFirstAnswer> dtoOptional = questionDTOList.stream().filter(dto -> dto.getQuestionId().equals(questionId)).findFirst();
+        Optional<QuestionWithFirstValue> dtoOptional = questionDTOList.stream().filter(dto -> dto.getQuestionId().equals(questionId)).findFirst();
         if (dtoOptional.isPresent()) {
             if (dtoOptional.get().getValue().equals("Fide")) {
                 //Dış kaynaktan temin edilen fide
-                Optional<QuestionWithFirstAnswer> fideOptional = questionDTOList.stream().filter(dto -> dto.getQuestionId().equals(fideQuestionId)).findFirst();
+                Optional<QuestionWithFirstValue> fideOptional = questionDTOList.stream().filter(dto -> dto.getQuestionId().equals(fideQuestionId)).findFirst();
                 if (fideOptional.isPresent()) {
                     BigDecimal seedlingPrice = BigDecimal.ZERO;
                     Optional<SeedSeedlingWithFirstValue> seedSeedlingValue = seedSeedlingNumberWithValueList.stream().filter(ss -> ss.getEnumType().equals(EnumSeedSeedlingType.HYBRID_SEEDLING)).findFirst();
@@ -1382,12 +1382,12 @@ public class ExpenseService extends BaseService {
         return BigDecimal.ZERO;
     }
 
-    private BigDecimal getAsBigDecimalByQIDsAndSeedSeedlingKg(List<QuestionWithFirstAnswer> questionDTOList, Long questionId, Long tohumQuestionId, Long fideQuestionId,
+    private BigDecimal getAsBigDecimalByQIDsAndSeedSeedlingKg(List<QuestionWithFirstValue> questionDTOList, Long questionId, Long tohumQuestionId, Long fideQuestionId,
                                                               List<SeedSeedlingWithFirstValue> seedSeedlingNumberWithValueList) {
-        Optional<QuestionWithFirstAnswer> dtoOptional = questionDTOList.stream().filter(dto -> dto.getQuestionId().equals(questionId)).findFirst();
+        Optional<QuestionWithFirstValue> dtoOptional = questionDTOList.stream().filter(dto -> dto.getQuestionId().equals(questionId)).findFirst();
         if (dtoOptional.isPresent()) {
             if (dtoOptional.get().getValue().equals("Tohum")) {
-                Optional<QuestionWithFirstAnswer> tohumOptional = questionDTOList.stream().filter(dto -> dto.getQuestionId().equals(tohumQuestionId)).findFirst();
+                Optional<QuestionWithFirstValue> tohumOptional = questionDTOList.stream().filter(dto -> dto.getQuestionId().equals(tohumQuestionId)).findFirst();
                 if (tohumOptional.isPresent()) {
                     if (tohumOptional.get().getValue().equals("Yerel")) {
                         Optional<SeedSeedlingWithFirstValue> seedSeedlingValue = seedSeedlingNumberWithValueList
@@ -1410,10 +1410,10 @@ public class ExpenseService extends BaseService {
                     }
                 }
             } else if (dtoOptional.get().getValue().equals("Fide")) {
-                Optional<QuestionWithFirstAnswer> fideOptional = questionDTOList.stream().filter(dto -> dto.getQuestionId().equals(fideQuestionId)).findFirst();
+                Optional<QuestionWithFirstValue> fideOptional = questionDTOList.stream().filter(dto -> dto.getQuestionId().equals(fideQuestionId)).findFirst();
                 if (fideOptional.isPresent()) {
                     if (!fideOptional.get().getValue().equals("Dış kaynak")) {
-                        Optional<QuestionWithFirstAnswer> tohumOptional = questionDTOList.stream().filter(dto -> dto.getQuestionId().equals(tohumQuestionId)).findFirst();
+                        Optional<QuestionWithFirstValue> tohumOptional = questionDTOList.stream().filter(dto -> dto.getQuestionId().equals(tohumQuestionId)).findFirst();
                         if (tohumOptional.isPresent()) {
                             if (tohumOptional.get().getValue().equals("Yerel")) {
                                 Optional<SeedSeedlingWithFirstValue> seedSeedlingValue = seedSeedlingNumberWithValueList
@@ -1442,12 +1442,12 @@ public class ExpenseService extends BaseService {
         return BigDecimal.ZERO;
     }
 
-    private BigDecimal getAsBigDecimalByQIDsAndSeedSeedlingTL(List<QuestionWithFirstAnswer> questionDTOList, Long questionId, Long tohumQuestionId, Long fideQuestionId,
+    private BigDecimal getAsBigDecimalByQIDsAndSeedSeedlingTL(List<QuestionWithFirstValue> questionDTOList, Long questionId, Long tohumQuestionId, Long fideQuestionId,
                                                               List<SeedSeedlingWithFirstValue> seedSeedlingPriceWithValueList) {
-        Optional<QuestionWithFirstAnswer> dtoOptional = questionDTOList.stream().filter(dto -> dto.getQuestionId().equals(questionId)).findFirst();
+        Optional<QuestionWithFirstValue> dtoOptional = questionDTOList.stream().filter(dto -> dto.getQuestionId().equals(questionId)).findFirst();
         if (dtoOptional.isPresent()) {
             if (dtoOptional.get().getValue().equals("Tohum")) {
-                Optional<QuestionWithFirstAnswer> tohumOptional = questionDTOList.stream().filter(dto -> dto.getQuestionId().equals(tohumQuestionId)).findFirst();
+                Optional<QuestionWithFirstValue> tohumOptional = questionDTOList.stream().filter(dto -> dto.getQuestionId().equals(tohumQuestionId)).findFirst();
                 if (tohumOptional.isPresent()) {
                     if (tohumOptional.get().getValue().equals("Yerel")) {
                         Optional<SeedSeedlingWithFirstValue> seedSeedlingValue = seedSeedlingPriceWithValueList
@@ -1470,10 +1470,10 @@ public class ExpenseService extends BaseService {
                     }
                 }
             } else if (dtoOptional.get().getValue().equals("Fide")) {
-                Optional<QuestionWithFirstAnswer> fideOptional = questionDTOList.stream().filter(dto -> dto.getQuestionId().equals(fideQuestionId)).findFirst();
+                Optional<QuestionWithFirstValue> fideOptional = questionDTOList.stream().filter(dto -> dto.getQuestionId().equals(fideQuestionId)).findFirst();
                 if (fideOptional.isPresent()) {
                     if (!fideOptional.get().getValue().equals("Dış kaynak")) {
-                        Optional<QuestionWithFirstAnswer> tohumOptional = questionDTOList.stream().filter(dto -> dto.getQuestionId().equals(tohumQuestionId)).findFirst();
+                        Optional<QuestionWithFirstValue> tohumOptional = questionDTOList.stream().filter(dto -> dto.getQuestionId().equals(tohumQuestionId)).findFirst();
                         if (tohumOptional.isPresent()) {
                             if (tohumOptional.get().getValue().equals("Yerel")) {
                                 Optional<SeedSeedlingWithFirstValue> seedSeedlingValue = seedSeedlingPriceWithValueList
@@ -1502,12 +1502,12 @@ public class ExpenseService extends BaseService {
         return BigDecimal.ZERO;
     }
 
-    private BigDecimal getFertilizerTotalValueAsBigDecimal(List<QuestionWithFirstAnswer> questionDTOList,
+    private BigDecimal getFertilizerTotalValueAsBigDecimal(List<QuestionWithFirstValue> questionDTOList,
                                                            List<CityFertilizerWithFirstValue> cityFertilizerWithValueList) {
         //Azotlu gübre 1 öneriniz ne kadardır?
         BigDecimal value1 = getAsBigDecimalByQuestionId(questionDTOList, 80L);
         //Azotlu gübre 1 öneriniz hangi gübre çeşidi içindir?
-        Optional<QuestionWithFirstAnswer> typeOptional = questionDTOList.stream().filter(dto -> dto.getQuestionId().equals(81L)).findFirst();
+        Optional<QuestionWithFirstValue> typeOptional = questionDTOList.stream().filter(dto -> dto.getQuestionId().equals(81L)).findFirst();
         BigDecimal fertilizerPrice = BigDecimal.ZERO;
         if (typeOptional.isPresent()) {
             if (!typeOptional.get().getValue().equals("0")) {
@@ -1526,7 +1526,7 @@ public class ExpenseService extends BaseService {
         //Azotlu gübre 2 öneriniz ne kadardır?
         BigDecimal value3 = getAsBigDecimalByQuestionId(questionDTOList, 82L);
         //Azotlu gübre 2 öneriniz hangi gübre çeşidi içindir?
-        Optional<QuestionWithFirstAnswer> type2Optional = questionDTOList.stream().filter(dto -> dto.getQuestionId().equals(83L)).findFirst();
+        Optional<QuestionWithFirstValue> type2Optional = questionDTOList.stream().filter(dto -> dto.getQuestionId().equals(83L)).findFirst();
         BigDecimal fertilizer2Price = BigDecimal.ZERO;
         if (type2Optional.isPresent()) {
             if (!type2Optional.get().getValue().equals("0")) {
@@ -1542,7 +1542,7 @@ public class ExpenseService extends BaseService {
         BigDecimal nitrogen2Total = value3.multiply(value4).setScale(3, RoundingMode.HALF_UP);
         //Fosforlu gübre
         BigDecimal value5 = getAsBigDecimalByQuestionId(questionDTOList, 84L);
-        Optional<QuestionWithFirstAnswer> type3Optional = questionDTOList.stream().filter(dto -> dto.getQuestionId().equals(85L)).findFirst();
+        Optional<QuestionWithFirstValue> type3Optional = questionDTOList.stream().filter(dto -> dto.getQuestionId().equals(85L)).findFirst();
         BigDecimal fertilizer3Price = BigDecimal.ZERO;
         if (type3Optional.isPresent()) {
             if (!type3Optional.get().getValue().equals("0")) {
@@ -1561,7 +1561,7 @@ public class ExpenseService extends BaseService {
         //Potasyumlu gübre
         BigDecimal value7 = getAsBigDecimalByQuestionId(questionDTOList, 86L);
         //Potasyumlu gübre
-        Optional<QuestionWithFirstAnswer> type4Optional = questionDTOList.stream().filter(dto -> dto.getQuestionId().equals(87L)).findFirst();
+        Optional<QuestionWithFirstValue> type4Optional = questionDTOList.stream().filter(dto -> dto.getQuestionId().equals(87L)).findFirst();
         BigDecimal fertilizer4Price = BigDecimal.ZERO;
         if (type4Optional.isPresent()) {
             if (!type4Optional.get().getValue().equals("0")) {
@@ -1580,7 +1580,7 @@ public class ExpenseService extends BaseService {
         //Kompoze gübre
         BigDecimal value9 = getAsBigDecimalByQuestionId(questionDTOList, 88L);
         //Kompoze gübre
-        Optional<QuestionWithFirstAnswer> type5Optional = questionDTOList.stream().filter(dto -> dto.getQuestionId().equals(89L)).findFirst();
+        Optional<QuestionWithFirstValue> type5Optional = questionDTOList.stream().filter(dto -> dto.getQuestionId().equals(89L)).findFirst();
         BigDecimal fertilizer5Price = BigDecimal.ZERO;
         if (type5Optional.isPresent()) {
             if (!type5Optional.get().getValue().equals("0")) {
@@ -1633,8 +1633,8 @@ public class ExpenseService extends BaseService {
         return nitrogenTotal.add(nitrogen2Total).add(phosphorTotal).add(potassiumTotal).add(compoundTotal).add(liquidTotal).add(humiqTotal).add(fertilizerTotal);
     }
 
-    private BigDecimal getAsBigDecimalByQuestionIdOrtalama(List<QuestionWithFirstAnswer> questionDTOList, Long questionId) {
-        Optional<QuestionWithFirstAnswer> dtoOptional = questionDTOList.stream().filter(dto -> dto.getQuestionId().equals(questionId)).findFirst();
+    private BigDecimal getAsBigDecimalByQuestionIdOrtalama(List<QuestionWithFirstValue> questionDTOList, Long questionId) {
+        Optional<QuestionWithFirstValue> dtoOptional = questionDTOList.stream().filter(dto -> dto.getQuestionId().equals(questionId)).findFirst();
         if (dtoOptional.isPresent()) {
             if (dtoOptional.get().getValue().equals("Evet")) {
                 //Ortalama uygulama sayısı
@@ -1648,7 +1648,7 @@ public class ExpenseService extends BaseService {
         return BigDecimal.ZERO;
     }
 
-    private BigDecimal getMedicineTotalValueAsBigDecimal(List<QuestionWithFirstAnswer> questionDTOList) {
+    private BigDecimal getMedicineTotalValueAsBigDecimal(List<QuestionWithFirstValue> questionDTOList) {
         GeneralCoefficientValue medicineRateCoef = generalCoefficientService.getFirstByGeneralCoefficientStatusAndGeneralCoefficientName(EnumStatus.ACTIVE, "İlaç fiyat artış oranı");
         //Yabani Ot Konrolü için hangi yöntemler kullanılmaktadır?
         medicineRateCoef.getValue();
@@ -1664,8 +1664,8 @@ public class ExpenseService extends BaseService {
     }
 
     //getOperationForMedicine
-    private BigDecimal getAsBigDecimalBy(List<QuestionWithFirstAnswer> questionDTOList, Long questionId) {
-        Optional<QuestionWithFirstAnswer> dtoOptional = questionDTOList.stream().filter(dto -> dto.getQuestionId().equals(questionId)).findFirst();
+    private BigDecimal getAsBigDecimalBy(List<QuestionWithFirstValue> questionDTOList, Long questionId) {
+        Optional<QuestionWithFirstValue> dtoOptional = questionDTOList.stream().filter(dto -> dto.getQuestionId().equals(questionId)).findFirst();
         if (dtoOptional.isPresent()) {
             if (dtoOptional.get().getValue().equals("İlaç")) {
                 BigDecimal herbisitCount = getAsBigDecimalByQuestionId(questionDTOList, 116L);//herbisit-sırt mak
@@ -1685,9 +1685,9 @@ public class ExpenseService extends BaseService {
         return BigDecimal.ZERO;
     }
 
-    private BigDecimal getAsBigDecimalByQIdAndTypeValueNakil(List<QuestionWithFirstAnswer> questionDTOList, Long questionId, Long verimQuestionId,
+    private BigDecimal getAsBigDecimalByQIdAndTypeValueNakil(List<QuestionWithFirstValue> questionDTOList, Long questionId, Long verimQuestionId,
                                                              List<CropCoefficientWithFirstValue> cropCoefficientList, EnumCropCoefficientType type, EnumCropCoefficientValue value) {
-        Optional<QuestionWithFirstAnswer> dtoOptional = questionDTOList.stream().filter(dto -> dto.getQuestionId().equals(questionId)).findFirst();
+        Optional<QuestionWithFirstValue> dtoOptional = questionDTOList.stream().filter(dto -> dto.getQuestionId().equals(questionId)).findFirst();
         if (dtoOptional.isPresent()) {
             if (dtoOptional.get().getValue().equals("Evet")) {
                 //Verim ne kadar

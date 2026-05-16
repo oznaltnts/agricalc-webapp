@@ -14,11 +14,11 @@ public interface CityCropSeedSeedlingPriceRepository extends JpaRepository<CityC
     @Query(value = """
             SELECT p.type  as enumType,
                    c.value as value
-            FROM agricalc.city_crop_seed_and_seedling_prices p
+            FROM city_crop_seed_and_seedling_prices p
                      JOIN (SELECT c1.*
-                           FROM agricalc.city_crop_seed_and_seedling_price_values c1
+                           FROM city_crop_seed_and_seedling_price_values c1
                                     JOIN (SELECT city_crop_seed_and_seedling_price_id, MAX(idate) AS idate
-                                          FROM agricalc.city_crop_seed_and_seedling_price_values
+                                          FROM city_crop_seed_and_seedling_price_values
                                           GROUP BY city_crop_seed_and_seedling_price_id) x
                                          ON c1.city_crop_seed_and_seedling_price_id = x.city_crop_seed_and_seedling_price_id
                                              AND c1.idate = x.idate) c ON c.city_crop_seed_and_seedling_price_id = p.id

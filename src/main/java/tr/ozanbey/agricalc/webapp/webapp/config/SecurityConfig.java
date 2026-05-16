@@ -38,9 +38,9 @@ public class SecurityConfig {
                         .requestMatchers("/jakarta.faces.resource/**").permitAll()
                         .requestMatchers("/", "/common/**", "/public/**").permitAll()
                         // user özel
-                        .requestMatchers("/secured/**").hasAnyRole("USER")
+                        .requestMatchers("/secured/**").hasAuthority("USER")
                         // admin özel
-                        .requestMatchers("/secured/admin/**").hasRole("ADMIN")
+                        .requestMatchers("/secured/admin/**").hasAuthority("ADMIN")
                         .anyRequest().authenticated()
                 )
                 .formLogin(form -> form
@@ -66,7 +66,7 @@ public class SecurityConfig {
                         .maximumSessions(3)
                 )
                 .rememberMe(remember -> remember
-                        .tokenValiditySeconds(1209600)
+                        .tokenValiditySeconds(1209600) //2 weeks
                         .useSecureCookie(true)
                         .rememberMeCookieName("agricalc-remember-me")
                         .key("")

@@ -7,17 +7,18 @@ import lombok.*;
 @Getter
 @Setter
 @Entity
-@Table(name = "crop_coefficient_answers")
+@Table(name = "city_crop_question_values")
 @NoArgsConstructor
 @AllArgsConstructor
 @ToString(onlyExplicitlyIncluded = true)
-public class CropCoefficientAnswer extends AbstractEntity {
+public class CityCropQuestionValue extends AbstractEntity {
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "crop_coefficient_id", referencedColumnName = "id", nullable = false)
-    private CropCoefficient cropCoefficient;
+    @JoinColumn(name = "city_crop_question_id", referencedColumnName = "id", nullable = false)
+    private CityCropQuestion cityCropQuestion;
 
     @Column(name = "value", nullable = false)
     @ToString.Include
     private String value;
+
 }

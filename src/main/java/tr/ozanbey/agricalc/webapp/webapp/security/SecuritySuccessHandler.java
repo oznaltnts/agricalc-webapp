@@ -24,10 +24,14 @@ public class SecuritySuccessHandler implements AuthenticationSuccessHandler {
             SecurityContextHolder.clearContext();
             response.sendRedirect("/public/login?error=blocked");
         } else {
-            loginController.assignUserPreference(currentUser.getUser().getId());
             loginController.clearLoginFailures(currentUser.getUser().getId());
             loginController.createLoginSuccess(currentUser.getUser().getId());
-            response.sendRedirect("/");
+            loginController.updateLastLoginInfo(currentUser.getUser());
+            loginController.assignUserPreference(currentUser.getUser().getId());
+            if (currentUser.getUser().getBeforeLastLogin() == null)
+                response.sendRedirect("/secured/profile");
+            else
+                response.sendRedirect("/secured/parcel");
         }
     }
 

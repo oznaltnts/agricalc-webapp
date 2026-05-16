@@ -5,10 +5,12 @@ import jakarta.faces.context.FacesContext;
 import jakarta.faces.view.ViewScoped;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 import tr.ozanbey.agricalc.webapp.service.service.BaseService;
+import tr.ozanbey.agricalc.webapp.webapp.security.CurrentUser;
 import tr.ozanbey.agricalc.webapp.webapp.util.JSFUtils;
 import tr.ozanbey.agricalc.webapp.webapp.util.io.CryptoUtils;
 
@@ -50,6 +52,10 @@ public class BaseController implements Serializable {
 
     public String getLocaleMessage(String key) {
         return JSFUtils.getLocaleMessage(key);
+    }
+
+    public CurrentUser getCurrentUser() {
+        return (CurrentUser) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
     }
 
 }

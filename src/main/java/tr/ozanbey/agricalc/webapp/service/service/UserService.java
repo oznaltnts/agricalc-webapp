@@ -5,6 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import tr.ozanbey.agricalc.webapp.service.domain.User;
+import tr.ozanbey.agricalc.webapp.service.domain.UserInformation;
 import tr.ozanbey.agricalc.webapp.service.domain.UserPreference;
 import tr.ozanbey.agricalc.webapp.service.domain.UserRole;
 import tr.ozanbey.agricalc.webapp.service.enumtype.EnumRole;
@@ -13,6 +14,7 @@ import tr.ozanbey.agricalc.webapp.service.repository.UserInformationRepository;
 import tr.ozanbey.agricalc.webapp.service.repository.UserPreferenceRepository;
 import tr.ozanbey.agricalc.webapp.service.repository.UserRepository;
 import tr.ozanbey.agricalc.webapp.service.repository.UserRoleRepository;
+import tr.ozanbey.agricalc.webapp.webapp.util.helpers.DateHelper;
 import tr.ozanbey.agricalc.webapp.webapp.util.io.CryptoUtils;
 
 import java.util.ArrayList;
@@ -44,23 +46,19 @@ public class UserService extends BaseService {
     }
 
     @Transactional
-    public void registerUser(String email, String phone, String password) throws Exception {
+    public void registerUser(String phone, String password) throws Exception {
         String formatted = "+90" + phone.replaceAll("\\D", "");
         if (checkUserExistByPhone(formatted)) {
             throw new Exception("Bu numara ile kullanıcı mevcut");
         }
-        if (email != null && !email.isEmpty() && checkUserExistByEmail(email)) {
-            throw new Exception("Bu email ile kullanıcı mevcut");
-        }
 
-        User user = saveUser(email, formatted, password);
+        User user = saveUser(formatted, password);
         generatePreferenceForUser(user);
     }
 
-    private User saveUser(String email, String formatted, String password) {
+    private User saveUser(String formatted, String password) {
         User user = new User();
         user.setStatus(EnumStatus.ACTIVE);
-        user.setEmail(email);
         user.setPhone(formatted);
         user.setPassword(CryptoUtils.oneWayHash(password));
         assignRoleToUser(user, EnumRole.USER);
@@ -79,14 +77,20 @@ public class UserService extends BaseService {
         return optionalUser.isPresent();
     }
 
-    private boolean checkUserExistByEmail(String email) {
-        Optional<User> optionalUser = userRepository.findByEmail(email);
-        return optionalUser.isPresent();
-    }
-
     private void generatePreferenceForUser(User user) {
         UserPreference userPreference = UserPreference.createWithTemplateData(user);
         preferenceRepository.save(userPreference);
+    }
+
+    @Transactional
+    public void updateLastLoginInfo(User user) {
+        user.setBeforeLastLogin(user.getLastLogin());
+        user.setLastLogin(DateHelper.now());
+        userRepository.save(user);
+    }
+
+    public UserInformation getInformationByUserId(Long userId) {
+        return informationRepository.findByUserId(userId);
     }
 
 }

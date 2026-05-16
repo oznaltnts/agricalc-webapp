@@ -11,6 +11,7 @@ public class CityCropFieldHarvestAverageValueService extends BaseService {
     private CityCropFieldHarvestAverageValueRepository valueRepository;
 
     public double getAverageValueByCityCropId(Long cityCropId) {
-        return valueRepository.findAverageValueByCityCropId(cityCropId);
+        return valueRepository.findAverageValueByCityCropId(cityCropId).orElse(0.0);
     }
+
 }

@@ -5,6 +5,7 @@ import jakarta.persistence.*;
 import lombok.*;
 import tr.ozanbey.agricalc.webapp.service.enumtype.EnumRole;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Objects;
 
@@ -17,10 +18,6 @@ import java.util.Objects;
 @ToString(onlyExplicitlyIncluded = true)
 public class User extends AbstractStatusEntity {
 
-    @Column(name = "email", unique = true)
-    @ToString.Include
-    private String email;
-
     @Column(name = "phone", unique = true, nullable = false, length = 25)
     @ToString.Include
     private String phone;
@@ -30,6 +27,12 @@ public class User extends AbstractStatusEntity {
 
     @OneToMany(mappedBy = "user", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     private List<UserRole> roleList;
+
+    @Column(name = "last_login")
+    private LocalDateTime lastLogin;
+
+    @Column(name = "before_last_login")
+    private LocalDateTime beforeLastLogin;
 
     public User(Long id) {
         super.setId(id);
@@ -43,12 +46,12 @@ public class User extends AbstractStatusEntity {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (!(o instanceof User other)) return false;
-        return email != null && email.equals(other.getEmail());
+        return phone != null && phone.equals(other.getPhone());
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(email);
+        return Objects.hash(phone);
     }
 
 }

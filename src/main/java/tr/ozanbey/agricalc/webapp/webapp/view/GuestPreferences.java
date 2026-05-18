@@ -3,10 +3,11 @@ package tr.ozanbey.agricalc.webapp.webapp.view;
 import jakarta.annotation.PostConstruct;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
-import lombok.Setter;
 import org.primefaces.PrimeFaces;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
+import tr.ozanbey.agricalc.webapp.service.service.UserService;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -18,23 +19,21 @@ import java.util.List;
 @Getter
 public class GuestPreferences implements Serializable {
 
-    @Setter
+    @Autowired
+    private UserService userService;
+
     private String menuMode = "layout-horizontal";
 
     private String darkMode = "dark";
 
-    @Setter
     private String componentTheme = "green";
 
     private String topbarTheme = "dark";
 
-    @Setter
     private String menuTheme = "dark";
 
-    @Setter
     private String inputStyle = "outlined";
 
-    @Setter
     private boolean lightLogo = true;
 
     private final List<ComponentTheme> componentThemes = new ArrayList<>();
@@ -56,6 +55,7 @@ public class GuestPreferences implements Serializable {
         this.menuTheme = darkMode;
         this.topbarTheme = darkMode;
         this.lightLogo = !this.topbarTheme.equals("light");
+        userService.saveUserPreferences(menuMode, darkMode, componentTheme, topbarTheme, menuTheme, inputStyle, lightLogo);
     }
 
     public String getLayout() {
@@ -69,6 +69,7 @@ public class GuestPreferences implements Serializable {
     public void setTopbarTheme(String topbarTheme) {
         this.topbarTheme = topbarTheme;
         this.lightLogo = !this.topbarTheme.equals("light");
+        userService.saveUserPreferences(menuMode, darkMode, componentTheme, topbarTheme, menuTheme, inputStyle, lightLogo);
     }
 
     public String getInputStyleClass() {
@@ -88,6 +89,31 @@ public class GuestPreferences implements Serializable {
         String name;
         String file;
         String color;
+    }
+
+    public void setMenuMode(String menuMode) {
+        this.menuMode = menuMode;
+        userService.saveUserPreferences(menuMode, darkMode, componentTheme, topbarTheme, menuTheme, inputStyle, lightLogo);
+    }
+
+    public void setComponentTheme(String componentTheme) {
+        this.componentTheme = componentTheme;
+        userService.saveUserPreferences(menuMode, darkMode, componentTheme, topbarTheme, menuTheme, inputStyle, lightLogo);
+    }
+
+    public void setMenuTheme(String menuTheme) {
+        this.menuTheme = menuTheme;
+        userService.saveUserPreferences(menuMode, darkMode, componentTheme, topbarTheme, menuTheme, inputStyle, lightLogo);
+    }
+
+    public void setInputStyle(String inputStyle) {
+        this.inputStyle = inputStyle;
+        userService.saveUserPreferences(menuMode, darkMode, componentTheme, topbarTheme, menuTheme, inputStyle, lightLogo);
+    }
+
+    public void setLightLogo(boolean lightLogo) {
+        this.lightLogo = lightLogo;
+        userService.saveUserPreferences(menuMode, darkMode, componentTheme, topbarTheme, menuTheme, inputStyle, lightLogo);
     }
 
 }

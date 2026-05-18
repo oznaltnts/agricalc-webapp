@@ -19,7 +19,7 @@ public class UserInformation extends AbstractEntity {
     private User user;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "city_id", referencedColumnName = "id", nullable = false)
+    @JoinColumn(name = "city_id", referencedColumnName = "id")
     private City city;
 
     @Column(name = "tckn")

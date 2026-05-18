@@ -514,6 +514,36 @@ CREATE TABLE `user_informations`
     ENGINE = InnoDB
     AUTO_INCREMENT = 1;
 
+CREATE TABLE `user_plant_assets`
+(
+    `id`          BIGINT      NOT NULL AUTO_INCREMENT,
+    `idate`       DATETIME    NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    `user_id`     BIGINT      NOT NULL,
+    `plant_asset` VARCHAR(25) NOT NULL,
+    `quantity`    INTEGER     NOT NULL,
+    PRIMARY KEY (`id`),
+    CONSTRAINT `FK_user_plant_assets_users` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`),
+    INDEX idx_user_plant_assets (`user_id`)
+)
+    ENGINE = InnoDB
+    AUTO_INCREMENT = 1;
+
+CREATE TABLE `user_plant_asset_details`
+(
+    `id`                  BIGINT         NOT NULL AUTO_INCREMENT,
+    `idate`               DATETIME       NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    `user_plant_asset_id` BIGINT         NOT NULL,
+    `asset_model`         VARCHAR(255)   NULL     DEFAULT NULL,
+    `asset_price`         DECIMAL(15, 3) NULL     DEFAULT NULL,
+    `tractor_brand`       VARCHAR(255)   NULL     DEFAULT NULL,
+    `asset_type`          VARCHAR(255)   NULL     DEFAULT NULL,
+    `spraying_tank`       DECIMAL(15, 3) NULL     DEFAULT NULL,
+    `rent_income_price`   DECIMAL(15, 3) NULL     DEFAULT NULL,
+    PRIMARY KEY (`id`),
+    CONSTRAINT `FK_user_plant_asset_details_user_plant_asset` FOREIGN KEY (`user_plant_asset_id`) REFERENCES `user_plant_assets` (`id`)
+)
+    ENGINE = InnoDB
+    AUTO_INCREMENT = 1;
 
 
 

@@ -14,7 +14,7 @@ import lombok.Setter;
 @AllArgsConstructor
 public class UserLoginFailure extends AbstractStatusEntity {
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", referencedColumnName = "id", nullable = false)
     private User user;
 

@@ -4,10 +4,7 @@ import jakarta.transaction.Transactional;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import tr.ozanbey.agricalc.webapp.service.domain.User;
-import tr.ozanbey.agricalc.webapp.service.domain.UserInformation;
-import tr.ozanbey.agricalc.webapp.service.domain.UserPreference;
-import tr.ozanbey.agricalc.webapp.service.domain.UserRole;
+import tr.ozanbey.agricalc.webapp.service.domain.*;
 import tr.ozanbey.agricalc.webapp.service.enumtype.EnumRole;
 import tr.ozanbey.agricalc.webapp.service.enumtype.EnumStatus;
 import tr.ozanbey.agricalc.webapp.service.repository.UserInformationRepository;
@@ -16,9 +13,11 @@ import tr.ozanbey.agricalc.webapp.service.repository.UserRepository;
 import tr.ozanbey.agricalc.webapp.service.repository.UserRoleRepository;
 import tr.ozanbey.agricalc.webapp.webapp.util.helpers.DateHelper;
 import tr.ozanbey.agricalc.webapp.webapp.util.io.CryptoUtils;
+import tr.ozanbey.agricalc.webapp.webapp.view.UserInformationView;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 
 @Service
@@ -89,8 +88,82 @@ public class UserService extends BaseService {
         userRepository.save(user);
     }
 
-    public UserInformation getInformationByUserId(Long userId) {
-        return informationRepository.findByUserId(userId);
+    public UserInformationView getInformationByUserId() {
+        UserInformation information = informationRepository.findByUserId(getCurrentUser().getUser().getId());
+        UserInformationView view = new UserInformationView();
+        if (information != null) {
+            if (information.getCity() != null)
+                view.setUserCityId(information.getCity().getId());
+            view.setTckn(information.getTckn());
+            view.setName(information.getNameSurname());
+            view.setEmail(information.getEmail());
+            view.setDistrict(information.getDistrict());
+            view.setVillage(information.getVillage());
+            view.setNeighborhood(information.getNeighborhood());
+        }
+        return view;
     }
+
+    @Transactional
+    public boolean save(UserInformationView informationView) {
+        UserInformation information = informationRepository.findByUserId(getCurrentUser().getUser().getId());
+        if (checkIsThereDifference(informationView, information)) {
+            if (information == null) {
+                information = new UserInformation();
+            }
+            viewToEntity(informationView, information);
+            informationRepository.save(information);
+            return true;
+        }
+        return false;
+    }
+
+    private void viewToEntity(UserInformationView informationView, UserInformation information) {
+        information.setUser(getCurrentUser().getUser());
+        if (informationView.getUserCityId() != null) {
+            information.setCity(new City(informationView.getUserCityId()));
+        }
+        information.setTckn(informationView.getTckn());
+        information.setNameSurname(informationView.getName());
+        information.setEmail(informationView.getEmail());
+        information.setDistrict(informationView.getDistrict());
+        information.setVillage(informationView.getVillage());
+        information.setNeighborhood(informationView.getNeighborhood());
+    }
+
+    private boolean checkIsThereDifference(UserInformationView view, UserInformation info) {
+        if (info == null && view == null)
+            return false;
+
+        if (info == null || view == null)
+            return true;
+
+        return !Objects.equals(info.getCity() != null ? info.getCity().getId() : null, view.getUserCityId())
+                || !Objects.equals(info.getTckn(), view.getTckn())
+                || !Objects.equals(info.getNameSurname(), view.getName())
+                || !Objects.equals(info.getEmail(), view.getEmail())
+                || !Objects.equals(info.getDistrict(), view.getDistrict())
+                || !Objects.equals(info.getVillage(), view.getVillage())
+                || !Objects.equals(info.getNeighborhood(), view.getNeighborhood());
+    }
+
+    public void saveUserPreferences(String menuMode,
+                                    String darkMode,
+                                    String componentTheme,
+                                    String topbarTheme,
+                                    String menuTheme,
+                                    String inputStyle,
+                                    boolean lightLogo) {
+        UserPreference userPreference = preferenceRepository.findByUserId(getCurrentUser().getUser().getId());
+        userPreference.setMenuMode(menuMode);
+        userPreference.setDarkMode(darkMode);
+        userPreference.setComponentTheme(componentTheme);
+        userPreference.setTopbarTheme(topbarTheme);
+        userPreference.setMenuTheme(menuTheme);
+        userPreference.setInputStyle(inputStyle);
+        userPreference.setLightLogo(lightLogo);
+        preferenceRepository.save(userPreference);
+    }
+
 
 }

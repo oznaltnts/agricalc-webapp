@@ -13,14 +13,14 @@ import jakarta.faces.render.RenderKitFactory;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.primefaces.PrimeFaces;
-import org.springframework.context.annotation.Scope;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
+import org.springframework.web.context.annotation.SessionScope;
 
 import java.io.IOException;
 
 @Component
-@Scope("session")
+@SessionScope
 public class JsfAjaxTimeoutPhaseListener implements PhaseListener {
 
     public void afterPhase(PhaseEvent event) {

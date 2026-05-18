@@ -507,6 +507,8 @@ CREATE TABLE `user_informations`
     `village`      VARCHAR(255) NULL     DEFAULT NULL,
     `neighborhood` VARCHAR(255) NULL     DEFAULT NULL,
     PRIMARY KEY (`id`),
+    UNIQUE (`tckn`),
+    UNIQUE (`email`),
     CONSTRAINT `FK_user_informations_users` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`),
     CONSTRAINT `FK_user_informations_cities` FOREIGN KEY (`city_id`) REFERENCES `cities` (`id`),
     INDEX idx_user_informations (`user_id`)

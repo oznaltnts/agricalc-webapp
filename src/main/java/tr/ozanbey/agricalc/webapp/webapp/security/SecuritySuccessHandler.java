@@ -31,7 +31,7 @@ public class SecuritySuccessHandler implements AuthenticationSuccessHandler {
             if (currentUser.getUser().getBeforeLastLogin() == null)
                 response.sendRedirect("/secured/profile");
             else
-                response.sendRedirect("/secured/parcel");
+                response.sendRedirect("/secured/fixed-asset");
         }
     }
 

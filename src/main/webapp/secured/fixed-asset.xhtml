@@ -1,0 +1,242 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="jakarta.faces.html"
+                xmlns:f="jakarta.faces.core"
+                xmlns:ui="jakarta.faces.facelets"
+                xmlns:p="http://primefaces.org/ui"
+                template="/templates/template.xhtml">
+
+    <ui:define name="title">Profil Sayfası</ui:define>
+
+    <ui:define name="content">
+        <div class="grid">
+            <div class="col">
+                <div class="card">
+                    <h2>Demişbaş bilgileriniz güncelleyin</h2>
+                    <p>Demişbaş bilgileriniz güncel mi?<br/>
+                        <a href="/secured/parcel">
+                            Üretim bilgilerinizi güncelleyin
+                        </a>
+                    </p>
+
+                    <h:form id="fixedAssetForm">
+                        <p:growl id="growl"
+                                 showDetail="true"
+                                 severity="info warn">
+                            <p:autoUpdate/>
+                        </p:growl>
+
+                        <p:panel id="fixedAssetPanel"
+                                 header="Demişbaş Bilgileri"
+                                 styleClass="mb-3">
+                            <p:focus context="@next"/>
+                            <p:selectOneButton value="#{fixedAssetController.selectedProductionType}"
+                                               styleClass="mb-3"
+                                               required="true"
+                                               requiredMessage="Lütfen üretim türünüzü seçiniz"
+                                               unselectable="false">
+                                <p:ajax event="change"
+                                        update="@parent"
+                                        listener="#{fixedAssetController.onSelectProductionType}"/>
+                                <f:selectItems value="#{fixedAssetController.productionTypes}"
+                                               var="productionType"
+                                               itemDisabled="#{productionType ne 'PLANT_PRODUCTION'}"
+                                               itemLabel="#{msg[productionType]}"
+                                               itemValue="#{productionType}"/>
+                            </p:selectOneButton>
+
+                            <ui:repeat id="repeatDeneme"
+                                       varStatus="repeatVarStatus"
+                                       value="#{fixedAssetController.enumPlantAssetList}"
+                                       var="enumAsset">
+                                <p:dataTable id="dataTable"
+                                             value="#{fixedAssetController.detailListByEnum(enumAsset)}"
+                                             var="dataTableVar"
+                                             rendered="#{fixedAssetController.selectedProductionType eq 'PLANT_PRODUCTION'}"
+                                             size="small"
+                                             scrollable="true"
+                                             emptyMessage="Toplam 0 adet #{msg[enumAsset]} ürünü var."
+                                             scrollHeight="250"
+                                             stripedRows="true">
+                                    <f:facet name="header">
+                                        <div class="flex align-items-right justify-content-between">
+                                            <h3>
+                                                #{msg[enumAsset]}
+                                            </h3>
+                                            <div>
+                                                <p:commandButton value="Yeni #{msg[enumAsset]} ekle"
+                                                                 styleClass="mr-2"
+                                                                 update="addDialogPanelGrid"
+                                                                 action="#{fixedAssetController.openDialog(enumAsset)}"
+                                                                 onclick="PF('addAsset').show()"/>
+                                                <p:commandButton value="#{msg[enumAsset]} çıkart"
+                                                                 update="@parent addDialogPanelGrid"
+                                                                 styleClass="mr-2"
+                                                                 disabled="#{fixedAssetController.detailListByEnum(enumAsset).size() lt 1}"
+                                                                 action="#{fixedAssetController.removeAsset(enumAsset)}"/>
+                                            </div>
+                                        </div>
+                                    </f:facet>
+                                    <p:column headerText="#{msg[enumAsset]} marka"
+                                              rendered="#{['TRACTOR'].contains(enumAsset.name())}">
+                                        <h:outputText value="#{dataTableVar.tractorBrand}"/>
+                                    </p:column>
+                                    <p:column headerText="#{msg[enumAsset]} tipi"
+                                              rendered="#{['SPRAYING','SEEDING','HARVESTING','OTHER'].contains(enumAsset.name())}">
+                                        <h:outputText value="#{msg[dataTableVar.sprayingType]}"
+                                                      rendered="#{['SPRAYING'].contains(enumAsset.name())}"/>
+                                        <h:outputText value="#{msg[dataTableVar.seedingType]}"
+                                                      rendered="#{['SEEDING'].contains(enumAsset.name())}"/>
+                                        <h:outputText value="#{dataTableVar.harvestingType}"
+                                                      rendered="#{['HARVESTING'].contains(enumAsset.name())}"/>
+                                        <h:outputText value="#{msg[dataTableVar.otherType]}"
+                                                      rendered="#{['OTHER'].contains(enumAsset.name())}"/>
+                                    </p:column>
+                                    <p:column headerText="#{msg[enumAsset]} tank büyüklüğü (Lt)"
+                                              rendered="#{['SPRAYING'].contains(enumAsset.name())}">
+                                        <h:outputText value="#{msg[dataTableVar.sprayingType]}"/>
+                                    </p:column>
+                                    <p:column headerText="#{msg[enumAsset]} model"
+                                              rendered="#{['TRACTOR','SPRAYING','FERTILIZER','SEEDING','HARVESTING','BALER','OTHER'].contains(enumAsset.name())}">
+                                        <h:outputText value="#{dataTableVar.assetModel}"/>
+                                    </p:column>
+                                    <p:column headerText="#{msg[enumAsset]} fiyat">
+                                        <h:outputText value="#{dataTableVar.assetPrice}"/>
+                                    </p:column>
+                                    <p:column headerText="#{msg[enumAsset]} kira geliri"
+                                              rendered="#{['HARVESTING','BALER','OTHER'].contains(enumAsset.name())}">
+                                        <h:outputText value="#{msg[dataTableVar.rentIncome]}"/>
+                                    </p:column>
+                                    <p:column headerText="#{msg[enumAsset]} yıllık kira geliri"
+                                              rendered="#{['HARVESTING','BALER','OTHER'].contains(enumAsset.name())}">
+                                        <h:outputText value="#{dataTableVar.rentIncomePrice}"/>
+                                    </p:column>
+                                </p:dataTable>
+                            </ui:repeat>
+                            <p:dialog id="addDialog"
+                                      header="Ürün ekle"
+                                      widgetVar="addAsset"
+                                      showEffect="fade"
+                                      closable="false"
+                                      modal="true">
+                                <p:panelGrid id="addDialogPanelGrid"
+                                             layout="flex"
+                                             styleClass="mt-3"
+                                             columns="1">
+                                    <p:outputPanel styleClass="ui-float-label mb-3"
+                                                   rendered="#{['TRACTOR'].contains(fixedAssetController.selectedAsset.name())}">
+                                        <p:inputText placeholder="Marka"
+                                                     value="#{fixedAssetController.assetDetail.tractorBrand}"/>
+                                        <p:outputLabel for="@previous" value="Marka"
+                                                       style="margin-left: 0.3rem"/>
+                                    </p:outputPanel>
+
+                                    <p:outputPanel styleClass="ui-float-label mb-3"
+                                                   rendered="#{['SPRAYING','SEEDING','HARVESTING','OTHER'].contains(fixedAssetController.selectedAsset.name())}">
+                                        <p:selectOneButton value="#{fixedAssetController.assetDetail.sprayingType}"
+                                                           rendered="#{['SPRAYING'].contains(fixedAssetController.selectedAsset.name())}"
+                                                           unselectable="false">
+                                            <f:selectItem itemValue="SPRAYER" itemLabel="#{msg['SPRAYER']}"/>
+                                            <f:selectItem itemValue="ATOMIZER" itemLabel="#{msg['ATOMIZER']}"/>
+                                        </p:selectOneButton>
+                                        <p:selectOneButton value="#{fixedAssetController.assetDetail.seedingType}"
+                                                           rendered="#{['SEEDING'].contains(fixedAssetController.selectedAsset.name())}"
+                                                           unselectable="false">
+                                            <f:selectItem itemValue="DRILL_1" itemLabel="#{msg['DRILL_1']}"/>
+                                            <f:selectItem itemValue="DRILL_2" itemLabel="#{msg['DRILL_2']}"/>
+                                        </p:selectOneButton>
+                                        <p:selectOneButton unselectable="false"
+                                                           value="#{fixedAssetController.assetDetail.harvestingType}"
+                                                           rendered="#{['HARVESTING'].contains(fixedAssetController.selectedAsset.name())}">
+                                            <f:selectItem itemValue="Biçerdöver" itemLabel="Biçerdöver"/>
+                                        </p:selectOneButton>
+                                        <p:selectOneButton value="#{fixedAssetController.assetDetail.otherType}"
+                                                           rendered="#{['OTHER'].contains(fixedAssetController.selectedAsset.name())}"
+                                                           unselectable="false">
+                                            <f:selectItem itemValue="CAR" itemLabel="#{msg['CAR']}"/>
+                                            <f:selectItem itemValue="VAN" itemLabel="#{msg['VAN']}"/>
+                                            <f:selectItem itemValue="TRUCK" itemLabel="#{msg['TRUCK']}"/>
+                                            <f:selectItem itemValue="DRONE" itemLabel="#{msg['DRONE']}"/>
+                                        </p:selectOneButton>
+                                    </p:outputPanel>
+
+                                    <p:outputPanel styleClass="ui-float-label mb-3"
+                                                   rendered="#{['SPRAYING'].contains(fixedAssetController.selectedAsset.name())}">
+                                        <p:inputNumber placeholder="Tank büyüklüğü (Lt)"
+                                                       value="#{fixedAssetController.assetDetail.sprayingTank}"/>
+                                        <p:outputLabel for="@previous" value="Tank büyüklüğü (Lt)"
+                                                       style="margin-left: 0.3rem"/>
+                                    </p:outputPanel>
+                                    <p:outputPanel styleClass="ui-float-label mb-3"
+                                                   rendered="#{['TRACTOR','SPRAYING','FERTILIZER','SEEDING','HARVESTING','BALER','OTHER'].contains(fixedAssetController.selectedAsset.name())}">
+                                        <p:inputText placeholder="Model"
+                                                     value="#{fixedAssetController.assetDetail.assetModel}"/>
+                                        <p:outputLabel for="@previous" value="Model"
+                                                       style="margin-left: 0.3rem"/>
+                                    </p:outputPanel>
+                                    <p:outputPanel styleClass="ui-float-label mb-3">
+                                        <p:inputNumber placeholder="₺ Değeri (tahmini)"
+                                                       symbol="₺ "
+                                                       min="0"
+                                                       decimalPlaces="0"
+                                                       value="#{fixedAssetController.assetDetail.assetPrice}"/>
+                                        <p:outputLabel for="@previous" value="₺ Değeri (tahmini)"
+                                                       style="margin-left: 0.3rem"/>
+                                    </p:outputPanel>
+                                    <p:outputPanel styleClass="ui-float-label mb-3"
+                                                   rendered="#{['HARVESTING','BALER','OTHER'].contains(fixedAssetController.selectedAsset.name())}">
+                                        <p:selectOneButton value="#{fixedAssetController.assetDetail.rentIncome}"
+                                                           label="Kiralık gelirin var mı?"
+                                                           converter="jakarta.faces.Boolean">
+                                            <p:ajax update="rentIncomeInput"/>
+                                            <f:selectItem itemLabel="Yok" itemValue="false"/>
+                                            <f:selectItem itemLabel="Var" itemValue="true"/>
+                                        </p:selectOneButton>
+                                    </p:outputPanel>
+                                    <p:outputPanel id="rentIncomeInput"
+                                                   styleClass="ui-float-label mb-3"
+                                                   rendered="#{['HARVESTING','BALER','OTHER'].contains(fixedAssetController.selectedAsset.name())}">
+                                        <p:inputNumber placeholder="₺ Yıllık kira geliri (tahmini)"
+                                                       rendered="#{fixedAssetController.assetDetail.rentIncome}"
+                                                       symbol="₺ "
+                                                       min="0"
+                                                       decimalPlaces="0"
+                                                       value="#{fixedAssetController.assetDetail.assetPrice}"/>
+                                        <p:outputLabel for="@previous" value="₺ Yıllık kira geliri (tahmini)"
+                                                       rendered="#{fixedAssetController.assetDetail.rentIncome}"
+                                                       style="margin-left: 0.3rem"/>
+                                    </p:outputPanel>
+                                </p:panelGrid>
+                                <f:facet name="footer">
+                                    <p:commandButton value="Vazgeç"
+                                                     action="#{fixedAssetController.cancelAsset}"
+                                                     style="width: 200px"
+                                                     styleClass="mb-2"
+                                                     process="@none"
+                                                     update="@parent"
+                                                     onclick="PF('addAsset').hide()"/>
+                                    <p:commandButton value="Kaydet"
+                                                     style="width: 200px"
+                                                     styleClass="mb-2"
+                                                     validateClient="true"
+                                                     update="fixedAssetPanel"
+                                                     action="#{fixedAssetController.addAsset(fixedAssetController.selectedAsset)}"
+                                                     onclick="PF('addAsset').hide()"/>
+                                </f:facet>
+                            </p:dialog>
+                            <f:facet name="footer">
+                                <p:commandButton value="Kaydet"
+                                                 styleClass="mt-3"
+                                                 action="#{fixedAssetController.updatePlantAsset}"
+                                                 process="@form"/>
+                            </f:facet>
+                        </p:panel>
+
+                    </h:form>
+                    <br/>
+                    <p>Sorunuz mu var? <a href="#">Buraya</a> basın ve bize bildirin.</p>
+                </div>
+            </div>
+        </div>
+    </ui:define>
+
+</ui:composition>

@@ -12,9 +12,9 @@
             <div class="col">
                 <div class="card">
                     <h2>Profil bilgilerinizi güncelleyin</h2>
-                    <p>Profil bilgileriniz güncel mi?
-                        <a href="/secured/parcel">
-                            Üretim bilgilerinizi girin
+                    <p>Profil bilgileriniz güncel mi?<br/>
+                        <a href="/secured/fixed-asset">
+                            Üretim bilgilerinizi güncelleyin
                         </a>
                     </p>
 
@@ -25,299 +25,84 @@
                             <p:autoUpdate/>
                         </p:growl>
 
-                        <p:wizard id="profileWizard"
-                                  flowListener="#{profileController.onFlowProcess}"
-                                  nextLabel="Sonraki"
-                                  backLabel="Önceki"
-                                  widgetVar="wizard">
-                            <p:tab id="tab1"
-                                   title="Kişisel">
-                                <p:focus context="@next"/>
-                                <p:panel header="Kişisel Bilgiler"
-                                         styleClass="mb-3">
-                                    <p:panelGrid layout="flex"
-                                                 columns="4">
-                                        <p:outputPanel styleClass="ui-float-label">
-                                            <p:inputText id="tckn"
-                                                         placeholder="TCKN"
-                                                         maxlength="11"
-                                                         style="width: 200px"
-                                                         value="#{profileController.informationView.tckn}">
-                                                <p:keyFilter mask="num"/>
-                                                <f:validateRegex pattern="^[1-9][0-9]{10}$"/>
-                                            </p:inputText>
-                                            <p:outputLabel for="@previous" value="TCKN" style="margin-left: 0.3rem"/>
-                                            <p:message for="tckn"/>
-                                        </p:outputPanel>
-                                        <p:outputPanel styleClass="ui-float-label">
-                                            <p:inputText id="name"
-                                                         placeholder="Adınız"
-                                                         style="width: 200px"
-                                                         value="#{profileController.informationView.name}"/>
-                                            <p:outputLabel for="@previous" value="Adınız" style="margin-left: 0.3rem"/>
-                                            <p:message for="name"/>
-                                        </p:outputPanel>
-                                        <p:outputPanel styleClass="ui-float-label">
-                                            <p:inputText id="emailInput"
-                                                         placeholder="E-mail"
-                                                         validatorMessage="Email formatına uygun olarak giriniz"
-                                                         style="width: 200px"
-                                                         value="#{profileController.informationView.email}"/>
-                                            <p:outputLabel for="@previous" value="E-mail" style="margin-left: 0.3rem"/>
-                                            <p:message for="emailInput"/>
-                                        </p:outputPanel>
-                                        <p:outputPanel styleClass="ui-float-label">
-                                        </p:outputPanel>
-                                        <p:outputPanel styleClass="ui-float-label">
-                                            <p:selectOneMenu style="width: 200px"
-                                                             converter="jakarta.faces.Long"
-                                                             value="#{profileController.informationView.userCityId}">
-                                                <f:selectItem itemLabel="Şehir" itemValue=""/>
-                                                <f:selectItems value="#{profileController.cityList}"
-                                                               var="city"
-                                                               itemLabel="#{city.name}"
-                                                               itemValue="#{city.id}"/>
-                                                <f:facet name="footer">
-                                                    <p:divider styleClass="mt-0"/>
-                                                    <h:outputText value="#{profileController.cityList.size()}"
-                                                                  style="font-weight:bold;"/>
-                                                </f:facet>
-                                            </p:selectOneMenu>
-                                            <p:outputLabel for="@previous" value="Şehir" style="margin-left: 0.3rem"/>
-                                        </p:outputPanel>
-                                        <p:outputPanel styleClass="ui-float-label">
-                                            <p:inputText placeholder="İlçe"
-                                                         style="width: 200px"
-                                                         value="#{profileController.informationView.district}"/>
-                                            <p:outputLabel for="@previous" value="İlçe" style="margin-left: 0.3rem"/>
-                                        </p:outputPanel>
-                                        <p:outputPanel styleClass="ui-float-label">
-                                            <p:inputText placeholder="Köy"
-                                                         style="width: 200px"
-                                                         value="#{profileController.informationView.village}"/>
-                                            <p:outputLabel for="@previous" value="Köy" style="margin-left: 0.3rem"/>
-                                        </p:outputPanel>
-                                        <p:outputPanel styleClass="ui-float-label">
-                                            <p:inputText placeholder="Mahalle"
-                                                         style="width: 200px"
-                                                         value="#{profileController.informationView.neighborhood}"/>
-                                            <p:outputLabel for="@previous" value="Mahalle" style="margin-left: 0.3rem"/>
-                                        </p:outputPanel>
-                                    </p:panelGrid>
-                                </p:panel>
-                            </p:tab>
-                            <p:tab id="tab2"
-                                   title="Demişbaş">
-                                <p:focus context="@next"/>
-                                <p:panel id="profilePanel"
-                                         header="Demişbaş Bilgileri"
-                                         styleClass="mb-3">
-                                    <p:selectOneButton value="#{profileController.selectedProductionType}"
-                                                       styleClass="mb-3"
-                                                       required="true"
-                                                       requiredMessage="Lütfen üretim türünüzü seçiniz"
-                                                       unselectable="false">
-                                        <p:ajax event="change"
-                                                update="@parent"
-                                                listener="#{profileController.onSelectProductionType}"/>
-                                        <f:selectItems value="#{profileController.productionTypes}"
-                                                       var="productionType"
-                                                       itemDisabled="#{productionType ne 'PLANT_PRODUCTION'}"
-                                                       itemLabel="#{msg[productionType]}"
-                                                       itemValue="#{productionType}"/>
-                                    </p:selectOneButton>
-
-                                    <ui:repeat id="repeatDeneme"
-                                               varStatus="repeatVarStatus"
-                                               value="#{profileController.enumPlantAssetList}"
-                                               var="enumAsset">
-                                        <p:panel id="repeatPanel" header="#{msg[enumAsset]}"
-                                                 rendered="#{profileController.plantAssetViewList.size() gt 0}">
-                                            <f:facet name="actions">
-                                                <p:commandButton value="Yeni #{msg[enumAsset]} ekle"
-                                                                 styleClass="mr-2 mb-2"
-                                                                 update="addDialogPanelGrid"
-                                                                 action="#{profileController.openDialog(enumAsset)}"
-                                                                 onclick="PF('addAsset').show()"/>
-                                                <p:commandButton value="#{msg[enumAsset]} çıkart"
-                                                                 update="@parent addDialogPanelGrid"
-                                                                 styleClass="mr-2 mb-2"
-                                                                 disabled="#{profileController.detailListByEnum(enumAsset).size() lt 1}"
-                                                                 action="#{profileController.removeAsset(enumAsset)}"/>
-                                            </f:facet>
-                                            <p:dataTable id="dataTable"
-                                                         value="#{profileController.detailListByEnum(enumAsset)}"
-                                                         var="dataTableVar"
-                                                         rendered="#{profileController.selectedProductionType eq 'PLANT_PRODUCTION'}"
-                                                         size="small"
-                                                         scrollable="true"
-                                                         emptyMessage="Toplam 0 adet #{msg[enumAsset]} ürünü var."
-                                                         scrollHeight="250"
-                                                         stripedRows="true">
-
-                                                <p:column headerText="#{msg[enumAsset]} marka"
-                                                          rendered="#{['TRACTOR'].contains(enumAsset.name())}">
-                                                    <h:outputText value="#{dataTableVar.tractorBrand}"/>
-                                                </p:column>
-
-                                                <p:column headerText="#{msg[enumAsset]} tipi"
-                                                          rendered="#{['SPRAYING','SEEDING','HARVESTING','OTHER'].contains(enumAsset.name())}">
-                                                    <h:outputText value="#{msg[dataTableVar.sprayingType]}"
-                                                                  rendered="#{['SPRAYING'].contains(enumAsset.name())}"/>
-                                                    <h:outputText value="#{msg[dataTableVar.seedingType]}"
-                                                                  rendered="#{['SEEDING'].contains(enumAsset.name())}"/>
-                                                    <h:outputText value="#{dataTableVar.harvestingType}"
-                                                                  rendered="#{['HARVESTING'].contains(enumAsset.name())}"/>
-                                                    <h:outputText value="#{msg[dataTableVar.otherType]}"
-                                                                  rendered="#{['OTHER'].contains(enumAsset.name())}"/>
-                                                </p:column>
-
-                                                <p:column headerText="#{msg[enumAsset]} tank büyüklüğü (Lt)"
-                                                          rendered="#{['SPRAYING'].contains(enumAsset.name())}">
-                                                    <h:outputText value="#{msg[dataTableVar.sprayingType]}"/>
-                                                </p:column>
-                                                <p:column headerText="#{msg[enumAsset]} model"
-                                                          rendered="#{['TRACTOR','SPRAYING','FERTILIZER','SEEDING','HARVESTING','BALER','OTHER'].contains(enumAsset.name())}">
-                                                    <h:outputText value="#{dataTableVar.assetModel}"/>
-                                                </p:column>
-                                                <p:column headerText="#{msg[enumAsset]} fiyat">
-                                                    <h:outputText value="#{dataTableVar.assetPrice}"/>
-                                                </p:column>
-                                                <p:column headerText="#{msg[enumAsset]} kira geliri"
-                                                          rendered="#{['HARVESTING','BALER','OTHER'].contains(enumAsset.name())}">
-                                                    <h:outputText value="#{msg[dataTableVar.rentIncome]}"/>
-                                                </p:column>
-                                                <p:column headerText="#{msg[enumAsset]} yıllık kira geliri"
-                                                          rendered="#{['HARVESTING','BALER','OTHER'].contains(enumAsset.name())}">
-                                                    <h:outputText value="#{dataTableVar.rentIncomePrice}"/>
-                                                </p:column>
-                                                <f:facet name="footer">
-                                            <span class="font-bold">
-                                                Toplam #{profileController.detailListByEnum(enumAsset).size()} adet #{msg[enumAsset]} ürünü var.
-                                            </span>
-                                                </f:facet>
-                                            </p:dataTable>
-                                        </p:panel>
-                                    </ui:repeat>
-                                    <p:dialog id="addDialog"
-                                              header="Ürün ekle"
-                                              widgetVar="addAsset"
-                                              showEffect="fade"
-                                              closable="false"
-                                              modal="true">
-                                        <p:panelGrid id="addDialogPanelGrid"
-                                                     layout="flex"
-                                                     styleClass="mt-3"
-                                                     columns="1">
-                                            <p:outputPanel styleClass="ui-float-label mb-3"
-                                                           rendered="#{['TRACTOR'].contains(profileController.selectedAsset.name())}">
-                                                <p:inputText placeholder="Marka"
-                                                             value="#{profileController.assetDetail.tractorBrand}"/>
-                                                <p:outputLabel for="@previous" value="Marka"
-                                                               style="margin-left: 0.3rem"/>
-                                            </p:outputPanel>
-
-                                            <p:outputPanel styleClass="ui-float-label mb-3"
-                                                           rendered="#{['SPRAYING','SEEDING','HARVESTING','OTHER'].contains(profileController.selectedAsset.name())}">
-                                                <p:selectOneButton value="#{profileController.assetDetail.sprayingType}"
-                                                                   rendered="#{['SPRAYING'].contains(profileController.selectedAsset.name())}"
-                                                                   unselectable="false">
-                                                    <f:selectItem itemValue="SPRAYER" itemLabel="#{msg['SPRAYER']}"/>
-                                                    <f:selectItem itemValue="ATOMIZER" itemLabel="#{msg['ATOMIZER']}"/>
-                                                </p:selectOneButton>
-                                                <p:selectOneButton value="#{profileController.assetDetail.seedingType}"
-                                                                   rendered="#{['SEEDING'].contains(profileController.selectedAsset.name())}"
-                                                                   unselectable="false">
-                                                    <f:selectItem itemValue="DRILL_1" itemLabel="#{msg['DRILL_1']}"/>
-                                                    <f:selectItem itemValue="DRILL_2" itemLabel="#{msg['DRILL_2']}"/>
-                                                </p:selectOneButton>
-                                                <p:selectOneButton unselectable="false"
-                                                                   value="#{profileController.assetDetail.harvestingType}"
-                                                                   rendered="#{['HARVESTING'].contains(profileController.selectedAsset.name())}">
-                                                    <f:selectItem itemValue="Biçerdöver" itemLabel="Biçerdöver"/>
-                                                </p:selectOneButton>
-                                                <p:selectOneButton value="#{profileController.assetDetail.otherType}"
-                                                                   rendered="#{['OTHER'].contains(profileController.selectedAsset.name())}"
-                                                                   unselectable="false">
-                                                    <f:selectItem itemValue="CAR" itemLabel="#{msg['CAR']}"/>
-                                                    <f:selectItem itemValue="VAN" itemLabel="#{msg['VAN']}"/>
-                                                    <f:selectItem itemValue="TRUCK" itemLabel="#{msg['TRUCK']}"/>
-                                                    <f:selectItem itemValue="DRONE" itemLabel="#{msg['DRONE']}"/>
-                                                </p:selectOneButton>
-                                            </p:outputPanel>
-
-                                            <p:outputPanel styleClass="ui-float-label mb-3"
-                                                           rendered="#{['SPRAYING'].contains(profileController.selectedAsset.name())}">
-                                                <p:inputNumber placeholder="Tank büyüklüğü (Lt)"
-                                                               value="#{profileController.assetDetail.sprayingTank}"/>
-                                                <p:outputLabel for="@previous" value="Tank büyüklüğü (Lt)"
-                                                               style="margin-left: 0.3rem"/>
-                                            </p:outputPanel>
-                                            <p:outputPanel styleClass="ui-float-label mb-3"
-                                                           rendered="#{['TRACTOR','SPRAYING','FERTILIZER','SEEDING','HARVESTING','BALER','OTHER'].contains(profileController.selectedAsset.name())}">
-                                                <p:inputText placeholder="Model"
-                                                             value="#{profileController.assetDetail.assetModel}"/>
-                                                <p:outputLabel for="@previous" value="Model"
-                                                               style="margin-left: 0.3rem"/>
-                                            </p:outputPanel>
-                                            <p:outputPanel styleClass="ui-float-label mb-3">
-                                                <p:inputNumber placeholder="₺ Değeri (tahmini)"
-                                                               symbol="₺ "
-                                                               min="0"
-                                                               decimalPlaces="0"
-                                                               value="#{profileController.assetDetail.assetPrice}"/>
-                                                <p:outputLabel for="@previous" value="₺ Değeri (tahmini)"
-                                                               style="margin-left: 0.3rem"/>
-                                            </p:outputPanel>
-                                            <p:outputPanel styleClass="ui-float-label mb-3"
-                                                           rendered="#{['HARVESTING','BALER','OTHER'].contains(profileController.selectedAsset.name())}">
-                                                <p:selectOneButton value="#{profileController.assetDetail.rentIncome}"
-                                                                   label="Kiralık gelirin var mı?"
-                                                                   converter="jakarta.faces.Boolean">
-                                                    <p:ajax update="rentIncomeInput"/>
-                                                    <f:selectItem itemLabel="Yok" itemValue="false"/>
-                                                    <f:selectItem itemLabel="Var" itemValue="true"/>
-                                                </p:selectOneButton>
-                                            </p:outputPanel>
-                                            <p:outputPanel id="rentIncomeInput"
-                                                           styleClass="ui-float-label mb-3"
-                                                           rendered="#{['HARVESTING','BALER','OTHER'].contains(profileController.selectedAsset.name())}">
-                                                <p:inputNumber placeholder="₺ Yıllık kira geliri (tahmini)"
-                                                               rendered="#{profileController.assetDetail.rentIncome}"
-                                                               symbol="₺ "
-                                                               min="0"
-                                                               decimalPlaces="0"
-                                                               value="#{profileController.assetDetail.assetPrice}"/>
-                                                <p:outputLabel for="@previous" value="₺ Yıllık kira geliri (tahmini)"
-                                                               rendered="#{profileController.assetDetail.rentIncome}"
-                                                               style="margin-left: 0.3rem"/>
-                                            </p:outputPanel>
-                                        </p:panelGrid>
+                        <p:panel header="Kişisel Bilgiler">
+                            <p:focus context="@next"/>
+                            <p:panelGrid layout="flex"
+                                         columns="2">
+                                <p:outputPanel styleClass="ui-float-label">
+                                    <p:inputText id="tckn"
+                                                 placeholder="TCKN"
+                                                 maxlength="11"
+                                                 style="width: 200px"
+                                                 value="#{profileController.informationView.tckn}">
+                                        <p:keyFilter mask="num"/>
+                                        <f:validateRegex pattern="^[1-9][0-9]{10}$"/>
+                                    </p:inputText>
+                                    <p:outputLabel for="@previous" value="TCKN" style="margin-left: 0.3rem"/>
+                                    <p:message for="tckn"/>
+                                </p:outputPanel>
+                                <p:outputPanel styleClass="ui-float-label">
+                                    <p:inputText id="name"
+                                                 placeholder="Adınız"
+                                                 style="width: 200px"
+                                                 value="#{profileController.informationView.name}"/>
+                                    <p:outputLabel for="@previous" value="Adınız" style="margin-left: 0.3rem"/>
+                                    <p:message for="name"/>
+                                </p:outputPanel>
+                                <p:outputPanel styleClass="ui-float-label">
+                                    <p:inputText id="emailInput"
+                                                 placeholder="E-mail"
+                                                 validatorMessage="Email formatına uygun olarak giriniz"
+                                                 style="width: 200px"
+                                                 value="#{profileController.informationView.email}"/>
+                                    <p:outputLabel for="@previous" value="E-mail" style="margin-left: 0.3rem"/>
+                                    <p:message for="emailInput"/>
+                                </p:outputPanel>
+                                <p:outputPanel styleClass="ui-float-label">
+                                </p:outputPanel>
+                                <p:outputPanel styleClass="ui-float-label">
+                                    <p:selectOneMenu style="width: 200px"
+                                                     converter="jakarta.faces.Long"
+                                                     value="#{profileController.informationView.userCityId}">
+                                        <f:selectItem itemLabel="Şehir" itemValue=""/>
+                                        <f:selectItems value="#{profileController.cityList}"
+                                                       var="city"
+                                                       itemLabel="#{city.name}"
+                                                       itemValue="#{city.id}"/>
                                         <f:facet name="footer">
-                                            <p:commandButton value="Vazgeç"
-                                                             action="#{profileController.cancelAsset}"
-                                                             style="width: 200px"
-                                                             styleClass="mb-2"
-                                                             process="@none"
-                                                             update="@parent"
-                                                             onclick="PF('addAsset').hide()"/>
-                                            <p:commandButton value="Kaydet"
-                                                             style="width: 200px"
-                                                             styleClass="mb-2"
-                                                             validateClient="true"
-                                                             update="profilePanel"
-                                                             action="#{profileController.addAsset(profileController.selectedAsset)}"
-                                                             onclick="PF('addAsset').hide()"/>
+                                            <p:divider styleClass="mt-0"/>
+                                            <h:outputText value="#{profileController.cityList.size()}"
+                                                          style="font-weight:bold;"/>
                                         </f:facet>
-                                    </p:dialog>
-                                </p:panel>
-                            </p:tab>
-                        </p:wizard>
+                                    </p:selectOneMenu>
+                                    <p:outputLabel for="@previous" value="Şehir" style="margin-left: 0.3rem"/>
+                                </p:outputPanel>
+                                <p:outputPanel styleClass="ui-float-label">
+                                    <p:inputText placeholder="İlçe"
+                                                 style="width: 200px"
+                                                 value="#{profileController.informationView.district}"/>
+                                    <p:outputLabel for="@previous" value="İlçe" style="margin-left: 0.3rem"/>
+                                </p:outputPanel>
+                                <p:outputPanel styleClass="ui-float-label">
+                                    <p:inputText placeholder="Köy"
+                                                 style="width: 200px"
+                                                 value="#{profileController.informationView.village}"/>
+                                    <p:outputLabel for="@previous" value="Köy" style="margin-left: 0.3rem"/>
+                                </p:outputPanel>
+                                <p:outputPanel styleClass="ui-float-label">
+                                    <p:inputText placeholder="Mahalle"
+                                                 style="width: 200px"
+                                                 value="#{profileController.informationView.neighborhood}"/>
+                                    <p:outputLabel for="@previous" value="Mahalle" style="margin-left: 0.3rem"/>
+                                </p:outputPanel>
+                            </p:panelGrid>
 
-                        <p:commandButton value="Kaydet"
-                                         styleClass="mt-3"
-                                         action="#{profileController.saveAll}"
-                                         process="@form"/>
+                            <f:facet name="footer">
+                                <p:commandButton value="Kaydet"
+                                                 action="#{profileController.updateUserProfile}"
+                                                 process="@form"/>
+                            </f:facet>
+                        </p:panel>
                     </h:form>
                     <br/>
                     <p>Sorunuz mu var? <a href="#">Buraya</a> basın ve bize bildirin.</p>

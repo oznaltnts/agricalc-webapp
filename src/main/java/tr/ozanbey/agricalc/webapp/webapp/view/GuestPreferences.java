@@ -5,9 +5,10 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import org.primefaces.PrimeFaces;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
+import org.springframework.web.context.annotation.SessionScope;
 import tr.ozanbey.agricalc.webapp.service.service.UserService;
+import tr.ozanbey.agricalc.webapp.webapp.controller.BaseController;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -15,8 +16,8 @@ import java.util.List;
 
 
 @Component("guestPreferences")
-@Scope("session")
 @Getter
+@SessionScope
 public class GuestPreferences implements Serializable {
 
     @Autowired
@@ -93,27 +94,32 @@ public class GuestPreferences implements Serializable {
 
     public void setMenuMode(String menuMode) {
         this.menuMode = menuMode;
-        userService.saveUserPreferences(menuMode, darkMode, componentTheme, topbarTheme, menuTheme, inputStyle, lightLogo);
+        savePreferenceIfLoggedIn();
+    }
+
+    private void savePreferenceIfLoggedIn() {
+        if (BaseController.isLoggedIn())
+            userService.saveUserPreferences(menuMode, darkMode, componentTheme, topbarTheme, menuTheme, inputStyle, lightLogo);
     }
 
     public void setComponentTheme(String componentTheme) {
         this.componentTheme = componentTheme;
-        userService.saveUserPreferences(menuMode, darkMode, componentTheme, topbarTheme, menuTheme, inputStyle, lightLogo);
+        savePreferenceIfLoggedIn();
     }
 
     public void setMenuTheme(String menuTheme) {
         this.menuTheme = menuTheme;
-        userService.saveUserPreferences(menuMode, darkMode, componentTheme, topbarTheme, menuTheme, inputStyle, lightLogo);
+        savePreferenceIfLoggedIn();
     }
 
     public void setInputStyle(String inputStyle) {
         this.inputStyle = inputStyle;
-        userService.saveUserPreferences(menuMode, darkMode, componentTheme, topbarTheme, menuTheme, inputStyle, lightLogo);
+        savePreferenceIfLoggedIn();
     }
 
     public void setLightLogo(boolean lightLogo) {
         this.lightLogo = lightLogo;
-        userService.saveUserPreferences(menuMode, darkMode, componentTheme, topbarTheme, menuTheme, inputStyle, lightLogo);
+        savePreferenceIfLoggedIn();
     }
 
 }

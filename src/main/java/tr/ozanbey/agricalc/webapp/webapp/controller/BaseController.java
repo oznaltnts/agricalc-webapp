@@ -5,6 +5,9 @@ import jakarta.faces.context.FacesContext;
 import jakarta.faces.view.ViewScoped;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.authentication.AnonymousAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
@@ -50,6 +53,13 @@ public class BaseController implements Serializable {
 
     public String getLocaleMessage(String key) {
         return JSFUtils.getLocaleMessage(key);
+    }
+
+    public static boolean isLoggedIn() {
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        return auth != null
+                && auth.isAuthenticated()
+                && !(auth instanceof AnonymousAuthenticationToken);
     }
 
 }

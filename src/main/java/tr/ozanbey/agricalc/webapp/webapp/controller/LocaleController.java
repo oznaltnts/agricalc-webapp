@@ -4,15 +4,15 @@ import jakarta.annotation.PostConstruct;
 import jakarta.faces.context.FacesContext;
 import lombok.Getter;
 import lombok.Setter;
-import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
+import org.springframework.web.context.annotation.SessionScope;
 
 import java.util.Locale;
 
 @Setter
 @Getter
 @Component("localeController")
-@Scope("session")
+@SessionScope
 public class LocaleController {
 
     private Locale locale;

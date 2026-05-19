@@ -5,6 +5,8 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.Table;
 import lombok.*;
 
+import java.util.Objects;
+
 @Getter
 @Setter
 @Entity
@@ -22,4 +24,15 @@ public class Crop extends AbstractStatusEntity {
     @ToString.Include
     private String name;
 
+    @Override
+    public boolean equals(Object o) {
+        if (o == null || getClass() != o.getClass()) return false;
+        Crop crop = (Crop) o;
+        return Objects.equals(groupName, crop.groupName) && Objects.equals(name, crop.name);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(groupName, name);
+    }
 }

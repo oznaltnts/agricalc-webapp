@@ -1,12 +1,9 @@
 package tr.ozanbey.agricalc.webapp.service.service;
 
 import org.springframework.stereotype.Service;
-import tr.ozanbey.agricalc.webapp.service.domain.City;
 import tr.ozanbey.agricalc.webapp.service.domain.CityCrop;
 import tr.ozanbey.agricalc.webapp.service.domain.CityCropWateringValue;
-import tr.ozanbey.agricalc.webapp.service.domain.Crop;
 import tr.ozanbey.agricalc.webapp.service.dto.*;
-import tr.ozanbey.agricalc.webapp.service.enumtype.EnumStatus;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -15,8 +12,6 @@ import java.util.*;
 @Service
 public class HomeService extends BaseService {
 
-    private final CityService cityService;
-    private final CropService cropService;
     private final CityCropService cityCropService;
     private final CityCropQuestionService cityCropQuestionService;
     private final ExpenseService expenseService;
@@ -28,9 +23,7 @@ public class HomeService extends BaseService {
     private final CityFertilizerService cityFertilizerService;
     private final CityCropWateringValueService wateringValueService;
 
-    public HomeService(CityService cityService,
-                       CropService cropService,
-                       CityCropService cityCropService,
+    public HomeService(CityCropService cityCropService,
                        CityCropQuestionService cityCropQuestionService,
                        ExpenseService expenseService,
                        CropCoefficientService cropCoefficientService,
@@ -41,8 +34,6 @@ public class HomeService extends BaseService {
                        CityFertilizerService cityFertilizerService,
                        CityCropWateringValueService wateringValueService
     ) {
-        this.cityService = cityService;
-        this.cropService = cropService;
         this.cityCropService = cityCropService;
         this.cityCropQuestionService = cityCropQuestionService;
         this.expenseService = expenseService;
@@ -55,17 +46,12 @@ public class HomeService extends BaseService {
         this.wateringValueService = wateringValueService;
     }
 
-    public List<City> getAllCities() {
-        return cityService.getAllCities();
+    public List<CityCrop> getAllActiveCityCrop() {
+        return cityCropService.getAllActiveCityCrop();
     }
 
-    public List<Crop> getAllActiveCrops() {
-        return cropService.getByStatus(EnumStatus.ACTIVE);
-    }
-
-    public Map<String, BigDecimal> calculate(Long selectedCityId, Long selectedCropId) {
+    public Map<String, BigDecimal> calculate(CityCrop cityCrop) {
         Map<String, BigDecimal> returnMap = new HashMap<>();
-        CityCrop cityCrop = cityCropService.getActiveByCityIdAndCropId(selectedCityId, selectedCropId);
         if (cityCrop != null) {
             List<QuestionWithFirstValue> questionDTOList = cityCropQuestionService.getActiveDTOsByCityCropId(cityCrop.getId());
             List<QuestionWithFirstValue> selectedDTOList = questionDTOList.stream().filter(dto -> new ArrayList<>(List.of(1L, 3L, 4L)).contains(dto.getQuestionId())).toList();

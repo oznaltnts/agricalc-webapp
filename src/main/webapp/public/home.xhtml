@@ -15,7 +15,7 @@
                     <h:form>
                         <p:growl id="growl"
                                  showDetail="true"
-                                 severity="info warn">
+                                 severity="info warn error">
                             <p:autoUpdate/>
                         </p:growl>
 
@@ -32,12 +32,11 @@
                                      columns="1">
                             <p:outputPanel styleClass="ui-float-label">
                                 <p:selectOneMenu id="cityMenu"
-                                                 required="true"
-                                                 requiredMessage="Lütfen şehir seçimi yapınız"
                                                  style="width: 200px"
                                                  filter="true"
                                                  filterMatchMode="startsWith"
                                                  value="#{homeController.selectedCityId}">
+                                    <p:ajax update="cropMenu calculateButton" listener="#{homeController.handleCropMenuOnSelect}"/>
                                     <f:selectItem itemLabel="Şehir seçiniz" itemValue=""/>
                                     <f:selectItems value="#{homeController.cityList}"
                                                    var="city"
@@ -53,12 +52,11 @@
                             </p:outputPanel>
                             <p:outputPanel styleClass="ui-float-label">
                                 <p:selectOneMenu id="cropMenu"
-                                                 required="true"
-                                                 requiredMessage="Lütfen ürün seçimi yapınız"
                                                  style="width: 200px"
                                                  filter="true"
                                                  filterMatchMode="contains"
                                                  value="#{homeController.selectedCropId}">
+                                    <p:ajax update="cityMenu calculateButton" listener="#{homeController.handleCityMenuOnSelect}"/>
                                     <f:selectItem itemLabel="Ürün seçiniz" itemValue=""/>
                                     <f:selectItems value="#{homeController.cropList}"
                                                    var="crop"
@@ -73,9 +71,11 @@
                                 <p:message for="cropMenu"/>
                             </p:outputPanel>
                         </p:panelGrid>
-                        <p:commandButton value="Hesapla"
+                        <p:commandButton id="calculateButton"
+                                         value="Hesapla"
                                          icon="pi pi-check"
                                          process="@form"
+                                         disabled="#{homeController.selectedCropId eq null or homeController.selectedCityId eq null}"
                                          style="width: 200px"
                                          update="@form"
                                          action="#{homeController.calculateIncome}"

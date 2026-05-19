@@ -10,7 +10,7 @@ import lombok.Setter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import tr.ozanbey.agricalc.webapp.service.domain.City;
-import tr.ozanbey.agricalc.webapp.service.service.HomeService;
+import tr.ozanbey.agricalc.webapp.service.service.CityService;
 import tr.ozanbey.agricalc.webapp.service.service.UserService;
 import tr.ozanbey.agricalc.webapp.webapp.view.UserInformationView;
 
@@ -26,14 +26,14 @@ public class ProfileController extends BaseController {
     private UserService userService;
 
     @Autowired
-    private HomeService homeService;
+    private CityService cityService;
 
     private List<City> cityList;
     private UserInformationView informationView;
 
     @PostConstruct
     public void init() {
-        cityList = homeService.getAllCities();
+        cityList = cityService.getAllCities();
         informationView = userService.getInformationByUserId();
     }
 
@@ -45,6 +45,5 @@ public class ProfileController extends BaseController {
                             "Kullanıcı bilgileriniz güncellenmiştir."));
         }
     }
-
 
 }

@@ -6,13 +6,16 @@ import tr.ozanbey.agricalc.webapp.service.domain.CityCrop;
 import tr.ozanbey.agricalc.webapp.service.enumtype.EnumStatus;
 import tr.ozanbey.agricalc.webapp.service.repository.CityCropRepository;
 
+import java.util.List;
+
 @Service
 public class CityCropService extends BaseService {
 
     @Autowired
     private CityCropRepository cityCropRepository;
 
-    public CityCrop getActiveByCityIdAndCropId(Long cityId, Long cropId) {
-        return cityCropRepository.getByStatusAndCity_IdAndCrop_StatusAndCrop_Id(EnumStatus.ACTIVE, cityId, EnumStatus.ACTIVE, cropId);
+    public List<CityCrop> getAllActiveCityCrop() {
+        return cityCropRepository.getByStatusAndCrop_StatusOrderByCity_CodeAscCrop_NameAsc(EnumStatus.ACTIVE, EnumStatus.ACTIVE);
     }
+
 }

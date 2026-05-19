@@ -8,6 +8,7 @@ import lombok.*;
 import tr.ozanbey.agricalc.webapp.service.converter.LongListConverter;
 
 import java.util.List;
+import java.util.Objects;
 
 @Getter
 @Setter
@@ -32,5 +33,17 @@ public class City extends AbstractEntity {
 
     public City(Long selectedCityId) {
         super.setId(selectedCityId);
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (o == null || getClass() != o.getClass()) return false;
+        City city = (City) o;
+        return Objects.equals(code, city.code);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hashCode(code);
     }
 }

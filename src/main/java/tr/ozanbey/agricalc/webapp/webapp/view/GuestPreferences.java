@@ -69,6 +69,7 @@ public class GuestPreferences implements Serializable {
 
     public void setTopbarTheme(String topbarTheme) {
         this.topbarTheme = topbarTheme;
+        this.menuTheme = topbarTheme;
         this.lightLogo = !this.topbarTheme.equals("light");
         savePreferenceIfLoggedIn();
     }

@@ -3,12 +3,12 @@ package tr.ozanbey.agricalc.webapp.webapp.view;
 import jakarta.annotation.PostConstruct;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.Setter;
 import org.primefaces.PrimeFaces;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.web.context.annotation.SessionScope;
 import tr.ozanbey.agricalc.webapp.service.service.UserService;
-import tr.ozanbey.agricalc.webapp.webapp.controller.BaseController;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -38,6 +38,9 @@ public class GuestPreferences implements Serializable {
     private boolean lightLogo = true;
 
     private final List<ComponentTheme> componentThemes = new ArrayList<>();
+
+    @Setter
+    private boolean afterLogin = false;
 
     @PostConstruct
     public void init() {
@@ -102,8 +105,8 @@ public class GuestPreferences implements Serializable {
     }
 
     private void savePreferenceIfLoggedIn() {
-        if (BaseController.isLoggedIn())
-            userService.saveUserPreferences(menuMode, darkMode, componentTheme, topbarTheme, menuTheme, inputStyle, lightLogo);
+        if (afterLogin)
+            userService.updatePreferences(menuMode, darkMode, componentTheme, topbarTheme, menuTheme, inputStyle, lightLogo);
     }
 
     public void setComponentTheme(String componentTheme) {

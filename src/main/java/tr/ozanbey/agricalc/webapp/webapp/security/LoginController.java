@@ -41,6 +41,7 @@ public class LoginController {
         guestPreferences.setMenuTheme(userPreference.getMenuTheme());
         guestPreferences.setInputStyle(userPreference.getInputStyle());
         guestPreferences.setLightLogo(userPreference.isLightLogo());
+        guestPreferences.setAfterLogin(true);
     }
 
     public void clearLoginFailures(Long userId) {

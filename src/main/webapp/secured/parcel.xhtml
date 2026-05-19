@@ -11,12 +11,253 @@
         <div class="grid">
             <div class="col">
                 <div class="card">
-                    <h:form>
+                    <h2>Parsel bilgileriniz güncelleyin</h2>
+
+                    <h:form id="parcelForm">
                         <p:growl id="growl"
                                  showDetail="true"
                                  severity="info warn">
                             <p:autoUpdate/>
                         </p:growl>
+
+                        <p:tabView dynamic="true"
+                                   cache="true"
+                                   value="#{parcelController.parcelDetails}"
+                                   var="parcelDetail">
+                            <p:tab title="#{msg[parcelDetail]}">
+                                <p:panelGrid layout="flex"
+                                             rendered="#{parcelDetail eq 'LOCATION_INFO'}"
+                                             columnClasses="col-2, col-10"
+                                             columns="2">
+                                    <p:outputLabel for="@next"
+                                                   value="Parsel tipinizi seçin"/>
+                                    <p:selectOneButton value="#{parcelController.parcelView.selectedParcelType}"
+                                                       unselectable="false">
+                                        <f:selectItems value="#{parcelController.parcelTypes}"
+                                                       var="parcelType"
+                                                       itemLabel="#{msg[parcelType]}"
+                                                       itemValue="#{parcelType}"/>
+                                    </p:selectOneButton>
+                                    <p:outputLabel for="@next"
+                                                   value="Parsel ismi"/>
+                                    <p:inputText value="#{parcelController.parcelView.parcelName}"
+                                                 style="width: 200px"
+                                                 placeholder="Parsel ismi"/>
+                                    <p:outputLabel for="@next"
+                                                   value="₺ Değeri (tahmini)"/>
+                                    <p:inputNumber placeholder="₺ Değeri (tahmini)"
+                                                   symbol="₺ "
+                                                   min="0"
+                                                   inputStyle="width: 200px"
+                                                   decimalPlaces="0"
+                                                   value="#{parcelController.parcelView.parcelPrice}"/>
+                                    <p:outputLabel for="@next"
+                                                   value="Ada numarası"/>
+                                    <p:inputNumber placeholder="Ada numarası"
+                                                   min="0"
+                                                   inputStyle="width: 200px"
+                                                   decimalPlaces="0"
+                                                   value="#{parcelController.parcelView.adaNumber}"/>
+                                    <p:outputLabel for="@next"
+                                                   value="Pafta numarası"/>
+                                    <p:inputNumber placeholder="Pafta numarası"
+                                                   min="0"
+                                                   inputStyle="width: 200px"
+                                                   decimalPlaces="0"
+                                                   value="#{parcelController.parcelView.paftaNumber}"/>
+                                    <p:outputLabel for="@next"
+                                                   value="Alan (Dekar)"/>
+                                    <p:inputNumber placeholder="Alan (Dekar)"
+                                                   value="#{parcelController.parcelView.areaDecare}"
+                                                   min="0"
+                                                   inputStyle="width: 200px"/>
+                                    <p:outputLabel for="@next"
+                                                   value="Bu parsel kiralık mı?"/>
+                                    <p:selectOneButton value="#{parcelController.parcelView.isRent}">
+                                        <p:ajax update="rentPriceLabel rentPriceNumber" partialSubmit="true"/>
+                                        <f:selectItem itemLabel="Sahipli" itemValue="#{false}"/>
+                                        <f:selectItem itemLabel="Kiralık" itemValue="#{true}"/>
+                                    </p:selectOneButton>
+                                    <p:outputPanel id="rentPriceLabel"
+                                                   style="visibility: #{parcelController.parcelView.isRent ? 'visible' : 'hidden'}">
+                                        <p:outputLabel for="rentPrice"
+                                                       value="₺ Kiralık fiyatı"
+                                                       rendered="#{parcelController.parcelView.isRent}"/>
+                                    </p:outputPanel>
+                                    <p:outputPanel id="rentPriceNumber"
+                                                   style="visibility: #{parcelController.parcelView.isRent ? 'visible' : 'hidden'}">
+                                        <p:inputNumber id="rentPrice"
+                                                       placeholder="₺ Kiralık fiyatı"
+                                                       symbol="₺ "
+                                                       min="0"
+                                                       rendered="#{parcelController.parcelView.isRent}"
+                                                       inputStyle="width: 200px"
+                                                       decimalPlaces="0"
+                                                       value="#{parcelController.parcelView.rentPrice}"/>
+                                    </p:outputPanel>
+                                </p:panelGrid>
+                                <p:panelGrid layout="flex"
+                                             rendered="#{parcelDetail eq 'LAND_STRUCTURE'}"
+                                             columnClasses="col-2, col-10"
+                                             columns="2">
+                                    <p:outputLabel for="@next"
+                                                   value="Bu parsel kiralık mı?"/>
+                                    <p:selectOneButton value="#{parcelController.parcelView.selectedStatusType}">
+                                        <f:selectItem itemLabel="Kuru" itemValue="Kuru"/>
+                                        <f:selectItem itemLabel="Dikili" itemValue="Dikili"/>
+                                        <f:selectItem itemLabel="Sulu" itemValue="Sulu"/>
+                                    </p:selectOneButton>
+                                    <p:outputLabel for="@next"
+                                                   value="Nadas var mı?"/>
+                                    <p:selectOneButton value="#{parcelController.parcelView.selectedNadasStatus}">
+                                        <f:selectItem itemLabel="Evet" itemValue="#{true}"/>
+                                        <f:selectItem itemLabel="Hayır" itemValue="#{false}"/>
+                                    </p:selectOneButton>
+                                    <p:outputLabel for="@next"
+                                                   value="Parsel eğimi"/>
+                                    <p:selectOneButton value="#{parcelController.parcelView.selectedSlope}">
+                                        <f:selectItem itemLabel="Düz" itemValue="Düz"/>
+                                        <f:selectItem itemLabel="Az eğimli" itemValue="Az eğimli"/>
+                                        <f:selectItem itemLabel="Eğimli" itemValue="Eğimli"/>
+                                        <f:selectItem itemLabel="Bazı yerler düz" itemValue="Bazı yerler düz"/>
+                                        <f:selectItem itemLabel="Dik" itemValue="Dik"/>
+                                        <f:selectItem itemLabel="Çok dik" itemValue="Çok dik"/>
+                                        <f:selectItem itemLabel="Setlenmiş dik" itemValue="Setlenmiş dik"/>
+                                    </p:selectOneButton>
+                                    <p:outputLabel for="@next"
+                                                   value="Parsel yönü"/>
+                                    <p:selectOneButton value="#{parcelController.parcelView.selectedOrientation}">
+                                        <f:selectItem itemLabel="Güney" itemValue="Güney"/>
+                                        <f:selectItem itemLabel="Güneybatı" itemValue="Güneybatı"/>
+                                        <f:selectItem itemLabel="Batı" itemValue="Batı"/>
+                                        <f:selectItem itemLabel="Kuzeybatı" itemValue="Kuzeybatı"/>
+                                        <f:selectItem itemLabel="Kuzey" itemValue="Kuzey"/>
+                                        <f:selectItem itemLabel="Kuzeydoğu" itemValue="Kuzeydoğu"/>
+                                        <f:selectItem itemLabel="Doğu" itemValue="Doğu"/>
+                                        <f:selectItem itemLabel="Güneydoğu" itemValue="Güneydoğu"/>
+                                    </p:selectOneButton>
+                                </p:panelGrid>
+                                <p:panelGrid layout="flex"
+                                             rendered="#{parcelDetail eq 'SOIL_CHARACTERISTICS'}"
+                                             columnClasses="col-2, col-10"
+                                             columns="2">
+                                    <p:outputLabel for="@next"
+                                                   value="Toprak bünyesi"/>
+                                    <p:selectOneButton value="#{parcelController.parcelView.selectedSoilTexture}">
+                                        <f:selectItem itemLabel="Tınlı" itemValue="Tınlı"/>
+                                        <f:selectItem itemLabel="Kumlu" itemValue="Kumlu"/>
+                                        <f:selectItem itemLabel="Killi" itemValue="Killi"/>
+                                        <f:selectItem itemLabel="Kumlu - tınlı" itemValue="Kumlu - tınlı"/>
+                                        <f:selectItem itemLabel="Milli tın" itemValue="Milli tın"/>
+                                        <f:selectItem itemLabel="Bilmiyorum" itemValue="Bilmiyorum"/>
+                                    </p:selectOneButton>
+                                    <p:outputLabel for="@next"
+                                                   value="Aktif toprak derinliği"/>
+                                    <p:selectOneButton value="#{parcelController.parcelView.selectedSoilDepth}">
+                                        <f:selectItem itemLabel="Sığ (0-30 cm)" itemValue="Sığ"/>
+                                        <f:selectItem itemLabel="Orta sığ (31-60 cm)" itemValue="Orta sığ"/>
+                                        <f:selectItem itemLabel="Orta (61-90 cm)" itemValue="Orta"/>
+                                        <f:selectItem itemLabel="Derin (91+ cm)" itemValue="Derin"/>
+                                        <f:selectItem itemLabel="Bilmiyorum" itemValue="Bilmiyorum"/>
+                                    </p:selectOneButton>
+                                    <p:outputLabel for="@next"
+                                                   value="Topraktaki organik madde oranı"/>
+                                    <p:selectOneButton value="#{parcelController.parcelView.selectedOrganicMatter}">
+                                        <f:selectItem itemLabel="Çok az (% 0-1)" itemValue="Çok az"/>
+                                        <f:selectItem itemLabel="Az (% 1-1,5)" itemValue="Az"/>
+                                        <f:selectItem itemLabel="Orta (% 1,5-2)" itemValue="Orta"/>
+                                        <f:selectItem itemLabel="Yeterli (% 2-3)" itemValue="Yeterli"/>
+                                        <f:selectItem itemLabel="Çok iyi (% 3+)" itemValue="Çok iyi"/>
+                                        <f:selectItem itemLabel="Bilmiyorum" itemValue="Bilmiyorum"/>
+                                    </p:selectOneButton>
+                                    <p:outputLabel for="@next"
+                                                   value="Toprak tuzluluk"/>
+                                    <p:selectOneButton value="#{parcelController.parcelView.selectedSoilSalinity}">
+                                        <f:selectItem itemLabel="Tuzsus" itemValue="Tuzsus"/>
+                                        <f:selectItem itemLabel="Çok az" itemValue="Çok az"/>
+                                        <f:selectItem itemLabel="Az tuzlu" itemValue="Az tuzlu"/>
+                                        <f:selectItem itemLabel="Tuzlu" itemValue="Tuzlu"/>
+                                        <f:selectItem itemLabel="Çok tuzlu" itemValue="Çok tuzlu"/>
+                                        <f:selectItem itemLabel="Bilmiyorum" itemValue="Bilmiyorum"/>
+                                    </p:selectOneButton>
+                                    <p:outputLabel for="@next"
+                                                   value="Kireçlilik"/>
+                                    <p:selectOneButton value="#{parcelController.parcelView.selectedLime}">
+                                        <f:selectItem itemLabel="Kireçsiz" itemValue="Kireçsiz"/>
+                                        <f:selectItem itemLabel="Az kireçli" itemValue="Az kireçli"/>
+                                        <f:selectItem itemLabel="Orta kireçli" itemValue="Orta kireçli"/>
+                                        <f:selectItem itemLabel="Kireçli" itemValue="Kireçli"/>
+                                        <f:selectItem itemLabel="Çok kireçli" itemValue="Çok kireçli"/>
+                                        <f:selectItem itemLabel="Bilmiyorum" itemValue="Bilmiyorum"/>
+                                    </p:selectOneButton>
+                                    <p:outputLabel for="@next"
+                                                   value="Fosfor"/>
+                                    <p:selectOneButton value="#{parcelController.parcelView.selectedPhosphorus}">
+                                        <f:selectItem itemLabel="Çok az" itemValue="Çok az"/>
+                                        <f:selectItem itemLabel="Az" itemValue="Az"/>
+                                        <f:selectItem itemLabel="Orta" itemValue="Orta"/>
+                                        <f:selectItem itemLabel="Yüksek" itemValue="Yüksek"/>
+                                        <f:selectItem itemLabel="Çok yüksek" itemValue="Çok yüksek"/>
+                                        <f:selectItem itemLabel="Bilmiyorum" itemValue="Bilmiyorum"/>
+                                    </p:selectOneButton>
+                                    <p:outputLabel for="@next"
+                                                   value="Potasyum"/>
+                                    <p:selectOneButton value="#{parcelController.parcelView.selectedPotassium}">
+                                        <f:selectItem itemLabel="Çok az" itemValue="Çok az"/>
+                                        <f:selectItem itemLabel="Az" itemValue="Az"/>
+                                        <f:selectItem itemLabel="Orta" itemValue="Orta"/>
+                                        <f:selectItem itemLabel="Yüksek" itemValue="Yüksek"/>
+                                        <f:selectItem itemLabel="Çok yüksek" itemValue="Çok yüksek"/>
+                                        <f:selectItem itemLabel="Bilmiyorum" itemValue="Bilmiyorum"/>
+                                    </p:selectOneButton>
+                                </p:panelGrid>
+                                <p:panelGrid layout="flex"
+                                             rendered="#{parcelDetail eq 'IRRIGATION_INFORMATION'}"
+                                             columnClasses="col-2, col-10"
+                                             columns="2">
+                                    <p:outputLabel for="@next"
+                                                   value="Su kaynağı nedir?"/>
+                                    <p:selectOneButton value="#{parcelController.parcelView.selectedWateringSource}">
+                                        <f:selectItem itemLabel="Baraj" itemValue="Baraj"/>
+                                        <f:selectItem itemLabel="Sulama koop" itemValue="Koop"/>
+                                        <f:selectItem itemLabel="Kuyu" itemValue="kuyu"/>
+                                    </p:selectOneButton>
+                                    <p:outputLabel for="@next"
+                                                   value="Sulama şekli nedir?"/>
+                                    <p:selectOneButton value="#{parcelController.parcelView.selectedWateringType}">
+                                        <f:selectItem itemLabel="Salma" itemValue="Salma"/>
+                                        <f:selectItem itemLabel="Tava" itemValue="Tava"/>
+                                        <f:selectItem itemLabel="Karık" itemValue="Karık"/>
+                                        <f:selectItem itemLabel="Damla" itemValue="Damla"/>
+                                        <f:selectItem itemLabel="Yağmurlama" itemValue="Yağmurlama"/>
+                                        <f:selectItem itemLabel="Mini sprey spring" itemValue="Mini sprey spring"/>
+                                        <f:selectItem itemLabel="Pivot" itemValue="Pivot"/>
+                                        <f:selectItem itemLabel="Center pivot" itemValue="Center pivot"/>
+                                        <f:selectItem itemLabel="Diğer" itemValue="Diğer"/>
+                                    </p:selectOneButton>
+                                    <p:outputLabel for="@next"
+                                                   value="₺ Su fiyatı"/>
+                                    <p:inputNumber placeholder="₺ Su fiyatı"
+                                                   symbol="₺ "
+                                                   min="0"
+                                                   inputStyle="width: 200px"
+                                                   decimalPlaces="0"
+                                                   value="#{parcelController.parcelView.waterPrice}"/>
+                                    <p:outputLabel for="@next"
+                                                   value="Enerji türü"/>
+                                    <p:selectOneButton value="#{parcelController.parcelView.electricSource}">
+                                        <f:selectItem itemLabel="Mazot" itemValue="Mazot"/>
+                                        <f:selectItem itemLabel="Elektrik" itemValue="Elektrik"/>
+                                        <f:selectItem itemLabel="Cazibe" itemValue="Cazibe"/>
+                                        <f:selectItem itemLabel="Diğer" itemValue="Diğer"/>
+                                    </p:selectOneButton>
+                                </p:panelGrid>
+                            </p:tab>
+                            <f:facet name="footer">
+                                <span style="font-weight:bold;">Elde edeceğiniz sonuçlar yaptığınız beyanınıza göre değişecektir.</span>
+                            </f:facet>
+                        </p:tabView>
+
                     </h:form>
                     <br/>
                     <p>Sorunuz mu var? <a href="#">Buraya</a> basın ve bize bildirin.</p>

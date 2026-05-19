@@ -147,23 +147,9 @@ public class UserService extends BaseService {
                 || !Objects.equals(info.getNeighborhood(), view.getNeighborhood());
     }
 
-    public void saveUserPreferences(String menuMode,
-                                    String darkMode,
-                                    String componentTheme,
-                                    String topbarTheme,
-                                    String menuTheme,
-                                    String inputStyle,
-                                    boolean lightLogo) {
-        UserPreference userPreference = preferenceRepository.findByUser_Id(getCurrentUser().getUser().getId());
-        userPreference.setMenuMode(menuMode);
-        userPreference.setDarkMode(darkMode);
-        userPreference.setComponentTheme(componentTheme);
-        userPreference.setTopbarTheme(topbarTheme);
-        userPreference.setMenuTheme(menuTheme);
-        userPreference.setInputStyle(inputStyle);
-        userPreference.setLightLogo(lightLogo);
-        preferenceRepository.save(userPreference);
+    @Transactional
+    public void updatePreferences(String menuMode, String darkMode, String componentTheme, String topbarTheme, String menuTheme, String inputStyle, boolean lightLogo) {
+        preferenceRepository.updatePreferenceForUser(getCurrentUser().getUser().getId(), menuMode, darkMode, componentTheme, topbarTheme, menuTheme, inputStyle, lightLogo);
     }
-
 
 }

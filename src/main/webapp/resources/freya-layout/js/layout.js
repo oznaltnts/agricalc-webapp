@@ -642,14 +642,16 @@ PrimeFaces.FreyaConfigurator = {
 
     function read(s, converter) {
         var value = config.raw ? s : parseCookieValue(s);
-        return $.isFunction(converter) ? converter(value) : value;
+        return (typeof converter === 'function') ? converter(value) : value;
+        //return $.isFunction(converter) ? converter(value) : value;
     }
 
     var config = $.cookie = function (key, value, options) {
 
         // Write
 
-        if (arguments.length > 1 && !$.isFunction(value)) {
+        if (arguments.length > 1 && typeof value !== 'function') {
+        //if (arguments.length > 1 && !$.isFunction(value)) {
             options = $.extend({}, config.defaults, options);
 
             if (typeof options.expires === 'number') {

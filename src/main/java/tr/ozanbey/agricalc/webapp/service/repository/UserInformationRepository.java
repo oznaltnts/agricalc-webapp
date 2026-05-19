@@ -7,6 +7,6 @@ import tr.ozanbey.agricalc.webapp.service.domain.UserInformation;
 
 public interface UserInformationRepository extends JpaRepository<UserInformation, Long> {
 
-    UserInformation findByUserId(Long userId);
+    UserInformation findByUser_Id(Long userId);
 
 }

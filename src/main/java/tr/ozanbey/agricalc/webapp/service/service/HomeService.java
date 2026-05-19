@@ -65,9 +65,9 @@ public class HomeService extends BaseService {
 
     public Map<String, BigDecimal> calculate(Long selectedCityId, Long selectedCropId) {
         Map<String, BigDecimal> returnMap = new HashMap<>();
-        CityCrop cityCrop = cityCropService.getByStatusAndCityIdAndCropId(EnumStatus.ACTIVE, selectedCityId, selectedCropId);
+        CityCrop cityCrop = cityCropService.getActiveByCityIdAndCropId(selectedCityId, selectedCropId);
         if (cityCrop != null) {
-            List<QuestionWithFirstValue> questionDTOList = cityCropQuestionService.getDTOsByStatusAndCityCropId(EnumStatus.ACTIVE, cityCrop.getId());
+            List<QuestionWithFirstValue> questionDTOList = cityCropQuestionService.getActiveDTOsByCityCropId(cityCrop.getId());
             List<QuestionWithFirstValue> selectedDTOList = questionDTOList.stream().filter(dto -> new ArrayList<>(List.of(1L, 3L, 4L)).contains(dto.getQuestionId())).toList();
             List<BigDecimal> yieldList = calculateYield(selectedDTOList);
             returnMap.put("yield", yieldList.getFirst());
@@ -76,11 +76,11 @@ public class HomeService extends BaseService {
             returnMap.put("price", priceList.getFirst());
             BigDecimal income = calculateIncome(yieldList.getFirst(), priceList.getFirst());
             returnMap.put("income", income);
-            List<CropCoefficientWithFirstValue> cropCoefficientList = cropCoefficientService.getDTOsByStatusAndCropId(EnumStatus.ACTIVE, cityCrop.getCrop().getId());
-            List<DieselDistanceWithFirstValue> dieselDistanceWithValueList = dieselDistanceService.getDTOsByCityId(cityCrop.getCity().getId());
-            List<SeedSeedlingWithFirstValue> seedSeedlingNumberWithValueList = seedSeedlingNumberService.getDTOsByStatusAndCityCropId(EnumStatus.ACTIVE, cityCrop.getId());
-            List<SeedSeedlingWithFirstValue> seedSeedlingPriceWithValueList = seedSeedlingPriceService.getDTOsByStatusAndCityCropId(EnumStatus.ACTIVE, cityCrop.getId());
-            List<CityFertilizerWithFirstValue> cityFertilizerWithValueList = cityFertilizerService.getDTOsByStatusAndCityId(EnumStatus.ACTIVE, cityCrop.getCity().getId());
+            List<CropCoefficientWithFirstValue> cropCoefficientList = cropCoefficientService.getActiveDTOsByCropId(cityCrop.getCrop().getId());
+            List<DieselDistanceWithFirstValue> dieselDistanceWithValueList = dieselDistanceService.getActiveDTOsByCityId(cityCrop.getCity().getId());
+            List<SeedSeedlingWithFirstValue> seedSeedlingNumberWithValueList = seedSeedlingNumberService.getActiveDTOsByCityCropId(cityCrop.getId());
+            List<SeedSeedlingWithFirstValue> seedSeedlingPriceWithValueList = seedSeedlingPriceService.getActiveDTOsByCityCropId(cityCrop.getId());
+            List<CityFertilizerWithFirstValue> cityFertilizerWithValueList = cityFertilizerService.getActiveDTOsByCityId(cityCrop.getCity().getId());
             double fieldAverageValue = fieldHarvestAverageValueService.getAverageValueByCityCropId(cityCrop.getId());
             Optional<CityCropWateringValue> wateringValueOptional = wateringValueService.getFirstByCityCropIdOrderByInsertDateDesc(cityCrop.getId());
             BigDecimal expense = expenseService.calculateExpense(questionDTOList, cropCoefficientList, dieselDistanceWithValueList,

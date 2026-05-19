@@ -7,6 +7,6 @@ import tr.ozanbey.agricalc.webapp.service.enumtype.EnumStatus;
 
 public interface CityCropRepository extends JpaRepository<CityCrop, Long> {
 
-    CityCrop getByStatusAndCityIdAndCropId(EnumStatus status, Long cityId, Long cropId);
+    CityCrop getByStatusAndCity_IdAndCrop_StatusAndCrop_Id(EnumStatus status, Long cityId, EnumStatus cropStatus, Long cropId);
 
 }

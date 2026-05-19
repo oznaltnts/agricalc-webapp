@@ -26,9 +26,10 @@ public interface CropCoefficientRepository extends JpaRepository<CropCoefficient
                                                      ON c1.crop_coefficient_id = x.crop_coefficient_id
                                                          AND c1.idate = x.idate) c
                                 ON c.crop_coefficient_id = p.id
-            WHERE p.status = ?1
+            WHERE p.status = 1
+              AND q.status = 1
               AND p.crop_id = :cropId
             """, nativeQuery = true)
-    List<CropCoefficientWithFirstValue> findDTOsByStatusAndCropId(Integer status, @Param("cropId") Long cropId);
+    List<CropCoefficientWithFirstValue> findActiveDTOsByCropId(@Param("cropId") Long cropId);
 
 }

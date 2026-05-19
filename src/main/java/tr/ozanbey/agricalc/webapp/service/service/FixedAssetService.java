@@ -21,13 +21,13 @@ public class FixedAssetService extends BaseService {
 
     @Autowired
     private UserPlantAssetRepository plantAssetRepository;
+    
     @Autowired
     private UserPlantAssetDetailRepository plantAssetDetailRepository;
 
-
     @Transactional
     public void savePlantAsset(List<UserPlantAssetView> plantAssetViewList) {
-        plantAssetRepository.deleteByUserId(getCurrentUser().getUser().getId());
+        plantAssetRepository.deleteByUser_Id(getCurrentUser().getUser().getId());
 
         List<UserPlantAsset> saveList = new ArrayList<>();
         for (UserPlantAssetView view : plantAssetViewList) {
@@ -70,7 +70,7 @@ public class FixedAssetService extends BaseService {
 
     public List<UserPlantAssetView> getPlantAssetByUserId() {
         List<UserPlantAssetView> returnList = new ArrayList<>();
-        List<UserPlantAsset> plantAssetList = plantAssetRepository.findByUserId(getCurrentUser().getUser().getId());
+        List<UserPlantAsset> plantAssetList = plantAssetRepository.findByUser_Id(getCurrentUser().getUser().getId());
         for (EnumPlantAsset asset : EnumPlantAsset.values()) {
             UserPlantAssetView userPlantAssetView = new UserPlantAssetView();
             userPlantAssetView.setPlantAsset(asset);
@@ -104,4 +104,5 @@ public class FixedAssetService extends BaseService {
         }
         return returnList;
     }
+
 }

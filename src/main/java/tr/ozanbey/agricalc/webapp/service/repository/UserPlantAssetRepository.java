@@ -8,9 +8,9 @@ import java.util.List;
 
 public interface UserPlantAssetRepository extends JpaRepository<UserPlantAsset, Long> {
 
-    List<UserPlantAsset> findByUserId(Long userId);
     @EntityGraph(attributePaths = {"plantAssetDetailList"})
+    List<UserPlantAsset> findByUser_Id(Long userId);
 
-    void deleteByUserId(Long userId);
+    void deleteByUser_Id(Long userId);
 
 }

@@ -87,7 +87,7 @@ server:
       cookie:
         secure: true
 logging:
-  file.name:
+  file.name: /home/ubuntu/tektarim/logs/tektarim-webapp.log
 ---
 spring:
   config.activate.on-profile: production

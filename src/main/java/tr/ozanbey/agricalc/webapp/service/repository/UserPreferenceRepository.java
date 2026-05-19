@@ -7,6 +7,6 @@ import tr.ozanbey.agricalc.webapp.service.domain.UserPreference;
 
 public interface UserPreferenceRepository extends JpaRepository<UserPreference, Long> {
 
-    UserPreference findByUserId(Long userId);
+    UserPreference findByUser_Id(Long userId);
 
 }

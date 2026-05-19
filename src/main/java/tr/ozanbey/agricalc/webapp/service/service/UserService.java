@@ -37,7 +37,7 @@ public class UserService extends BaseService {
     private UserInformationRepository informationRepository;
 
     public UserPreference getPreferenceByUserId(Long userId) {
-        return preferenceRepository.findByUserId(userId);
+        return preferenceRepository.findByUser_Id(userId);
     }
 
     public Optional<User> getUserIdByPhoneAndStatus(String phone, EnumStatus status) {
@@ -89,7 +89,7 @@ public class UserService extends BaseService {
     }
 
     public UserInformationView getInformationByUserId() {
-        UserInformation information = informationRepository.findByUserId(getCurrentUser().getUser().getId());
+        UserInformation information = informationRepository.findByUser_Id(getCurrentUser().getUser().getId());
         UserInformationView view = new UserInformationView();
         if (information != null) {
             if (information.getCity() != null)
@@ -106,7 +106,7 @@ public class UserService extends BaseService {
 
     @Transactional
     public boolean save(UserInformationView informationView) {
-        UserInformation information = informationRepository.findByUserId(getCurrentUser().getUser().getId());
+        UserInformation information = informationRepository.findByUser_Id(getCurrentUser().getUser().getId());
         if (checkIsThereDifference(informationView, information)) {
             if (information == null) {
                 information = new UserInformation();
@@ -154,7 +154,7 @@ public class UserService extends BaseService {
                                     String menuTheme,
                                     String inputStyle,
                                     boolean lightLogo) {
-        UserPreference userPreference = preferenceRepository.findByUserId(getCurrentUser().getUser().getId());
+        UserPreference userPreference = preferenceRepository.findByUser_Id(getCurrentUser().getUser().getId());
         userPreference.setMenuMode(menuMode);
         userPreference.setDarkMode(darkMode);
         userPreference.setComponentTheme(componentTheme);

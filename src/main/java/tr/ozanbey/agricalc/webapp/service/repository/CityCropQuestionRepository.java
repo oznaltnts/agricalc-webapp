@@ -21,8 +21,8 @@ public interface CityCropQuestionRepository extends JpaRepository<CityCropQuesti
                                           GROUP BY city_crop_question_id) x
                                          ON c1.city_crop_question_id = x.city_crop_question_id
                                              AND c1.idate = x.idate) c ON c.city_crop_question_id = p.id
-            where p.status = ?1
+            where p.status = 1
               and p.city_crop_id = :cityCropId
             """, nativeQuery = true)
-    List<QuestionWithFirstValue> findDTOsByStatusAndCityCropId(Integer status, @Param("cityCropId") Long cityCropId);
+    List<QuestionWithFirstValue> findActiveDTOsByCityCropId(@Param("cityCropId") Long cityCropId);
 }

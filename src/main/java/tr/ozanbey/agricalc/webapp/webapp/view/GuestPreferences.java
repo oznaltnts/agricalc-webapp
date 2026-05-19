@@ -56,7 +56,7 @@ public class GuestPreferences implements Serializable {
         this.menuTheme = darkMode;
         this.topbarTheme = darkMode;
         this.lightLogo = !this.topbarTheme.equals("light");
-        userService.saveUserPreferences(menuMode, darkMode, componentTheme, topbarTheme, menuTheme, inputStyle, lightLogo);
+        savePreferenceIfLoggedIn();
     }
 
     public String getLayout() {
@@ -70,7 +70,7 @@ public class GuestPreferences implements Serializable {
     public void setTopbarTheme(String topbarTheme) {
         this.topbarTheme = topbarTheme;
         this.lightLogo = !this.topbarTheme.equals("light");
-        userService.saveUserPreferences(menuMode, darkMode, componentTheme, topbarTheme, menuTheme, inputStyle, lightLogo);
+        savePreferenceIfLoggedIn();
     }
 
     public String getInputStyleClass() {
@@ -82,6 +82,7 @@ public class GuestPreferences implements Serializable {
             menuTheme = topbarTheme;
             PrimeFaces.current().executeScript("PrimeFaces.FreyaConfigurator.changeSectionTheme('" + menuTheme + "' , 'layout-menu')");
         }
+        savePreferenceIfLoggedIn();
     }
 
     @Getter

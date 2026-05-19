@@ -21,8 +21,9 @@ public interface CityDieselDistanceRepository extends JpaRepository<CityDieselDi
                                           GROUP BY city_diesel_distance_id) x
                                          ON c1.city_diesel_distance_id = x.city_diesel_distance_id
                                              AND c1.idate = x.idate) c ON c.city_diesel_distance_id = p.id
-            where p.city_id = :cityCropId
+            where p.city_id = :cityId
+              and p.status = 1
             """, nativeQuery = true)
-    List<DieselDistanceWithFirstValue> findDTOsByCityId(@Param("cityCropId") Long cityCropId);
+    List<DieselDistanceWithFirstValue> findActiveDTOsByCityId(@Param("cityId") Long cityId);
 
 }

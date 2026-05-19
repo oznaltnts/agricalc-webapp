@@ -12,7 +12,7 @@ public class CityCropService extends BaseService {
     @Autowired
     private CityCropRepository cityCropRepository;
 
-    public CityCrop getByStatusAndCityIdAndCropId(EnumStatus status, Long cityId, Long cropId) {
-        return cityCropRepository.getByStatusAndCityIdAndCropId(status, cityId, cropId);
+    public CityCrop getActiveByCityIdAndCropId(Long cityId, Long cropId) {
+        return cityCropRepository.getByStatusAndCity_IdAndCrop_StatusAndCrop_Id(EnumStatus.ACTIVE, cityId, EnumStatus.ACTIVE, cropId);
     }
 }

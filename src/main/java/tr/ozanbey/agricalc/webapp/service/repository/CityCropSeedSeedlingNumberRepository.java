@@ -22,8 +22,8 @@ public interface CityCropSeedSeedlingNumberRepository extends JpaRepository<City
                                           GROUP BY city_crop_seed_and_seedling_number_id) x
                                          ON c1.city_crop_seed_and_seedling_number_id = x.city_crop_seed_and_seedling_number_id
                                              AND c1.idate = x.idate) c ON c.city_crop_seed_and_seedling_number_id = p.id
-            WHERE p.status = ?1
+            WHERE p.status = 1
               AND p.city_crop_id = :cityCropId
             """, nativeQuery = true)
-    List<SeedSeedlingWithFirstValue> findDTOsByStatusAndCityCropId(Integer status, @Param("cityCropId") Long cityCropId);
+    List<SeedSeedlingWithFirstValue> findActiveDTOsByCityCropId(@Param("cityCropId") Long cityCropId);
 }

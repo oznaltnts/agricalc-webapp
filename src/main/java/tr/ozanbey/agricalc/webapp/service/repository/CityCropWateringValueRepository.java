@@ -9,5 +9,5 @@ import java.util.Optional;
 
 public interface CityCropWateringValueRepository extends JpaRepository<CityCropWateringValue, Long> {
 
-    Optional<CityCropWateringValue> findFirstByCityCropIdOrderByInsertDateDesc(Long cityCropId);
+    Optional<CityCropWateringValue> findFirstByCityCrop_IdOrderByInsertDateDesc(Long cityCropId);
 }

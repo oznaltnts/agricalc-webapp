@@ -3,7 +3,6 @@ package tr.ozanbey.agricalc.webapp.service.service;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import tr.ozanbey.agricalc.webapp.service.dto.CityFertilizerWithFirstValue;
-import tr.ozanbey.agricalc.webapp.service.enumtype.EnumStatus;
 import tr.ozanbey.agricalc.webapp.service.repository.CityFertilizerRepository;
 import tr.ozanbey.agricalc.webapp.service.repository.CityFertilizerValueRepository;
 
@@ -18,8 +17,8 @@ public class CityFertilizerService extends BaseService {
     @Autowired
     private CityFertilizerValueRepository cityFertilizerValueRepository;
 
-    public List<CityFertilizerWithFirstValue> getDTOsByStatusAndCityId(EnumStatus status, Long cityId) {
-        return cityFertilizerRepository.findDTOsByStatusAndCityId(status.getValue(), cityId);
+    public List<CityFertilizerWithFirstValue> getActiveDTOsByCityId(Long cityId) {
+        return cityFertilizerRepository.findActiveDTOsByCityId(cityId);
     }
 
 }

@@ -17,7 +17,7 @@ public class CityDieselDistanceService extends BaseService {
     @Autowired
     private CityDieselDistanceValueRepository dieselDistanceValueRepository;
 
-    public List<DieselDistanceWithFirstValue> getDTOsByCityId(Long cityId) {
-        return dieselDistanceRepository.findDTOsByCityId(cityId);
+    public List<DieselDistanceWithFirstValue> getActiveDTOsByCityId(Long cityId) {
+        return dieselDistanceRepository.findActiveDTOsByCityId(cityId);
     }
 }

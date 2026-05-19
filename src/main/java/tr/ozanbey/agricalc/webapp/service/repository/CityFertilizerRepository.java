@@ -31,9 +31,9 @@ public interface CityFertilizerRepository extends JpaRepository<CityFertilizer, 
                                                      ON v1.city_fertilizer_id = x.city_fertilizer_id
                                                          AND v1.idate = x.max_idate) v
                                 ON v.city_fertilizer_id = cf.id
-            WHERE f.status = ?1
-              AND cf.status = ?1
-              AND cf.city_id = :cityCropId
+            WHERE f.status = 1
+              AND cf.status = 1
+              AND cf.city_id = :cityId
             """, nativeQuery = true)
-    List<CityFertilizerWithFirstValue> findDTOsByStatusAndCityId(Integer status, @Param("cityCropId") Long cityCropId);
+    List<CityFertilizerWithFirstValue> findActiveDTOsByCityId(@Param("cityId") Long cityId);
 }

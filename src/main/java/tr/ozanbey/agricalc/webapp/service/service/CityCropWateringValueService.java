@@ -14,7 +14,7 @@ public class CityCropWateringValueService extends BaseService {
     private CityCropWateringValueRepository wateringValueRepository;
 
     public Optional<CityCropWateringValue> getFirstByCityCropIdOrderByInsertDateDesc(Long cityCropId) {
-        return wateringValueRepository.findFirstByCityCropIdOrderByInsertDateDesc(cityCropId);
+        return wateringValueRepository.findFirstByCityCrop_IdOrderByInsertDateDesc(cityCropId);
     }
 
 }

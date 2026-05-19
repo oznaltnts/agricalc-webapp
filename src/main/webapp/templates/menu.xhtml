@@ -3,6 +3,7 @@
                 xmlns:f="jakarta.faces.core"
                 xmlns:ui="jakarta.faces.facelets"
                 xmlns:p="http://primefaces.org/ui"
+                xmlns:sec="https://joinfaces.org/security"
                 xmlns:fr="http://primefaces.org/freya">
 
 <div class="menu-wrapper">
@@ -13,14 +14,16 @@
         <a href="#" class="sidebar-pin" title="Toggle Menu">
             <span class="pin"></span>
         </a>
-       
     </div>
     <div class="layout-menu-container">
         <h:form id="menuform">
             <fr:menu widgetVar="FreyaMenuWidget">
                 <p:menuitem value="Ana sayfa" icon="pi pi-home" url="/" />
-                <p:menuitem value="Profil" icon="pi pi-user-edit" url="/secured/profile" />
-                <p:menuitem value="Parsel" icon="pi pi-cog" url="/secured/parcel" />
+                <sec:authorize access="isAuthenticated()">
+                    <p:menuitem value="Profil" icon="pi pi-user-edit" url="/secured/profile" />
+                    <p:menuitem value="Demirbaş" icon="pi pi-cog" url="/secured/fixed-asset" />
+                    <p:menuitem value="Parsel" icon="pi pi-cog" url="/secured/parcel" />
+                </sec:authorize>
             </fr:menu>
         </h:form>
     </div>

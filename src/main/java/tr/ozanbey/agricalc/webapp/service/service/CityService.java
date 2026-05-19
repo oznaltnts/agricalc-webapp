@@ -18,5 +18,5 @@ public class CityService extends BaseService {
     public List<City> getAllCities() {
         return cityRepository.findAll();
     }
-    
+
 }

@@ -10,87 +10,82 @@
     <ui:define name="content">
         <div class="grid">
             <div class="col">
-                <div class="card">
-                    <h4>Ana sayfa</h4>
-                    <h:form>
-                        <p:growl id="growl"
-                                 showDetail="true"
-                                 severity="info warn error">
-                            <p:autoUpdate/>
-                        </p:growl>
+                <h2>Şehir - ürün seçerek hesaplama yapın</h2>
+                <h:form class="card">
+                    <p:growl id="growl"
+                             showDetail="true"
+                             severity="info warn error">
+                        <p:autoUpdate/>
+                    </p:growl>
 
-                        <p:focus context="homePanelGrid"/>
+                    <p:focus context="homePanelGrid"/>
+                    <p:panelGrid id="homePanelGrid"
+                                 layout="flex"
+                                 columns="1">
+                        <p:outputPanel styleClass="ui-float-label">
+                            <p:selectOneMenu id="cityMenu"
+                                             style="width: 200px"
+                                             filter="true"
+                                             filterMatchMode="startsWith"
+                                             value="#{homeController.selectedCityId}">
+                                <p:ajax update="cropMenu calculateButton"
+                                        listener="#{homeController.handleCropMenuOnSelect}"/>
+                                <f:selectItem itemLabel="Şehir seçiniz" itemValue=""/>
+                                <f:selectItems value="#{homeController.cityList}"
+                                               var="city"
+                                               itemLabel="#{city.name}"
+                                               itemValue="#{city.id}"/>
+                                <f:facet name="footer">
+                                    <p:divider styleClass="mt-0"/>
+                                    <h:outputText value="#{homeController.cityList.size()}" style="font-weight:bold;"/>
+                                </f:facet>
+                            </p:selectOneMenu>
+                            <p:outputLabel for="@previous" value="Şehir seçiniz" style="margin-left: 0.3rem"/>
+                            <p:message for="cityMenu"/>
+                        </p:outputPanel>
+                        <p:outputPanel styleClass="ui-float-label">
+                            <p:selectOneMenu id="cropMenu"
+                                             style="width: 200px"
+                                             filter="true"
+                                             filterMatchMode="contains"
+                                             value="#{homeController.selectedCropId}">
+                                <p:ajax update="cityMenu calculateButton"
+                                        listener="#{homeController.handleCityMenuOnSelect}"/>
+                                <f:selectItem itemLabel="Ürün seçiniz" itemValue=""/>
+                                <f:selectItems value="#{homeController.cropList}"
+                                               var="crop"
+                                               itemLabel="#{crop.groupName} - #{crop.name}"
+                                               itemValue="#{crop.id}"/>
+                                <f:facet name="footer">
+                                    <p:divider styleClass="mt-0"/>
+                                    <h:outputText value="#{homeController.cropList.size()}" style="font-weight:bold;"/>
+                                </f:facet>
+                            </p:selectOneMenu>
+                            <p:outputLabel for="@previous" value="Ürün seçiniz" style="margin-left: 0.3rem"/>
+                            <p:message for="cropMenu"/>
+                        </p:outputPanel>
+                    </p:panelGrid>
+                    <p:commandButton id="calculateButton"
+                                     value="Hesapla"
+                                     icon="pi pi-check"
+                                     process="@form"
+                                     disabled="#{homeController.selectedCropId eq null or homeController.selectedCityId eq null}"
+                                     style="width: 200px"
+                                     update="@form"
+                                     action="#{homeController.calculateIncome}"
+                                     validateClient="true"
+                                     styleClass="m-2"/>
 
-                        <h2>Şehir - ürün seçerek hesaplama yapın</h2>
-                        <p>Hesabınız var mı?<br/>
-                            <a href="/public/login">
-                                Giriş yapın
-                            </a>
-                        </p>
-                        <p:panelGrid id="homePanelGrid"
-                                     layout="flex"
-                                     columns="1">
-                            <p:outputPanel styleClass="ui-float-label">
-                                <p:selectOneMenu id="cityMenu"
-                                                 style="width: 200px"
-                                                 filter="true"
-                                                 filterMatchMode="startsWith"
-                                                 value="#{homeController.selectedCityId}">
-                                    <p:ajax update="cropMenu calculateButton" listener="#{homeController.handleCropMenuOnSelect}"/>
-                                    <f:selectItem itemLabel="Şehir seçiniz" itemValue=""/>
-                                    <f:selectItems value="#{homeController.cityList}"
-                                                   var="city"
-                                                   itemLabel="#{city.name}"
-                                                   itemValue="#{city.id}"/>
-                                    <f:facet name="footer">
-                                        <p:divider styleClass="mt-0" />
-                                        <h:outputText value="#{homeController.cityList.size()}" style="font-weight:bold;"/>
-                                    </f:facet>
-                                </p:selectOneMenu>
-                                <p:outputLabel for="@previous" value="Şehir seçiniz" style="margin-left: 0.3rem"/>
-                                <p:message for="cityMenu"/>
-                            </p:outputPanel>
-                            <p:outputPanel styleClass="ui-float-label">
-                                <p:selectOneMenu id="cropMenu"
-                                                 style="width: 200px"
-                                                 filter="true"
-                                                 filterMatchMode="contains"
-                                                 value="#{homeController.selectedCropId}">
-                                    <p:ajax update="cityMenu calculateButton" listener="#{homeController.handleCityMenuOnSelect}"/>
-                                    <f:selectItem itemLabel="Ürün seçiniz" itemValue=""/>
-                                    <f:selectItems value="#{homeController.cropList}"
-                                                   var="crop"
-                                                   itemLabel="#{crop.groupName} - #{crop.name}"
-                                                   itemValue="#{crop.id}"/>
-                                    <f:facet name="footer">
-                                        <p:divider styleClass="mt-0" />
-                                        <h:outputText value="#{homeController.cropList.size()}" style="font-weight:bold;"/>
-                                    </f:facet>
-                                </p:selectOneMenu>
-                                <p:outputLabel for="@previous" value="Ürün seçiniz" style="margin-left: 0.3rem"/>
-                                <p:message for="cropMenu"/>
-                            </p:outputPanel>
-                        </p:panelGrid>
-                        <p:commandButton id="calculateButton"
-                                         value="Hesapla"
-                                         icon="pi pi-check"
-                                         process="@form"
-                                         disabled="#{homeController.selectedCropId eq null or homeController.selectedCityId eq null}"
-                                         style="width: 200px"
-                                         update="@form"
-                                         action="#{homeController.calculateIncome}"
-                                         validateClient="true"
-                                         styleClass="m-2"  />
-
-                        <div class="ui-fluid formgrid grid">
-                            <ui:repeat value="#{homeController.calculateMap}" var="calculate">
-                                <div class="field col-12 md:col-12">
-                                    <p:outputLabel value="#{calculate.key}: #{calculate.value}"/>
-                                </div>
-                            </ui:repeat>
-                        </div>
-                    </h:form>
-                </div>
+                    <div class="ui-fluid formgrid grid">
+                        <ui:repeat value="#{homeController.calculateMap}" var="calculate">
+                            <div class="field col-12 md:col-12">
+                                <p:outputLabel value="#{calculate.key}: #{calculate.value}"/>
+                            </div>
+                        </ui:repeat>
+                    </div>
+                </h:form>
+                <br/>
+                <p>Sorunuz mu var? <a href="#">Buraya</a> basın ve bize bildirin.</p>
             </div>
         </div>
     </ui:define>

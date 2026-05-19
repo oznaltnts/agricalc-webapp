@@ -5,6 +5,7 @@ import jakarta.annotation.PostConstruct;
 import jakarta.faces.view.ViewScoped;
 import lombok.Getter;
 import lombok.Setter;
+import org.primefaces.event.TabChangeEvent;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import tr.ozanbey.agricalc.webapp.service.enumtype.plantation.EnumParcelDetail;
@@ -27,6 +28,12 @@ public class ParcelController extends BaseController {
 
     @PostConstruct
     public void init() {
+    }
+
+    public void onTabChange(TabChangeEvent event) {
+    }
+
+    public void save() {
     }
 
 }

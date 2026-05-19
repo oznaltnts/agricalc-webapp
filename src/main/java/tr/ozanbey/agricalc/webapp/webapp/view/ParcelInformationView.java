@@ -1,5 +1,7 @@
 package tr.ozanbey.agricalc.webapp.webapp.view;
 
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -17,6 +19,8 @@ public class ParcelInformationView implements Serializable {
 
     // Parsel Bilgisi
     private EnumParcelType selectedParcelType;
+    @NotBlank(message = "Bu parsele bir isim verin")
+    @Size(min = 3, message = "Parsel ismini en az 3 karakter olarak giriniz")
     private String parcelName;
     private BigDecimal parcelPrice;
     private Integer adaNumber;

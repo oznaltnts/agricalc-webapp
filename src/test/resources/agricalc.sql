@@ -488,6 +488,7 @@ CREATE TABLE `user_preferences`
     `input_style`     VARCHAR(25) NOT NULL,
     `light_logo`      TINYINT     NOT NULL,
     PRIMARY KEY (`id`),
+    UNIQUE (`user_id`),
     CONSTRAINT `FK_user_preferences_users` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`),
     INDEX idx_user_preferences (`user_id`)
 )
@@ -543,6 +544,42 @@ CREATE TABLE `user_plant_asset_details`
     `rent_income_price`   DECIMAL(15, 3) NULL     DEFAULT NULL,
     PRIMARY KEY (`id`),
     CONSTRAINT `FK_user_plant_asset_details_user_plant_asset` FOREIGN KEY (`user_plant_asset_id`) REFERENCES `user_plant_assets` (`id`)
+)
+    ENGINE = InnoDB
+    AUTO_INCREMENT = 1;
+
+CREATE TABLE `user_plant_parcels`
+(
+    `id`              BIGINT         NOT NULL AUTO_INCREMENT,
+    `idate`           DATETIME       NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    `user_id`         BIGINT         NOT NULL,
+    `parcel_type`     VARCHAR(255)   NULL     DEFAULT NULL,
+    `parce_name`      VARCHAR(255)   NOT NULL,
+    `parcel_price`    DECIMAL(15, 3) NULL     DEFAULT NULL,
+    `ada_number`      INTEGER        NULL     DEFAULT NULL,
+    `pafta_number`    INTEGER        NULL     DEFAULT NULL,
+    `area_decare`     DECIMAL(15, 3) NULL     DEFAULT NULL,
+    `rent_price`      DECIMAL(15, 3) NULL     DEFAULT NULL,
+    `status_type`     VARCHAR(255)   NULL     DEFAULT NULL,
+    `nadas`           TINYINT        NULL     DEFAULT NULL,
+    `slope`           VARCHAR(255)   NULL     DEFAULT NULL,
+    `orientation`     VARCHAR(255)   NULL     DEFAULT NULL,
+    `soil_texture`    VARCHAR(255)   NULL     DEFAULT NULL,
+    `soil_depth`      VARCHAR(255)   NULL     DEFAULT NULL,
+    `organic_matter`  VARCHAR(255)   NULL     DEFAULT NULL,
+    `soil_salinity`   VARCHAR(255)   NULL     DEFAULT NULL,
+    `lime`            VARCHAR(255)   NULL     DEFAULT NULL,
+    `phosphorus`      VARCHAR(255)   NULL     DEFAULT NULL,
+    `potassium`       VARCHAR(255)   NULL     DEFAULT NULL,
+    `watering_source` VARCHAR(255)   NULL     DEFAULT NULL,
+    `watering_type`   VARCHAR(255)   NULL     DEFAULT NULL,
+    `water_price`     DECIMAL(15, 3) NULL     DEFAULT NULL,
+    `electric_source` VARCHAR(255)   NULL     DEFAULT NULL,
+    PRIMARY KEY (`id`),
+    UNIQUE (`user_id`, `parce_name`),
+    ##  UNIQUE (`ada_number`,`pafta_number`),
+    CONSTRAINT `FK_user_plant_parcels_users` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`),
+    INDEX idx_user_plant_parcels (`user_id`)
 )
     ENGINE = InnoDB
     AUTO_INCREMENT = 1;

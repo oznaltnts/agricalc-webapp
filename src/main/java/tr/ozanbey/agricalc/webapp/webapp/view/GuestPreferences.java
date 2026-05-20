@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.web.context.annotation.SessionScope;
 import tr.ozanbey.agricalc.webapp.service.service.UserService;
+import tr.ozanbey.agricalc.webapp.webapp.controller.BaseController;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -23,6 +24,7 @@ public class GuestPreferences implements Serializable {
     @Autowired
     private UserService userService;
 
+    @Setter
     private String menuMode = "layout-horizontal";
 
     private String darkMode = "dark";
@@ -99,14 +101,9 @@ public class GuestPreferences implements Serializable {
         String color;
     }
 
-    public void setMenuMode(String menuMode) {
-        this.menuMode = menuMode;
-        savePreferenceIfLoggedIn();
-    }
-
     private void savePreferenceIfLoggedIn() {
         if (afterLogin)
-            userService.updatePreferences(menuMode, darkMode, componentTheme, topbarTheme, menuTheme, inputStyle, lightLogo);
+            userService.updatePreferences(BaseController.getCurrentUser().getUser().getId(), menuMode, darkMode, componentTheme, topbarTheme, menuTheme, inputStyle, lightLogo);
     }
 
     public void setComponentTheme(String componentTheme) {

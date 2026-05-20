@@ -4,6 +4,7 @@ import jakarta.transaction.Transactional;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import tr.ozanbey.agricalc.webapp.service.domain.User;
 import tr.ozanbey.agricalc.webapp.service.domain.UserPlantAsset;
 import tr.ozanbey.agricalc.webapp.service.domain.UserPlantAssetDetail;
 import tr.ozanbey.agricalc.webapp.service.enumtype.plantation.EnumPlantAsset;
@@ -26,14 +27,14 @@ public class FixedAssetService extends BaseService {
     private UserPlantAssetDetailRepository plantAssetDetailRepository;
 
     @Transactional
-    public void savePlantAsset(List<UserPlantAssetView> plantAssetViewList) {
-        plantAssetRepository.deleteByUser_Id(getCurrentUser().getUser().getId());
+    public void savePlantAsset(List<UserPlantAssetView> plantAssetViewList, User user) {
+        plantAssetRepository.deleteByUser_Id(user.getId());
 
         List<UserPlantAsset> saveList = new ArrayList<>();
         for (UserPlantAssetView view : plantAssetViewList) {
             if (view.getQuantity() > 0) {
                 UserPlantAsset plantAsset = new UserPlantAsset();
-                plantAsset.setUser(getCurrentUser().getUser());
+                plantAsset.setUser(user);
                 plantAsset.setPlantAsset(view.getPlantAsset());
                 plantAsset.setQuantity(view.getQuantity());
                 List<UserPlantAssetDetail> assetDetailList = new ArrayList<>();
@@ -68,9 +69,9 @@ public class FixedAssetService extends BaseService {
         plantAssetRepository.saveAll(saveList);
     }
 
-    public List<UserPlantAssetView> getPlantAssetByUserId() {
+    public List<UserPlantAssetView> getPlantAssetByUserId(Long userId) {
         List<UserPlantAssetView> returnList = new ArrayList<>();
-        List<UserPlantAsset> plantAssetList = plantAssetRepository.findByUser_Id(getCurrentUser().getUser().getId());
+        List<UserPlantAsset> plantAssetList = plantAssetRepository.findByUser_Id(userId);
         for (EnumPlantAsset asset : EnumPlantAsset.values()) {
             UserPlantAssetView userPlantAssetView = new UserPlantAssetView();
             userPlantAssetView.setPlantAsset(asset);

@@ -34,11 +34,11 @@ public class ProfileController extends BaseController {
     @PostConstruct
     public void init() {
         cityList = cityService.getAllCities();
-        informationView = userService.getInformationByUserId();
+        informationView = userService.getInformationByUserId(getCurrentUser().getUser().getId());
     }
 
     public void updateUserProfile() {
-        if (userService.save(informationView)) {
+        if (userService.save(informationView, getCurrentUser().getUser())) {
             FacesContext.getCurrentInstance().addMessage(null,
                     new FacesMessage(FacesMessage.SEVERITY_INFO,
                             "Kayıt başarılı",

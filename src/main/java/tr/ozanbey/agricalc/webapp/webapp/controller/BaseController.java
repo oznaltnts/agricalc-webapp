@@ -12,6 +12,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 import tr.ozanbey.agricalc.webapp.service.service.BaseService;
+import tr.ozanbey.agricalc.webapp.webapp.security.CurrentUser;
 import tr.ozanbey.agricalc.webapp.webapp.util.JSFUtils;
 import tr.ozanbey.agricalc.webapp.webapp.util.io.CryptoUtils;
 
@@ -53,6 +54,10 @@ public class BaseController implements Serializable {
 
     public String getLocaleMessage(String key) {
         return JSFUtils.getLocaleMessage(key);
+    }
+
+    public static CurrentUser getCurrentUser() {
+        return (CurrentUser) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
     }
 
     public static boolean isLoggedIn() {

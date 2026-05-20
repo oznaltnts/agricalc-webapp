@@ -88,8 +88,8 @@ public class UserService extends BaseService {
         userRepository.save(user);
     }
 
-    public UserInformationView getInformationByUserId() {
-        UserInformation information = informationRepository.findByUser_Id(getCurrentUser().getUser().getId());
+    public UserInformationView getInformationByUserId(Long userId) {
+        UserInformation information = informationRepository.findByUser_Id(userId);
         UserInformationView view = new UserInformationView();
         if (information != null) {
             if (information.getCity() != null)
@@ -105,21 +105,21 @@ public class UserService extends BaseService {
     }
 
     @Transactional
-    public boolean save(UserInformationView informationView) {
-        UserInformation information = informationRepository.findByUser_Id(getCurrentUser().getUser().getId());
+    public boolean save(UserInformationView informationView, User user) {
+        UserInformation information = informationRepository.findByUser_Id(user.getId());
         if (checkIsThereDifference(informationView, information)) {
             if (information == null) {
                 information = new UserInformation();
             }
-            viewToEntity(informationView, information);
+            viewToEntity(informationView, information, user);
             informationRepository.save(information);
             return true;
         }
         return false;
     }
 
-    private void viewToEntity(UserInformationView informationView, UserInformation information) {
-        information.setUser(getCurrentUser().getUser());
+    private void viewToEntity(UserInformationView informationView, UserInformation information, User user) {
+        information.setUser(user);
         if (informationView.getUserCityId() != null) {
             information.setCity(new City(informationView.getUserCityId()));
         }
@@ -148,8 +148,8 @@ public class UserService extends BaseService {
     }
 
     @Transactional
-    public void updatePreferences(String menuMode, String darkMode, String componentTheme, String topbarTheme, String menuTheme, String inputStyle, boolean lightLogo) {
-        preferenceRepository.updatePreferenceForUser(getCurrentUser().getUser().getId(), menuMode, darkMode, componentTheme, topbarTheme, menuTheme, inputStyle, lightLogo);
+    public void updatePreferences(Long userId, String menuMode, String darkMode, String componentTheme, String topbarTheme, String menuTheme, String inputStyle, boolean lightLogo) {
+        preferenceRepository.updatePreferenceForUser(userId, menuMode, darkMode, componentTheme, topbarTheme, menuTheme, inputStyle, lightLogo);
     }
 
 }

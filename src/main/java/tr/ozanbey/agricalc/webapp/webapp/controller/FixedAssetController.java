@@ -15,7 +15,6 @@ import tr.ozanbey.agricalc.webapp.service.enumtype.plantation.EnumPlantAsset;
 import tr.ozanbey.agricalc.webapp.service.service.FixedAssetService;
 import tr.ozanbey.agricalc.webapp.webapp.view.UserPlantAssetView;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -41,7 +40,7 @@ public class FixedAssetController extends BaseController {
 
     public void onSelectProductionType() {
         if (selectedProductionType.equals(EnumProductionType.PLANT_PRODUCTION)) {
-            plantAssetViewList = fixedAssetService.getPlantAssetByUserId();
+            plantAssetViewList = fixedAssetService.getPlantAssetByUserId(getCurrentUser().getUser().getId());
         }
     }
 
@@ -80,7 +79,7 @@ public class FixedAssetController extends BaseController {
     }
 
     public void updatePlantAsset() {
-        fixedAssetService.savePlantAsset(plantAssetViewList);
+        fixedAssetService.savePlantAsset(plantAssetViewList, getCurrentUser().getUser());
         FacesContext.getCurrentInstance().addMessage(null,
                 new FacesMessage(FacesMessage.SEVERITY_INFO,
                         "Kayıt başarılı",

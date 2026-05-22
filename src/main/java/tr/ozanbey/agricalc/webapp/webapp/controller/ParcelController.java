@@ -2,6 +2,8 @@ package tr.ozanbey.agricalc.webapp.webapp.controller;
 
 
 import jakarta.annotation.PostConstruct;
+import jakarta.faces.application.FacesMessage;
+import jakarta.faces.context.FacesContext;
 import jakarta.faces.view.ViewScoped;
 import lombok.Getter;
 import lombok.Setter;
@@ -13,6 +15,10 @@ import tr.ozanbey.agricalc.webapp.service.enumtype.plantation.EnumParcelType;
 import tr.ozanbey.agricalc.webapp.service.service.ParcelService;
 import tr.ozanbey.agricalc.webapp.webapp.view.ParcelInformationView;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
+
 @Component("parcelController")
 @ViewScoped
 @Getter
@@ -22,18 +28,79 @@ public class ParcelController extends BaseController {
     @Autowired
     private ParcelService parcelService;
 
-    private ParcelInformationView parcelView = new ParcelInformationView();
-    private EnumParcelDetail[] parcelDetails = EnumParcelDetail.values();
     private EnumParcelType[] parcelTypes = EnumParcelType.values();
+    private EnumParcelType selectedParcelType;
+    private List<ParcelInformationView> parcelViewList = new ArrayList<>();
+    private ParcelInformationView selectedParcelView;
+
+    private EnumParcelDetail[] parcelDetails = EnumParcelDetail.values();
 
     @PostConstruct
     public void init() {
+        selectedParcelType = EnumParcelType.OPEN_FIELD;
+        fillParcelViewList();
+    }
+
+    private void fillParcelViewList() {
+        parcelViewList = parcelService.parcelListByUser(getCurrentUser().getUser().getId());
     }
 
     public void onTabChange(TabChangeEvent event) {
+        selectedParcelView = null;
+        selectedParcelType = (EnumParcelType) event.getData();
     }
 
-    public void save() {
+    public List<ParcelInformationView> detailListByEnum(EnumParcelType parcelType) {
+        return parcelViewList.stream()
+                .filter(pa -> pa.getParcelType().equals(parcelType))
+                .toList();
+    }
+
+    public void editRow(ParcelInformationView parcelView) {
+        selectedParcelView = parcelView;
+    }
+
+    public void addNew() {
+        selectedParcelView = new ParcelInformationView();
+        selectedParcelView.setParcelType(selectedParcelType);
+    }
+
+    public void cancelSaveButton() {
+        selectedParcelView = null;
+    }
+
+    public void saveButton() {
+        saveParcelView();
+    }
+
+    private void saveParcelView() {
+        if (selectedParcelView.getParcelName() != null) {
+            Optional<ParcelInformationView> optionalView = parcelViewList.stream()
+                    .filter(v ->
+                            v.getParcelName().equals(selectedParcelView.getParcelName()) &&
+                                    !v.getRecordId().equals(selectedParcelView.getRecordId()))
+                    .findFirst();
+            if (optionalView.isEmpty()) {
+                parcelService.saveParcel(selectedParcelView, getCurrentUser().getUser());
+                FacesContext.getCurrentInstance().addMessage(null,
+                        new FacesMessage(FacesMessage.SEVERITY_INFO,
+                                "Kayıt başarılı", "Parseliniz listenize eklenmiştir."));
+                selectedParcelView = null;
+                fillParcelViewList();
+            } else {
+                FacesContext.getCurrentInstance().addMessage(null,
+                        new FacesMessage(FacesMessage.SEVERITY_WARN,
+                                "Kayıt başarısız", "Bu isimli parseliniz zaten mevcut."));
+            }
+        }
+    }
+
+    public void deleteRow(ParcelInformationView parcelView) {
+        parcelService.deleteParcel(parcelView.getRecordId());
+        FacesContext.getCurrentInstance().addMessage(null,
+                new FacesMessage(FacesMessage.SEVERITY_INFO,
+                        "Silme başarılı", "Parseliniz listenizden çıkartılmıştır."));
+        fillParcelViewList();
     }
 
 }

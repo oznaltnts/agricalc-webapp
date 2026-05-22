@@ -523,7 +523,6 @@ CREATE TABLE `user_plant_assets`
     `idate`       DATETIME    NOT NULL DEFAULT CURRENT_TIMESTAMP,
     `user_id`     BIGINT      NOT NULL,
     `plant_asset` VARCHAR(25) NOT NULL,
-    `quantity`    INTEGER     NOT NULL,
     PRIMARY KEY (`id`),
     CONSTRAINT `FK_user_plant_assets_users` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`),
     INDEX idx_user_plant_assets (`user_id`)

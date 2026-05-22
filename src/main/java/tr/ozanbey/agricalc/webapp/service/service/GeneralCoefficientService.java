@@ -16,8 +16,8 @@ public class GeneralCoefficientService extends BaseService {
     @Autowired
     private GeneralCoefficientValueRepository generalCoefficientValueRepository;
 
-    public GeneralCoefficientValue getFirstByGeneralCoefficientStatusAndGeneralCoefficientName(EnumStatus status, String name) {
-        return generalCoefficientValueRepository.findFirstByGeneralCoefficientStatusAndGeneralCoefficientNameOrderByInsertDateDesc(status, name);
+    public GeneralCoefficientValue getFirstActiveByGeneralCoefficientName(String name) {
+        return generalCoefficientValueRepository.findFirstByGeneralCoefficient_StatusAndGeneralCoefficient_NameOrderByInsertDateDesc(EnumStatus.ACTIVE, name);
     }
 
 }

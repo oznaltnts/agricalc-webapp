@@ -38,9 +38,9 @@ public class ExpenseService extends BaseService {
         BigDecimal orderMachineLtDec = getAsBigDecimalByQuestionIdAndValueAndType(questionDTOList, 21L,
                 cropCoefficientList, EnumCropCoefficientType.NEEDED_DIESEL, EnumCropCoefficientValue.NEEDED_DIESEL_DEEP);
         // Çalışma saati
-        GeneralCoefficientValue workingHour = generalCoefficientService.getFirstByGeneralCoefficientStatusAndGeneralCoefficientName(EnumStatus.ACTIVE, "Çalışma saati");
+        GeneralCoefficientValue workingHour = generalCoefficientService.getFirstActiveByGeneralCoefficientName("Çalışma saati");
         // Amortisman katsayısı
-        GeneralCoefficientValue amortization = generalCoefficientService.getFirstByGeneralCoefficientStatusAndGeneralCoefficientName(EnumStatus.ACTIVE, "Traktör makine amortisman katsayısı");
+        GeneralCoefficientValue amortization = generalCoefficientService.getFirstActiveByGeneralCoefficientName("Traktör makine amortisman katsayısı");
         //Erkek işçi yevmiyesi ne kadardır?
         BigDecimal orderMachineTLDec = getAsBigDecimalByQuestionIdAndDieselDistancesAndGeneralCoefficients(questionDTOList, 40L,
                 dieselDistanceWithValueList, EnumDieselDistanceType.DIESEL_PRICE, EnumDieselDistanceType.PLOWING_FIELD,
@@ -600,10 +600,10 @@ public class ExpenseService extends BaseService {
             BigDecimal powerCoef = BigDecimal.ZERO;
             if (energyDtoOptional.isPresent()) {
                 if (energyDtoOptional.get().getValue().equals("Elektrik")) {
-                    GeneralCoefficientValue coefficientValue = generalCoefficientService.getFirstByGeneralCoefficientStatusAndGeneralCoefficientName(EnumStatus.ACTIVE, "Elektrik katsayısı");
+                    GeneralCoefficientValue coefficientValue = generalCoefficientService.getFirstActiveByGeneralCoefficientName("Elektrik katsayısı");
                     powerCoef = coefficientValue.getValue();
                 } else if (energyDtoOptional.get().getValue().equals("Mazot")) {
-                    GeneralCoefficientValue coefficientValue = generalCoefficientService.getFirstByGeneralCoefficientStatusAndGeneralCoefficientName(EnumStatus.ACTIVE, "Mazot katsayısı");
+                    GeneralCoefficientValue coefficientValue = generalCoefficientService.getFirstActiveByGeneralCoefficientName("Mazot katsayısı");
                     powerCoef = coefficientValue.getValue();
                 }
             }
@@ -618,7 +618,7 @@ public class ExpenseService extends BaseService {
         Optional<DieselDistanceWithFirstValue> dieselPriceOptional = dieselDistanceWithValueList.stream().filter(dd -> dd.getEnumType().equals(dieselPrice)).findFirst();
         if (dieselPriceOptional.isPresent()) {
             BigDecimal dieselPriceValue = new BigDecimal(dieselPriceOptional.get().getValue());
-            GeneralCoefficientValue coefficientValue = generalCoefficientService.getFirstByGeneralCoefficientStatusAndGeneralCoefficientName(EnumStatus.ACTIVE, "Traktör makine amortisman katsayısı");
+            GeneralCoefficientValue coefficientValue = generalCoefficientService.getFirstActiveByGeneralCoefficientName("Traktör makine amortisman katsayısı");
             machinePower = dieselPriceValue.multiply(coefficientValue.getValue());
         }
         return machinePower.setScale(3, RoundingMode.HALF_UP);
@@ -635,16 +635,16 @@ public class ExpenseService extends BaseService {
             }
             if (dtoOptional.get().getValue().equals("Damlama")) {
                 if (wateringCount.compareTo(new BigDecimal(2)) > 0) {
-                    GeneralCoefficientValue coefficientValue = generalCoefficientService.getFirstByGeneralCoefficientStatusAndGeneralCoefficientName(EnumStatus.ACTIVE, "Damla amortisman (+2)");
+                    GeneralCoefficientValue coefficientValue = generalCoefficientService.getFirstActiveByGeneralCoefficientName("Damla amortisman (+2)");
                     return coefficientValue.getValue();
                 }
             } else if (dtoOptional.get().getValue().equals("Yağmurlama")) {
                 if (wateringCount.compareTo(new BigDecimal(2)) > 0) {
-                    GeneralCoefficientValue coefficientValue = generalCoefficientService.getFirstByGeneralCoefficientStatusAndGeneralCoefficientName(EnumStatus.ACTIVE, "Yağmurlama amortisman (+2))");
+                    GeneralCoefficientValue coefficientValue = generalCoefficientService.getFirstActiveByGeneralCoefficientName("Yağmurlama amortisman (+2))");
                     return coefficientValue.getValue();
                 }
             } else if (dtoOptional.get().getValue().equals("Vahşi sulama")) {
-                GeneralCoefficientValue coefficientValue = generalCoefficientService.getFirstByGeneralCoefficientStatusAndGeneralCoefficientName(EnumStatus.ACTIVE, "Vahşi sulama amortisman");
+                GeneralCoefficientValue coefficientValue = generalCoefficientService.getFirstActiveByGeneralCoefficientName("Vahşi sulama amortisman");
                 return coefficientValue.getValue();
             }
         }
@@ -845,12 +845,12 @@ public class ExpenseService extends BaseService {
         //Sulama sayısı
         BigDecimal wateringCount = BigDecimal.ZERO;
         BigDecimal value0 = getAsBigDecimalByQuestionId(questionDTOList, question1Id);
-        GeneralCoefficientValue coefWatering = generalCoefficientService.getFirstByGeneralCoefficientStatusAndGeneralCoefficientName(EnumStatus.ACTIVE, "Sulama işlem katsayısı");//Sulama katsayısı
+        GeneralCoefficientValue coefWatering = generalCoefficientService.getFirstActiveByGeneralCoefficientName("Sulama işlem katsayısı");//Sulama katsayısı
         if (coefWatering != null) {
             wateringCount = value0.multiply(coefWatering.getValue());
         }
         BigDecimal value1 = getFertilizingCount(questionDTOList);
-        GeneralCoefficientValue coefFertilizing = generalCoefficientService.getFirstByGeneralCoefficientStatusAndGeneralCoefficientName(EnumStatus.ACTIVE, "Gübreleme işlem katsayısı");//Sulama katsayısı
+        GeneralCoefficientValue coefFertilizing = generalCoefficientService.getFirstActiveByGeneralCoefficientName("Gübreleme işlem katsayısı");//Sulama katsayısı
         BigDecimal fertilizingCount = value1.multiply(coefFertilizing.getValue());
         BigDecimal value2 = getAgriculturalOp(questionDTOList);
         //Çapalama sayısı
@@ -893,7 +893,7 @@ public class ExpenseService extends BaseService {
         operationCount = operationCount.add(getAgriculturalOpWithMachine(questionDTOList));
         operationCount = operationCount.add(getAgriculturalOpWithTractor(questionDTOList));
         operationCount = operationCount.add(getAgriculturalOpWithWatering(questionDTOList));
-        GeneralCoefficientValue generalCoef = generalCoefficientService.getFirstByGeneralCoefficientStatusAndGeneralCoefficientName(EnumStatus.ACTIVE, "İlaçlama işlem katsayısı)");
+        GeneralCoefficientValue generalCoef = generalCoefficientService.getFirstActiveByGeneralCoefficientName("İlaçlama işlem katsayısı)");
         operationCount = operationCount.multiply(generalCoef.getValue());
         return operationCount;
     }
@@ -1262,7 +1262,7 @@ public class ExpenseService extends BaseService {
         if (dieselDistance2Optional.isPresent()) {
             tansportationCoef = new BigDecimal(dieselDistance2Optional.get().getValue());
         }
-        GeneralCoefficientValue amortisman = generalCoefficientService.getFirstByGeneralCoefficientStatusAndGeneralCoefficientName(EnumStatus.ACTIVE, "Taşıma aracı amortisman katsayısı");
+        GeneralCoefficientValue amortisman = generalCoefficientService.getFirstActiveByGeneralCoefficientName("Taşıma aracı amortisman katsayısı");
         BigDecimal transportationVehicleCoef = amortisman.getValue();
         Optional<DieselDistanceWithFirstValue> dieselDistance3Optional = dieselDistanceWithValueList.stream().filter(dd -> dd.getEnumType().equals(dieselDistanceType3)).findFirst();
         BigDecimal dieselPrice = BigDecimal.ZERO;
@@ -1519,7 +1519,7 @@ public class ExpenseService extends BaseService {
                 }
             }
         }
-        GeneralCoefficientValue nitrogenPriceCoef = generalCoefficientService.getFirstByGeneralCoefficientStatusAndGeneralCoefficientName(EnumStatus.ACTIVE, "Azotlu gübre fiyat artış oranı");
+        GeneralCoefficientValue nitrogenPriceCoef = generalCoefficientService.getFirstActiveByGeneralCoefficientName("Azotlu gübre fiyat artış oranı");
         BigDecimal nitrogenPriceRate = nitrogenPriceCoef.getValue();
         BigDecimal value2 = fertilizerPrice.multiply(nitrogenPriceRate).setScale(3, RoundingMode.HALF_UP);
         BigDecimal nitrogenTotal = value1.multiply(value2).setScale(3, RoundingMode.HALF_UP);
@@ -1554,7 +1554,7 @@ public class ExpenseService extends BaseService {
                 }
             }
         }
-        GeneralCoefficientValue phosphorPriceCoef = generalCoefficientService.getFirstByGeneralCoefficientStatusAndGeneralCoefficientName(EnumStatus.ACTIVE, "Fosforlu gübre fiyat artış oranı");
+        GeneralCoefficientValue phosphorPriceCoef = generalCoefficientService.getFirstActiveByGeneralCoefficientName("Fosforlu gübre fiyat artış oranı");
         BigDecimal phosphorPriceRate = phosphorPriceCoef.getValue();
         BigDecimal value6 = fertilizer3Price.multiply(phosphorPriceRate).setScale(3, RoundingMode.HALF_UP);
         BigDecimal phosphorTotal = value5.multiply(value6).setScale(3, RoundingMode.HALF_UP);
@@ -1573,7 +1573,7 @@ public class ExpenseService extends BaseService {
                 }
             }
         }
-        GeneralCoefficientValue potassiumPriceCoef = generalCoefficientService.getFirstByGeneralCoefficientStatusAndGeneralCoefficientName(EnumStatus.ACTIVE, "Potasyumlu gübre fiyat artış oranı)");
+        GeneralCoefficientValue potassiumPriceCoef = generalCoefficientService.getFirstActiveByGeneralCoefficientName("Potasyumlu gübre fiyat artış oranı)");
         BigDecimal potassiumPriceRate = potassiumPriceCoef.getValue();
         BigDecimal value8 = fertilizer4Price.multiply(potassiumPriceRate).setScale(3, RoundingMode.HALF_UP);
         BigDecimal potassiumTotal = value7.multiply(value8).setScale(3, RoundingMode.HALF_UP);
@@ -1592,7 +1592,7 @@ public class ExpenseService extends BaseService {
                 }
             }
         }
-        GeneralCoefficientValue compoundPriceCoef = generalCoefficientService.getFirstByGeneralCoefficientStatusAndGeneralCoefficientName(EnumStatus.ACTIVE, "Kompoze gübre fiyat artış oranı");
+        GeneralCoefficientValue compoundPriceCoef = generalCoefficientService.getFirstActiveByGeneralCoefficientName("Kompoze gübre fiyat artış oranı");
         BigDecimal compoundPriceRate = compoundPriceCoef.getValue();
         BigDecimal value10 = fertilizer5Price.multiply(compoundPriceRate).setScale(3, RoundingMode.HALF_UP);
         BigDecimal compoundTotal = value9.multiply(value10).setScale(3, RoundingMode.HALF_UP);
@@ -1606,7 +1606,7 @@ public class ExpenseService extends BaseService {
                 result = result.add(f.getPrice());
             }
         }
-        GeneralCoefficientValue foliarPriceCoef = generalCoefficientService.getFirstByGeneralCoefficientStatusAndGeneralCoefficientName(EnumStatus.ACTIVE, "Yaprak gübresi fiyat artış oranı)");
+        GeneralCoefficientValue foliarPriceCoef = generalCoefficientService.getFirstActiveByGeneralCoefficientName("Yaprak gübresi fiyat artış oranı)");
         BigDecimal foliarPriceRate = foliarPriceCoef.getValue();
         BigDecimal value12 = (result.divide(new BigDecimal(3), 3, RoundingMode.HALF_UP)).multiply(foliarPriceRate).setScale(3, RoundingMode.HALF_UP);
         BigDecimal liquidTotal = value11.multiply(value12).setScale(3, RoundingMode.HALF_UP);
@@ -1620,7 +1620,7 @@ public class ExpenseService extends BaseService {
                 resultHumic = resultHumic.add(s.getPrice());
             }
         }
-        GeneralCoefficientValue soilConditionerCoef = generalCoefficientService.getFirstByGeneralCoefficientStatusAndGeneralCoefficientName(EnumStatus.ACTIVE, "Toprak düzenleyiciler fiyat artış oranı");
+        GeneralCoefficientValue soilConditionerCoef = generalCoefficientService.getFirstActiveByGeneralCoefficientName("Toprak düzenleyiciler fiyat artış oranı");
         BigDecimal soilConditionerPriceRate = soilConditionerCoef.getValue();
         BigDecimal value14 = (resultHumic.divide(new BigDecimal(3), 3, RoundingMode.HALF_UP)).multiply(soilConditionerPriceRate).setScale(3, RoundingMode.HALF_UP);
         BigDecimal humiqTotal = value13.multiply(value14).setScale(3, RoundingMode.HALF_UP);
@@ -1649,7 +1649,7 @@ public class ExpenseService extends BaseService {
     }
 
     private BigDecimal getMedicineTotalValueAsBigDecimal(List<QuestionWithFirstValue> questionDTOList) {
-        GeneralCoefficientValue medicineRateCoef = generalCoefficientService.getFirstByGeneralCoefficientStatusAndGeneralCoefficientName(EnumStatus.ACTIVE, "İlaç fiyat artış oranı");
+        GeneralCoefficientValue medicineRateCoef = generalCoefficientService.getFirstActiveByGeneralCoefficientName("İlaç fiyat artış oranı");
         //Yabani Ot Konrolü için hangi yöntemler kullanılmaktadır?
         medicineRateCoef.getValue();
         BigDecimal value1 = getAsBigDecimalBy(questionDTOList, 48L);

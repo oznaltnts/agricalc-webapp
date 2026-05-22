@@ -18,7 +18,6 @@ import java.util.List;
 public class UserPlantAssetView implements Serializable {
 
     private EnumPlantAsset plantAsset;
-    private Integer quantity = 0;
     private List<AssetDetail> detailList = new ArrayList<>();
 
     public enum SprayingType {
@@ -42,6 +41,8 @@ public class UserPlantAssetView implements Serializable {
     @Setter
     @NoArgsConstructor
     public static class AssetDetail implements Serializable {
+        private Long recordId;
+
         private String assetModel;
         private BigDecimal assetPrice;
         //traktör

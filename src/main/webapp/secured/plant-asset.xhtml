@@ -1,0 +1,225 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="jakarta.faces.html"
+                xmlns:f="jakarta.faces.core"
+                xmlns:ui="jakarta.faces.facelets"
+                xmlns:p="http://primefaces.org/ui"
+                template="/templates/template.xhtml">
+
+    <ui:define name="title">Bitkisel demirbaşlar</ui:define>
+
+    <ui:define name="content">
+        <div class="grid">
+            <div class="col">
+                <h:form id="assetListForm"
+                        class="card">
+                    <h2>Bitkisel üretim demişbaşlarınız</h2>
+
+                    <p:growl id="growl"
+                             showDetail="true"
+                             severity="info warn">
+                        <p:autoUpdate/>
+                    </p:growl>
+
+                    <p:tabView value="#{plantAssetController.plantAssetTypes}"
+                               dynamic="true"
+                               cache="true"
+                               focusOnError="true"
+                               var="assetType">
+
+                        <p:ajax event="tabChange"
+                                update="assetForm"
+                                listener="#{plantAssetController.onTabChange}"/>
+
+                        <p:tab title="#{msg[assetType]}">
+                            <p:dataTable value="#{plantAssetController.detailListByEnum(assetType)}"
+                                         var="dataTableVar"
+                                         stripedRows="true"
+                                         emptyMessage="Henüz #{msg[assetType]} eklemediniz">
+                                <p:column exportable="false" style="width:200px;text-align:center">
+                                    <p:commandButton value="Düzenle"
+                                                     update="assetForm"
+                                                     process="@this"
+                                                     styleClass="ui-button-warning mr-2"
+                                                     action="#{plantAssetController.editRow(dataTableVar)}"
+                                                     icon="pi pi-check"/>
+                                    <p:commandButton value="Çıkart"
+                                                     update="assetForm assetListForm"
+                                                     process="@this"
+                                                     styleClass="ui-button-danger mr-2"
+                                                     action="#{plantAssetController.deleteRow(dataTableVar)}"
+                                                     icon="pi pi-times"/>
+                                </p:column>
+                                <p:column headerText="#{msg[assetType]} marka"
+                                          rendered="#{['TRACTOR'].contains(assetType.name())}">
+                                    <h:outputText value="#{dataTableVar.tractorBrand}"/>
+                                </p:column>
+                                <p:column headerText="#{msg[assetType]} tipi"
+                                          rendered="#{['SPRAYING','SEEDING','HARVESTING','OTHER'].contains(assetType.name())}">
+                                    <h:outputText value="#{msg[dataTableVar.sprayingType]}"
+                                                  rendered="#{['SPRAYING'].contains(assetType.name())}"/>
+                                    <h:outputText value="#{msg[dataTableVar.seedingType]}"
+                                                  rendered="#{['SEEDING'].contains(assetType.name())}"/>
+                                    <h:outputText value="#{dataTableVar.harvestingType}"
+                                                  rendered="#{['HARVESTING'].contains(assetType.name())}"/>
+                                    <h:outputText value="#{msg[dataTableVar.otherType]}"
+                                                  rendered="#{['OTHER'].contains(assetType.name())}"/>
+                                </p:column>
+                                <p:column headerText="#{msg[assetType]} tank büyüklüğü (Lt)"
+                                          rendered="#{['SPRAYING'].contains(assetType.name())}">
+                                    <h:outputText value="#{msg[dataTableVar.sprayingType]}"/>
+                                </p:column>
+                                <p:column headerText="#{msg[assetType]} model"
+                                          rendered="#{['TRACTOR','SPRAYING','FERTILIZER','SEEDING','HARVESTING','BALER','OTHER'].contains(assetType.name())}">
+                                    <h:outputText value="#{dataTableVar.assetModel}"/>
+                                </p:column>
+                                <p:column headerText="#{msg[assetType]} fiyat">
+                                    <h:outputText value="#{dataTableVar.assetPrice}"/>
+                                </p:column>
+                                <p:column headerText="#{msg[assetType]} kira geliri"
+                                          rendered="#{['HARVESTING','BALER','OTHER'].contains(assetType.name())}">
+                                    <h:outputText value="#{msg[dataTableVar.rentIncome]}"/>
+                                </p:column>
+                                <p:column headerText="#{msg[assetType]} yıllık kira geliri"
+                                          rendered="#{['HARVESTING','BALER','OTHER'].contains(assetType.name())}">
+                                    <h:outputText value="#{dataTableVar.rentIncomePrice}"/>
+                                </p:column>
+                            </p:dataTable>
+
+                            <p:commandButton value="#{msg[assetType]} ekle"
+                                             process="@this"
+                                             styleClass="mt-2"
+                                             update="assetForm"
+                                             action="#{plantAssetController.addNew}"/>
+                        </p:tab>
+                    </p:tabView>
+                </h:form>
+            </div>
+        </div>
+        <div class="grid">
+            <div class="col">
+                <h:form id="assetForm"
+                        style="visibility: #{plantAssetController.selectedAssetDetail ne null ? 'visible' : 'hidden'}"
+                        class="card">
+                    <h2>#{msg[plantAssetController.selectedAssetType]} bilgisini güncelleyin</h2>
+
+                    <p:tabView id="detailTabView"
+                               rendered="#{plantAssetController.selectedAssetDetail ne null}"
+                               dynamic="true"
+                               cache="true"
+                               focusOnError="true">
+                        <p:tab title="#{msg[plantAssetController.selectedAssetType]}">
+                            <p:panelGrid layout="flex"
+                                         rendered="#{plantAssetController.selectedAssetDetail ne null}"
+                                         columnClasses="col-3, col-9"
+                                         columns="2">
+                                <p:outputLabel for="@next"
+                                               rendered="#{['TRACTOR'].contains(plantAssetController.selectedAssetType.name())}"
+                                               value="Marka"/>
+                                <p:inputText placeholder="Marka"
+                                             rendered="#{['TRACTOR'].contains(plantAssetController.selectedAssetType.name())}"
+                                             value="#{plantAssetController.selectedAssetDetail.tractorBrand}"/>
+
+                                <p:outputLabel for="@next"
+                                               rendered="#{['SPRAYING','SEEDING','HARVESTING','OTHER'].contains(plantAssetController.selectedAssetType.name())}"
+                                               value="Demirbaş Tipi"/>
+                                <p:selectOneButton value="#{plantAssetController.selectedAssetDetail.sprayingType}"
+                                                   rendered="#{['SPRAYING'].contains(plantAssetController.selectedAssetType.name())}"
+                                                   unselectable="false">
+                                    <f:selectItem itemValue="SPRAYER" itemLabel="#{msg['SPRAYER']}"/>
+                                    <f:selectItem itemValue="ATOMIZER" itemLabel="#{msg['ATOMIZER']}"/>
+                                </p:selectOneButton>
+                                <p:selectOneButton value="#{plantAssetController.selectedAssetDetail.seedingType}"
+                                                   rendered="#{['SEEDING'].contains(plantAssetController.selectedAssetType.name())}"
+                                                   unselectable="false">
+                                    <f:selectItem itemValue="DRILL_1" itemLabel="#{msg['DRILL_1']}"/>
+                                    <f:selectItem itemValue="DRILL_2" itemLabel="#{msg['DRILL_2']}"/>
+                                </p:selectOneButton>
+                                <p:selectOneButton unselectable="false"
+                                                   value="#{plantAssetController.selectedAssetDetail.harvestingType}"
+                                                   rendered="#{['HARVESTING'].contains(plantAssetController.selectedAssetType.name())}">
+                                    <f:selectItem itemValue="Biçerdöver" itemLabel="Biçerdöver"/>
+                                </p:selectOneButton>
+                                <p:selectOneButton value="#{plantAssetController.selectedAssetDetail.otherType}"
+                                                   rendered="#{['OTHER'].contains(plantAssetController.selectedAssetType.name())}"
+                                                   unselectable="false">
+                                    <f:selectItem itemValue="CAR" itemLabel="#{msg['CAR']}"/>
+                                    <f:selectItem itemValue="VAN" itemLabel="#{msg['VAN']}"/>
+                                    <f:selectItem itemValue="TRUCK" itemLabel="#{msg['TRUCK']}"/>
+                                    <f:selectItem itemValue="DRONE" itemLabel="#{msg['DRONE']}"/>
+                                </p:selectOneButton>
+
+                                <p:outputLabel for="@next"
+                                               rendered="#{['SPRAYING'].contains(plantAssetController.selectedAssetType.name())}"
+                                               value="Tank büyüklüğü (Lt)"/>
+                                <p:inputNumber placeholder="Tank büyüklüğü (Lt)"
+                                               rendered="#{['SPRAYING'].contains(plantAssetController.selectedAssetType.name())}"
+                                               value="#{plantAssetController.selectedAssetDetail.sprayingTank}"/>
+
+                                <p:outputLabel for="@next"
+                                               rendered="#{['TRACTOR','SPRAYING','FERTILIZER','SEEDING','HARVESTING','BALER','OTHER'].contains(plantAssetController.selectedAssetType.name())}"
+                                               value="Model"/>
+                                <p:inputText placeholder="Model"
+                                             rendered="#{['TRACTOR','SPRAYING','FERTILIZER','SEEDING','HARVESTING','BALER','OTHER'].contains(plantAssetController.selectedAssetType.name())}"
+                                             value="#{plantAssetController.selectedAssetDetail.assetModel}"/>
+
+                                <p:outputLabel for="@next"
+                                               value="₺ Değeri (tahmini)"/>
+                                <p:inputNumber placeholder="₺ Değeri (tahmini)"
+                                               symbol="₺ "
+                                               min="0"
+                                               decimalPlaces="0"
+                                               value="#{plantAssetController.selectedAssetDetail.assetPrice}"/>
+
+                                <p:outputLabel for="@next"
+                                               rendered="#{['HARVESTING','BALER','OTHER'].contains(plantAssetController.selectedAssetType.name())}"
+                                               value="Kiralık gelirin var mı?"/>
+                                <p:selectOneButton value="#{plantAssetController.selectedAssetDetail.rentIncome}"
+                                                   rendered="#{['HARVESTING','BALER','OTHER'].contains(plantAssetController.selectedAssetType.name())}"
+                                                   label="Kiralık gelirin var mı?">
+                                    <p:ajax update="rentIncomeLabel rentIncomePrice" partialSubmit="true"/>
+                                    <f:selectItem itemLabel="Yok" itemValue="#{false}"/>
+                                    <f:selectItem itemLabel="Var" itemValue="#{true}"/>
+                                </p:selectOneButton>
+                                <p:outputPanel id="rentIncomeLabel">
+                                    <p:outputLabel for="rentInput"
+                                                   rendered="#{plantAssetController.selectedAssetDetail.rentIncome eq true}"
+                                                   value="₺ Yıllık kira geliri (tahmini)"/>
+                                </p:outputPanel>
+                                <p:outputPanel id="rentIncomePrice">
+                                    <p:inputNumber id="rentInput"
+                                                   placeholder="₺ Yıllık kira geliri (tahmini)"
+                                                   rendered="#{plantAssetController.selectedAssetDetail.rentIncome eq true}"
+                                                   symbol="₺ "
+                                                   min="0"
+                                                   decimalPlaces="0"
+                                                   value="#{plantAssetController.selectedAssetDetail.rentIncomePrice}"/>
+                                </p:outputPanel>
+                            </p:panelGrid>
+                            <p:commandButton value="Vazgeç"
+                                             update="assetForm"
+                                             process="@this"
+                                             resetValues="true"
+                                             styleClass="ui-button-warning mr-2"
+                                             validateClient="true"
+                                             action="#{plantAssetController.cancelSaveButton}"
+                                             icon="pi pi-times"/>
+                            <p:commandButton value="Kaydet"
+                                             update="assetListForm assetForm"
+                                             process="assetForm"
+                                             styleClass="ui-button-success mr-2"
+                                             validateClient="true"
+                                             action="#{plantAssetController.saveButton}"
+                                             icon="pi pi-check"/>
+                        </p:tab>
+                        <f:facet name="footer">
+                            Not: <span style="font-weight:bold;">Elde edeceğiniz sonuçlar yaptığınız beyanınıza göre değişecektir.</span>
+                        </f:facet>
+                    </p:tabView>
+                </h:form>
+                <br/>
+                <p>Sorunuz mu var? <a href="#">Buraya</a> basın ve bize bildirin.</p>
+            </div>
+        </div>
+    </ui:define>
+
+</ui:composition>

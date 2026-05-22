@@ -7,10 +7,7 @@ import lombok.Getter;
 public enum EnumParcelType {
 
     OPEN_FIELD(0),  // açık tarla
-    GREENHOUSE(1),  // seracılık
-    CUT_FLOWER(2),  // kesme çiçekçilik
-    NURSERY(3),     // fidancılık
-    ROLLED_TURF(4); // rulo çim
+    GREENHOUSE(1);  // seracılık;
 
     private final int value;
 

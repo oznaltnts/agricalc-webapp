@@ -32,24 +32,14 @@
                         </li>
                     </sec:authorize>
                     <sec:authorize access="isAuthenticated()">
-                        <li class="topbar-item user-profile">
-                            <a href="#">
-                                <p:graphicImage name="images/avatar-profilemenu.png" library="freya-layout" />
+                        <li class="user-profile">
+                            <a href="#{request.contextPath}/logout">
+                                <span style="white-space: nowrap;font-weight: 600;">Çıkış yap</span>
                             </a>
-                            <ul>
-                                <li>
-                                    <a href="#{request.contextPath}/logout">
-                                        <span>Çıkış yap</span>
-                                    </a>
-                                </li>
-                            </ul>
                         </li>
                     </sec:authorize>
 
                 </ul>
-                <!--a href="#" class="layout-rightpanel-button">
-                    <i class="pi pi-arrow-left"/>
-                </a-->
             </div>
         </div>
        

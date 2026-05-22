@@ -26,11 +26,8 @@ public class UserPlantAsset extends AbstractEntity {
     @ToString.Include
     private EnumPlantAsset plantAsset;
 
-    @Column(name = "quantity", nullable = false)
-    @ToString.Include
-    private Integer quantity;
-
-    @OneToMany(mappedBy = "userPlantAsset", fetch = FetchType.EAGER, cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "userPlantAsset", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    @OrderBy("insertDate ASC")
     private List<UserPlantAssetDetail> plantAssetDetailList;
 
 }

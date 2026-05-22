@@ -21,12 +21,12 @@ public class UserPlantParcel extends AbstractEntity {
     @JoinColumn(name = "user_id", referencedColumnName = "id", nullable = false)
     private User user;
 
-    // Parsel Bilgisi
     @Column(name = "parcel_type")
     @Enumerated(EnumType.STRING)
     @ToString.Include
     private EnumParcelType parcelType;
 
+    // Parsel Bilgisi
     @Column(name = "parce_name")
     @ToString.Include
     private String parcelName;
@@ -57,7 +57,7 @@ public class UserPlantParcel extends AbstractEntity {
     private String statusType;
 
     @Column(name = "nadas", columnDefinition = "TINYINT")
-    private boolean nadas;
+    private Boolean nadas;
 
     @Column(name = "slope")
     @ToString.Include
@@ -104,10 +104,6 @@ public class UserPlantParcel extends AbstractEntity {
     @Column(name = "watering_type")
     @ToString.Include
     private String wateringType;
-
-    @Column(name = "water_price")
-    @ToString.Include
-    private BigDecimal waterPrice;
 
     @Column(name = "electric_source")
     @ToString.Include

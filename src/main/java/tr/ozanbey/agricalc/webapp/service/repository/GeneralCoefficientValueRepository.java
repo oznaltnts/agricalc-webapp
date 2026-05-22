@@ -7,5 +7,6 @@ import tr.ozanbey.agricalc.webapp.service.enumtype.EnumStatus;
 
 public interface GeneralCoefficientValueRepository extends JpaRepository<GeneralCoefficientValue, Long> {
 
-    GeneralCoefficientValue findFirstByGeneralCoefficientStatusAndGeneralCoefficientNameOrderByInsertDateDesc(EnumStatus status, String name);
+    GeneralCoefficientValue findFirstByGeneralCoefficient_StatusAndGeneralCoefficient_NameOrderByInsertDateDesc(EnumStatus status, String name);
+
 }

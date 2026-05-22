@@ -1,4 +1,4 @@
-<ui:composition xmlns="http://www.w3.org/1999/xhtml" 
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
                 xmlns:h="jakarta.faces.html"
                 xmlns:f="jakarta.faces.core"
                 xmlns:ui="jakarta.faces.facelets"
@@ -19,9 +19,16 @@
         <h:form id="menuform">
             <fr:menu widgetVar="FreyaMenuWidget">
                 <p:menuitem value="Ana sayfa" icon="pi pi-home" url="/" />
+                <sec:authorize access="!isAuthenticated()">
+                    <p:menuitem value="Giriş yap" icon="pi pi-user" url="/public/login"/>
+                    <p:menuitem value="Üye ol" icon="pi pi-user-plus" url="/public/register"/>
+                </sec:authorize>
                 <sec:authorize access="isAuthenticated()">
                     <p:menuitem value="Profil" icon="pi pi-user-edit" url="/secured/profile" />
-                    <p:menuitem value="Demirbaş" icon="pi pi-cog" url="/secured/fixed-asset" />
+                    <p:submenu label="Demirbaş" icon="pi pi-list">
+                        <p:menuitem value="Bitkisel demirbaş" icon="pi pi-hammer" url="/secured/plant-asset"/>
+                        <p:menuitem value="Hayvansal demirbaş" icon="pi pi-cog" url="/secured/animal-asset"/>
+                    </p:submenu>
                     <p:menuitem value="Parsel" icon="pi pi-sun" url="/secured/parcel" />
                 </sec:authorize>
             </fr:menu>

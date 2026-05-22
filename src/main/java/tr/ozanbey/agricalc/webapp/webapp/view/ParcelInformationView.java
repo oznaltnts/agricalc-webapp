@@ -17,16 +17,18 @@ import java.math.BigDecimal;
 @Setter
 public class ParcelInformationView implements Serializable {
 
+    private Long recordId;
+    private EnumParcelType parcelType;
+
     // Parsel Bilgisi
-    private EnumParcelType selectedParcelType;
     @NotBlank(message = "Bu parsele bir isim verin")
     @Size(min = 3, message = "Parsel ismini en az 3 karakter olarak giriniz")
     private String parcelName;
-    private BigDecimal parcelPrice;
     private Integer adaNumber;
     private Integer paftaNumber;
     private BigDecimal areaDecare;
-    private Boolean isRent;
+    private Boolean rent;
+    private BigDecimal parcelPrice;
     private BigDecimal rentPrice;
     // Arazi Yapısı
     private String selectedStatusType;
@@ -44,7 +46,6 @@ public class ParcelInformationView implements Serializable {
     // Sulama Bilgileri
     private String selectedWateringSource;
     private String selectedWateringType;
-    private BigDecimal waterPrice;
     private String electricSource;
 
 }

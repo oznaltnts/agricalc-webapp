@@ -18,69 +18,68 @@ import java.util.Optional;
 
 @Service
 @Slf4j
-public class FixedAssetService extends BaseService {
+public class PlantAssetService extends BaseService {
 
     @Autowired
     private UserPlantAssetRepository plantAssetRepository;
-    
+
     @Autowired
     private UserPlantAssetDetailRepository plantAssetDetailRepository;
 
     @Transactional
-    public void savePlantAsset(List<UserPlantAssetView> plantAssetViewList, User user) {
-        plantAssetRepository.deleteByUser_Id(user.getId());
+    public void savePlantAsset(UserPlantAssetView view, User user) {
+        plantAssetRepository.deleteByPlantAssetAndUser_Id(view.getPlantAsset(), user.getId());
 
         List<UserPlantAsset> saveList = new ArrayList<>();
-        for (UserPlantAssetView view : plantAssetViewList) {
-            if (view.getQuantity() > 0) {
-                UserPlantAsset plantAsset = new UserPlantAsset();
-                plantAsset.setUser(user);
-                plantAsset.setPlantAsset(view.getPlantAsset());
-                plantAsset.setQuantity(view.getQuantity());
-                List<UserPlantAssetDetail> assetDetailList = new ArrayList<>();
-                for (UserPlantAssetView.AssetDetail viewDetail : view.getDetailList()) {
-                    UserPlantAssetDetail detail = new UserPlantAssetDetail();
-                    detail.setUserPlantAsset(plantAsset);
+        if (!view.getDetailList().isEmpty()) {
+            UserPlantAsset plantAsset = new UserPlantAsset();
+            plantAsset.setUser(user);
+            plantAsset.setPlantAsset(view.getPlantAsset());
+            List<UserPlantAssetDetail> assetDetailList = new ArrayList<>();
+            for (UserPlantAssetView.AssetDetail viewDetail : view.getDetailList()) {
+                UserPlantAssetDetail detail = new UserPlantAssetDetail();
+                detail.setUserPlantAsset(plantAsset);
 
-                    detail.setAssetModel(viewDetail.getAssetModel());
-                    detail.setAssetPrice(viewDetail.getAssetPrice());
-                    detail.setTractorBrand(viewDetail.getTractorBrand());
+                detail.setAssetModel(viewDetail.getAssetModel());
+                detail.setAssetPrice(viewDetail.getAssetPrice());
+                detail.setTractorBrand(viewDetail.getTractorBrand());
 
-                    if (viewDetail.getSprayingType() != null)
-                        detail.setAssetType(viewDetail.getSprayingType().toString());
-                    else if (viewDetail.getSeedingType() != null)
-                        detail.setAssetType(viewDetail.getSeedingType().toString());
-                    else if (viewDetail.getHarvestingType() != null)
-                        detail.setAssetType(viewDetail.getHarvestingType());
-                    else if (viewDetail.getOtherType() != null)
-                        detail.setAssetType(viewDetail.getOtherType().toString());
+                if (view.getPlantAsset().equals(EnumPlantAsset.SPRAYING))
+                    detail.setAssetType(viewDetail.getSprayingType().toString());
+                else if (view.getPlantAsset().equals(EnumPlantAsset.SEEDING))
+                    detail.setAssetType(viewDetail.getSeedingType().toString());
+                else if (view.getPlantAsset().equals(EnumPlantAsset.HARVESTING))
+                    detail.setAssetType(viewDetail.getHarvestingType());
+                else if (view.getPlantAsset().equals(EnumPlantAsset.OTHER))
+                    detail.setAssetType(viewDetail.getOtherType().toString());
 
-                    detail.setSprayingTank(viewDetail.getSprayingTank());
+                detail.setSprayingTank(viewDetail.getSprayingTank());
 
-                    if (viewDetail.isRentIncome())
-                        detail.setRentIncomePrice(viewDetail.getRentIncomePrice());
+                if (viewDetail.isRentIncome())
+                    detail.setRentIncomePrice(viewDetail.getRentIncomePrice());
 
-                    assetDetailList.add(detail);
-                }
-                plantAsset.setPlantAssetDetailList(assetDetailList);
-                saveList.add(plantAsset);
+                assetDetailList.add(detail);
             }
+            plantAsset.setPlantAssetDetailList(assetDetailList);
+            saveList.add(plantAsset);
         }
         plantAssetRepository.saveAll(saveList);
     }
 
     public List<UserPlantAssetView> getPlantAssetByUserId(Long userId) {
         List<UserPlantAssetView> returnList = new ArrayList<>();
-        List<UserPlantAsset> plantAssetList = plantAssetRepository.findByUser_Id(userId);
+        List<UserPlantAsset> plantAssetList = plantAssetRepository.findByUser_IdOrderByInsertDateAsc(userId);
         for (EnumPlantAsset asset : EnumPlantAsset.values()) {
             UserPlantAssetView userPlantAssetView = new UserPlantAssetView();
             userPlantAssetView.setPlantAsset(asset);
-            Optional<UserPlantAsset> plantAssetOptional = plantAssetList.stream().filter(pa -> pa.getPlantAsset().equals(asset)).findFirst();
+            Optional<UserPlantAsset> plantAssetOptional = plantAssetList.stream()
+                    .filter(pa -> pa.getPlantAsset().equals(asset))
+                    .findFirst();
             if (plantAssetOptional.isPresent()) {
-                userPlantAssetView.setQuantity(plantAssetOptional.get().getQuantity());
                 List<UserPlantAssetView.AssetDetail> detailList = new ArrayList<>();
                 for (UserPlantAssetDetail detail : plantAssetOptional.get().getPlantAssetDetailList()) {
                     UserPlantAssetView.AssetDetail detailView = new UserPlantAssetView.AssetDetail();
+                    detailView.setRecordId(detail.getId());
                     detailView.setAssetModel(detail.getAssetModel());
                     detailView.setAssetPrice(detail.getAssetPrice());
                     detailView.setTractorBrand(detail.getTractorBrand());

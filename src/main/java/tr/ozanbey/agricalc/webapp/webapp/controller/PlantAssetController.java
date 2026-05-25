@@ -72,7 +72,7 @@ public class PlantAssetController extends BaseController {
                 .findFirst();
         if (assetView.isPresent()) {
             Optional<UserPlantAssetView.AssetDetail> optionalAsset = assetView.get().getDetailList().stream()
-                    .filter(d -> d.getRecordId().equals(selectedAssetDetail.getRecordId()))
+                    .filter(d -> selectedAssetDetail.getRecordId().equals(d.getRecordId()))
                     .findFirst();
             if (optionalAsset.isEmpty()) {
                 assetView.get().getDetailList().add(selectedAssetDetail);

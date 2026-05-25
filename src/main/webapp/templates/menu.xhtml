@@ -25,11 +25,12 @@
                 </sec:authorize>
                 <sec:authorize access="isAuthenticated()">
                     <p:menuitem value="Profil" icon="pi pi-user-edit" url="/secured/profile" />
-                    <p:submenu label="Demirbaş" icon="pi pi-list">
+                    <p:submenu label="Demirbaşlar" icon="pi pi-list">
                         <p:menuitem value="Bitkisel demirbaş" icon="pi pi-hammer" url="/secured/plant-asset"/>
                         <p:menuitem value="Hayvansal demirbaş" icon="pi pi-cog" url="/secured/animal-asset"/>
                     </p:submenu>
                     <p:menuitem value="Parsel" icon="pi pi-sun" url="/secured/parcel" />
+                    <p:menuitem value="Bitkisel Üretim" icon="pi pi-sun" url="/secured/plant-product" />
                 </sec:authorize>
             </fr:menu>
         </h:form>

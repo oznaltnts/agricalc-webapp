@@ -66,7 +66,7 @@
                                 </p:column>
                                 <p:column headerText="#{msg[assetType]} tank büyüklüğü (Lt)"
                                           rendered="#{['SPRAYING'].contains(assetType.name())}">
-                                    <h:outputText value="#{msg[dataTableVar.sprayingType]}"/>
+                                    <h:outputText value="#{dataTableVar.sprayingTank}"/>
                                 </p:column>
                                 <p:column headerText="#{msg[assetType]} model"
                                           rendered="#{['TRACTOR','SPRAYING','FERTILIZER','SEEDING','HARVESTING','BALER','OTHER'].contains(assetType.name())}">
@@ -102,6 +102,8 @@
                         class="card">
                     <h2>#{msg[plantAssetController.selectedAssetType]} bilgisini güncelleyin</h2>
 
+                    <p:focus context="@next"/>
+
                     <p:tabView id="detailTabView"
                                rendered="#{plantAssetController.selectedAssetDetail ne null}"
                                dynamic="true"
@@ -122,31 +124,49 @@
                                 <p:outputLabel for="@next"
                                                rendered="#{['SPRAYING','SEEDING','HARVESTING','OTHER'].contains(plantAssetController.selectedAssetType.name())}"
                                                value="Demirbaş Tipi"/>
-                                <p:selectOneButton value="#{plantAssetController.selectedAssetDetail.sprayingType}"
-                                                   rendered="#{['SPRAYING'].contains(plantAssetController.selectedAssetType.name())}"
-                                                   unselectable="false">
-                                    <f:selectItem itemValue="SPRAYER" itemLabel="#{msg['SPRAYER']}"/>
-                                    <f:selectItem itemValue="ATOMIZER" itemLabel="#{msg['ATOMIZER']}"/>
-                                </p:selectOneButton>
-                                <p:selectOneButton value="#{plantAssetController.selectedAssetDetail.seedingType}"
-                                                   rendered="#{['SEEDING'].contains(plantAssetController.selectedAssetType.name())}"
-                                                   unselectable="false">
-                                    <f:selectItem itemValue="DRILL_1" itemLabel="#{msg['DRILL_1']}"/>
-                                    <f:selectItem itemValue="DRILL_2" itemLabel="#{msg['DRILL_2']}"/>
-                                </p:selectOneButton>
-                                <p:selectOneButton unselectable="false"
-                                                   value="#{plantAssetController.selectedAssetDetail.harvestingType}"
-                                                   rendered="#{['HARVESTING'].contains(plantAssetController.selectedAssetType.name())}">
-                                    <f:selectItem itemValue="Biçerdöver" itemLabel="Biçerdöver"/>
-                                </p:selectOneButton>
-                                <p:selectOneButton value="#{plantAssetController.selectedAssetDetail.otherType}"
-                                                   rendered="#{['OTHER'].contains(plantAssetController.selectedAssetType.name())}"
-                                                   unselectable="false">
-                                    <f:selectItem itemValue="CAR" itemLabel="#{msg['CAR']}"/>
-                                    <f:selectItem itemValue="VAN" itemLabel="#{msg['VAN']}"/>
-                                    <f:selectItem itemValue="TRUCK" itemLabel="#{msg['TRUCK']}"/>
-                                    <f:selectItem itemValue="DRONE" itemLabel="#{msg['DRONE']}"/>
-                                </p:selectOneButton>
+                                <p:outputPanel rendered="#{['SPRAYING','SEEDING','HARVESTING','OTHER'].contains(plantAssetController.selectedAssetType.name())}">
+                                    <p:selectOneButton value="#{plantAssetController.selectedAssetDetail.sprayingType}"
+                                                       required="true"
+                                                       requiredMessage="Lütfen seçim yapınız"
+                                                       rendered="#{['SPRAYING'].contains(plantAssetController.selectedAssetType.name())}"
+                                                       unselectable="false">
+                                        <f:selectItem itemValue="SPRAYER" itemLabel="#{msg['SPRAYER']}"/>
+                                        <f:selectItem itemValue="ATOMIZER" itemLabel="#{msg['ATOMIZER']}"/>
+                                    </p:selectOneButton>
+                                    <p:message for="@previous"
+                                               rendered="#{['SPRAYING'].contains(plantAssetController.selectedAssetType.name())}"/>
+                                    <p:selectOneButton value="#{plantAssetController.selectedAssetDetail.seedingType}"
+                                                       required="true"
+                                                       requiredMessage="Lütfen seçim yapınız"
+                                                       rendered="#{['SEEDING'].contains(plantAssetController.selectedAssetType.name())}"
+                                                       unselectable="false">
+                                        <f:selectItem itemValue="DRILL_1" itemLabel="#{msg['DRILL_1']}"/>
+                                        <f:selectItem itemValue="DRILL_2" itemLabel="#{msg['DRILL_2']}"/>
+                                    </p:selectOneButton>
+                                    <p:message for="@previous"
+                                               rendered="#{['SEEDING'].contains(plantAssetController.selectedAssetType.name())}"/>
+                                    <p:selectOneButton unselectable="false"
+                                                       required="true"
+                                                       requiredMessage="Lütfen seçim yapınız"
+                                                       value="#{plantAssetController.selectedAssetDetail.harvestingType}"
+                                                       rendered="#{['HARVESTING'].contains(plantAssetController.selectedAssetType.name())}">
+                                        <f:selectItem itemValue="Biçerdöver" itemLabel="Biçerdöver"/>
+                                    </p:selectOneButton>
+                                    <p:message for="@previous"
+                                               rendered="#{['HARVESTING'].contains(plantAssetController.selectedAssetType.name())}"/>
+                                    <p:selectOneButton value="#{plantAssetController.selectedAssetDetail.otherType}"
+                                                       required="true"
+                                                       requiredMessage="Lütfen seçim yapınız"
+                                                       rendered="#{['OTHER'].contains(plantAssetController.selectedAssetType.name())}"
+                                                       unselectable="false">
+                                        <f:selectItem itemValue="CAR" itemLabel="#{msg['CAR']}"/>
+                                        <f:selectItem itemValue="VAN" itemLabel="#{msg['VAN']}"/>
+                                        <f:selectItem itemValue="TRUCK" itemLabel="#{msg['TRUCK']}"/>
+                                        <f:selectItem itemValue="DRONE" itemLabel="#{msg['DRONE']}"/>
+                                    </p:selectOneButton>
+                                    <p:message for="@previous"
+                                               rendered="#{['OTHER'].contains(plantAssetController.selectedAssetType.name())}"/>
+                                </p:outputPanel>
 
                                 <p:outputLabel for="@next"
                                                rendered="#{['SPRAYING'].contains(plantAssetController.selectedAssetType.name())}"

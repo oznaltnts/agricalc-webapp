@@ -63,9 +63,15 @@ public class ProfileController extends BaseController {
         informationView.setEditInfo(false);
     }
 
+    public void saveButton() {
+        updateUserProfile();
+        informationView.setEditInfo(false);
+    }
+
     public void saveAndNextButton(Integer tabNum) {
         updateUserProfile();
         if (tabNum == 1) {
+            informationView.setEditInfo(false);
             FacesContext.getCurrentInstance().addMessage(null,
                     new FacesMessage(FacesMessage.SEVERITY_INFO, "Kayıt başarılı", "3 saniye içinde demirbaş ekranına yönlendirileceksiniz."));
             NavigationController.redirectToUrlWithDuration("/secured/plant-asset", 3000);

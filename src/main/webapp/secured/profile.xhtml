@@ -19,7 +19,6 @@
                         <p:autoUpdate/>
                     </p:growl>
 
-                    <p:focus context="@next"/>
                     <p:tabView dynamic="true"
                                cache="true"
                                focusOnError="true">
@@ -82,6 +81,10 @@
                 <h:form id="profileEditForm"
                         style="visibility: #{profileController.informationView.editInfo ? 'visible' : 'hidden'}"
                         class="card">
+                    <h2>Profil bilgilerinizi güncelleyin</h2>
+
+                    <p:focus context="@next"/>
+
                     <p:tabView id="profileEditTabView"
                                dynamic="true"
                                widgetVar="profileTabWidget"
@@ -130,6 +133,13 @@
                                              styleClass="ui-button-warning mr-2"
                                              action="#{profileController.cancelSaveButton}"
                                              icon="pi pi-times"/>
+                            <p:commandButton value="Kaydet"
+                                             update="profileForm profileEditForm"
+                                             process="profileEditForm"
+                                             styleClass="ui-button-success mr-2"
+                                             validateClient="true"
+                                             action="#{profileController.saveButton}"
+                                             icon="pi pi-check"/>
                             <p:commandButton value="Kaydet ve ilerle"
                                              update="profileForm profileEditForm"
                                              process="profileEditForm"
@@ -171,6 +181,13 @@
                                              styleClass="ui-button-warning mr-2"
                                              action="#{profileController.cancelSaveButton}"
                                              icon="pi pi-times"/>
+                            <p:commandButton value="Kaydet"
+                                             update="profileForm profileEditForm"
+                                             process="profileEditForm"
+                                             styleClass="ui-button-success mr-2"
+                                             validateClient="true"
+                                             action="#{profileController.saveButton}"
+                                             icon="pi pi-check"/>
                             <p:commandButton value="Kaydet ve ilerle"
                                              update="profileForm profileEditForm"
                                              process="profileEditForm"

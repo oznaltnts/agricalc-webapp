@@ -36,15 +36,16 @@ public class SecurityConfig {
                 )
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/jakarta.faces.resource/**").permitAll()
-                        .requestMatchers("/", "/common/**", "/public/**").permitAll()
-                        // user özel
-                        .requestMatchers("/secured/**").hasAuthority("USER")
+                        .requestMatchers("/", "/register", "/login", "/common/**", "/public/**").permitAll()
                         // admin özel
                         .requestMatchers("/secured/admin/**").hasAuthority("ADMIN")
+                        // user özel
+                        .requestMatchers("/secured/**").hasAuthority("USER")
                         .anyRequest().authenticated()
                 )
                 .formLogin(form -> form
                         .loginPage("/public/login.xhtml")
+                        .loginProcessingUrl("/perform_login")
                         .usernameParameter("loginForm:phone")
                         .passwordParameter("loginForm:password")
                         .successHandler(successHandler)
@@ -55,7 +56,7 @@ public class SecurityConfig {
                         .logoutRequestMatcher(request ->
                                 request.getRequestURI().equals(request.getContextPath() + "/logout")
                         )
-                        .deleteCookies("AGRICALCSESSION", "agricalc-remember-me")
+                        .deleteCookies("", "")
                         .invalidateHttpSession(true)
                         .logoutSuccessUrl("/")
                         .clearAuthentication(true)
@@ -63,13 +64,16 @@ public class SecurityConfig {
                 )
                 .sessionManagement(session -> session
                         .sessionFixation().migrateSession()
-                        .maximumSessions(3)
+                        .maximumSessions(5)
+                        .maxSessionsPreventsLogin(false)
                 )
                 .rememberMe(remember -> remember
-                        .tokenValiditySeconds(1209600) //2 weeks
-                        .useSecureCookie(true)
-                        .rememberMeCookieName("agricalc-remember-me")
-                        .key("")
+                                .rememberMeParameter("")
+                                .rememberMeCookieName("")
+                                .tokenValiditySeconds(1209600) //2 weeks
+                                .useSecureCookie(false) // localhost için
+//TODO                  .useSecureCookie(true)
+                                .key("")
                 )
                 .exceptionHandling(ex -> ex
                         .accessDeniedPage("/common/access-denied")

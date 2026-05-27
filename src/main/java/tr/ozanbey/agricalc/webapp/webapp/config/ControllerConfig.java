@@ -16,13 +16,15 @@ public class ControllerConfig implements WebMvcConfigurer {
     @Override
     public void addViewControllers(ViewControllerRegistry registry) {
         registry.addViewController("/").setViewName("forward:/public/home.xhtml");
-        registry.addViewController("/public/login").setViewName("forward:/public/login.xhtml");
-        registry.addViewController("/public/register").setViewName("forward:/public/register.xhtml");
+        registry.addViewController("/public/how-it-works").setViewName("forward:/public/how-it-works.xhtml");
+        registry.addViewController("/login").setViewName("forward:/public/login.xhtml");
+        registry.addViewController("/register").setViewName("forward:/public/register.xhtml");
         registry.addViewController("/secured/profile").setViewName("forward:/secured/profile.xhtml");
         registry.addViewController("/secured/plant-asset").setViewName("forward:/secured/plant-asset.xhtml");
+        registry.addViewController("/secured/plant-parcel").setViewName("forward:/secured/plant-parcel.xhtml");
         registry.addViewController("/secured/plant-product").setViewName("forward:/secured/plant-product.xhtml");
         registry.addViewController("/secured/animal-asset").setViewName("forward:/secured/animal-asset.xhtml");
-        registry.addViewController("/secured/parcel").setViewName("forward:/secured/parcel.xhtml");
+        registry.addViewController("/secured/admin/user-management").setViewName("forward:/secured/admin/user-management.xhtml");
         registry.addViewController("/common/access-denied").setViewName("forward:/common/access.xhtml");
         registry.addViewController("/common/error").setViewName("forward:/common/error.xhtml");
         registry.addViewController("/common/not-found").setViewName("forward:/common/notfound.xhtml");
@@ -36,4 +38,5 @@ public class ControllerConfig implements WebMvcConfigurer {
                         new ErrorPage(HttpStatus.INTERNAL_SERVER_ERROR, "/common/error"),
                         new ErrorPage(HttpStatus.FORBIDDEN, "/common/access-denied"));
     }
+
 }

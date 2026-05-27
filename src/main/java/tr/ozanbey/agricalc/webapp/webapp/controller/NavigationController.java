@@ -18,7 +18,7 @@ public class NavigationController {
     }
 
     public static void redirectToLoginWithDuration(int duration) throws IOException {
-        PrimeFaces.current().executeScript("setTimeout(() => {window.location.href = '/public/login';}, " + duration + ");");
+        PrimeFaces.current().executeScript("setTimeout(() => {window.location.href = '/login';}, " + duration + ");");
     }
 
     public void redirectToHome() throws IOException {

@@ -24,6 +24,116 @@
         </div>
         <div class="grid">
             <div class="col">
+                <h:form class="card">
+                    <h2>Parsel üretimini güncelleyin</h2>
+
+                    <p:tabView>
+                        <p:tab title="Ürün bilgileri">
+                            <p:panelGrid layout="flex"
+                                         columnClasses="col-3, col-9"
+                                         columns="2">
+                                <p:outputLabel for="productSelect"
+                                               value="Üretim ürünü"/>
+                                <p:outputPanel>
+                                    <p:selectOneMenu id="productSelect"
+                                                     style="width: 200px"
+                                                     value="#{plantProductController.selectedProduct}"
+                                                     required="true"
+                                                     filter="true"
+                                                     filterMatchMode="contains">
+                                        <p:ajax update="productTypeSelect" listener="#{plantProductController.handleProductSelect}"/>
+                                        <f:selectItem itemLabel="Ürün seçiniz" itemValue=""/>
+                                        <f:selectItem itemLabel="Elma" itemValue="Elma" itemDisabled="true"/>
+                                        <f:selectItem itemLabel="Armut" itemValue="Armut"/>
+                                    </p:selectOneMenu>
+                                    <p:message for="@previous"/>
+                                </p:outputPanel>
+                                <p:outputLabel for="productTypeSelect"
+                                               value="Üretim çeşidi"/>
+                                <p:outputPanel>
+                                    <p:selectOneMenu id="productTypeSelect"
+                                                     disabled="#{plantProductController.selectedProduct eq null}"
+                                                     style="width: 200px"
+                                                     value="#{plantProductController.selectedProductType}"
+                                                     filter="true"
+                                                     filterMatchMode="contains">
+                                        <f:selectItem itemLabel="Çeşit seçiniz" itemValue=""/>
+                                        <f:selectItem itemLabel="Santa maria" itemValue="Santa maria"/>
+                                        <f:selectItem itemLabel="Deveci" itemValue="Deveci"/>
+                                        <f:selectItem itemLabel="Etrusca" itemValue="Etrusca"/>
+                                    </p:selectOneMenu>
+                                    <p:message for="@previous"/>
+                                </p:outputPanel>
+                                <p:outputLabel for="treeAgeSelect"
+                                               value="Ağaç yaşı"/>
+                                <p:outputPanel>
+                                    <p:selectOneMenu id="treeAgeSelect"
+                                                     style="width: 200px"
+                                                     value="#{plantProductController.selectedTreeAge}"
+                                                     filter="true"
+                                                     filterMatchMode="contains">
+                                        <f:selectItem itemLabel="Ağaç yaşı seçiniz" itemValue=""/>
+                                        <f:selectItem itemLabel="Fidan dönemi" itemValue="Fidan dönemi"/>
+                                        <f:selectItem itemLabel="Verime geçme dönemi" itemValue="Verime geçme dönemi"/>
+                                        <f:selectItem itemLabel="Tam verim dönemi" itemValue="Tam verim dönemi"/>
+                                        <f:selectItem itemLabel="Gençlik budaması dönemi" itemValue="Gençlik budaması dönemi"/>
+                                        <f:selectItem itemLabel="Yaşlılık dönemi" itemValue="Yaşlılık dönemi"/>
+                                    </p:selectOneMenu>
+                                    <p:message for="@previous"/>
+                                </p:outputPanel>
+                                <p:outputLabel for="treeTypeSelect"
+                                               value="Anaç özelliği"/>
+                                <p:outputPanel>
+                                    <p:selectOneMenu id="treeTypeSelect"
+                                                     style="width: 200px"
+                                                     value="#{plantProductController.selectedTreeType}"
+                                                     filter="true"
+                                                     filterMatchMode="contains">
+                                        <f:selectItem itemLabel="Anaç özelliği seçiniz" itemValue=""/>
+                                        <f:selectItem itemLabel="Bodur" itemValue="Bodur"/>
+                                        <f:selectItem itemLabel="Yarı bodur" itemValue="Yarı bodur"/>
+                                        <f:selectItem itemLabel="Klasik" itemValue="Klasik"/>
+                                    </p:selectOneMenu>
+                                    <p:message for="@previous"/>
+                                </p:outputPanel>
+                                <p:outputLabel for="flowerDatePicker"
+                                               value="Çiçek açma tarihi"/>
+                                <p:outputPanel>
+                                    <p:datePicker id="flowerDatePicker"
+                                                  view="month"
+                                                  value="#{plantProductController.selectedFlowerDate}"
+                                                  placeholder="Çiçek açma tarihi"
+                                                  showTime="false"
+                                                  pattern="MMMM yyyy"
+                                                  mindate="#{plantProductController.minDate}"
+                                                  maxdate="#{plantProductController.maxDate}"
+                                                  inputStyle="width: 200px;" />
+                                    <p:message for="@previous"/>
+                                </p:outputPanel>
+                                <p:outputLabel for="productDatePicker"
+                                               value="Hasat tarihi"/>
+                                <p:outputPanel>
+                                    <p:datePicker id="productDatePicker"
+                                                  view="month"
+                                                  value="#{plantProductController.selectedHarvestDate}"
+                                                  placeholder="Hasat tarihi"
+                                                  showTime="false"
+                                                  pattern="MMMM yyyy"
+                                                  mindate="#{plantProductController.minDate}"
+                                                  maxdate="#{plantProductController.maxDate}"
+                                                  inputStyle="width: 200px;" />
+                                    <p:message for="@previous"/>
+                                </p:outputPanel>
+                            </p:panelGrid>
+                        </p:tab>
+                        <p:tab title="Ekim çeşitliliği">
+                            <p:panelGrid layout="flex"
+                                         columnClasses="col-3, col-9"
+                                         columns="2">
+                            </p:panelGrid>
+                        </p:tab>
+                    </p:tabView>
+                </h:form>
                 <br/>
                 <p>Sorunuz mu var? <a href="#">Buraya</a> basın ve bize bildirin.</p>
             </div>

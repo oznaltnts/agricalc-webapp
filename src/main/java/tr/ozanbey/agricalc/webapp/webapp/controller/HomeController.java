@@ -13,8 +13,9 @@ import tr.ozanbey.agricalc.webapp.service.domain.City;
 import tr.ozanbey.agricalc.webapp.service.domain.CityCrop;
 import tr.ozanbey.agricalc.webapp.service.domain.Crop;
 import tr.ozanbey.agricalc.webapp.service.service.HomeService;
+import tr.ozanbey.agricalc.webapp.webapp.view.HomePageView;
 
-import java.math.BigDecimal;
+import java.io.IOException;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -32,7 +33,9 @@ public class HomeController extends BaseController {
     private Long selectedCityId;
     private Set<Crop> cropList = new LinkedHashSet<>();
     private Long selectedCropId;
-    private Map<String, BigDecimal> calculateMap;
+    private List<HomePageView> resultList;
+    @Autowired
+    private NavigationController navigationController;
 
     @PostConstruct
     public void init() {
@@ -52,7 +55,7 @@ public class HomeController extends BaseController {
         }
         Optional<CityCrop> selectedCityCrop = cityCropList.stream().filter(cc -> cc.getCrop().getId().equals(selectedCropId) && cc.getCity().getId().equals(selectedCityId)).findFirst();
         if (selectedCityCrop.isPresent()) {
-            calculateMap = homeService.calculate(selectedCityCrop.get());
+            resultList = homeService.calculate(selectedCityCrop.get());
         } else {
             FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Şehir - Ürün bulunamadı", "Eşleşme başarısız"));
         }
@@ -96,6 +99,10 @@ public class HomeController extends BaseController {
                     .sorted(Comparator.comparing(Crop::getName))
                     .collect(Collectors.toCollection(LinkedHashSet::new));
         }
+    }
+
+    public void navigateToHowItWorks() throws IOException {
+        navigationController.redirectToUrl("/public/how-it-works");
     }
 
 }

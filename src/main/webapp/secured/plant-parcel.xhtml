@@ -20,17 +20,18 @@
                         <p:autoUpdate/>
                     </p:growl>
 
-                    <p:tabView value="#{parcelController.parcelTypes}"
+                    <p:tabView value="#{plantParcelController.parcelTypes}"
                                var="parcelType"
                                dynamic="true"
                                cache="true"
                                focusOnError="true">
 
                         <p:ajax event="tabChange"
-                                listener="#{parcelController.onTabChange}"/>
+                                update="parcelForm"
+                                listener="#{plantParcelController.onTabChange}"/>
 
                         <p:tab title="#{msg[parcelType]}">
-                            <p:dataTable value="#{parcelController.detailListByEnum(parcelType)}"
+                            <p:dataTable value="#{plantParcelController.detailListByEnum(parcelType)}"
                                          var="parcelView"
                                          stripedRows="true"
                                          emptyMessage="Henüz #{msg[assetType]} eklemediniz">
@@ -39,13 +40,13 @@
                                                      update="parcelForm"
                                                      process="@this"
                                                      styleClass="ui-button-warning mr-2"
-                                                     action="#{parcelController.editRow(parcelView)}"
+                                                     action="#{plantParcelController.editRow(parcelView)}"
                                                      icon="pi pi-check"/>
                                     <p:commandButton value="Çıkart"
                                                      update="parcelForm parcelListForm"
                                                      process="@this"
                                                      styleClass="ui-button-danger mr-2"
-                                                     action="#{parcelController.deleteRow(parcelView)}"
+                                                     action="#{plantParcelController.deleteRow(parcelView)}"
                                                      icon="pi pi-times"/>
                                 </p:column>
                                 <p:column headerText="Parsel ismi">
@@ -69,7 +70,7 @@
                                              process="@this"
                                              styleClass="mt-2"
                                              update="parcelForm"
-                                             action="#{parcelController.addNew}"/>
+                                             action="#{plantParcelController.addNew}"/>
                         </p:tab>
                     </p:tabView>
                 </h:form>
@@ -78,16 +79,16 @@
         <div class="grid">
             <div class="col">
                 <h:form id="parcelForm"
-                        style="visibility: #{parcelController.selectedParcelView ne null ? 'visible' : 'hidden'}"
+                        style="visibility: #{plantParcelController.selectedParcelView ne null ? 'visible' : 'hidden'}"
                         class="card">
-                    <h2>#{msg[parcelController.selectedParcelType]} bilgisini güncelleyin</h2>
+                    <h2>#{msg[plantParcelController.selectedParcelType]} bilgisini güncelleyin</h2>
 
                     <p:tabView id="parcelTabView"
-                               rendered="#{parcelController.selectedParcelView ne null}"
+                               rendered="#{plantParcelController.selectedParcelView ne null}"
                                dynamic="true"
                                cache="true"
                                focusOnError="true"
-                               value="#{parcelController.parcelDetails}"
+                               value="#{plantParcelController.parcelDetails}"
                                var="parcelDetail">
                         <p:ajax event="tabChange"
                                 process="@parent"
@@ -101,7 +102,7 @@
                                                value="Parsel ismi"/>
                                 <p:outputPanel>
                                     <p:inputText id="nameInput"
-                                                 value="#{parcelController.selectedParcelView.parcelName}"
+                                                 value="#{plantParcelController.selectedParcelView.parcelName}"
                                                  style="width: 200px"
                                                  required="true"
                                                  requiredMessage="Bu parsele bir isim verin"
@@ -114,52 +115,52 @@
                                                min="0"
                                                inputStyle="width: 200px"
                                                decimalPlaces="0"
-                                               value="#{parcelController.selectedParcelView.adaNumber}"/>
+                                               value="#{plantParcelController.selectedParcelView.adaNumber}"/>
                                 <p:outputLabel for="@next"
                                                value="Pafta numarası"/>
                                 <p:inputNumber placeholder="Pafta numarası"
                                                min="0"
                                                inputStyle="width: 200px"
                                                decimalPlaces="0"
-                                               value="#{parcelController.selectedParcelView.paftaNumber}"/>
+                                               value="#{plantParcelController.selectedParcelView.paftaNumber}"/>
                                 <p:outputLabel for="@next"
                                                value="Alan (Dekar)"/>
                                 <p:inputNumber placeholder="Alan (Dekar)"
-                                               value="#{parcelController.selectedParcelView.areaDecare}"
+                                               value="#{plantParcelController.selectedParcelView.areaDecare}"
                                                min="0"
                                                inputStyle="width: 200px"/>
                                 <p:outputLabel for="@next"
                                                value="Bu parsel kiralık mı?"/>
-                                <p:selectOneButton value="#{parcelController.selectedParcelView.rent}">
+                                <p:selectOneButton value="#{plantParcelController.selectedParcelView.rent}">
                                     <p:ajax update="priceLabel priceNumber" partialSubmit="true"/>
                                     <f:selectItem itemLabel="Sahipli" itemValue="#{false}"/>
                                     <f:selectItem itemLabel="Kiralık" itemValue="#{true}"/>
                                 </p:selectOneButton>
                                 <p:outputPanel id="priceLabel">
                                     <p:outputLabel for="parcelPrice"
-                                                   rendered="#{parcelController.selectedParcelView.rent ne null and !parcelController.selectedParcelView.rent}"
+                                                   rendered="#{plantParcelController.selectedParcelView.rent ne null and !plantParcelController.selectedParcelView.rent}"
                                                    value="₺ Değeri (tahmini)"/>
                                     <p:outputLabel for="rentPrice"
                                                    value="₺ Kiralık fiyatı"
-                                                   rendered="#{parcelController.selectedParcelView.rent ne null and parcelController.selectedParcelView.rent}"/>
+                                                   rendered="#{plantParcelController.selectedParcelView.rent ne null and plantParcelController.selectedParcelView.rent}"/>
                                 </p:outputPanel>
                                 <p:outputPanel id="priceNumber">
                                     <p:inputNumber id="parcelPrice"
                                                    placeholder="₺ Değeri (tahmini)"
                                                    symbol="₺ "
                                                    min="0"
-                                                   rendered="#{parcelController.selectedParcelView.rent ne null and !parcelController.selectedParcelView.rent}"
+                                                   rendered="#{plantParcelController.selectedParcelView.rent ne null and !plantParcelController.selectedParcelView.rent}"
                                                    inputStyle="width: 200px"
                                                    decimalPlaces="0"
-                                                   value="#{parcelController.selectedParcelView.parcelPrice}"/>
+                                                   value="#{plantParcelController.selectedParcelView.parcelPrice}"/>
                                     <p:inputNumber id="rentPrice"
                                                    placeholder="₺ Kiralık fiyatı"
                                                    symbol="₺ "
                                                    min="0"
-                                                   rendered="#{parcelController.selectedParcelView.rent ne null and parcelController.selectedParcelView.rent}"
+                                                   rendered="#{plantParcelController.selectedParcelView.rent ne null and plantParcelController.selectedParcelView.rent}"
                                                    inputStyle="width: 200px"
                                                    decimalPlaces="0"
-                                                   value="#{parcelController.selectedParcelView.rentPrice}"/>
+                                                   value="#{plantParcelController.selectedParcelView.rentPrice}"/>
                                 </p:outputPanel>
                             </p:panelGrid>
                             <p:panelGrid layout="flex"
@@ -168,20 +169,20 @@
                                          columns="2">
                                 <p:outputLabel for="@next"
                                                value="Bu parsel kiralık mı?"/>
-                                <p:selectOneButton value="#{parcelController.selectedParcelView.selectedStatusType}">
+                                <p:selectOneButton value="#{plantParcelController.selectedParcelView.selectedStatusType}">
                                     <f:selectItem itemLabel="Kuru" itemValue="Kuru"/>
                                     <f:selectItem itemLabel="Dikili" itemValue="Dikili"/>
                                     <f:selectItem itemLabel="Sulu" itemValue="Sulu"/>
                                 </p:selectOneButton>
                                 <p:outputLabel for="@next"
                                                value="Nadas var mı?"/>
-                                <p:selectOneButton value="#{parcelController.selectedParcelView.selectedNadasStatus}">
+                                <p:selectOneButton value="#{plantParcelController.selectedParcelView.selectedNadasStatus}">
                                     <f:selectItem itemLabel="Evet" itemValue="#{true}"/>
                                     <f:selectItem itemLabel="Hayır" itemValue="#{false}"/>
                                 </p:selectOneButton>
                                 <p:outputLabel for="@next"
                                                value="Parsel eğimi"/>
-                                <p:selectOneButton value="#{parcelController.selectedParcelView.selectedSlope}">
+                                <p:selectOneButton value="#{plantParcelController.selectedParcelView.selectedSlope}">
                                     <f:selectItem itemLabel="Düz" itemValue="Düz"/>
                                     <f:selectItem itemLabel="Az eğimli" itemValue="Az eğimli"/>
                                     <f:selectItem itemLabel="Eğimli" itemValue="Eğimli"/>
@@ -192,7 +193,7 @@
                                 </p:selectOneButton>
                                 <p:outputLabel for="@next"
                                                value="Parsel yönü"/>
-                                <p:selectOneButton value="#{parcelController.selectedParcelView.selectedOrientation}">
+                                <p:selectOneButton value="#{plantParcelController.selectedParcelView.selectedOrientation}">
                                     <f:selectItem itemLabel="Güney" itemValue="Güney"/>
                                     <f:selectItem itemLabel="Güneybatı" itemValue="Güneybatı"/>
                                     <f:selectItem itemLabel="Batı" itemValue="Batı"/>
@@ -209,7 +210,7 @@
                                          columns="2">
                                 <p:outputLabel for="@next"
                                                value="Toprak bünyesi"/>
-                                <p:selectOneButton value="#{parcelController.selectedParcelView.selectedSoilTexture}">
+                                <p:selectOneButton value="#{plantParcelController.selectedParcelView.selectedSoilTexture}">
                                     <f:selectItem itemLabel="Tınlı" itemValue="Tınlı"/>
                                     <f:selectItem itemLabel="Kumlu" itemValue="Kumlu"/>
                                     <f:selectItem itemLabel="Killi" itemValue="Killi"/>
@@ -219,7 +220,7 @@
                                 </p:selectOneButton>
                                 <p:outputLabel for="@next"
                                                value="Aktif toprak derinliği"/>
-                                <p:selectOneButton value="#{parcelController.selectedParcelView.selectedSoilDepth}">
+                                <p:selectOneButton value="#{plantParcelController.selectedParcelView.selectedSoilDepth}">
                                     <f:selectItem itemLabel="Sığ (0-30 cm)" itemValue="Sığ"/>
                                     <f:selectItem itemLabel="Orta sığ (31-60 cm)" itemValue="Orta sığ"/>
                                     <f:selectItem itemLabel="Orta (61-90 cm)" itemValue="Orta"/>
@@ -228,7 +229,7 @@
                                 </p:selectOneButton>
                                 <p:outputLabel for="@next"
                                                value="Topraktaki organik madde oranı"/>
-                                <p:selectOneButton value="#{parcelController.selectedParcelView.selectedOrganicMatter}">
+                                <p:selectOneButton value="#{plantParcelController.selectedParcelView.selectedOrganicMatter}">
                                     <f:selectItem itemLabel="Çok az (% 0-1)" itemValue="Çok az"/>
                                     <f:selectItem itemLabel="Az (% 1-1,5)" itemValue="Az"/>
                                     <f:selectItem itemLabel="Orta (% 1,5-2)" itemValue="Orta"/>
@@ -238,7 +239,7 @@
                                 </p:selectOneButton>
                                 <p:outputLabel for="@next"
                                                value="Toprak tuzluluk"/>
-                                <p:selectOneButton value="#{parcelController.selectedParcelView.selectedSoilSalinity}">
+                                <p:selectOneButton value="#{plantParcelController.selectedParcelView.selectedSoilSalinity}">
                                     <f:selectItem itemLabel="Tuzsus" itemValue="Tuzsus"/>
                                     <f:selectItem itemLabel="Çok az" itemValue="Çok az"/>
                                     <f:selectItem itemLabel="Az tuzlu" itemValue="Az tuzlu"/>
@@ -248,7 +249,7 @@
                                 </p:selectOneButton>
                                 <p:outputLabel for="@next"
                                                value="Kireçlilik"/>
-                                <p:selectOneButton value="#{parcelController.selectedParcelView.selectedLime}">
+                                <p:selectOneButton value="#{plantParcelController.selectedParcelView.selectedLime}">
                                     <f:selectItem itemLabel="Kireçsiz" itemValue="Kireçsiz"/>
                                     <f:selectItem itemLabel="Az kireçli" itemValue="Az kireçli"/>
                                     <f:selectItem itemLabel="Orta kireçli" itemValue="Orta kireçli"/>
@@ -258,7 +259,7 @@
                                 </p:selectOneButton>
                                 <p:outputLabel for="@next"
                                                value="Fosfor"/>
-                                <p:selectOneButton value="#{parcelController.selectedParcelView.selectedPhosphorus}">
+                                <p:selectOneButton value="#{plantParcelController.selectedParcelView.selectedPhosphorus}">
                                     <f:selectItem itemLabel="Çok az" itemValue="Çok az"/>
                                     <f:selectItem itemLabel="Az" itemValue="Az"/>
                                     <f:selectItem itemLabel="Orta" itemValue="Orta"/>
@@ -268,7 +269,7 @@
                                 </p:selectOneButton>
                                 <p:outputLabel for="@next"
                                                value="Potasyum"/>
-                                <p:selectOneButton value="#{parcelController.selectedParcelView.selectedPotassium}">
+                                <p:selectOneButton value="#{plantParcelController.selectedParcelView.selectedPotassium}">
                                     <f:selectItem itemLabel="Çok az" itemValue="Çok az"/>
                                     <f:selectItem itemLabel="Az" itemValue="Az"/>
                                     <f:selectItem itemLabel="Orta" itemValue="Orta"/>
@@ -283,14 +284,14 @@
                                          columns="2">
                                 <p:outputLabel for="@next"
                                                value="Su kaynağı nedir?"/>
-                                <p:selectOneButton value="#{parcelController.selectedParcelView.selectedWateringSource}">
+                                <p:selectOneButton value="#{plantParcelController.selectedParcelView.selectedWateringSource}">
                                     <f:selectItem itemLabel="Baraj" itemValue="Baraj"/>
                                     <f:selectItem itemLabel="Sulama koop" itemValue="Koop"/>
                                     <f:selectItem itemLabel="Kuyu" itemValue="kuyu"/>
                                 </p:selectOneButton>
                                 <p:outputLabel for="@next"
                                                value="Sulama şekli nedir?"/>
-                                <p:selectOneButton value="#{parcelController.selectedParcelView.selectedWateringType}">
+                                <p:selectOneButton value="#{plantParcelController.selectedParcelView.selectedWateringType}">
                                     <f:selectItem itemLabel="Salma" itemValue="Salma"/>
                                     <f:selectItem itemLabel="Tava" itemValue="Tava"/>
                                     <f:selectItem itemLabel="Karık" itemValue="Karık"/>
@@ -303,7 +304,7 @@
                                 </p:selectOneButton>
                                 <p:outputLabel for="@next"
                                                value="Enerji türü"/>
-                                <p:selectOneButton value="#{parcelController.selectedParcelView.electricSource}">
+                                <p:selectOneButton value="#{plantParcelController.selectedParcelView.electricSource}">
                                     <f:selectItem itemLabel="Mazot" itemValue="Mazot"/>
                                     <f:selectItem itemLabel="Elektrik" itemValue="Elektrik"/>
                                     <f:selectItem itemLabel="Cazibe" itemValue="Cazibe"/>
@@ -317,21 +318,21 @@
                                              resetValues="true"
                                              styleClass="ui-button-warning mr-2"
                                              validateClient="true"
-                                             action="#{parcelController.cancelSaveButton}"
+                                             action="#{plantParcelController.cancelSaveButton}"
                                              icon="pi pi-times"/>
                             <p:commandButton value="Kaydet"
                                              update="parcelListForm parcelForm"
                                              process="parcelTabView"
                                              styleClass="ui-button-success mr-2"
                                              validateClient="true"
-                                             action="#{parcelController.saveButton}"
+                                             action="#{plantParcelController.saveButton}"
                                              icon="pi pi-check"/>
                             <p:commandButton value="Kaydet ve ilerle"
                                              update="parcelTabView"
                                              process="@parent"
                                              styleClass="ui-button-success mr-2"
                                              validateClient="true"
-                                             action="#{parcelController.saveAndNextButton}"
+                                             action="#{plantParcelController.saveAndNextButton}"
                                              icon="pi pi-chevron-right"/>
                         </p:tab>
                         <f:facet name="footer">

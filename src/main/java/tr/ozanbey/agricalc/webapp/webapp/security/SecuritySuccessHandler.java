@@ -22,7 +22,7 @@ public class SecuritySuccessHandler implements AuthenticationSuccessHandler {
         long loginFailureCount = loginController.isAccountBlocked(currentUser.getUser().getId());
         if (loginFailureCount > 2) {
             SecurityContextHolder.clearContext();
-            response.sendRedirect("/public/login?error=blocked");
+            response.sendRedirect("/login?error=blocked");
         } else {
             loginController.clearLoginFailures(currentUser.getUser().getId());
             loginController.createLoginSuccess(currentUser.getUser().getId());

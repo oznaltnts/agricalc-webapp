@@ -6,88 +6,164 @@
                 template="/templates/template.xhtml">
              
     <ui:define name="title">Ana sayfa</ui:define>
+
+    <ui:define name="head">
+        <style type="text/css">
+            html {
+                scroll-snap-type: y mandatory;
+                scroll-behavior: smooth;
+            }
+
+            .grid {
+                height: calc(100vh - 122px + 1rem);
+                scroll-snap-align: start;
+                scroll-margin-top: calc(92px - 0.5rem);
+                scroll-snap-stop: always;
+            }
+
+            .grid:not(:last-of-type) {
+                margin-bottom: calc(60px - 0.5rem);
+            }
+
+            .card {
+                height: calc(100vh - 122px);
+                overflow-y: auto;
+            }
+
+            .section-one {
+                background-image: url("#{resource['freya-layout:images/pages/home/home-section-1.png']}");
+                background-position: right;
+                background-size: cover;
+                background-repeat: no-repeat;
+                overflow: hidden;
+            }
+
+            .section-two {
+                background-image: url("#{resource['freya-layout:images/pages/home/home-section-2.png']}");
+                background-position: left;
+                background-size: cover;
+                background-repeat: no-repeat;
+                overflow: hidden;
+            }
+
+            .section-one h1, .section-one h2, .section-one p, .section-two h1, .section-two h2, .section-two p {
+                color: white;
+                text-shadow: 3px 3px 3px #000000;
+            }
+
+            .result {
+                color: white;
+                text-shadow: 3px 3px 3px #000000;
+                font-size: 1.5rem !important;
+            }
+        </style>
+    </ui:define>
     
     <ui:define name="content">
         <div class="grid">
             <div class="col">
-                <h2>Şehir - ürün seçerek hesaplama yapın</h2>
-                <h:form class="card">
+                <h:form class="card section-one">
+                    <h1>Tarlanın Bereketini Hesapla,<br/>Kazancını Tektarım ile Artır.</h1>
+                    <h2>Dijital tarım asistanınızla, toprağınızın potansiyelini keşfedin.</h2>
+                    <p>Şehir - ürün seçerek hesaplama yapın</p>
                     <p:growl id="growl"
                              showDetail="true"
                              severity="info warn error">
                         <p:autoUpdate/>
                     </p:growl>
 
-                    <p:focus context="homePanelGrid"/>
-                    <p:panelGrid id="homePanelGrid"
-                                 layout="flex"
-                                 columns="1">
-                        <p:outputPanel styleClass="ui-float-label">
-                            <p:selectOneMenu id="cityMenu"
-                                             style="width: 200px"
-                                             filter="true"
-                                             filterMatchMode="startsWith"
-                                             value="#{homeController.selectedCityId}">
-                                <p:ajax update="cropMenu calculateButton"
-                                        listener="#{homeController.handleCropMenuOnSelect}"/>
-                                <f:selectItem itemLabel="Şehir seçiniz" itemValue=""/>
-                                <f:selectItems value="#{homeController.cityList}"
-                                               var="city"
-                                               itemLabel="#{city.name}"
-                                               itemValue="#{city.id}"/>
-                                <f:facet name="footer">
-                                    <p:divider styleClass="mt-0"/>
-                                    <h:outputText value="#{homeController.cityList.size()}" style="font-weight:bold;"/>
-                                </f:facet>
-                            </p:selectOneMenu>
-                            <p:outputLabel for="@previous" value="Şehir seçiniz" style="margin-left: 0.3rem"/>
-                            <p:message for="cityMenu"/>
-                        </p:outputPanel>
-                        <p:outputPanel styleClass="ui-float-label">
-                            <p:selectOneMenu id="cropMenu"
-                                             style="width: 200px"
-                                             filter="true"
-                                             filterMatchMode="contains"
-                                             value="#{homeController.selectedCropId}">
-                                <p:ajax update="cityMenu calculateButton"
-                                        listener="#{homeController.handleCityMenuOnSelect}"/>
-                                <f:selectItem itemLabel="Ürün seçiniz" itemValue=""/>
-                                <f:selectItems value="#{homeController.cropList}"
-                                               var="crop"
-                                               itemLabel="#{crop.groupName} - #{crop.name}"
-                                               itemValue="#{crop.id}"/>
-                                <f:facet name="footer">
-                                    <p:divider styleClass="mt-0"/>
-                                    <h:outputText value="#{homeController.cropList.size()}" style="font-weight:bold;"/>
-                                </f:facet>
-                            </p:selectOneMenu>
-                            <p:outputLabel for="@previous" value="Ürün seçiniz" style="margin-left: 0.3rem"/>
-                            <p:message for="cropMenu"/>
-                        </p:outputPanel>
-                    </p:panelGrid>
-                    <p:commandButton id="calculateButton"
-                                     value="Hesapla"
-                                     icon="pi pi-check"
-                                     process="@form"
-                                     disabled="#{homeController.selectedCropId eq null or homeController.selectedCityId eq null}"
-                                     style="width: 200px"
-                                     update="@form"
-                                     action="#{homeController.calculateIncome}"
-                                     validateClient="true"
-                                     styleClass="m-2"/>
+                    <p:focus context="@next"/>
 
-                    <div class="ui-fluid formgrid grid">
-                        <ui:repeat value="#{homeController.calculateMap}" var="calculate">
-                            <div class="field col-12 md:col-12">
-                                <p:outputLabel value="#{calculate.key}: #{calculate.value}"/>
-                            </div>
-                        </ui:repeat>
-                    </div>
+                    <p:outputPanel styleClass="ui-float-label mt-5">
+                        <p:selectOneMenu id="cityMenu"
+                                         style="width: 350px"
+                                         filter="true"
+                                         filterMatchMode="startsWith"
+                                         value="#{homeController.selectedCityId}">
+                            <p:ajax update="cropMenu calculateButton"
+                                    listener="#{homeController.handleCropMenuOnSelect}"/>
+                            <f:selectItem itemLabel="Şehir seçiniz" itemValue=""/>
+                            <f:selectItems value="#{homeController.cityList}"
+                                           var="city"
+                                           itemLabel="#{city.name}"
+                                           itemValue="#{city.id}"/>
+                        </p:selectOneMenu>
+                        <p:outputLabel for="@previous" value="Şehir seçiniz" style="margin-left: 0.3rem"/>
+                        <p:message for="cityMenu"/>
+                    </p:outputPanel>
+                    <p:outputPanel styleClass="ui-float-label mt-5">
+                        <p:selectOneMenu id="cropMenu"
+                                         style="width: 350px"
+                                         filter="true"
+                                         filterMatchMode="contains"
+                                         value="#{homeController.selectedCropId}">
+                            <p:ajax update="cityMenu calculateButton"
+                                    listener="#{homeController.handleCityMenuOnSelect}"/>
+                            <f:selectItem itemLabel="Ürün seçiniz" itemValue=""/>
+                            <f:selectItems value="#{homeController.cropList}"
+                                           var="crop"
+                                           itemLabel="#{crop.name}"
+                                           itemValue="#{crop.id}"/>
+                        </p:selectOneMenu>
+                        <p:outputLabel for="@previous" value="Ürün seçiniz" style="margin-left: 0.3rem"/>
+                        <p:message for="cropMenu"/>
+                    </p:outputPanel>
+                    <p:outputPanel styleClass="mt-5">
+                        <p:commandButton id="calculateButton"
+                                         value="Hesapla"
+                                         icon="pi pi-check"
+                                         process="@form"
+                                         disabled="#{homeController.selectedCropId eq null or homeController.selectedCityId eq null}"
+                                         update="resultForm"
+                                         oncomplete="smoothScrollToResultForm();"
+                                         action="#{homeController.calculateIncome}"
+                                         validateClient="true"/>
+                    </p:outputPanel>
+                    <p:outputPanel styleClass="mt-5">
+                        <p:commandButton id="howItWorksButton"
+                                         ajax="false"
+                                         value="Nasıl çalışır?"
+                                         icon="pi pi-question"
+                                         process="@none"
+                                         update="@none"
+                                         action="#{homeController.navigateToHowItWorks}"/>
+                    </p:outputPanel>
                 </h:form>
-                <br/>
-                <p>Sorunuz mu var? <a href="#">Buraya</a> basın ve bize bildirin.</p>
             </div>
         </div>
+        <div class="grid">
+            <div class="col">
+                <h:form id="resultForm" class="card section-two" style="text-align: right">
+                    <h1>Tarlanın Bereketini Hesapla,<br/>Kazancını Tektarım ile Artır.</h1>
+                    <h2>Dijital tarım asistanınızla, toprağınızın potansiyelini keşfedin.</h2>
+                    <p></p>
+                    <ui:repeat value="#{homeController.resultList}" var="result">
+                        <p:outputPanel styleClass="result mt-5">
+                            <h:outputText value="#{result.resultLabel}: "/>
+                            <h:outputText value="#{result.resultValue}" rendered="#{!result.price}"/>
+                            <h:outputText value="#{result.resultValue}" rendered="#{result.price}"
+                                          converter="#{priceDecimalFormatter}"/>
+                        </p:outputPanel>
+                    </ui:repeat>
+                    <p:outputPanel styleClass="mt-5">
+                        <p:commandButton id="howItWorksButton"
+                                         ajax="false"
+                                         value="Nasıl çalışır?"
+                                         icon="pi pi-question"
+                                         process="@none"
+                                         update="@none"
+                                         action="#{homeController.navigateToHowItWorks}"/>
+                    </p:outputPanel>
+                </h:form>
+            </div>
+        </div>
+        <script type="text/javascript">
+            function smoothScrollToResultForm() {
+                $('html, body').animate({
+                    scrollTop: $("#resultForm").offset().top - 62
+                }, 100);
+            }
+        </script>
     </ui:define>
 
 </ui:composition>

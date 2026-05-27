@@ -19,18 +19,21 @@
         <h:form id="menuform">
             <fr:menu widgetVar="FreyaMenuWidget">
                 <p:menuitem value="Ana sayfa" icon="pi pi-home" url="/" />
-                <sec:authorize access="!isAuthenticated()">
-                    <p:menuitem value="Giriş yap" icon="pi pi-user" url="/public/login"/>
-                    <p:menuitem value="Üye ol" icon="pi pi-user-plus" url="/public/register"/>
+                <p:menuitem value="Nasıl çalışır?" icon="pi pi-question" url="/public/how-it-works"/>
+                <p:menuitem value="Hakkımızda" icon="pi pi-user" url="#"/>
+                <sec:authorize access="hasAuthority('ADMIN')">
+                    <p:menuitem value="Yönetici" icon="pi pi-key" url="/secured/admin/user-management" />
                 </sec:authorize>
-                <sec:authorize access="isAuthenticated()">
-                    <p:menuitem value="Profil" icon="pi pi-user-edit" url="/secured/profile" />
-                    <p:submenu label="Demirbaşlar" icon="pi pi-list">
-                        <p:menuitem value="Bitkisel demirbaş" icon="pi pi-hammer" url="/secured/plant-asset"/>
+                <sec:authorize access="hasAuthority('USER')">
+                    <p:menuitem value="Üretici bilgileri" icon="pi pi-user-edit" url="/secured/profile" />
+                    <p:submenu label="Bitkisel" icon="pi pi-list">
+                        <p:menuitem value="Demirbaş" icon="pi pi-hammer" url="/secured/plant-asset"/>
+                        <p:menuitem value="Parsel" icon="pi pi-sun" url="/secured/plant-parcel" />
+                        <p:menuitem value="Üretim" icon="pi pi-sun" url="/secured/plant-product" />
+                    </p:submenu>
+                    <p:submenu label="Hayvansal" icon="pi pi-list" rendered="false">
                         <p:menuitem value="Hayvansal demirbaş" icon="pi pi-cog" url="/secured/animal-asset"/>
                     </p:submenu>
-                    <p:menuitem value="Parsel" icon="pi pi-sun" url="/secured/parcel" />
-                    <p:menuitem value="Bitkisel Üretim" icon="pi pi-sun" url="/secured/plant-product" />
                 </sec:authorize>
             </fr:menu>
         </h:form>

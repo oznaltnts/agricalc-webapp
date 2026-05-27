@@ -1,0 +1,75 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="jakarta.faces.html"
+                xmlns:f="jakarta.faces.core"
+                xmlns:ui="jakarta.faces.facelets"
+                xmlns:p="http://primefaces.org/ui"
+                template="/templates/template.xhtml">
+
+    <ui:define name="title">Nasıl çalışır</ui:define>
+
+    <ui:define name="head">
+        <style type="text/css">
+            html {
+                scroll-snap-type: y mandatory;
+                scroll-behavior: smooth;
+            }
+
+            .grid {
+                height: calc(100vh - 122px + 1rem);
+                scroll-snap-align: start;
+                scroll-margin-top: calc(92px - 0.5rem);
+                scroll-snap-stop: always;
+            }
+
+            .grid:not(:last-of-type) {
+                margin-bottom: calc(60px - 0.5rem);
+            }
+
+            .card {
+                height: calc(100vh - 122px);
+                overflow-y: auto;
+            }
+
+            .section-one {
+                background-image: url("#{resource['freya-layout:images/pages/how-it-works/how-it-works-section-1.png']}");
+                background-size: cover;
+                background-position: center right;
+                background-repeat: no-repeat;
+                overflow: hidden;
+            }
+
+            .section-one h1 {
+                margin-top: 5rem;
+                text-shadow: 3px 3px 3px #000000;
+            }
+
+            .section-one p {
+                max-width: 450px;
+                text-shadow: 3px 3px 3px #000000;
+            }
+        </style>
+    </ui:define>
+
+    <ui:define name="content">
+        <div class="grid">
+            <div class="col">
+                <h:form class="card section-one">
+
+                    <p:growl id="growl"
+                             showDetail="true"
+                             severity="info warn error">
+                        <p:autoUpdate/>
+                    </p:growl>
+
+                </h:form>
+            </div>
+        </div>
+        <div class="grid">
+            <div class="col">
+                <h:form class="card">
+                </h:form>
+            </div>
+        </div>
+    </ui:define>
+
+</ui:composition>

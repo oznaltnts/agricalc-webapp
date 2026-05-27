@@ -12,21 +12,21 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import tr.ozanbey.agricalc.webapp.service.enumtype.plantation.EnumParcelDetail;
 import tr.ozanbey.agricalc.webapp.service.enumtype.plantation.EnumParcelType;
-import tr.ozanbey.agricalc.webapp.service.service.ParcelService;
+import tr.ozanbey.agricalc.webapp.service.service.PlantParcelService;
 import tr.ozanbey.agricalc.webapp.webapp.view.ParcelInformationView;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-@Component("parcelController")
+@Component("plantParcelController")
 @ViewScoped
 @Getter
 @Setter
-public class ParcelController extends BaseController {
+public class PlantParcelController extends BaseController {
 
     @Autowired
-    private ParcelService parcelService;
+    private PlantParcelService plantParcelService;
 
     private EnumParcelType[] parcelTypes = EnumParcelType.values();
     private EnumParcelType selectedParcelType;
@@ -42,7 +42,7 @@ public class ParcelController extends BaseController {
     }
 
     private void fillParcelViewList() {
-        parcelViewList = parcelService.parcelListByUser(getCurrentUser().getUser().getId());
+        parcelViewList = plantParcelService.parcelListByUser(getCurrentUser().getUser().getId());
     }
 
     public void onTabChange(TabChangeEvent event) {
@@ -81,7 +81,7 @@ public class ParcelController extends BaseController {
                                     !v.getRecordId().equals(selectedParcelView.getRecordId()))
                     .findFirst();
             if (optionalView.isEmpty()) {
-                parcelService.saveParcel(selectedParcelView, getCurrentUser().getUser());
+                plantParcelService.saveParcel(selectedParcelView, getCurrentUser().getUser());
                 FacesContext.getCurrentInstance().addMessage(null,
                         new FacesMessage(FacesMessage.SEVERITY_INFO,
                                 "Kayıt başarılı", "Parseliniz listenize eklenmiştir."));
@@ -96,7 +96,7 @@ public class ParcelController extends BaseController {
     }
 
     public void deleteRow(ParcelInformationView parcelView) {
-        parcelService.deleteParcel(parcelView.getRecordId());
+        plantParcelService.deleteParcel(parcelView.getRecordId());
         FacesContext.getCurrentInstance().addMessage(null,
                 new FacesMessage(FacesMessage.SEVERITY_INFO,
                         "Silme başarılı", "Parseliniz listenizden çıkartılmıştır."));

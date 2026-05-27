@@ -15,22 +15,23 @@
     <ui:define name="content">
         <div class="grid">
             <div class="col">
-                <h2>Sisteme kayıt olun</h2>
-                <p>Hesabınız var mı?
-                    <a href="/public/login">
-                        Giriş yapın
-                    </a>
-                </p>
                 <h:form class="card">
+                    <h2>Sisteme kayıt olun</h2>
+                    <p>Hesabınız var mı?
+                        <a href="/login">
+                            Giriş yapın
+                        </a>
+                    </p>
+
                     <p:growl id="growl"
                              showDetail="true"
                              severity="info warn">
                         <p:autoUpdate/>
                     </p:growl>
 
-                    <p:focus context="registerPanelGrid"/>
-                    <p:panelGrid id="registerPanelGrid"
-                                 layout="flex"
+                    <p:focus context="@next"/>
+
+                    <p:panelGrid layout="flex"
                                  columns="1">
                         <p:outputPanel styleClass="ui-float-label">
                             <p:inputMask id="phone"

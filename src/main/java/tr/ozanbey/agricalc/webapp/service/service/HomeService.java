@@ -4,10 +4,13 @@ import org.springframework.stereotype.Service;
 import tr.ozanbey.agricalc.webapp.service.domain.CityCrop;
 import tr.ozanbey.agricalc.webapp.service.domain.CityCropWateringValue;
 import tr.ozanbey.agricalc.webapp.service.dto.*;
+import tr.ozanbey.agricalc.webapp.webapp.view.HomePageView;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
 
 @Service
 public class HomeService extends BaseService {
@@ -50,18 +53,18 @@ public class HomeService extends BaseService {
         return cityCropService.getAllActiveCityCrop();
     }
 
-    public Map<String, BigDecimal> calculate(CityCrop cityCrop) {
-        Map<String, BigDecimal> returnMap = new HashMap<>();
+    public List<HomePageView> calculate(CityCrop cityCrop) {
+        List<HomePageView> returnList = new ArrayList<>();
         if (cityCrop != null) {
             List<QuestionWithFirstValue> questionDTOList = cityCropQuestionService.getActiveDTOsByCityCropId(cityCrop.getId());
             List<QuestionWithFirstValue> selectedDTOList = questionDTOList.stream().filter(dto -> new ArrayList<>(List.of(1L, 3L, 4L)).contains(dto.getQuestionId())).toList();
             List<BigDecimal> yieldList = calculateYield(selectedDTOList);
-            returnMap.put("yield", yieldList.getFirst());
+            returnList.add(new HomePageView("Verim", yieldList.getFirst().toString(), false));
             selectedDTOList = questionDTOList.stream().filter(dto -> new ArrayList<>(List.of(10L, 12L, 16L)).contains(dto.getQuestionId())).toList();
             List<BigDecimal> priceList = calculatePrice(selectedDTOList);
-            returnMap.put("price", priceList.getFirst());
+            returnList.add(new HomePageView("Fiyat", priceList.getFirst().toString(), true));
             BigDecimal income = calculateIncome(yieldList.getFirst(), priceList.getFirst());
-            returnMap.put("income", income);
+            returnList.add(new HomePageView("Gelir", income.toString(), true));
             List<CropCoefficientWithFirstValue> cropCoefficientList = cropCoefficientService.getActiveDTOsByCropId(cityCrop.getCrop().getId());
             List<DieselDistanceWithFirstValue> dieselDistanceWithValueList = dieselDistanceService.getActiveDTOsByCityId(cityCrop.getCity().getId());
             List<SeedSeedlingWithFirstValue> seedSeedlingNumberWithValueList = seedSeedlingNumberService.getActiveDTOsByCityCropId(cityCrop.getId());
@@ -72,20 +75,19 @@ public class HomeService extends BaseService {
             BigDecimal expense = expenseService.calculateExpense(questionDTOList, cropCoefficientList, dieselDistanceWithValueList,
                     seedSeedlingNumberWithValueList, seedSeedlingPriceWithValueList,
                     cityFertilizerWithValueList, fieldAverageValue, wateringValueOptional);
-            returnMap.put("expense", expense);
-
-            BigDecimal maturity = calculateMaturity(questionDTOList);
-            returnMap.put("maturity", maturity);
+            returnList.add(new HomePageView("Gider", expense.toString(), true));
+            String maturity = calculateMaturity(questionDTOList);
+            returnList.add(new HomePageView("Hasat ayı", maturity, false));
         }
-        return returnMap;
+        return returnList;
     }
 
-    private BigDecimal calculateMaturity(List<QuestionWithFirstValue> questionDTOList) {
+    private String calculateMaturity(List<QuestionWithFirstValue> questionDTOList) {
         Optional<QuestionWithFirstValue> dtoOptional = questionDTOList.stream().filter(dto -> dto.getQuestionId().equals(20L)).findFirst();
-        if (dtoOptional.isPresent()) {//TODO
-            String questionValue = dtoOptional.get().getValue();
+        if (dtoOptional.isPresent()) {
+            return dtoOptional.get().getValue();
         }
-        return BigDecimal.ONE;
+        return "0";
     }
 
     private List<BigDecimal> calculateYield(List<QuestionWithFirstValue> selectedDTOList) {

@@ -15,17 +15,21 @@
     <ui:define name="content">
         <div class="grid">
             <div class="col">
-                <h2>Sisteme giriş yapın</h2>
-                <p>Hesabınız mı yok?
-                    <a href="/public/register">
-                        Kayıt olun
-                    </a>
-                </p>
-                <h:form id="loginForm" class="card">
-                    <p:focus context="loginPanelGrid"/>
+                <h:form id="loginForm"
+                        class="card">
+                    <h2>Sisteme giriş yapın</h2>
+                    <p>Hesabınız mı yok?
+                        <a href="/register">
+                            Kayıt olun
+                        </a>
+                    </p>
 
-                    <p:panelGrid id="loginPanelGrid"
-                                 layout="flex"
+                    <f:passThroughAttribute name="action"
+                                            value="#{request.contextPath}/perform_login"/>
+
+                    <p:focus context="@next"/>
+
+                    <p:panelGrid layout="flex"
                                  columns="1">
                         <p:outputPanel styleClass="ui-float-label">
                             <p:inputMask id="phone"
@@ -45,17 +49,35 @@
                                         name="password"/>
                             <p:outputLabel for="@previous" value="Şifreniz" style="margin-left: 0.3rem"/>
                         </p:outputPanel>
-                        <p:selectBooleanCheckbox name="remember-me"
+
+                        <p:selectBooleanCheckbox onchange="toggleRememberMe(this)"
                                                  itemLabel="Beni hatırla"/>
+
+                        <input type="hidden"
+                               id="remember-me-hidden"
+                               name="remember-me"
+                               value="false"/>
+
                     </p:panelGrid>
+
                     <p:commandButton value="Giriş yapın"
                                      style="width: 200px"
-                                     type="button"
-                                     onclick="$('#loginForm').submit();"/>
+                                     type="submit"
+                                     ajax="false"/>
                 </h:form>
+            </div>
+        </div>
+        <div class="grid">
+            <div class="col">
                 <br/>
                 <p>Sorunuz mu var? <a href="#">Buraya</a> basın ve bize bildirin.</p>
             </div>
         </div>
+        <script>
+            function toggleRememberMe(checkbox) {
+                document.getElementById('remember-me-hidden').value =
+                    checkbox.checked ? 'true' : 'false';
+            }
+        </script>
     </ui:define>
 </ui:composition>

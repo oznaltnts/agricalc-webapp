@@ -43,7 +43,7 @@ public class UserPreference extends AbstractEntity {
     private boolean lightLogo;
 
     public static UserPreference createWithTemplateData(User user) {
-        return new UserPreference(user, "layout-horizontal", "dark", "green", "dark", "dark", "outlined", true);
+        return new UserPreference(user, "layout-horizontal", "light", "green", "light", "light", "outlined", false);
     }
 
 }

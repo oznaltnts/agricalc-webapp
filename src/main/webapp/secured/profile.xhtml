@@ -10,92 +10,177 @@
     <ui:define name="content">
         <div class="grid">
             <div class="col">
-                <h2>Profil bilgilerinizi güncelleyin</h2>
                 <h:form id="profileForm" class="card">
+                    <h2>Profil bilgileriniz</h2>
+
                     <p:growl id="growl"
                              showDetail="true"
                              severity="info warn">
                         <p:autoUpdate/>
                     </p:growl>
 
-                    <p:panel header="Kişisel Bilgiler">
-                        <p:focus context="@next"/>
-                        <p:panelGrid layout="flex"
-                                     columns="2">
-                            <p:outputPanel styleClass="ui-float-label">
-                                <p:inputText id="tckn"
-                                             placeholder="TCKN"
-                                             maxlength="11"
-                                             style="width: 200px"
-                                             value="#{profileController.informationView.tckn}">
-                                    <p:keyFilter mask="num"/>
-                                    <f:validateRegex pattern="^[1-9][0-9]{10}$"/>
-                                </p:inputText>
-                                <p:outputLabel for="@previous" value="TCKN" style="margin-left: 0.3rem"/>
-                                <p:message for="tckn"/>
-                            </p:outputPanel>
-                            <p:outputPanel styleClass="ui-float-label">
-                                <p:inputText id="name"
-                                             placeholder="Adınız"
-                                             style="width: 200px"
-                                             value="#{profileController.informationView.name}"/>
-                                <p:outputLabel for="@previous" value="Adınız" style="margin-left: 0.3rem"/>
-                                <p:message for="name"/>
-                            </p:outputPanel>
-                            <p:outputPanel styleClass="ui-float-label">
-                                <p:inputText id="emailInput"
-                                             placeholder="E-mail"
-                                             validatorMessage="Email formatına uygun olarak giriniz"
-                                             style="width: 200px"
-                                             value="#{profileController.informationView.email}"/>
-                                <p:outputLabel for="@previous" value="E-mail" style="margin-left: 0.3rem"/>
-                                <p:message for="emailInput"/>
-                            </p:outputPanel>
-                            <p:outputPanel styleClass="ui-float-label">
-                            </p:outputPanel>
-                            <p:outputPanel styleClass="ui-float-label">
-                                <p:selectOneMenu style="width: 200px"
-                                                 converter="jakarta.faces.Long"
+                    <p:focus context="@next"/>
+                    <p:tabView dynamic="true"
+                               cache="true"
+                               focusOnError="true">
+                        <p:ajax event="tabChange"
+                                update="profileEditForm"
+                                listener="#{profileController.onTabChange}"/>
+
+                        <p:tab title="Kimlik bilgileri">
+                            <p:panelGrid layout="flex"
+                                         columnClasses="col-3, col-9"
+                                         columns="2">
+                                <p:outputLabel for="@next" value="TCKN: "/>
+                                <h:outputText value="#{profileController.informationView.tckn}"/>
+
+                                <p:outputLabel for="@next" value="Adınız: "/>
+                                <h:outputText value="#{profileController.informationView.name}"/>
+
+                                <p:outputLabel for="@next" value="E-mail: "/>
+                                <h:outputText value="#{profileController.informationView.email}"/>
+
+                                <p:outputPanel/>
+                                <p:outputPanel/>
+                            </p:panelGrid>
+
+                            <p:commandButton value="Kimlik bilgileri düzenle"
+                                             process="@this"
+                                             styleClass="mt-2"
+                                             update="profileEditForm"
+                                             action="#{profileController.editProfileInfo(0)}"/>
+                        </p:tab>
+                        <p:tab title="Adres bilgileri">
+                            <p:panelGrid layout="flex"
+                                         columnClasses="col-3, col-9"
+                                         columns="2">
+                                <p:outputLabel for="@next" value="Şehir: "/>
+                                <h:outputText value="#{profileController.informationView.cityName}"/>
+
+                                <p:outputLabel for="@next" value="İlçe: "/>
+                                <h:outputText value="#{profileController.informationView.district}"/>
+
+                                <p:outputLabel for="@next" value="Köy: "/>
+                                <h:outputText value="#{profileController.informationView.village}"/>
+
+                                <p:outputLabel for="@next" value="Mahalle: "/>
+                                <h:outputText value="#{profileController.informationView.neighborhood}"/>
+                            </p:panelGrid>
+
+                            <p:commandButton value="Adres bilgileri düzenle"
+                                             process="@this"
+                                             styleClass="mt-2"
+                                             update="profileEditForm"
+                                             action="#{profileController.editProfileInfo(1)}"/>
+                        </p:tab>
+                    </p:tabView>
+                </h:form>
+            </div>
+        </div>
+        <div class="grid">
+            <div class="col">
+                <h:form id="profileEditForm"
+                        style="visibility: #{profileController.informationView.editInfo ? 'visible' : 'hidden'}"
+                        class="card">
+                    <p:tabView id="profileEditTabView"
+                               dynamic="true"
+                               widgetVar="profileTabWidget"
+                               cache="true"
+                               focusOnError="true">
+                        <p:tab title="Kimlik bilgileri düzenle">
+                            <p:panelGrid layout="flex"
+                                         columnClasses="col-3, col-9"
+                                         columns="2">
+                                <p:outputLabel for="tckn" value="TCKN: "/>
+                                <p:outputPanel>
+                                    <p:inputText id="tckn"
+                                                 placeholder="TCKN"
+                                                 maxlength="11"
+                                                 value="#{profileController.informationView.tckn}">
+                                        <p:keyFilter mask="num"/>
+                                        <f:validateRegex pattern="^[1-9][0-9]{10}$"/>
+                                    </p:inputText>
+                                    <p:message for="tckn"/>
+                                </p:outputPanel>
+
+                                <p:outputLabel for="name" value="Adınız: "/>
+                                <p:outputPanel>
+                                    <p:inputText id="name"
+                                                 placeholder="Adınız"
+                                                 value="#{profileController.informationView.name}"/>
+                                    <p:message for="name"/>
+                                </p:outputPanel>
+
+                                <p:outputLabel for="emailInput" value="E-mail: "/>
+                                <p:outputPanel>
+                                    <p:inputText id="emailInput"
+                                                 placeholder="E-mail"
+                                                 validatorMessage="Email formatına uygun olarak giriniz"
+                                                 value="#{profileController.informationView.email}"/>
+                                    <p:message for="emailInput"/>
+                                </p:outputPanel>
+
+                                <p:outputPanel/>
+                                <p:outputPanel/>
+                            </p:panelGrid>
+                            <p:commandButton value="Vazgeç"
+                                             update="profileEditForm"
+                                             process="@this"
+                                             resetValues="true"
+                                             styleClass="ui-button-warning mr-2"
+                                             action="#{profileController.cancelSaveButton}"
+                                             icon="pi pi-times"/>
+                            <p:commandButton value="Kaydet ve ilerle"
+                                             update="profileForm profileEditForm"
+                                             process="profileEditForm"
+                                             styleClass="ui-button-success mr-2"
+                                             validateClient="true"
+                                             action="#{profileController.saveAndNextButton(0)}"
+                                             icon="pi pi-check"/>
+                        </p:tab>
+                        <p:tab title="Adres bilgileri düzenle">
+                            <p:panelGrid layout="flex"
+                                         columnClasses="col-3, col-9"
+                                         columns="2">
+                                <p:outputLabel for="@next" value="Şehir: "/>
+                                <p:selectOneMenu converter="jakarta.faces.Long"
                                                  value="#{profileController.informationView.userCityId}">
                                     <f:selectItem itemLabel="Şehir" itemValue=""/>
                                     <f:selectItems value="#{profileController.cityList}"
                                                    var="city"
                                                    itemLabel="#{city.name}"
                                                    itemValue="#{city.id}"/>
-                                    <f:facet name="footer">
-                                        <p:divider styleClass="mt-0"/>
-                                        <h:outputText value="#{profileController.cityList.size()}"
-                                                      style="font-weight:bold;"/>
-                                    </f:facet>
                                 </p:selectOneMenu>
-                                <p:outputLabel for="@previous" value="Şehir" style="margin-left: 0.3rem"/>
-                            </p:outputPanel>
-                            <p:outputPanel styleClass="ui-float-label">
-                                <p:inputText placeholder="İlçe"
-                                             style="width: 200px"
-                                             value="#{profileController.informationView.district}"/>
-                                <p:outputLabel for="@previous" value="İlçe" style="margin-left: 0.3rem"/>
-                            </p:outputPanel>
-                            <p:outputPanel styleClass="ui-float-label">
-                                <p:inputText placeholder="Köy"
-                                             style="width: 200px"
-                                             value="#{profileController.informationView.village}"/>
-                                <p:outputLabel for="@previous" value="Köy" style="margin-left: 0.3rem"/>
-                            </p:outputPanel>
-                            <p:outputPanel styleClass="ui-float-label">
-                                <p:inputText placeholder="Mahalle"
-                                             style="width: 200px"
-                                             value="#{profileController.informationView.neighborhood}"/>
-                                <p:outputLabel for="@previous" value="Mahalle" style="margin-left: 0.3rem"/>
-                            </p:outputPanel>
-                        </p:panelGrid>
 
-                        <f:facet name="footer">
-                            <p:commandButton value="Kaydet"
-                                             action="#{profileController.updateUserProfile}"
-                                             process="@form"/>
-                        </f:facet>
-                    </p:panel>
+                                <p:outputLabel for="@next" value="İlçe: "/>
+                                <p:inputText placeholder="İlçe"
+                                             value="#{profileController.informationView.district}"/>
+
+                                <p:outputLabel for="@next" value="Köy: "/>
+                                <p:inputText placeholder="Köy"
+                                             value="#{profileController.informationView.village}"/>
+
+                                <p:outputLabel for="@next" value="Mahalle: "/>
+                                <p:inputText placeholder="Mahalle"
+                                             value="#{profileController.informationView.neighborhood}"/>
+                            </p:panelGrid>
+                            <p:commandButton value="Vazgeç"
+                                             update="profileEditForm"
+                                             process="@this"
+                                             resetValues="true"
+                                             styleClass="ui-button-warning mr-2"
+                                             action="#{profileController.cancelSaveButton}"
+                                             icon="pi pi-times"/>
+                            <p:commandButton value="Kaydet ve ilerle"
+                                             update="profileForm profileEditForm"
+                                             process="profileEditForm"
+                                             styleClass="ui-button-success mr-2"
+                                             validateClient="true"
+                                             action="#{profileController.saveAndNextButton(1)}"
+                                             icon="pi pi-check"/>
+                        </p:tab>
+                    </p:tabView>
+
                 </h:form>
                 <br/>
                 <p>Sorunuz mu var? <a href="#">Buraya</a> basın ve bize bildirin.</p>

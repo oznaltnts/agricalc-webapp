@@ -17,8 +17,12 @@ public class NavigationController {
         FacesContext.getCurrentInstance().getExternalContext().redirect(url);
     }
 
-    public static void redirectToLoginWithDuration(int duration) throws IOException {
+    public static void redirectToLoginWithDuration(int duration) {
         PrimeFaces.current().executeScript("setTimeout(() => {window.location.href = '/login';}, " + duration + ");");
+    }
+
+    public static void redirectToUrlWithDuration(String url, int duration) {
+        PrimeFaces.current().executeScript("setTimeout(() => {window.location.href = '" + url + "';}, " + duration + ");");
     }
 
     public void redirectToHome() throws IOException {

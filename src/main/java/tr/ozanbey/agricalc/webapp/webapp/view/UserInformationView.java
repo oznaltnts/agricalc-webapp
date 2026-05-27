@@ -23,8 +23,11 @@ public class UserInformationView implements Serializable {
     @Email(message = "Email formatına uygun olarak giriniz")
     private String email;
     private Long userCityId;
+    private String cityName;
     private String district;
     private String village;
     private String neighborhood;
+
+    private boolean editInfo = false;
 
 }

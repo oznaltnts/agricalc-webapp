@@ -68,12 +68,11 @@ public class SecurityConfig {
                         .maxSessionsPreventsLogin(false)
                 )
                 .rememberMe(remember -> remember
-                                .rememberMeParameter("")
-                                .rememberMeCookieName("")
-                                .tokenValiditySeconds(1209600) //2 weeks
-                                .useSecureCookie(false) // localhost için
-//TODO                  .useSecureCookie(true)
-                                .key("")
+                        .rememberMeParameter("")
+                        .rememberMeCookieName("")
+                        .tokenValiditySeconds(1209600) //2 weeks
+                        .useSecureCookie(true)
+                        .key("")
                 )
                 .exceptionHandling(ex -> ex
                         .accessDeniedPage("/common/access-denied")

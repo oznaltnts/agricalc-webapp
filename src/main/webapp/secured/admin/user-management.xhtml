@@ -10,7 +10,7 @@
     <ui:define name="content">
         <div class="grid">
             <div class="col">
-                <h:form id="animalAssetForm"
+                <h:form id="userListForm"
                         class="card">
                     <h2>Kullanıcı yönetimi</h2>
 
@@ -20,11 +20,81 @@
                         <p:autoUpdate/>
                     </p:growl>
 
+                    <p:tabView dynamic="true"
+                               cache="true"
+                               focusOnError="true">
+
+                        <p:tab title="Kullanıcılar">
+                            <p:dataTable value="#{userManagementController.userInfoList}"
+                                         stripedRows="true"
+                                         var="user">
+                                <p:column exportable="false" style="width:100px;text-align:center">
+                                    <p:commandButton value="Düzenle"
+                                                     update="userEditForm"
+                                                     process="@this"
+                                                     styleClass="ui-button-warning mr-2"
+                                                     action="#{userManagementController.editRow(user)}"
+                                                     icon="pi pi-check"/>
+                                </p:column>
+                                <p:column headerText="Statü">
+                                    <h:outputText value="#{msg[user.status]}"/>
+                                </p:column>
+                                <p:column headerText="Telefon">
+                                    <h:outputText value="#{user.phone}"/>
+                                </p:column>
+                                <p:column headerText="İsim">
+                                    <h:outputText value="#{user.name}"/>
+                                </p:column>
+                                <p:column headerText="E-mail">
+                                    <h:outputText value="#{user.email}"/>
+                                </p:column>
+                                <p:column headerText="Role">
+                                    <h:outputText value="#{msg[user.role]}"/>
+                                </p:column>
+                                <p:column headerText="Son giriş">
+                                    <h:outputText value="#{user.lastLogin}"/>
+                                </p:column>
+                            </p:dataTable>
+
+                        </p:tab>
+                    </p:tabView>
+
                 </h:form>
             </div>
         </div>
         <div class="grid">
             <div class="col">
+                <h:form id="userEditForm"
+                        style="visibility: #{userManagementController.selectedUser ne null ? 'visible' : 'hidden'}"
+                        class="card">
+                    <h2>Kullanıcı bilgisini güncelleyin</h2>
+
+                    <p:tabView rendered="#{userManagementController.selectedUser ne null}"
+                               dynamic="true"
+                               cache="true"
+                               focusOnError="true">
+                        <p:tab title="#{userManagementController.selectedUser.phone}">
+                            <p:panelGrid layout="flex"
+                                         columnClasses="col-3, col-9"
+                                         columns="2">
+                                <p:outputLabel for="@next"
+                                               value="Statü: "/>
+                                <p:outputPanel>
+                                    <p:selectOneButton value="#{userManagementController.selectedUser.status}"
+                                                       required="true"
+                                                       requiredMessage="Lütfen seçim yapınız"
+                                                       unselectable="false">
+                                        <f:selectItem itemValue="ACTIVE" itemLabel="#{msg['ACTIVE']}"/>
+                                        <f:selectItem itemValue="PASSIVE" itemLabel="#{msg['PASSIVE']}"/>
+                                        <f:selectItem itemValue="DELETED" itemLabel="#{msg['DELETED']}"/>
+                                    </p:selectOneButton>
+                                    <p:message for="@previous"/>
+                                </p:outputPanel>
+                            </p:panelGrid>
+                        </p:tab>
+                    </p:tabView>
+
+                </h:form>
                 <br/>
                 <p>Sorunuz mu var? <a href="#">Buraya</a> basın ve bize bildirin.</p>
             </div>

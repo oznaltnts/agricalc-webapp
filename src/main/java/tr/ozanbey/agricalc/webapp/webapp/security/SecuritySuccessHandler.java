@@ -7,6 +7,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 import org.springframework.stereotype.Component;
+import tr.ozanbey.agricalc.webapp.service.enumtype.EnumRole;
 
 import java.io.IOException;
 
@@ -28,10 +29,10 @@ public class SecuritySuccessHandler implements AuthenticationSuccessHandler {
             loginController.createLoginSuccess(currentUser.getUser().getId());
             loginController.updateLastLoginInfo(currentUser.getUser());
             loginController.assignUserPreference(currentUser.getUser().getId());
-            if (currentUser.getUser().getBeforeLastLogin() == null)
-                response.sendRedirect("/secured/profile");
+            if (currentUser.getUser().getUserRole().equals(EnumRole.ADMIN))
+                response.sendRedirect("/secured/admin/user-management");
             else
-                response.sendRedirect("/secured/plant-asset");
+                response.sendRedirect("/secured/profile");
         }
     }
 

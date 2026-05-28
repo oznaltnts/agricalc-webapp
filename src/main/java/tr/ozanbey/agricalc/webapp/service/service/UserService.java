@@ -152,4 +152,8 @@ public class UserService extends BaseService {
         preferenceRepository.updatePreferenceForUser(userId, menuMode, darkMode, componentTheme, topbarTheme, menuTheme, inputStyle, lightLogo);
     }
 
+    public List<UserInformationView> getUsersAsInfoViewList() {
+        return informationRepository.findAllAsInfoView();
+    }
+
 }

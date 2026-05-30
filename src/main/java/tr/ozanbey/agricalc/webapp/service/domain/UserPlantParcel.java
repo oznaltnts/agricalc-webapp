@@ -27,7 +27,7 @@ public class UserPlantParcel extends AbstractEntity {
     private EnumParcelType parcelType;
 
     // Parsel Bilgisi
-    @Column(name = "parce_name")
+    @Column(name = "parcel_name")
     @ToString.Include
     private String parcelName;
 

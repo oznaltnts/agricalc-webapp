@@ -130,9 +130,9 @@ INSERT INTO tektarim.coefficients (status, type, value_tr, value) values (1, 'DU
 INSERT INTO tektarim.coefficients (status, type, value_tr, value) values (1, 'DURATION','Bir kişinin 1 dekar meyve seyreltme süresi – makine','DURATION_THINNING_MACHINE');
 INSERT INTO tektarim.coefficients (status, type, value_tr, value) values (1, 'DURATION','Bir kişinin yazlık yaprak alma, uç alma veya yazlık budama süresi – insan','DURATION_SUMMER_PRUNING_HUMAN');
 INSERT INTO tektarim.coefficients (status, type, value_tr, value) values (1, 'DURATION','Bir kişinin yazlık yaprak alma, uç alma veya yazlık budama süresi – makine','DURATION_SUMMER_PRUNING_MACHINE');
-INSERT INTO tektarim.coefficients (status, type, value_tr, value) values (1, 'OTHER','İşçilik','OTHER_LABOR');
-INSERT INTO tektarim.coefficients (status, type, value_tr, value) values (1, 'OTHER','Mazot','OTHER_DIESEL');
-INSERT INTO tektarim.coefficients (status, type, value_tr, value) values (1, 'OTHER','Malzeme','OTHER_MATERIAL');
+INSERT INTO tektarim.coefficients (status, type, value_tr, value) values (1, 'OTHER_COEFFICIENT','İşçilik','OTHER_LABOR');
+INSERT INTO tektarim.coefficients (status, type, value_tr, value) values (1, 'OTHER_COEFFICIENT','Mazot','OTHER_DIESEL');
+INSERT INTO tektarim.coefficients (status, type, value_tr, value) values (1, 'OTHER_COEFFICIENT','Malzeme','OTHER_MATERIAL');
 INSERT INTO tektarim.coefficients (status, type, value_tr, value) values (1, 'HOW_MUCH_SEEDLING','El ("adet")','HOW_MUCH_SEEDLING_HAND');
 INSERT INTO tektarim.coefficients (status, type, value_tr, value) values (1, 'HOW_MUCH_SEEDLING','Makine ("lt")','HOW_MUCH_SEEDLING_MACHINE');
 INSERT INTO tektarim.coefficients (status, type, value_tr, value) values (1, 'HOW_MUCH_SEEDLING','El ve makine – El','HOW_MUCH_SEEDLING_HAND_AND_MACHINE_HAND');
@@ -247,4 +247,25 @@ INSERT INTO `tektarim`.`user_roles` (`user_id`, `role`) VALUES (1, 1);
 INSERT INTO `tektarim`.`user_preferences` (`user_id`, `menu_mode`, `dark_mode`, `component_theme`, `topbar_theme`, `menu_theme`, `input_style`, `light_logo`)
 VALUES (1, 'layout-horizontal', 'dark', 'green', 'dark', 'dark', 'outlined', 1);
 
+##TODO alttaki listeyi tamamla
+INSERT INTO `tektarim`.`feeds` (`status`, `category`, `feed_type`, `name`) VALUES ('1', 'ROUGHAGE', 'DRY_ROUGHAGE', 'Yonca (Kuru)');
+INSERT INTO `tektarim`.`feeds` (`status`, `category`, `feed_type`, `name`) VALUES ('1', 'ROUGHAGE', 'SILAGE', 'Mısır Silajı');
+INSERT INTO `tektarim`.`feeds` (`status`, `category`, `feed_type`, `name`) VALUES ('1', 'ROUGHAGE', 'FORAGE', 'Taze Yonca');
+INSERT INTO `tektarim`.`feeds` (`status`, `category`, `feed_type`, `name`) VALUES ('1', 'ROUGHAGE', 'FIBROUS', 'Pancar Yaprağı');
+INSERT INTO `tektarim`.`feeds` (`status`, `category`, `feed_type`, `name`) VALUES ('1', 'ROUGHAGE', 'OTHER_FEED', 'Diğer Kaba Yemler');
+INSERT INTO `tektarim`.`feeds` (`status`, `category`, `feed_type`, `name`) VALUES ('1', 'CONCENTRATE', 'ENERGY', 'Arpa (Dane)');
+INSERT INTO `tektarim`.`feeds` (`status`, `category`, `feed_type`, `name`) VALUES ('1', 'CONCENTRATE', 'PROTEIN', 'Soya Küspesi');
+INSERT INTO `tektarim`.`feeds` (`status`, `category`, `feed_type`, `name`) VALUES ('1', 'CONCENTRATE', 'OTHER_FEED', 'Diğer Kesif Yemler');
+INSERT INTO `tektarim`.`feeds` (`status`, `category`, `feed_type`, `name`) VALUES ('1', 'COMPOUND', 'DAIRY', 'Süt Yemi (%14 Protein)');
+INSERT INTO `tektarim`.`feeds` (`status`, `category`, `feed_type`, `name`) VALUES ('1', 'COMPOUND', 'CATTLE', 'Besi Başlangıç Yemi');
+INSERT INTO `tektarim`.`feeds` (`status`, `category`, `feed_type`, `name`) VALUES ('1', 'COMPOUND', 'GENERAL', 'Sanayi yemi');
+INSERT INTO `tektarim`.`feeds` (`status`, `category`, `feed_type`, `name`) VALUES ('1', 'COMPOUND', 'OTHER_FEED', 'Diğer karma yemler');
+INSERT INTO `tektarim`.`feeds` (`status`, `category`, `feed_type`, `name`) VALUES ('1', 'SUCCULENT', 'WATERY', 'Yeşil Taze Otlar');
+INSERT INTO `tektarim`.`feeds` (`status`, `category`, `feed_type`, `name`) VALUES ('1', 'SUCCULENT', 'OTHER_FEED', 'Diğer sulu yemler');
+INSERT INTO `tektarim`.`feeds` (`status`, `category`, `feed_type`, `name`) VALUES ('1', 'MINERAL_VITAMIN', 'MINERAL', 'Kireç Taşı (Kalsiyum Kaynağı)');
+INSERT INTO `tektarim`.`feeds` (`status`, `category`, `feed_type`, `name`) VALUES ('1', 'MINERAL_VITAMIN', 'VITAMIN', 'Premiks (Vitamin-Mineral Karışımı)');
+INSERT INTO `tektarim`.`feeds` (`status`, `category`, `feed_type`, `name`) VALUES ('1', 'MINERAL_VITAMIN', 'OTHER_FEED', 'Diğer Mineral ve Vitamin');
+INSERT INTO `tektarim`.`feeds` (`status`, `category`, `feed_type`, `name`) VALUES ('1', 'ADDITIVE', 'GENERAL', 'Probiyotikler');
+INSERT INTO `tektarim`.`feeds` (`status`, `category`, `feed_type`, `name`) VALUES ('1', 'ADDITIVE', 'OTHER_FEED', 'Diğer Fonksiyonel Katkılar');
+INSERT INTO `tektarim`.`feeds` (`status`, `category`, `feed_type`, `name`) VALUES ('1', 'OTHER_CATEGORY', 'OTHER_FEED', 'Diğer');
 

@@ -54,7 +54,7 @@
                                     <h:outputText value="#{dataTableVar.tractorBrand}"/>
                                 </p:column>
                                 <p:column headerText="#{msg[assetType]} tipi"
-                                          rendered="#{['SPRAYING','SEEDING','HARVESTING','OTHER'].contains(assetType.name())}">
+                                          rendered="#{['SPRAYING','SEEDING','HARVESTING','OTHER_MACHINE'].contains(assetType.name())}">
                                     <h:outputText value="#{msg[dataTableVar.sprayingType]}"
                                                   rendered="#{['SPRAYING'].contains(assetType.name())}"/>
                                     <h:outputText value="#{msg[dataTableVar.seedingType]}"
@@ -62,25 +62,25 @@
                                     <h:outputText value="#{dataTableVar.harvestingType}"
                                                   rendered="#{['HARVESTING'].contains(assetType.name())}"/>
                                     <h:outputText value="#{msg[dataTableVar.otherType]}"
-                                                  rendered="#{['OTHER'].contains(assetType.name())}"/>
+                                                  rendered="#{['OTHER_MACHINE'].contains(assetType.name())}"/>
                                 </p:column>
                                 <p:column headerText="#{msg[assetType]} tank büyüklüğü (Lt)"
                                           rendered="#{['SPRAYING'].contains(assetType.name())}">
                                     <h:outputText value="#{dataTableVar.sprayingTank}"/>
                                 </p:column>
                                 <p:column headerText="#{msg[assetType]} model"
-                                          rendered="#{['TRACTOR','SPRAYING','FERTILIZER','SEEDING','HARVESTING','BALER','OTHER'].contains(assetType.name())}">
+                                          rendered="#{['TRACTOR','SPRAYING','FERTILIZER','SEEDING','HARVESTING','BALER','OTHER_MACHINE'].contains(assetType.name())}">
                                     <h:outputText value="#{dataTableVar.assetModel}"/>
                                 </p:column>
                                 <p:column headerText="#{msg[assetType]} fiyat">
                                     <h:outputText value="#{dataTableVar.assetPrice}"/>
                                 </p:column>
                                 <p:column headerText="#{msg[assetType]} kira geliri"
-                                          rendered="#{['HARVESTING','BALER','OTHER'].contains(assetType.name())}">
+                                          rendered="#{['HARVESTING','BALER','OTHER_MACHINE'].contains(assetType.name())}">
                                     <h:outputText value="#{msg[dataTableVar.rentIncome]}"/>
                                 </p:column>
                                 <p:column headerText="#{msg[assetType]} yıllık kira geliri"
-                                          rendered="#{['HARVESTING','BALER','OTHER'].contains(assetType.name())}">
+                                          rendered="#{['HARVESTING','BALER','OTHER_MACHINE'].contains(assetType.name())}">
                                     <h:outputText value="#{dataTableVar.rentIncomePrice}"/>
                                 </p:column>
                             </p:dataTable>
@@ -122,9 +122,9 @@
                                              value="#{plantAssetController.selectedAssetDetail.tractorBrand}"/>
 
                                 <p:outputLabel for="@next"
-                                               rendered="#{['SPRAYING','SEEDING','HARVESTING','OTHER'].contains(plantAssetController.selectedAssetType.name())}"
+                                               rendered="#{['SPRAYING','SEEDING','HARVESTING','OTHER_MACHINE'].contains(plantAssetController.selectedAssetType.name())}"
                                                value="Demirbaş Tipi"/>
-                                <p:outputPanel rendered="#{['SPRAYING','SEEDING','HARVESTING','OTHER'].contains(plantAssetController.selectedAssetType.name())}">
+                                <p:outputPanel rendered="#{['SPRAYING','SEEDING','HARVESTING','OTHER_MACHINE'].contains(plantAssetController.selectedAssetType.name())}">
                                     <p:selectOneButton value="#{plantAssetController.selectedAssetDetail.sprayingType}"
                                                        required="true"
                                                        requiredMessage="Lütfen seçim yapınız"
@@ -157,7 +157,7 @@
                                     <p:selectOneButton value="#{plantAssetController.selectedAssetDetail.otherType}"
                                                        required="true"
                                                        requiredMessage="Lütfen seçim yapınız"
-                                                       rendered="#{['OTHER'].contains(plantAssetController.selectedAssetType.name())}"
+                                                       rendered="#{['OTHER_MACHINE'].contains(plantAssetController.selectedAssetType.name())}"
                                                        unselectable="false">
                                         <f:selectItem itemValue="CAR" itemLabel="#{msg['CAR']}"/>
                                         <f:selectItem itemValue="VAN" itemLabel="#{msg['VAN']}"/>
@@ -165,7 +165,7 @@
                                         <f:selectItem itemValue="DRONE" itemLabel="#{msg['DRONE']}"/>
                                     </p:selectOneButton>
                                     <p:message for="@previous"
-                                               rendered="#{['OTHER'].contains(plantAssetController.selectedAssetType.name())}"/>
+                                               rendered="#{['OTHER_MACHINE'].contains(plantAssetController.selectedAssetType.name())}"/>
                                 </p:outputPanel>
 
                                 <p:outputLabel for="@next"
@@ -176,10 +176,10 @@
                                                value="#{plantAssetController.selectedAssetDetail.sprayingTank}"/>
 
                                 <p:outputLabel for="@next"
-                                               rendered="#{['TRACTOR','SPRAYING','FERTILIZER','SEEDING','HARVESTING','BALER','OTHER'].contains(plantAssetController.selectedAssetType.name())}"
+                                               rendered="#{['TRACTOR','SPRAYING','FERTILIZER','SEEDING','HARVESTING','BALER','OTHER_MACHINE'].contains(plantAssetController.selectedAssetType.name())}"
                                                value="Model"/>
                                 <p:inputText placeholder="Model"
-                                             rendered="#{['TRACTOR','SPRAYING','FERTILIZER','SEEDING','HARVESTING','BALER','OTHER'].contains(plantAssetController.selectedAssetType.name())}"
+                                             rendered="#{['TRACTOR','SPRAYING','FERTILIZER','SEEDING','HARVESTING','BALER','OTHER_MACHINE'].contains(plantAssetController.selectedAssetType.name())}"
                                              value="#{plantAssetController.selectedAssetDetail.assetModel}"/>
 
                                 <p:outputLabel for="@next"
@@ -191,10 +191,10 @@
                                                value="#{plantAssetController.selectedAssetDetail.assetPrice}"/>
 
                                 <p:outputLabel for="@next"
-                                               rendered="#{['HARVESTING','BALER','OTHER'].contains(plantAssetController.selectedAssetType.name())}"
+                                               rendered="#{['HARVESTING','BALER','OTHER_MACHINE'].contains(plantAssetController.selectedAssetType.name())}"
                                                value="Kiralık gelirin var mı?"/>
                                 <p:selectOneButton value="#{plantAssetController.selectedAssetDetail.rentIncome}"
-                                                   rendered="#{['HARVESTING','BALER','OTHER'].contains(plantAssetController.selectedAssetType.name())}"
+                                                   rendered="#{['HARVESTING','BALER','OTHER_MACHINE'].contains(plantAssetController.selectedAssetType.name())}"
                                                    label="Kiralık gelirin var mı?">
                                     <p:ajax update="rentIncomeLabel rentIncomePrice" partialSubmit="true"/>
                                     <f:selectItem itemLabel="Yok" itemValue="#{false}"/>

@@ -45,8 +45,8 @@ public class User extends AbstractStatusEntity {
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (!(o instanceof User other)) return false;
-        return phone != null && phone.equals(other.getPhone());
+        if (!(o instanceof User user)) return false;
+        return phone != null && phone.equals(user.getPhone());
     }
 
     @Override

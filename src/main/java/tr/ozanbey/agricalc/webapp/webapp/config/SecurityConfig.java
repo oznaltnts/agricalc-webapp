@@ -35,7 +35,7 @@ public class SecurityConfig {
                         .ignoringRequestMatchers("/jakarta.faces.resource/**", "/public/**", "/common/**")
                 )
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/jakarta.faces.resource/**").permitAll()
+                        .requestMatchers("/jakarta.faces.resource/**", "/webjars/**").permitAll()
                         .requestMatchers("/", "/register", "/login", "/common/**", "/public/**").permitAll()
                         // admin özel
                         .requestMatchers("/secured/admin/**").hasAuthority("ADMIN")
@@ -68,12 +68,11 @@ public class SecurityConfig {
                         .maxSessionsPreventsLogin(false)
                 )
                 .rememberMe(remember -> remember
-                                .rememberMeParameter("")
-                                .rememberMeCookieName("")
-                                .tokenValiditySeconds(1209600) //2 weeks
-                                .useSecureCookie(false) // localhost için
-//TODO                  .useSecureCookie(true)
-                                .key("")
+                        .rememberMeParameter("")
+                        .rememberMeCookieName("")
+                        .tokenValiditySeconds(1209600) //2 weeks
+                        .useSecureCookie(false) // localhost için
+                        .key("")
                 )
                 .exceptionHandling(ex -> ex
                         .accessDeniedPage("/common/access-denied")

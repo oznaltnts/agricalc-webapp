@@ -9,7 +9,7 @@ public enum EnumCropCoefficientType {
     PEST_CONTROL,
     WEEDING,
     DURATION,
-    OTHER,
+    OTHER_COEFFICIENT,
     HOW_MUCH_SEEDLING,
     HOW_MUCH_SEED,
     HOW_MUCH_COLLECT,

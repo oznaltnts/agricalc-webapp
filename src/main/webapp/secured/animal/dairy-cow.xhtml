@@ -1,0 +1,100 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="jakarta.faces.html"
+                xmlns:f="jakarta.faces.core"
+                xmlns:ui="jakarta.faces.facelets"
+                xmlns:p="http://primefaces.org/ui"
+                template="/templates/template.xhtml">
+
+    <ui:define name="title">Büyükbaş Süt Üretimi</ui:define>
+
+    <ui:define name="content">
+        <div class="grid">
+            <div class="col">
+                <h:form id="dairyCowForm"
+                        class="card">
+                    <h2>Büyükbaş süt</h2>
+
+                    <p:growl id="growl"
+                             showDetail="true"
+                             severity="info warn">
+                        <p:autoUpdate/>
+                    </p:growl>
+
+                    <p:tabView dynamic="true"
+                               cache="true"
+                               focusOnError="true">
+                        <p:tab title="aaa">
+
+                        </p:tab>
+                    </p:tabView>
+
+                </h:form>
+            </div>
+        </div>
+        <div class="grid">
+            <div class="col">
+                <h:form id="dairyCowInputForm"
+                        class="card">
+                    <p:tabView dynamic="true"
+                               cache="true"
+                               focusOnError="true">
+                        <p:tab title="Yem stoğu">
+                            <p:dataTable value="#{dairyCowController.dairyCowViewList}"
+                                         widgetVar="dairyCowWidgetVar"
+                                         size="small"
+                                         selectionMode="multiple"
+                                         selection="#{dairyCowController.selectedFeedList}"
+                                         rowKey="#{feedView.feed.id}"
+                                         selectionRowMode="none"
+                                         sortBy="#{feedView.feed.feedCategory}"
+                                         var="feedView">
+
+                                <p:ajax event="rowSelectCheckbox" update="@this"/>
+                                <p:ajax event="rowUnselectCheckbox" update="@this"/>
+                                <p:ajax event="toggleSelect" update="@this"/>
+
+                                <p:headerRow field="feed.feedCategory">
+                                    <p:column colspan="6">
+                                        <h:outputText styleClass="ml-8" value="#{msg[feedView.feed.feedCategory]}"/>
+                                    </p:column>
+                                </p:headerRow>
+
+                                <p:column headerText="Yem Tipi" groupRow="true">
+                                    <h6>#{msg[feedView.feed.feedType]}</h6>
+                                </p:column>
+                                <p:column selectionBox="true" style="width: 21px; text-align: center; padding: 0"/>
+                                <p:column headerText="Yem ismi">
+                                    <h:outputText value="#{feedView.feed.name}"/>
+                                </p:column>
+                                <p:column headerText="Yaklaşık Miktarı (kg)">
+                                    <p:inputNumber value="#{feedView.amountKg}"
+                                                   required="#{dairyCowController.selectedFeedList.contains(feedView)}"
+                                                   disabled="#{!dairyCowController.selectedFeedList.contains(feedView)}"/>
+                                </p:column>
+                                <p:column headerText="Alış Tarihi">
+                                    <p:datePicker value="#{feedView.buyingDate}"
+                                                  showTime="false"
+                                                  pattern="dd MMMM yyyy"
+                                                  required="#{dairyCowController.selectedFeedList.contains(feedView)}"
+                                                  mindate="#{plantProductController.minDate}"
+                                                  maxdate="#{plantProductController.maxDate}"
+                                                  disabled="#{!dairyCowController.selectedFeedList.contains(feedView)}"/>
+                                </p:column>
+                                <p:column headerText="Alış Fiyatı (TL/kg)">
+                                    <p:inputNumber value="#{feedView.buyingPriceKg}"
+                                                   required="#{dairyCowController.selectedFeedList.contains(feedView)}"
+                                                   disabled="#{!dairyCowController.selectedFeedList.contains(feedView)}"/>
+
+                                </p:column>
+                            </p:dataTable>
+                        </p:tab>
+                        <p:tab title="Hayvan varlığı">
+                        </p:tab>
+                    </p:tabView>
+                </h:form>
+                <br/>
+                <p>Sorunuz mu var? <a href="#">Buraya</a> basın ve bize bildirin.</p>
+            </div>
+        </div>
+    </ui:define>
+</ui:composition>

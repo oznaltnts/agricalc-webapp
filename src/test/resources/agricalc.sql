@@ -553,7 +553,7 @@ CREATE TABLE `user_plant_parcels`
     `idate`           DATETIME       NOT NULL DEFAULT CURRENT_TIMESTAMP,
     `user_id`         BIGINT         NOT NULL,
     `parcel_type`     VARCHAR(255)   NULL     DEFAULT NULL,
-    `parce_name`      VARCHAR(255)   NOT NULL,
+    `parcel_name`     VARCHAR(255)   NOT NULL,
     `parcel_price`    DECIMAL(15, 3) NULL     DEFAULT NULL,
     `ada_number`      INTEGER        NULL     DEFAULT NULL,
     `pafta_number`    INTEGER        NULL     DEFAULT NULL,
@@ -575,14 +575,27 @@ CREATE TABLE `user_plant_parcels`
     `water_price`     DECIMAL(15, 3) NULL     DEFAULT NULL,
     `electric_source` VARCHAR(255)   NULL     DEFAULT NULL,
     PRIMARY KEY (`id`),
-    UNIQUE (`user_id`, `parce_name`),
-    ##  UNIQUE (`ada_number`,`pafta_number`),
+    UNIQUE (`user_id`, `parcel_name`),
+    ##TODO  UNIQUE (`ada_number`,`pafta_number`),
     CONSTRAINT `FK_user_plant_parcels_users` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`),
     INDEX idx_user_plant_parcels (`user_id`)
 )
     ENGINE = InnoDB
     AUTO_INCREMENT = 1;
 
-
+CREATE TABLE `feeds`
+(
+    `id`        BIGINT       NOT NULL AUTO_INCREMENT,
+    `idate`     DATETIME     NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    `udate`     DATETIME     NULL     DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP,
+    `status`    TINYINT      NOT NULL COMMENT '-1:deleted, 0:passive, 1:active',
+    `category`  VARCHAR(255) NOT NULL,
+    `feed_type` VARCHAR(255) NOT NULL,
+    `name`      VARCHAR(255) NOT NULL,
+    PRIMARY KEY (`id`),
+    INDEX idx_feeds (`status`)
+)
+    ENGINE = InnoDB
+    AUTO_INCREMENT = 1;
 
 

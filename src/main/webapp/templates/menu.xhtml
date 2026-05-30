@@ -18,21 +18,21 @@
     <div class="layout-menu-container">
         <h:form id="menuform">
             <fr:menu widgetVar="FreyaMenuWidget">
-                <p:menuitem value="Ana sayfa" icon="pi pi-home" url="/" />
-                <p:menuitem value="Nasıl çalışır?" icon="pi pi-question" url="/public/how-it-works"/>
-                <p:menuitem value="Hakkımızda" icon="pi pi-user" url="#"/>
+                <p:menuitem value="Ana sayfa" icon="fa-solid fa-home" url="/"/>
+                <p:menuitem value="Nasıl çalışır?" icon="fa-solid fa-question" url="/public/how-it-works"/>
+                <p:menuitem value="Hakkımızda" icon="fa-solid fa-circle-info" url="#"/>
                 <sec:authorize access="hasAuthority('ADMIN')">
-                    <p:menuitem value="Yönetici" icon="pi pi-key" url="/secured/admin/user-management" />
+                    <p:menuitem value="Kullanıcılar" icon="fa-solid fa-user-gear" url="/secured/admin/user-management"/>
                 </sec:authorize>
                 <sec:authorize access="hasAuthority('USER')">
-                    <p:menuitem value="Üretici bilgileri" icon="pi pi-user-edit" url="/secured/profile" />
-                    <p:submenu label="Bitkisel" icon="pi pi-list">
-                        <p:menuitem value="Demirbaş" icon="pi pi-hammer" url="/secured/plant-asset"/>
-                        <p:menuitem value="Parsel" icon="pi pi-sun" url="/secured/plant-parcel" />
-                        <p:menuitem value="Üretim" icon="pi pi-sun" url="/secured/plant-product" />
+                    <p:menuitem value="Üretici bilgileri" icon="fa-solid fa-user-pen" url="/secured/profile"/>
+                    <p:submenu label="Bitkisel" icon="fa-solid fa-wheat-awn">
+                        <p:menuitem value="Demirbaş" icon="fa-solid fa-tractor" url="/secured/plant-asset"/>
+                        <p:menuitem value="Parsel" icon="fa-solid fa-earth-africa" url="/secured/plant-parcel"/>
+                        <p:menuitem value="Üretim" icon="fa-solid fa-money-bill-wheat" url="/secured/plant-product"/>
                     </p:submenu>
-                    <p:submenu label="Hayvansal" icon="pi pi-list" rendered="false">
-                        <p:menuitem value="Hayvansal demirbaş" icon="pi pi-cog" url="/secured/animal-asset"/>
+                    <p:submenu label="Hayvansal" icon="fa-solid fa-cow">
+                        <p:menuitem value="Büyükbaş besi" icon="fa-solid fa-shop" url="/secured/animal/dairy-cow"/>
                     </p:submenu>
                 </sec:authorize>
             </fr:menu>

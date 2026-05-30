@@ -13,7 +13,7 @@ public enum EnumPlantAsset {
     SEEDING(4),      // ekim makineleri
     HARVESTING(5),   // hasat makineleri
     BALER(6),        // balyalama makineleri
-    OTHER(7);        // diğer makineler
+    OTHER_MACHINE(7);        // diğer makineler
 
     private final int value;
 

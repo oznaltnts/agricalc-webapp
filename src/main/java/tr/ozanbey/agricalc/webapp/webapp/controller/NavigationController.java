@@ -7,13 +7,13 @@ import org.springframework.stereotype.Component;
 import java.io.IOException;
 
 @Component("navigationController")
-public class NavigationController {
+public class NavigationController extends BaseController {
 
     public void redirectToError() throws IOException {
         FacesContext.getCurrentInstance().getExternalContext().redirect("/common/error");
     }
 
-    public void redirectToUrl(String url) throws IOException {
+    public static void redirectToUrl(String url) throws IOException {
         FacesContext.getCurrentInstance().getExternalContext().redirect(url);
     }
 

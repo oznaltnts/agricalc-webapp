@@ -34,8 +34,6 @@ public class HomeController extends BaseController {
     private Set<Crop> cropList = new LinkedHashSet<>();
     private Long selectedCropId;
     private List<HomePageView> resultList;
-    @Autowired
-    private NavigationController navigationController;
 
     @PostConstruct
     public void init() {
@@ -102,7 +100,7 @@ public class HomeController extends BaseController {
     }
 
     public void navigateToHowItWorks() throws IOException {
-        navigationController.redirectToUrl("/public/how-it-works");
+        NavigationController.redirectToUrl("/public/how-it-works");
     }
 
 }

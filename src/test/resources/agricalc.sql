@@ -572,7 +572,7 @@ CREATE TABLE `user_plant_parcels`
     `potassium`       VARCHAR(255)   NULL     DEFAULT NULL,
     `watering_source` VARCHAR(255)   NULL     DEFAULT NULL,
     `watering_type`   VARCHAR(255)   NULL     DEFAULT NULL,
-    `water_price`     DECIMAL(15, 3) NULL     DEFAULT NULL,
+##    `water_price`     DECIMAL(15, 3) NULL     DEFAULT NULL,
     `electric_source` VARCHAR(255)   NULL     DEFAULT NULL,
     PRIMARY KEY (`id`),
     UNIQUE (`user_id`, `parcel_name`),
@@ -589,11 +589,42 @@ CREATE TABLE `feeds`
     `idate`     DATETIME     NOT NULL DEFAULT CURRENT_TIMESTAMP,
     `udate`     DATETIME     NULL     DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP,
     `status`    TINYINT      NOT NULL COMMENT '-1:deleted, 0:passive, 1:active',
-    `category`  VARCHAR(255) NOT NULL,
+    `category`  TINYINT      NOT NULL,
     `feed_type` VARCHAR(255) NOT NULL,
     `name`      VARCHAR(255) NOT NULL,
     PRIMARY KEY (`id`),
     INDEX idx_feeds (`status`)
+)
+    ENGINE = InnoDB
+    AUTO_INCREMENT = 1;
+
+CREATE TABLE `user_dairy_cows`
+(
+    `id`           BIGINT         NOT NULL AUTO_INCREMENT,
+    `idate`        DATETIME       NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    `udate`        DATETIME       NULL     DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP,
+    `status`       TINYINT        NOT NULL COMMENT '-1:deleted, 0:passive, 1:active',
+    `user_id`      BIGINT         NOT NULL,
+    PRIMARY KEY (`id`),
+    CONSTRAINT `FK_user_dairy_cows_users` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`),
+    INDEX idx_user_dairy_cows (`status`, `user_id`)
+)
+    ENGINE = InnoDB
+    AUTO_INCREMENT = 1;
+
+CREATE TABLE `user_dairy_cow_feeds`
+(
+    `id`                BIGINT         NOT NULL AUTO_INCREMENT,
+    `idate`             DATETIME       NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    `user_dairy_cow_id` BIGINT         NOT NULL,
+    `feed_id`           BIGINT         NOT NULL,
+    `amount_kg`         DECIMAL(15, 3) NOT NULL,
+    `buying_date`       DATETIME       NOT NULL,
+    `buying_price`      DECIMAL(15, 3) NOT NULL,
+    PRIMARY KEY (`id`),
+    CONSTRAINT `FK_user_dairy_cow_feeds_user_dairy_cows` FOREIGN KEY (`user_dairy_cow_id`) REFERENCES `user_dairy_cows` (`id`),
+    CONSTRAINT `FK_user_dairy_cow_feeds_feeds` FOREIGN KEY (`feed_id`) REFERENCES `feeds` (`id`),
+    INDEX idx_user_dairy_cow_feeds (`user_dairy_cow_id`)
 )
     ENGINE = InnoDB
     AUTO_INCREMENT = 1;

@@ -1679,10 +1679,7 @@ public class ExpenseService extends BaseService {
     }
 
     private BigDecimal getWaterPriceTotalValueAsBigDecimal(Optional<CityCropWateringValue> wateringValueOptional) {
-        if (wateringValueOptional.isPresent()) {
-            return wateringValueOptional.get().getMaintenance().setScale(3, RoundingMode.HALF_UP);
-        }
-        return BigDecimal.ZERO;
+        return wateringValueOptional.map(cityCropWateringValue -> cityCropWateringValue.getMaintenance().setScale(3, RoundingMode.HALF_UP)).orElse(BigDecimal.ZERO);
     }
 
     private BigDecimal getAsBigDecimalByQIdAndTypeValueNakil(List<QuestionWithFirstValue> questionDTOList, Long questionId, Long verimQuestionId,

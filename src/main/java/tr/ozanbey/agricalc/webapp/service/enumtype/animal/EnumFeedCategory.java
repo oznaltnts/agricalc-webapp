@@ -3,6 +3,8 @@ package tr.ozanbey.agricalc.webapp.service.enumtype.animal;
 
 import lombok.Getter;
 
+import java.util.Objects;
+
 @Getter
 public enum EnumFeedCategory {
 
@@ -18,6 +20,15 @@ public enum EnumFeedCategory {
 
     EnumFeedCategory(int value) {
         this.value = value;
+    }
+
+    public static EnumFeedCategory fromValue(Integer value) {
+        for (EnumFeedCategory c : EnumFeedCategory.values()) {
+            if (Objects.equals(c.value, value)) {
+                return c;
+            }
+        }
+        throw new IllegalArgumentException("Unknown FeedCategory value: " + value);
     }
 
 }

@@ -248,24 +248,24 @@ INSERT INTO `tektarim`.`user_preferences` (`user_id`, `menu_mode`, `dark_mode`, 
 VALUES (1, 'layout-horizontal', 'dark', 'green', 'dark', 'dark', 'outlined', 1);
 
 ##TODO alttaki listeyi tamamla
-INSERT INTO `tektarim`.`feeds` (`status`, `category`, `feed_type`, `name`) VALUES ('1', 'ROUGHAGE', 'DRY_ROUGHAGE', 'Yonca (Kuru)');
-INSERT INTO `tektarim`.`feeds` (`status`, `category`, `feed_type`, `name`) VALUES ('1', 'ROUGHAGE', 'SILAGE', 'Mısır Silajı');
-INSERT INTO `tektarim`.`feeds` (`status`, `category`, `feed_type`, `name`) VALUES ('1', 'ROUGHAGE', 'FORAGE', 'Taze Yonca');
-INSERT INTO `tektarim`.`feeds` (`status`, `category`, `feed_type`, `name`) VALUES ('1', 'ROUGHAGE', 'FIBROUS', 'Pancar Yaprağı');
-INSERT INTO `tektarim`.`feeds` (`status`, `category`, `feed_type`, `name`) VALUES ('1', 'ROUGHAGE', 'OTHER_FEED', 'Diğer Kaba Yemler');
-INSERT INTO `tektarim`.`feeds` (`status`, `category`, `feed_type`, `name`) VALUES ('1', 'CONCENTRATE', 'ENERGY', 'Arpa (Dane)');
-INSERT INTO `tektarim`.`feeds` (`status`, `category`, `feed_type`, `name`) VALUES ('1', 'CONCENTRATE', 'PROTEIN', 'Soya Küspesi');
-INSERT INTO `tektarim`.`feeds` (`status`, `category`, `feed_type`, `name`) VALUES ('1', 'CONCENTRATE', 'OTHER_FEED', 'Diğer Kesif Yemler');
-INSERT INTO `tektarim`.`feeds` (`status`, `category`, `feed_type`, `name`) VALUES ('1', 'COMPOUND', 'DAIRY', 'Süt Yemi (%14 Protein)');
-INSERT INTO `tektarim`.`feeds` (`status`, `category`, `feed_type`, `name`) VALUES ('1', 'COMPOUND', 'CATTLE', 'Besi Başlangıç Yemi');
-INSERT INTO `tektarim`.`feeds` (`status`, `category`, `feed_type`, `name`) VALUES ('1', 'COMPOUND', 'GENERAL', 'Sanayi yemi');
-INSERT INTO `tektarim`.`feeds` (`status`, `category`, `feed_type`, `name`) VALUES ('1', 'COMPOUND', 'OTHER_FEED', 'Diğer karma yemler');
-INSERT INTO `tektarim`.`feeds` (`status`, `category`, `feed_type`, `name`) VALUES ('1', 'SUCCULENT', 'WATERY', 'Yeşil Taze Otlar');
-INSERT INTO `tektarim`.`feeds` (`status`, `category`, `feed_type`, `name`) VALUES ('1', 'SUCCULENT', 'OTHER_FEED', 'Diğer sulu yemler');
-INSERT INTO `tektarim`.`feeds` (`status`, `category`, `feed_type`, `name`) VALUES ('1', 'MINERAL_VITAMIN', 'MINERAL', 'Kireç Taşı (Kalsiyum Kaynağı)');
-INSERT INTO `tektarim`.`feeds` (`status`, `category`, `feed_type`, `name`) VALUES ('1', 'MINERAL_VITAMIN', 'VITAMIN', 'Premiks (Vitamin-Mineral Karışımı)');
-INSERT INTO `tektarim`.`feeds` (`status`, `category`, `feed_type`, `name`) VALUES ('1', 'MINERAL_VITAMIN', 'OTHER_FEED', 'Diğer Mineral ve Vitamin');
-INSERT INTO `tektarim`.`feeds` (`status`, `category`, `feed_type`, `name`) VALUES ('1', 'ADDITIVE', 'GENERAL', 'Probiyotikler');
-INSERT INTO `tektarim`.`feeds` (`status`, `category`, `feed_type`, `name`) VALUES ('1', 'ADDITIVE', 'OTHER_FEED', 'Diğer Fonksiyonel Katkılar');
-INSERT INTO `tektarim`.`feeds` (`status`, `category`, `feed_type`, `name`) VALUES ('1', 'OTHER_CATEGORY', 'OTHER_FEED', 'Diğer');
+INSERT INTO `tektarim`.`feeds` (`status`, `category`, `feed_type`, `name`) VALUES ('1', '0', 'DRY_ROUGHAGE', 'Yonca (Kuru)');
+INSERT INTO `tektarim`.`feeds` (`status`, `category`, `feed_type`, `name`) VALUES ('1', '0', 'SILAGE', 'Mısır Silajı');
+INSERT INTO `tektarim`.`feeds` (`status`, `category`, `feed_type`, `name`) VALUES ('1', '0', 'FORAGE', 'Taze Yonca');
+INSERT INTO `tektarim`.`feeds` (`status`, `category`, `feed_type`, `name`) VALUES ('1', '0', 'FIBROUS', 'Pancar Yaprağı');
+INSERT INTO `tektarim`.`feeds` (`status`, `category`, `feed_type`, `name`) VALUES ('1', '0', 'OTHER_FEED', 'Diğer Kaba Yemler');
+INSERT INTO `tektarim`.`feeds` (`status`, `category`, `feed_type`, `name`) VALUES ('1', '1', 'ENERGY', 'Arpa (Dane)');
+INSERT INTO `tektarim`.`feeds` (`status`, `category`, `feed_type`, `name`) VALUES ('1', '1', 'PROTEIN', 'Soya Küspesi');
+INSERT INTO `tektarim`.`feeds` (`status`, `category`, `feed_type`, `name`) VALUES ('1', '1', 'OTHER_FEED', 'Diğer Kesif Yemler');
+INSERT INTO `tektarim`.`feeds` (`status`, `category`, `feed_type`, `name`) VALUES ('1', '2', 'DAIRY', 'Süt Yemi (%14 Protein)');
+INSERT INTO `tektarim`.`feeds` (`status`, `category`, `feed_type`, `name`) VALUES ('1', '2', 'CATTLE', 'Besi Başlangıç Yemi');
+INSERT INTO `tektarim`.`feeds` (`status`, `category`, `feed_type`, `name`) VALUES ('1', '2', 'GENERAL', 'Sanayi yemi');
+INSERT INTO `tektarim`.`feeds` (`status`, `category`, `feed_type`, `name`) VALUES ('1', '2', 'OTHER_FEED', 'Diğer karma yemler');
+INSERT INTO `tektarim`.`feeds` (`status`, `category`, `feed_type`, `name`) VALUES ('1', '3', 'WATERY', 'Yeşil Taze Otlar');
+INSERT INTO `tektarim`.`feeds` (`status`, `category`, `feed_type`, `name`) VALUES ('1', '3', 'OTHER_FEED', 'Diğer sulu yemler');
+INSERT INTO `tektarim`.`feeds` (`status`, `category`, `feed_type`, `name`) VALUES ('1', '4', 'MINERAL', 'Kireç Taşı (Kalsiyum Kaynağı)');
+INSERT INTO `tektarim`.`feeds` (`status`, `category`, `feed_type`, `name`) VALUES ('1', '4', 'VITAMIN', 'Premiks (Vitamin-Mineral Karışımı)');
+INSERT INTO `tektarim`.`feeds` (`status`, `category`, `feed_type`, `name`) VALUES ('1', '4', 'OTHER_FEED', 'Diğer Mineral ve Vitamin');
+INSERT INTO `tektarim`.`feeds` (`status`, `category`, `feed_type`, `name`) VALUES ('1', '5', 'GENERAL', 'Probiyotikler');
+INSERT INTO `tektarim`.`feeds` (`status`, `category`, `feed_type`, `name`) VALUES ('1', '5', 'OTHER_FEED', 'Diğer Fonksiyonel Katkılar');
+INSERT INTO `tektarim`.`feeds` (`status`, `category`, `feed_type`, `name`) VALUES ('1', '6', 'OTHER_FEED', 'Diğer');
 

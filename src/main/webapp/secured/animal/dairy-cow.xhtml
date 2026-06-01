@@ -7,6 +7,18 @@
 
     <ui:define name="title">Büyükbaş Süt Üretimi</ui:define>
 
+    <ui:define name="metadata">
+        <f:metadata>
+            <f:viewParam id="dairyCowId" name="dairyCowId"
+                         value="#{dairyCowController.dairyCowId}"
+                         required="true"
+                         requiredMessage="requiredMessageViewParam"/> <!-- TODO-->
+            <f:viewAction action="#{dairyCowController.loadDairyCowId('ROUGHAGE')}"/>
+            <f:event type="postValidate"
+                     listener="#{dairyCowController.redirectIfValidationFailed}" />
+        </f:metadata>
+    </ui:define>
+
     <ui:define name="content">
         <div class="grid">
             <div class="col">
@@ -14,9 +26,8 @@
                         class="card">
                     <h2>Büyükbaş süt</h2>
 
-                    <p:growl id="growl"
-                             showDetail="true"
-                             severity="info warn">
+                    <p:growl showDetail="true"
+                             severity="info warn error">
                         <p:autoUpdate/>
                     </p:growl>
 

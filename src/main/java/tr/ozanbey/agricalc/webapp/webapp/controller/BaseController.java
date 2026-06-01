@@ -2,13 +2,11 @@ package tr.ozanbey.agricalc.webapp.webapp.controller;
 
 
 import jakarta.faces.context.FacesContext;
-import jakarta.faces.view.ViewScoped;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.stereotype.Component;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 import tr.ozanbey.agricalc.webapp.service.service.BaseService;
@@ -22,8 +20,6 @@ import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.util.Objects;
 
-@Component("baseController")
-@ViewScoped
 public class BaseController implements Serializable {
 
     @Autowired

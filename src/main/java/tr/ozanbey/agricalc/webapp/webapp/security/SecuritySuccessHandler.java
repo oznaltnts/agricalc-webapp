@@ -30,9 +30,9 @@ public class SecuritySuccessHandler implements AuthenticationSuccessHandler {
             loginController.updateLastLoginInfo(currentUser.getUser());
             loginController.assignUserPreference(currentUser.getUser().getId());
             if (currentUser.getUser().getUserRole().equals(EnumRole.ADMIN))
-                response.sendRedirect("/secured/admin/user-management");
+                response.sendRedirect("/secured/admin/dashboard");
             else
-                response.sendRedirect("/secured/profile");
+                response.sendRedirect("/secured/dashboard");
         }
     }
 

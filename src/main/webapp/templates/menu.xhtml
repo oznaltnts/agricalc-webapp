@@ -22,7 +22,10 @@
                 <p:menuitem value="Nasıl çalışır?" icon="fa-solid fa-question" url="/public/how-it-works"/>
                 <p:menuitem value="Hakkımızda" icon="fa-solid fa-circle-info" url="#"/>
                 <sec:authorize access="hasAuthority('ADMIN')">
-                    <p:menuitem value="Kullanıcılar" icon="fa-solid fa-user-gear" url="/secured/admin/user-management"/>
+                    <p:submenu label="Yönetim" icon="fa-solid fa-sliders">
+                        <p:menuitem value="Kullanıcılar" icon="fa-solid fa-user-gear" url="/secured/admin/user-management"/>
+                        <p:menuitem value="Hayvan yemleri" icon="fa-solid fa-wheat-awn" url="/secured/admin/feed-management"/>
+                    </p:submenu>
                 </sec:authorize>
                 <sec:authorize access="hasAuthority('USER')">
                     <p:menuitem value="Üretici bilgileri" icon="fa-solid fa-user-pen" url="/secured/profile"/>

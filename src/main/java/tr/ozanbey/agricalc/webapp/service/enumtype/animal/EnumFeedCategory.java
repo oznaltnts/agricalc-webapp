@@ -3,32 +3,28 @@ package tr.ozanbey.agricalc.webapp.service.enumtype.animal;
 
 import lombok.Getter;
 
-import java.util.Objects;
-
 @Getter
 public enum EnumFeedCategory {
 
-    ROUGHAGE(0),        // Kaba Yemler
-    CONCENTRATE(1),     // Kesif Yemler
-    COMPOUND(2),        // Karma Fabrika Yemleri
-    SUCCULENT(3),       // Sulu Yemler
-    MINERAL_VITAMIN(4), // Mineral ve Vitamin Katkıları
-    ADDITIVE(5),        // Yem Katkıları
-    OTHER_CATEGORY(6);  // Diğer Yemler
+    // Kaba Yemler
+    ROUGHAGE(new EnumFeedType[]{EnumFeedType.DRY_ROUGHAGE, EnumFeedType.SILAGE, EnumFeedType.FORAGE, EnumFeedType.OTHER_FEED}),
+    // Kesif Yemler
+    CONCENTRATE(new EnumFeedType[]{EnumFeedType.ENERGY, EnumFeedType.PROTEIN, EnumFeedType.OTHER_FEED}),
+    // Karma Fabrika Yemleri
+    COMPOUND(new EnumFeedType[]{EnumFeedType.DAIRY, EnumFeedType.CATTLE, EnumFeedType.OTHER_FEED}),
+    // Sulu Yemler
+    SUCCULENT(new EnumFeedType[]{EnumFeedType.GENERAL, EnumFeedType.OTHER_FEED}),
+    // Mineral ve Vitamin Katkıları
+    MINERAL_VITAMIN(new EnumFeedType[]{EnumFeedType.MINERAL, EnumFeedType.VITAMIN, EnumFeedType.OTHER_FEED}),
+    // Yem Katkıları
+    ADDITIVE(new EnumFeedType[]{EnumFeedType.GENERAL, EnumFeedType.OTHER_FEED}),
+    // Diğer Yemler
+    OTHER_CATEGORY(new EnumFeedType[]{EnumFeedType.OTHER_FEED});
 
-    private final int value;
+    private final EnumFeedType[] subTypes;
 
-    EnumFeedCategory(int value) {
-        this.value = value;
-    }
-
-    public static EnumFeedCategory fromValue(Integer value) {
-        for (EnumFeedCategory c : EnumFeedCategory.values()) {
-            if (Objects.equals(c.value, value)) {
-                return c;
-            }
-        }
-        throw new IllegalArgumentException("Unknown FeedCategory value: " + value);
+    EnumFeedCategory(EnumFeedType[] subTypes) {
+        this.subTypes = subTypes;
     }
 
 }

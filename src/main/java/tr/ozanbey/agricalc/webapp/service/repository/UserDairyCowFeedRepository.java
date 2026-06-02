@@ -18,7 +18,7 @@ public interface UserDairyCowFeedRepository extends JpaRepository<UserDairyCowFe
             FROM Feed t1
             LEFT JOIN UserDairyCowFeed t2 ON t1.id = t2.feed.id AND t2.userDairyCow.id = :dairyCowId AND t2.userDairyCow.user.id = :userId
             WHERE t1.status = :status
-            ORDER BY t1.feedCategory ASC
+            ORDER BY t1.feedCategory ASC, t1.feedType ASC
             """)
     List<DairyCowFeedView> findAllAsCowView(@Param("status") EnumStatus status, @Param("dairyCowId") Long dairyCowId, @Param("userId") Long userId);
 

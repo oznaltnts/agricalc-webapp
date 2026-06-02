@@ -76,10 +76,11 @@
                             <p:panelGrid layout="flex"
                                          columnClasses="col-3, col-9"
                                          columns="2">
-                                <p:outputLabel for="@next"
+                                <p:outputLabel for="statusSelect"
                                                value="Statü: "/>
                                 <p:outputPanel>
-                                    <p:selectOneButton value="#{userManagementController.selectedUser.status}"
+                                    <p:selectOneButton id="statusSelect"
+                                                       value="#{userManagementController.selectedUser.status}"
                                                        required="true"
                                                        requiredMessage="Lütfen seçim yapınız"
                                                        unselectable="false">

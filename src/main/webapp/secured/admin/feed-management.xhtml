@@ -1,0 +1,139 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="jakarta.faces.html"
+                xmlns:f="jakarta.faces.core"
+                xmlns:ui="jakarta.faces.facelets"
+                xmlns:p="http://primefaces.org/ui"
+                template="/templates/template.xhtml">
+
+    <ui:define name="title">Yem yönetimi</ui:define>
+
+    <ui:define name="content">
+        <div class="grid">
+            <div class="col">
+                <h:form id="feedListForm"
+                        class="card">
+                    <h2>Yem yönetimi</h2>
+
+                    <p:growl showDetail="true"
+                             severity="info warn">
+                        <p:autoUpdate/>
+                    </p:growl>
+
+                    <p:tabView id="feedTabView"
+                               cache="false"
+                               dynamic="true"
+                               widgetVar="feedWidgetVar"
+                               value="#{feedManagementController.feedCategories}"
+                               var="category"
+                               focusOnError="true">
+                        <p:ajax event="tabChange"
+                                update="feedEditForm"
+                                listener="#{feedManagementController.setSelectedFeed(null)}"/>
+                        <p:tab title="#{msg[category.name()]}">
+                            <p:dataTable var="feedTable"
+                                         size="small"
+                                         stripedRows="true"
+                                         value="#{feedManagementController.getDataTableList(category)}">
+
+                                <p:column headerText="Yem tipi" groupRow="true">
+                                    <h6>#{msg[feedTable.feedType]}</h6>
+                                </p:column>
+
+                                <p:column headerText="Statü">
+                                    <h6>#{msg[feedTable.status]}</h6>
+                                </p:column>
+                                <p:column headerText="Yem ismi">
+                                    <h:outputText value="#{feedTable.name}"/>
+                                </p:column>
+                                <p:column headerText="Yönet">
+                                    <p:commandButton action="#{feedManagementController.editFeed(feedTable)}"
+                                                     update="feedEditForm"
+                                                     disabled="#{feedTable.status eq 'DELETED'}"
+                                                     value="Düzenle"/>
+                                </p:column>
+                            </p:dataTable>
+
+                            <p:commandButton action="#{feedManagementController.addNewFeedToCategory(category)}"
+                                             styleClass="m-1"
+                                             process="@this"
+                                             update="feedEditForm"
+                                             value="Yeni #{msg[category.name()]} ekle"/>
+                        </p:tab>
+                    </p:tabView>
+                </h:form>
+            </div>
+        </div>
+        <div class="grid">
+            <div class="col">
+                <h:form id="feedEditForm"
+                        style="visibility: #{feedManagementController.selectedFeed eq null ? 'hidden' : 'visible'}"
+                        class="card">
+                    <h2>#{msg[plantParcelController.selectedParcelType]} bilgisini güncelleyin</h2>
+
+                    <p:tabView rendered="#{feedManagementController.selectedFeed ne null}"
+                               dynamic="true"
+                               cache="true"
+                               focusOnError="true">
+                        <p:tab title="#{msg[feedManagementController.selectedFeed.feedCategory]}">
+                            <p:panelGrid layout="flex"
+                                         columnClasses="col-3, col-9"
+                                         columns="2">
+                                <p:outputLabel for="@next" value="Kategory"/>
+                                <p:selectOneButton unselectable="false"
+                                                   disabled="true"
+                                                   value="#{feedManagementController.selectedFeed.feedCategory}">
+                                    <f:selectItems value="#{feedManagementController.feedCategories}"
+                                                   var="feedCategory"
+                                                   itemLabel="#{msg[feedCategory]}"
+                                                   itemValue="#{feedCategory}"/>
+                                </p:selectOneButton>
+
+                                <p:outputLabel for="@next" value="Tip"/>
+                                <p:selectOneButton unselectable="false"
+                                                   required="true"
+                                                   value="#{feedManagementController.selectedFeed.feedType}">
+                                    <f:selectItems var="feedType"
+                                                   value="#{feedManagementController.selectedFeed.feedCategory.subTypes}"
+                                                   itemLabel="#{msg[feedType]}"
+                                                   itemValue="#{feedType}"/>
+                                </p:selectOneButton>
+                                <p:outputLabel for="@next" value="Statü"/>
+                                <p:selectOneButton unselectable="false"
+                                                   required="true"
+                                                   value="#{feedManagementController.selectedFeed.status}">
+                                    <f:selectItems value="#{feedManagementController.statuses}"
+                                                   var="status"
+                                                   itemValue="#{status}"
+                                                   itemLabel="#{msg[status]}"/>
+                                </p:selectOneButton>
+                                <p:outputLabel for="nameInput" value="İsmi"/>
+                                <p:outputPanel>
+                                    <p:inputText id="nameInput"
+                                                 value="#{feedManagementController.selectedFeed.name}"
+                                                 required="true"/>
+                                    <p:message for="@previous"/>
+                                </p:outputPanel>
+                            </p:panelGrid>
+
+                            <p:commandButton value="Vazgeç"
+                                             process="@this"
+                                             update="@form"
+                                             styleClass="m-1"
+                                             resetValues="true"
+                                             action="#{feedManagementController.setSelectedFeed(null)}"/>
+
+                            <p:commandButton value="Kaydet"
+                                             process="@form"
+                                             update="@form feedListForm"
+                                             styleClass="m-1"
+                                             validateClient="true"
+                                             action="#{feedManagementController.saveSelectedFeed}"/>
+                        </p:tab>
+                    </p:tabView>
+                </h:form>
+                <br/>
+                <p>Sorunuz mu var? <a href="#">Buraya</a> basın ve bize bildirin.</p>
+            </div>
+        </div>
+    </ui:define>
+</ui:composition>

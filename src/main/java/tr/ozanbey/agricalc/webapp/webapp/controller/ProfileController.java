@@ -30,6 +30,9 @@ public class ProfileController extends BaseController {
     @Autowired
     private CityService cityService;
 
+    @Autowired
+    private NavigationController navigationController;
+
     private List<City> cityList;
     private UserInformationView informationView;
 
@@ -73,8 +76,8 @@ public class ProfileController extends BaseController {
         if (tabNum == 1) {
             informationView.setEditInfo(false);
             FacesContext.getCurrentInstance().addMessage(null,
-                    new FacesMessage(FacesMessage.SEVERITY_INFO, "Kayıt başarılı", "3 saniye içinde demirbaş ekranına yönlendirileceksiniz."));
-            NavigationController.redirectToUrlWithDuration("/secured/plant-asset", 3000);
+                    new FacesMessage(FacesMessage.SEVERITY_INFO, "Kayıt başarılı", "Kullanıcı bilgileriniz güncellenmiştir."));
+            navigationController.redirectToUrlWithDuration("/secured/plant-asset", 3000);
         } else {
             PrimeFaces.current().executeScript("PF('profileTabWidget').select(1);");
         }
@@ -83,8 +86,7 @@ public class ProfileController extends BaseController {
     private void updateUserProfile() {
         if (userService.save(informationView, getCurrentUser().getUser())) {
             FacesContext.getCurrentInstance().addMessage(null,
-                    new FacesMessage(FacesMessage.SEVERITY_INFO,
-                            "Kayıt başarılı", "Kullanıcı bilgileriniz güncellenmiştir."));
+                    new FacesMessage(FacesMessage.SEVERITY_INFO, "Kayıt başarılı", "Kullanıcı bilgileriniz güncellenmiştir."));
         }
     }
 

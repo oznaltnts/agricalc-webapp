@@ -22,6 +22,9 @@ public class RegisterController extends BaseController {
     @Autowired
     private UserService userService;
 
+    @Autowired
+    private NavigationController navigationController;
+
     private final String regexPattern = "^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=\\S+$).{8,}$";
 
     //^\(5:(5 ile başlamalı,[0-9]{2}: 2 rakam,\) :parantez ve boşluk,[0-9]{3} :3 rakam ve boşluk,[0-9]{2} : 2 rakam ve boşluk,[0-9]{2}$:2 rakam
@@ -42,12 +45,11 @@ public class RegisterController extends BaseController {
             userService.registerUser(phone, password);
             FacesContext.getCurrentInstance().addMessage(null,
                     new FacesMessage(FacesMessage.SEVERITY_INFO, "Kayıt başarılı", "5 saniye içinde giriş ekranına yönlendirileceksiniz."));
-            NavigationController.redirectToLoginWithDuration(5000);
+            navigationController.redirectToLoginWithDuration(5000);
         } catch (Exception e) {
             FacesContext.getCurrentInstance().addMessage(null,
                     new FacesMessage(FacesMessage.SEVERITY_ERROR, "Kullanıcı mevcut", "Bu bilgiler ile kullanıcı zaten kayıtlı."));
         }
     }
-
 
 }

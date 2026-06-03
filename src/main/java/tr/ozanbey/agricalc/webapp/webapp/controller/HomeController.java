@@ -15,7 +15,6 @@ import tr.ozanbey.agricalc.webapp.service.domain.Crop;
 import tr.ozanbey.agricalc.webapp.service.service.HomeService;
 import tr.ozanbey.agricalc.webapp.webapp.view.HomePageView;
 
-import java.io.IOException;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -97,10 +96,6 @@ public class HomeController extends BaseController {
                     .sorted(Comparator.comparing(Crop::getName))
                     .collect(Collectors.toCollection(LinkedHashSet::new));
         }
-    }
-
-    public void navigateToHowItWorks() throws IOException {
-        NavigationController.redirectToUrl("/public/how-it-works");
     }
 
 }

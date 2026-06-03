@@ -5,6 +5,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import tr.ozanbey.agricalc.webapp.service.domain.Feed;
+import tr.ozanbey.agricalc.webapp.service.enumtype.EnumStatus;
 import tr.ozanbey.agricalc.webapp.service.repository.FeedRepository;
 
 import java.util.List;
@@ -20,8 +21,13 @@ public class FeedService extends BaseService {
         return feedRepository.findAllByOrderByFeedCategoryAscFeedTypeAsc();
     }
 
+    public List<Feed> getActiveFeedListByOrderByCategoryAndType() {
+        return feedRepository.getFeedListByStatusOrderByFeedCategoryAscFeedTypeAsc(EnumStatus.ACTIVE);
+    }
+
     @Transactional
     public void saveFeed(Feed selectedFeed) {
         feedRepository.save(selectedFeed);
     }
+
 }

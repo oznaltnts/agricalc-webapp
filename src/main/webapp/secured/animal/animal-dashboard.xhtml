@@ -33,11 +33,13 @@
                                 </p:column>
 
                                 <p:column style="width: 80px;text-align: right">
-
                                     <p:button value="Detay"
                                               styleClass="mr-2" iconPos="right"
-                                              outcome="/secured/animal/dairy-cow?dairyCowId=#{userDairy.id}"
-                                              icon="fa-solid fa-angles-right"/>
+                                              href="/secured/animal/dairy-cow-feed"
+                                              icon="fa-solid fa-angles-right">
+                                        <f:param name="dairyCowId"
+                                                 value="#{userDairy.id}" />
+                                    </p:button>
                                 </p:column>
                             </p:dataTable>
                         </p:tab>

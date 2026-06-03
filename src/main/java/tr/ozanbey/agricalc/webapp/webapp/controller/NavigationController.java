@@ -6,27 +6,23 @@ import org.springframework.stereotype.Component;
 
 import java.io.IOException;
 
-@Component("navigationController")
-public class NavigationController extends BaseController {
+@Component
+public class NavigationController {
 
     public void redirectToError() throws IOException {
         FacesContext.getCurrentInstance().getExternalContext().redirect("/common/error");
     }
 
-    public static void redirectToUrl(String url) throws IOException {
+    public void redirectToHome() throws IOException {
+        FacesContext.getCurrentInstance().getExternalContext().redirect("/");
+    }
+
+    public void redirectToUrl(String url) throws IOException {
         FacesContext.getCurrentInstance().getExternalContext().redirect(url);
     }
 
-    public static void redirectToLoginWithDuration(int duration) {
+    public void redirectToLoginWithDuration(int duration) {
         PrimeFaces.current().executeScript("setTimeout(() => {window.location.href = '/login';}, " + duration + ");");
-    }
-
-    public static void redirectToUrlWithDuration(String url, int duration) {
-        PrimeFaces.current().executeScript("setTimeout(() => {window.location.href = '" + url + "';}, " + duration + ");");
-    }
-
-    public void redirectToHome() throws IOException {
-        FacesContext.getCurrentInstance().getExternalContext().redirect("/");
     }
 
 }

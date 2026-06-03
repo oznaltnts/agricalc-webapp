@@ -67,7 +67,7 @@
                     <h2>Dijital tarım asistanınızla, toprağınızın potansiyelini keşfedin.</h2>
                     <p>Şehir - ürün seçerek hesaplama yapın</p>
                     <p:growl showDetail="true"
-                             severity="info warn error">
+                             severity="info warn">
                         <p:autoUpdate/>
                     </p:growl>
 
@@ -123,7 +123,7 @@
                                          icon="pi pi-question"
                                          process="@none"
                                          update="@none"
-                                         action="#{homeController.navigateToHowItWorks}"/>
+                                         action="#{navigationController.redirectToUrl('/public/how-it-works')}"/>
                     </p:outputPanel>
                 </h:form>
             </div>
@@ -149,7 +149,7 @@
                                          icon="pi pi-question"
                                          process="@none"
                                          update="@none"
-                                         action="#{homeController.navigateToHowItWorks}"/>
+                                         action="#{navigationController.redirectToUrl('/public/how-it-works')}"/>
                     </p:outputPanel>
                 </h:form>
             </div>

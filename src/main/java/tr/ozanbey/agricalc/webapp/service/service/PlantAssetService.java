@@ -1,9 +1,9 @@
 package tr.ozanbey.agricalc.webapp.service.service;
 
-import jakarta.transaction.Transactional;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import tr.ozanbey.agricalc.webapp.service.domain.User;
 import tr.ozanbey.agricalc.webapp.service.domain.UserPlantAsset;
 import tr.ozanbey.agricalc.webapp.service.domain.UserPlantAssetDetail;
@@ -18,7 +18,7 @@ import java.util.Optional;
 
 @Service
 @Slf4j
-public class PlantAssetService extends BaseService {
+public class PlantAssetService {
 
     @Autowired
     private UserPlantAssetRepository plantAssetRepository;

@@ -8,7 +8,7 @@ import tr.ozanbey.agricalc.webapp.service.repository.GeneralCoefficientRepositor
 import tr.ozanbey.agricalc.webapp.service.repository.GeneralCoefficientValueRepository;
 
 @Service
-public class GeneralCoefficientService extends BaseService {
+public class GeneralCoefficientService {
 
     @Autowired
     private GeneralCoefficientRepository generalCoefficientRepository;

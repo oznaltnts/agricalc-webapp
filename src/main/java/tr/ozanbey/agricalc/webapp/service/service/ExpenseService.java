@@ -14,7 +14,7 @@ import java.util.Optional;
 
 @Slf4j
 @Service
-public class ExpenseService extends BaseService {
+public class ExpenseService {
 
     private final GeneralCoefficientService generalCoefficientService;
 

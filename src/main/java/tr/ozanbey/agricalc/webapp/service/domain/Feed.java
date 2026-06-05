@@ -1,7 +1,11 @@
 package tr.ozanbey.agricalc.webapp.service.domain;
 
-import jakarta.persistence.*;
+import jakarta.persistence.Column;
+import jakarta.persistence.Convert;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Table;
 import lombok.*;
+import tr.ozanbey.agricalc.webapp.service.converter.EnumFeedCategoryConverter;
 import tr.ozanbey.agricalc.webapp.service.converter.EnumFeedTypeConverter;
 import tr.ozanbey.agricalc.webapp.service.enumtype.animal.EnumFeedCategory;
 import tr.ozanbey.agricalc.webapp.service.enumtype.animal.EnumFeedType;
@@ -15,8 +19,8 @@ import tr.ozanbey.agricalc.webapp.service.enumtype.animal.EnumFeedType;
 @ToString(onlyExplicitlyIncluded = true)
 public class Feed extends AbstractStatusEntity {
 
-    @Column(name = "category", nullable = false)
-    @Enumerated(EnumType.STRING)
+    @Convert(converter = EnumFeedCategoryConverter.class)
+    @Column(name = "category", nullable = false, columnDefinition = "TINYINT")
     @ToString.Include
     private EnumFeedCategory feedCategory;
 

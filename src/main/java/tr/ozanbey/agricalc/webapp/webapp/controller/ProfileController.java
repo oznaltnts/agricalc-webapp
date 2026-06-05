@@ -77,7 +77,7 @@ public class ProfileController extends BaseController {
             informationView.setEditInfo(false);
             FacesContext.getCurrentInstance().addMessage(null,
                     new FacesMessage(FacesMessage.SEVERITY_INFO, "Kayıt başarılı", "Kullanıcı bilgileriniz güncellenmiştir."));
-            navigationController.redirectToUrlWithDuration("/secured/plant-asset", 3000);
+//TODO            navigationController.redirectToUrlWithDuration("/secured/plant-asset", 3000);
         } else {
             PrimeFaces.current().executeScript("PF('profileTabWidget').select(1);");
         }

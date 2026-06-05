@@ -10,7 +10,7 @@ import java.util.List;
 
 @Service
 @Slf4j
-public class CityService extends BaseService {
+public class CityService {
 
     @Autowired
     private CityRepository cityRepository;

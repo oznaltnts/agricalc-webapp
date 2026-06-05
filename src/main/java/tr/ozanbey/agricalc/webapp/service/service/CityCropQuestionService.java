@@ -9,7 +9,7 @@ import tr.ozanbey.agricalc.webapp.service.repository.CityCropQuestionValueReposi
 import java.util.List;
 
 @Service
-public class CityCropQuestionService extends BaseService {
+public class CityCropQuestionService {
 
     @Autowired
     private CityCropQuestionRepository cityCropQuestionRepository;

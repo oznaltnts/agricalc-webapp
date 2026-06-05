@@ -1,7 +1,6 @@
 package tr.ozanbey.agricalc.webapp.webapp.view;
 
 import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Positive;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -21,13 +20,10 @@ public class DairyCowFeedView implements Serializable {
     private Long userFeedId;
     private Feed feed;
 
-    @NotNull(message = "Yaklaşık miktarı kilogram olarak giriniz")
-    @Positive
-    private BigDecimal amountKg;
+    private double amountKg;
     @NotNull(message = "Satın alma tarihi seçiniz")
     private LocalDateTime buyingDate;
     @NotNull(message = "Kilogram fiyatını giriniz")
-    @Positive
     private BigDecimal buyingPriceKg;
 
 }

@@ -15,8 +15,8 @@ import java.time.LocalDateTime;
 public class UserDairyCowFeed extends AbstractEntity {
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_dairy_cow_id", referencedColumnName = "id", nullable = false)
-    private UserDairyCow userDairyCow;
+    @JoinColumn(name = "user_dairy_cow_barn_id", referencedColumnName = "id", nullable = false)
+    private UserDairyCowBarn userDairyCowBarn;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "feed_id", referencedColumnName = "id", nullable = false)
@@ -24,7 +24,7 @@ public class UserDairyCowFeed extends AbstractEntity {
 
     @Column(name = "amount_kg", nullable = false)
     @ToString.Include
-    private BigDecimal amountKg;
+    private double amountKg;
 
     @Column(name = "buying_date", nullable = false)
     @ToString.Include
@@ -33,9 +33,5 @@ public class UserDairyCowFeed extends AbstractEntity {
     @Column(name = "buying_price", nullable = false)
     @ToString.Include
     private BigDecimal buyingPrice;
-
-    public UserDairyCowFeed(Feed feed) {
-        this.feed = feed;
-    }
 
 }

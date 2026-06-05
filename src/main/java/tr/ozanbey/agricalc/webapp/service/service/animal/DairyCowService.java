@@ -4,47 +4,65 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import tr.ozanbey.agricalc.webapp.service.domain.UserDairyCowFeed;
+import tr.ozanbey.agricalc.webapp.service.domain.DairyCow;
+import tr.ozanbey.agricalc.webapp.service.domain.DairyCowCoefficient;
+import tr.ozanbey.agricalc.webapp.service.domain.Feed;
+import tr.ozanbey.agricalc.webapp.service.domain.UserDairyCowBarn;
 import tr.ozanbey.agricalc.webapp.service.enumtype.EnumStatus;
+import tr.ozanbey.agricalc.webapp.service.repository.DairyCowCoefficientRepository;
+import tr.ozanbey.agricalc.webapp.service.repository.DairyCowRepository;
 import tr.ozanbey.agricalc.webapp.service.repository.FeedRepository;
-import tr.ozanbey.agricalc.webapp.service.repository.UserDairyCowFeedRepository;
-import tr.ozanbey.agricalc.webapp.service.repository.UserDairyCowRepository;
-import tr.ozanbey.agricalc.webapp.service.service.BaseService;
-import tr.ozanbey.agricalc.webapp.webapp.view.DairyCowFeedView;
+import tr.ozanbey.agricalc.webapp.service.repository.UserDairyCowBarnRepository;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @Slf4j
-public class DairyCowService extends BaseService {
+public class DairyCowService {
+
+    @Autowired
+    private DairyCowRepository dairyCowRepository;
+
+    @Autowired
+    private DairyCowCoefficientRepository coefficientRepository;
 
     @Autowired
     private FeedRepository feedRepository;
 
     @Autowired
-    private UserDairyCowRepository dairyCowRepository;
+    private UserDairyCowBarnRepository barnRepository;
 
-    @Autowired
-    private UserDairyCowFeedRepository userFeedRepository;
 
-    public List<DairyCowFeedView> getActiveFeedAsViewList(Long dairyCowId, Long userId) {
-        return userFeedRepository.findAllAsCowView(EnumStatus.ACTIVE, dairyCowId, userId);
+    public List<DairyCow> getDairyCowsByStatuses(EnumStatus[] statuses) {
+        return dairyCowRepository.findByStatusIn(statuses);
     }
 
     @Transactional
-    public void saveUserFeed(DairyCowFeedView selectedFeedView, Long dairyCowId, Long selectedFeedId) {
-        UserDairyCowFeed userDairyCowFeed;
-        if (selectedFeedView.getUserFeedId() == null) {
-            userDairyCowFeed = new UserDairyCowFeed();
-        } else {
-            userDairyCowFeed = userFeedRepository.getReferenceById(selectedFeedView.getUserFeedId());
-        }
-        userDairyCowFeed.setUserDairyCow(dairyCowRepository.getReferenceById(dairyCowId));
-        userDairyCowFeed.setFeed(feedRepository.getReferenceById(selectedFeedId));
-        userDairyCowFeed.setAmountKg(selectedFeedView.getAmountKg());
-        userDairyCowFeed.setBuyingDate(selectedFeedView.getBuyingDate());
-        userDairyCowFeed.setBuyingPrice(selectedFeedView.getBuyingPriceKg());
-        userFeedRepository.save(userDairyCowFeed);
+    public void saveDairyCow(DairyCow selectedDairyCow) {
+        dairyCowRepository.save(selectedDairyCow);
+    }
+
+    public List<DairyCowCoefficient> getDairyCowCoefficients() {
+        return coefficientRepository.findAll();
+    }
+
+    @Transactional
+    public void saveDairyCowCoefficient(DairyCowCoefficient selectedCoefficient) {
+        coefficientRepository.save(selectedCoefficient);
+    }
+
+    public List<Feed> getFeedsByStatuses(EnumStatus[] statuses) {
+        return feedRepository.findByStatusInOrderByFeedCategoryAscFeedTypeAsc(statuses);
+    }
+
+    @Transactional
+    public void saveFeed(Feed selectedFeed) {
+        feedRepository.save(selectedFeed);
+    }
+
+    public Optional<UserDairyCowBarn> getUserBarnByIdAndUserId(Long barnId, Long userId) {
+        return barnRepository.findByIdAndUser_Id(barnId, userId);
     }
 
 }

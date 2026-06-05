@@ -269,3 +269,8 @@ INSERT INTO `tektarim`.`feeds` (`status`, `category`, `feed_type`, `name`) VALUE
 INSERT INTO `tektarim`.`feeds` (`status`, `category`, `feed_type`, `name`) VALUES ('1', '5', 'OTHER_FEED', 'Diğer Fonksiyonel Katkılar');
 INSERT INTO `tektarim`.`feeds` (`status`, `category`, `feed_type`, `name`) VALUES ('1', '6', 'OTHER_FEED', 'Diğer');
 
+INSERT INTO `tektarim`.`dairy_cow_coefficients` (`cow_type`, `value`) VALUES ('0', '1');
+INSERT INTO `tektarim`.`dairy_cow_coefficients` (`cow_type`, `value`) VALUES ('1', '0.85');
+INSERT INTO `tektarim`.`dairy_cow_coefficients` (`cow_type`, `value`) VALUES ('2', '0.6');
+INSERT INTO `tektarim`.`dairy_cow_coefficients` (`cow_type`, `value`) VALUES ('3', '0.4');
+INSERT INTO `tektarim`.`dairy_cow_coefficients` (`cow_type`, `value`) VALUES ('4', '0.25');

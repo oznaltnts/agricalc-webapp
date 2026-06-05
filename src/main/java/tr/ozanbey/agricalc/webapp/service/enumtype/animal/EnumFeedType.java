@@ -16,8 +16,8 @@ public enum EnumFeedType {
     DAIRY(5),           // Süt Yemleri
     CATTLE(6),          // Besi Yemleri
     GENERAL(7),         // Genel
-    MINERAL(8),        // Mineraller
-    VITAMIN(9),        // Vitaminler
+    MINERAL(8),         // Mineraller
+    VITAMIN(9),         // Vitaminler
     OTHER_FEED(10);     // Diğer Türler
 
     private final int value;

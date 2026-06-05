@@ -7,7 +7,7 @@ import tr.ozanbey.agricalc.webapp.service.repository.QuestionRepository;
 
 @Service
 @Slf4j
-public class QuestionService extends BaseService {
+public class QuestionService {
 
     @Autowired
     private QuestionRepository questionRepository;

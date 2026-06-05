@@ -19,14 +19,23 @@ public class ControllerConfig implements WebMvcConfigurer {
         registry.addViewController("/public/how-it-works").setViewName("forward:/public/how-it-works.xhtml");
         registry.addViewController("/login").setViewName("forward:/public/login.xhtml");
         registry.addViewController("/register").setViewName("forward:/public/register.xhtml");
+
         registry.addViewController("/secured/profile").setViewName("forward:/secured/profile.xhtml");
+
         registry.addViewController("/secured/plant-asset").setViewName("forward:/secured/plant-asset.xhtml");
         registry.addViewController("/secured/plant-parcel").setViewName("forward:/secured/plant-parcel.xhtml");
         registry.addViewController("/secured/plant-product").setViewName("forward:/secured/plant-product.xhtml");
-        registry.addViewController("/secured/animal/dashboard").setViewName("forward:/secured/animal/animal-dashboard.xhtml");
+
+        registry.addViewController("/secured/animal/dairy-cow-barn").setViewName("forward:/secured/animal/dairy-cow-barn.xhtml");
+        registry.addViewController("/secured/animal/dairy-cow-count").setViewName("forward:/secured/animal/dairy-cow-count.xhtml");
         registry.addViewController("/secured/animal/dairy-cow-feed").setViewName("forward:/secured/animal/dairy-cow-feed.xhtml");
+        registry.addViewController("/secured/animal/dairy-cow-expense").setViewName("forward:/secured/animal/dairy-cow-expense.xhtml");
+
         registry.addViewController("/secured/admin/user-management").setViewName("forward:/secured/admin/user-management.xhtml");
-        registry.addViewController("/secured/admin/feed-management").setViewName("forward:/secured/admin/feed-management.xhtml");
+        registry.addViewController("/secured/admin/animal/cow-management").setViewName("forward:/secured/admin/animal/cow-management.xhtml");
+        registry.addViewController("/secured/admin/animal/cow-coefficient").setViewName("forward:/secured/admin/animal/cow-coefficient.xhtml");
+        registry.addViewController("/secured/admin/animal/feed-management").setViewName("forward:/secured/admin/animal/feed-management.xhtml");
+
         registry.addViewController("/common/access-denied").setViewName("forward:/common/access.xhtml");
         registry.addViewController("/common/error").setViewName("forward:/common/error.xhtml");
         registry.addViewController("/common/not-found").setViewName("forward:/common/notfound.xhtml");

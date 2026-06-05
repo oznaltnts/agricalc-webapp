@@ -1,4 +1,4 @@
-package tr.ozanbey.agricalc.webapp.webapp.controller.admin;
+package tr.ozanbey.agricalc.webapp.webapp.controller.admin.animal;
 
 
 import jakarta.annotation.PostConstruct;
@@ -11,10 +11,9 @@ import tr.ozanbey.agricalc.webapp.service.domain.Feed;
 import tr.ozanbey.agricalc.webapp.service.enumtype.EnumStatus;
 import tr.ozanbey.agricalc.webapp.service.enumtype.animal.EnumFeedCategory;
 import tr.ozanbey.agricalc.webapp.service.enumtype.animal.EnumFeedType;
-import tr.ozanbey.agricalc.webapp.service.service.FeedService;
+import tr.ozanbey.agricalc.webapp.service.service.animal.DairyCowService;
 import tr.ozanbey.agricalc.webapp.webapp.controller.BaseController;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -25,12 +24,12 @@ import java.util.Optional;
 public class FeedManagementController extends BaseController {
 
     @Autowired
-    private FeedService feedService;
+    private DairyCowService dairyCowService;
 
     private EnumStatus[] statuses = EnumStatus.values();
     private EnumFeedCategory[] feedCategories = EnumFeedCategory.values();
     private EnumFeedType[] feedTypes = EnumFeedType.values();
-    private List<Feed> dairyCowFeedViewList = new ArrayList<>();
+    private List<Feed> feedList;
     private Feed selectedFeed;
 
     @PostConstruct
@@ -39,17 +38,12 @@ public class FeedManagementController extends BaseController {
     }
 
     private void fillDataTableValues() {
-        dairyCowFeedViewList = feedService.getFeedList();
+        feedList = dairyCowService.getFeedsByStatuses(statuses);
     }
 
-    public List<Feed> getDataTableList(EnumFeedCategory category) {
-        return dairyCowFeedViewList.stream().filter(v -> v.getFeedCategory().equals(category)).toList();
-    }
-
-    public void addNewFeedToCategory(EnumFeedCategory category) {
+    public void addNewFeedToCategory() {
         selectedFeed = new Feed();
         selectedFeed.setStatus(EnumStatus.ACTIVE);
-        selectedFeed.setFeedCategory(category);
     }
 
     public void editFeed(Feed feed) {
@@ -63,7 +57,7 @@ public class FeedManagementController extends BaseController {
 
     public void saveSelectedFeed() {
         if (checkIsThereChange()) {
-            feedService.saveFeed(selectedFeed);
+            dairyCowService.saveFeed(selectedFeed);
             fillDataTableValues();
         }
         selectedFeed = null;
@@ -71,7 +65,7 @@ public class FeedManagementController extends BaseController {
 
     public boolean checkIsThereChange() {
         if (selectedFeed.getId() != null) {
-            Optional<Feed> optionalFeed = dairyCowFeedViewList.stream().filter(v -> v.getId().equals(selectedFeed.getId())).findFirst();
+            Optional<Feed> optionalFeed = feedList.stream().filter(v -> v.getId().equals(selectedFeed.getId())).findFirst();
             if (optionalFeed.isPresent()) {
                 Feed feed = optionalFeed.get();
                 return !selectedFeed.getFeedCategory().equals(feed.getFeedCategory())

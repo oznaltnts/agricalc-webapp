@@ -18,6 +18,7 @@ import java.time.LocalDateTime;
 public class DairyCowFeedView implements Serializable {
 
     private Long userFeedId;
+    private Long selectedFeedId;
     private Feed feed;
 
     private double amountKg;

@@ -43,19 +43,19 @@ public class DairyCowBarnService {
         if (editedDairyCowBarnView.isUnknownBirthRate())
             userDairyCowBarn.setBirthRate(null);
         else
-        userDairyCowBarn.setBirthRate(editedDairyCowBarnView.getBirthRate());
+            userDairyCowBarn.setBirthRate(editedDairyCowBarnView.getBirthRate());
         if (editedDairyCowBarnView.isUnknownDeathRate())
             userDairyCowBarn.setDeathRate(null);
         else
-        userDairyCowBarn.setDeathRate(editedDairyCowBarnView.getDeathRate());
+            userDairyCowBarn.setDeathRate(editedDairyCowBarnView.getDeathRate());
         if (editedDairyCowBarnView.isUnknownInseminationRate())
             userDairyCowBarn.setInseminationRate(null);
         else
-        userDairyCowBarn.setInseminationRate(editedDairyCowBarnView.getInseminationRate());
+            userDairyCowBarn.setInseminationRate(editedDairyCowBarnView.getInseminationRate());
         if (editedDairyCowBarnView.isUnknownMilkYield())
             userDairyCowBarn.setMilkYield(null);
         else
-        userDairyCowBarn.setMilkYield(editedDairyCowBarnView.getMilkYield());
+            userDairyCowBarn.setMilkYield(editedDairyCowBarnView.getMilkYield());
         barnRepository.save(userDairyCowBarn);
     }
 

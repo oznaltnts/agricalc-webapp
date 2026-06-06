@@ -23,6 +23,7 @@
                         <p:menuitem value="Ahırlar"/>
                         <p:menuitem value="Hayvanlar"/>
                         <p:menuitem value="Yemler"/>
+                        <p:menuitem value="Yem rasyonu"/>
                         <p:menuitem value="Giderler"/>
                         <p:menuitem value="Confirmation"/>
                     </p:steps>
@@ -33,7 +34,7 @@
             <div class="col">
                 <h:form id="countListForm"
                         class="card">
-                    <h5 class="mt-0">Büyükbaş süt hayvanları</h5>
+                    <h5 class="mt-0" style="font-weight: bold">Büyükbaş süt hayvanları</h5>
 
                     <p:growl showDetail="true"
                              severity="info warn">
@@ -44,12 +45,7 @@
                                  stripedRows="true"
                                  size="small"
                                  value="#{dairyCowCountController.dairyCowCountViewList}">
-                        <p:column style="text-align: left" headerText="Yönet">
-                            <p:commandButton update="countEditForm"
-                                             value="Düzenle"
-                                             action="#{dairyCowCountController.editCount(cowCount)}"/>
-                        </p:column>
-                        <p:column headerText="Hayvan" style="text-align: right">
+                        <p:column headerText="Hayvan">
                             <h:outputText value="#{msg[cowCount.cowType]}:"/>
                         </p:column>
                         <p:column headerText="Mevcut Hayvan Varlığı">
@@ -81,12 +77,18 @@
                             <h:outputText value="#{cowCount.endMilkUsageRate}" rendered="#{cowCount.cowType eq 'COW'}"/>
                         </p:column>
                         -->
+                        <p:column style="width: 100px; text-align: center" headerText="Yönet">
+                            <p:commandButton update="countEditForm"
+                                             styleClass="m-1"
+                                             value="Düzenle"
+                                             action="#{dairyCowCountController.editCount(cowCount)}"/>
+                        </p:column>
                         <p:columnGroup type="footer">
                             <p:row>
-                                <p:column colspan="2"
+                                <p:column colspan="1"
                                           style="text-align: right"
                                           footerText="Toplam Büyükbaş Hayvan Sayısı:"/>
-                                <p:column>
+                                <p:column colspan="4">
                                     <f:facet name="footer">
                                         <h:outputText value="#{dairyCowCountController.totalCount}"/>
                                     </f:facet>
@@ -118,7 +120,7 @@
                 <h:form id="countEditForm"
                         style="visibility: #{dairyCowCountController.selectedCountView eq null ? 'hidden' : 'visible'}"
                         styleClass="card">
-                    <h5 class="mt-0">Ekle/Düzenle</h5>
+                    <h5 class="mt-0" style="font-weight: bold">Ekle/Düzenle</h5>
 
                     <p:messages showDetail="true" globalOnly="true" />
 

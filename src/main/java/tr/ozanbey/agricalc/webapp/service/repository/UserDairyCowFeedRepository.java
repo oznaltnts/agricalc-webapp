@@ -12,7 +12,7 @@ import java.util.List;
 public interface UserDairyCowFeedRepository extends JpaRepository<UserDairyCowFeed, Long> {
 
     @Query("""
-            SELECT new tr.ozanbey.agricalc.webapp.webapp.view.DairyCowFeedView(t1.id, t1.feed, t1.amountKg, t1.buyingDate, t1.buyingPrice)
+            SELECT new tr.ozanbey.agricalc.webapp.webapp.view.DairyCowFeedView(t1.id, t1.feed.id, t1.feed, t1.amountKg, t1.buyingDate, t1.buyingPrice)
             FROM UserDairyCowFeed t1
             WHERE t1.userDairyCowBarn.id = :barnId
             AND t1.feed.status = :status

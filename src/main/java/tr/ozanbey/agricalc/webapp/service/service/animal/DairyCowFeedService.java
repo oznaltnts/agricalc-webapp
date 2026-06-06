@@ -31,7 +31,7 @@ public class DairyCowFeedService {
     }
 
     @Transactional
-    public void saveUserFeed(DairyCowFeedView selectedFeedView, Long barnId, Long selectedFeedId) {
+    public void saveUserFeed(DairyCowFeedView selectedFeedView, Long barnId) {
         UserDairyCowFeed userDairyCowFeed;
         if (selectedFeedView.getUserFeedId() == null) {
             userDairyCowFeed = new UserDairyCowFeed();
@@ -39,10 +39,17 @@ public class DairyCowFeedService {
             userDairyCowFeed = dairyCowFeedRepository.getReferenceById(selectedFeedView.getUserFeedId());
         }
         userDairyCowFeed.setUserDairyCowBarn(barnRepository.getReferenceById(barnId));
-        userDairyCowFeed.setFeed(feedRepository.getReferenceById(selectedFeedId));
+        userDairyCowFeed.setFeed(feedRepository.getReferenceById(selectedFeedView.getSelectedFeedId()));
         userDairyCowFeed.setAmountKg(selectedFeedView.getAmountKg());
         userDairyCowFeed.setBuyingDate(selectedFeedView.getBuyingDate());
         userDairyCowFeed.setBuyingPrice(selectedFeedView.getBuyingPriceKg());
         dairyCowFeedRepository.save(userDairyCowFeed);
     }
+
+    @Transactional
+    public void removeUserFeed(Long selectedUserFeedId) {
+        dairyCowFeedRepository.delete(dairyCowFeedRepository.getReferenceById(selectedUserFeedId));
+
+    }
+
 }

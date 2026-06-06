@@ -18,8 +18,8 @@ public class DairyCowCountView implements Serializable {
     private Long coefId;
     private EnumCowType cowType;
     private double coefficientValue;
-    private Integer currentCount = 0;
-    private Integer purchaseCount = 0;
-    private Integer sellCount = 0;
+    private int currentCount;
+    private int purchaseCount;
+    private int sellCount;
 
 }

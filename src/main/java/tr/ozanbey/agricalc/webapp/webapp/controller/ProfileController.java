@@ -2,8 +2,6 @@ package tr.ozanbey.agricalc.webapp.webapp.controller;
 
 
 import jakarta.annotation.PostConstruct;
-import jakarta.faces.application.FacesMessage;
-import jakarta.faces.context.FacesContext;
 import jakarta.faces.view.ViewScoped;
 import lombok.Getter;
 import lombok.Setter;
@@ -14,6 +12,7 @@ import org.springframework.stereotype.Component;
 import tr.ozanbey.agricalc.webapp.service.domain.City;
 import tr.ozanbey.agricalc.webapp.service.service.CityService;
 import tr.ozanbey.agricalc.webapp.service.service.UserService;
+import tr.ozanbey.agricalc.webapp.webapp.util.JSFUtils;
 import tr.ozanbey.agricalc.webapp.webapp.view.UserInformationView;
 
 import java.util.List;
@@ -75,8 +74,7 @@ public class ProfileController extends BaseController {
         updateUserProfile();
         if (tabNum == 1) {
             informationView.setEditInfo(false);
-            FacesContext.getCurrentInstance().addMessage(null,
-                    new FacesMessage(FacesMessage.SEVERITY_INFO, "Kayıt başarılı", "Kullanıcı bilgileriniz güncellenmiştir."));
+            JSFUtils.addInfoMessage(null, "Kayıt başarılı", "Kullanıcı bilgileriniz güncellenmiştir.");
 //TODO            navigationController.redirectToUrlWithDuration("/secured/plant-asset", 3000);
         } else {
             PrimeFaces.current().executeScript("PF('profileTabWidget').select(1);");
@@ -85,8 +83,7 @@ public class ProfileController extends BaseController {
 
     private void updateUserProfile() {
         if (userService.save(informationView, getCurrentUser().getUser())) {
-            FacesContext.getCurrentInstance().addMessage(null,
-                    new FacesMessage(FacesMessage.SEVERITY_INFO, "Kayıt başarılı", "Kullanıcı bilgileriniz güncellenmiştir."));
+            JSFUtils.addInfoMessage(null, "Kayıt başarılı", "Kullanıcı bilgileriniz güncellenmiştir.");
         }
     }
 

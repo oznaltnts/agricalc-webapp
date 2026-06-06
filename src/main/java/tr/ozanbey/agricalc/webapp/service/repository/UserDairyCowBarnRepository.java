@@ -2,8 +2,11 @@ package tr.ozanbey.agricalc.webapp.service.repository;
 
 import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import tr.ozanbey.agricalc.webapp.service.domain.UserDairyCowBarn;
 import tr.ozanbey.agricalc.webapp.service.enumtype.EnumStatus;
+import tr.ozanbey.agricalc.webapp.webapp.view.DairyCowBarnView;
 
 import java.util.List;
 import java.util.Optional;
@@ -13,7 +16,27 @@ public interface UserDairyCowBarnRepository extends JpaRepository<UserDairyCowBa
     @EntityGraph(attributePaths = {"dairyCow"})
     Optional<UserDairyCowBarn> findByIdAndUser_Id(Long id, Long userId);
 
-    @EntityGraph(attributePaths = {"dairyCow"})
-    List<UserDairyCowBarn> findByStatusInAndUser_Id(EnumStatus[] status, Long userId);
+    @Query("""
+            SELECT new tr.ozanbey.agricalc.webapp.webapp.view.DairyCowBarnView(
+                t1.id,
+                t1.dairyCow.id,
+                t1.dairyCow.name,
+                t1.barnCapacity,
+                t1.milkingCapacity,
+                t1.birthRate,
+                t1.deathRate,
+                t1.inseminationRate,
+                t1.milkYield,
+                CASE WHEN t1.birthRate IS NULL THEN true ELSE false END,
+                CASE WHEN t1.deathRate IS NULL THEN true ELSE false END,
+                CASE WHEN t1.inseminationRate IS NULL THEN true ELSE false END,
+                CASE WHEN t1.milkYield IS NULL THEN true ELSE false END
+                    )
+                    FROM UserDairyCowBarn t1
+                    WHERE t1.status in :statuses
+                      AND t1.user.id = :userId
+            
+            """)
+    List<DairyCowBarnView> findAsViewListByStatusInAndUser_Id(@Param("statuses") EnumStatus[] statuses, @Param("userId") Long userId);
 
 }

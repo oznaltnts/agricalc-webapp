@@ -36,7 +36,7 @@
                     <h5 class="mt-0">Büyükbaş süt hayvanları</h5>
 
                     <p:growl showDetail="true"
-                             severity="info warn error">
+                             severity="info warn">
                         <p:autoUpdate/>
                     </p:growl>
 
@@ -44,7 +44,7 @@
                                  stripedRows="true"
                                  size="small"
                                  value="#{dairyCowCountController.dairyCowCountViewList}">
-                        <p:column headerText="Yönet" style="width: 100px">
+                        <p:column style="text-align: left" headerText="Yönet">
                             <p:commandButton update="countEditForm"
                                              value="Düzenle"
                                              action="#{dairyCowCountController.editCount(cowCount)}"/>
@@ -119,6 +119,8 @@
                         style="visibility: #{dairyCowCountController.selectedCountView eq null ? 'hidden' : 'visible'}"
                         styleClass="card">
                     <h5 class="mt-0">Ekle/Düzenle</h5>
+
+                    <p:messages showDetail="true" globalOnly="true" />
 
                     <p:panelGrid layout="flex"
                                  rendered="#{dairyCowCountController.selectedCountView ne null}"

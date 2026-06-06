@@ -10,11 +10,8 @@ import tr.ozanbey.agricalc.webapp.service.domain.UserDairyCowBarn;
 import tr.ozanbey.agricalc.webapp.service.service.animal.DairyCowService;
 import tr.ozanbey.agricalc.webapp.webapp.controller.BaseController;
 import tr.ozanbey.agricalc.webapp.webapp.controller.NavigationController;
-import tr.ozanbey.agricalc.webapp.webapp.view.DairyCowBarnView;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 
@@ -57,27 +54,4 @@ public class DairyCowController extends BaseController {
         return false;
     }
 
-    public List<DairyCowBarnView> entityListToViewListDataTransfer(List<UserDairyCowBarn> userDairyCowBarns) {
-        List<DairyCowBarnView> returnList = new ArrayList<>();
-        for (UserDairyCowBarn u : userDairyCowBarns) {
-            returnList.add(entityToViewDataTransfer(u));
-        }
-        return returnList;
-    }
-
-    public DairyCowBarnView entityToViewDataTransfer(UserDairyCowBarn userDairyCowBarn) {
-        DairyCowBarnView dairyCowBarnView = new DairyCowBarnView();
-        dairyCowBarnView.setBarnId(userDairyCowBarn.getId());
-        dairyCowBarnView.setBarnCapacity(userDairyCowBarn.getBarnCapacity());
-        dairyCowBarnView.setMilkingCapacity(userDairyCowBarn.getMilkingCapacity());
-        if (userDairyCowBarn.getDairyCow() != null) {
-            dairyCowBarnView.setDairyCowName(userDairyCowBarn.getDairyCow().getName());
-            dairyCowBarnView.setSelectedDairyCowId(userDairyCowBarn.getDairyCow().getId());
-        }
-        dairyCowBarnView.setBirthRate(userDairyCowBarn.getBirthRate());
-        dairyCowBarnView.setDeathRate(userDairyCowBarn.getDeathRate());
-        dairyCowBarnView.setInseminationRate(userDairyCowBarn.getInseminationRate());
-        dairyCowBarnView.setMilkYield(userDairyCowBarn.getMilkYield());
-        return dairyCowBarnView;
-    }
 }

@@ -29,7 +29,7 @@ public class DairyCowCountService {
         return countRepository.findAsViewListByBarnId(barnId);
     }
 
-    private List<DairyCowCountView> calculateCowCount(List<DairyCowCountView> returnList, double milkCapacity, double birthRate, double deathRate, double barnCapacity) {
+//    private List<DairyCowCountView> calculateCowCount(List<DairyCowCountView> returnList, double milkCapacity, double birthRate, double deathRate, double barnCapacity) {
 //        double endYearCowCount = 0;
 //        double endYearFeedCowCount = 0;
 //        double endYearPregnantCount = 0;
@@ -73,8 +73,8 @@ public class DairyCowCountService {
 //            view.setStartBarnUsageRate(view.getCurrentCount() * 100 / barnCapacity);
 //            view.setEndBarnUsageRate(view.getEndYearCount() * 100 / barnCapacity);
 //        }
-        return returnList;
-    }
+//        return returnList;
+//    }
 
     @Transactional
     public void saveUserCount(DairyCowCountView selectedCountView, Long barnId) {

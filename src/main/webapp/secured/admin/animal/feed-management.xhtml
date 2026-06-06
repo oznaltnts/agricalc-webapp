@@ -27,12 +27,12 @@
                         <p:column headerText="Yem tipi" groupRow="true">
                             <h6>#{msg[feedTable.feedCategory]} - #{msg[feedTable.feedType]}</h6>
                         </p:column>
-
-                        <p:column headerText="Statü">
-                            <h6>#{msg[feedTable.status]}</h6>
-                        </p:column>
                         <p:column headerText="Yem ismi">
                             <h:outputText value="#{feedTable.name}"/>
+                        </p:column>
+
+                        <p:column headerText="Statü">
+                            <h:outputText value="#{msg[feedTable.status]}"/>
                         </p:column>
                         <p:column headerText="Yönet">
                             <p:commandButton action="#{feedManagementController.editFeed(feedTable)}"

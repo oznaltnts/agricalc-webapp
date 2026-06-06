@@ -18,12 +18,17 @@ public class DairyCowBarnView implements Serializable {
     @NotNull(message = "Hayvan ırkı seçiniz")
     private Long selectedDairyCowId;
     private String dairyCowName;
-    private int barnCapacity;
-    private int milkingCapacity;
+    private Integer barnCapacity;
+    private Integer milkingCapacity;
 
     private Double birthRate;
     private Double deathRate;
     private Double inseminationRate;
     private Double milkYield;
+
+    private boolean unknownBirthRate;
+    private boolean unknownDeathRate;
+    private boolean unknownInseminationRate;
+    private boolean unknownMilkYield;
 
 }

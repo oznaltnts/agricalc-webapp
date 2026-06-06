@@ -18,6 +18,7 @@
                         <p:menuitem value="Ahırlar"/>
                         <p:menuitem value="Hayvanlar"/>
                         <p:menuitem value="Yemler"/>
+                        <p:menuitem value="Yem rasyonu"/>
                         <p:menuitem value="Giderler"/>
                         <p:menuitem value="Confirmation"/>
                     </p:steps>
@@ -28,7 +29,7 @@
             <div class="col">
                 <h:form id="barnListForm"
                         class="card">
-                    <h5 class="mt-0">Büyükbaş süt ahırları</h5>
+                    <h5 class="mt-0" style="font-weight: bold">Büyükbaş süt ahırları</h5>
 
                     <p:growl showDetail="true"
                              severity="info warn">
@@ -38,7 +39,7 @@
                     <p:dataTable var="dairyCowBarn"
                                  stripedRows="true"
                                  value="#{dairyCowBarnController.dairyCowBarnViews}">
-                        <p:column headerText="Yönet">
+                        <p:column style="text-align: left" headerText="Yönet">
                             <p:commandButton update="barnEditForm"
                                              value="Düzenle"
                                              action="#{dairyCowBarnController.editBarn(dairyCowBarn)}"/>
@@ -53,18 +54,18 @@
                             <h:outputText value="#{dairyCowBarn.milkingCapacity}"/>
                         </p:column>
                         <p:column headerText="Ortalama doğum oranı">
-                            <h:outputText value="#{dairyCowBarn.birthRate}"/>
+                            <h:outputText value="#{dairyCowBarn.unknownBirthRate ? 'Bilmiyorum' : dairyCowBarn.birthRate}"/>
                         </p:column>
                         <p:column headerText="Ortalama ölüm oranı">
-                            <h:outputText value="#{dairyCowBarn.deathRate}"/>
+                            <h:outputText value="#{dairyCowBarn.unknownDeathRate ? 'Bilmiyorum' : dairyCowBarn.deathRate}"/>
                         </p:column>
                         <p:column headerText="Ortalama suni tohumlama sayısı">
-                            <h:outputText value="#{dairyCowBarn.inseminationRate}"/>
+                            <h:outputText value="#{dairyCowBarn.unknownInseminationRate ? 'Bilmiyorum' : dairyCowBarn.inseminationRate}"/>
                         </p:column>
                         <p:column headerText="Yıllık ortama hayvan başına süt verimi">
-                            <h:outputText value="#{dairyCowBarn.milkYield}"/>
+                            <h:outputText value="#{dairyCowBarn.unknownMilkYield ? 'Bilmiyorum' : dairyCowBarn.milkYield}"/>
                         </p:column>
-                        <p:column style="width: 120px;text-align: right">
+                        <p:column style="text-align: right">
                             <p:button value="Hayvanlar"
                                       styleClass="mr-2" iconPos="right"
                                       href="/secured/animal/dairy-cow-count"
@@ -89,6 +90,9 @@
                         style="visibility: #{dairyCowBarnController.selectedBarnView eq null ? 'hidden' : 'visible'}"
                         styleClass="card">
                     <h5 class="mt-0">Ekle/Düzenle</h5>
+
+                    <p:messages showDetail="true" globalOnly="true" />
+
                     <p:panelGrid layout="flex"
                                  rendered="#{dairyCowBarnController.selectedBarnView ne null}"
                                  columnClasses="col-3, col-9"
@@ -109,6 +113,7 @@
                             <p:inputNumber id="milkingCapacity"
                                            value="#{dairyCowBarnController.selectedBarnView.milkingCapacity}"
                                            minValue="0"
+                                           placeholder="Ahır kapasitesinin %90'nı geçemez."
                                            decimalPlaces="0"
                                            required="true"
                                            requiredMessage="milkingCapacity inputNumber requiredMessage"/>
@@ -131,28 +136,61 @@
                         </p:outputPanel>
 
                         <p:outputLabel for="birthRate" value="İşletmenin ortalama doğum oranı (%)"/>
+                        <p:outputPanel styleClass="ui-inputgroup">
                         <p:inputNumber id="birthRate"
                                        value="#{dairyCowBarnController.selectedBarnView.birthRate}"
+                                           rendered="#{!dairyCowBarnController.selectedBarnView.unknownBirthRate}"
                                        maxValue="100"
                                        minValue="0"/>
+                            <p:selectBooleanButton onLabel="Biliyorum"
+                                                   offLabel="Bilmiyorum"
+                                                   value="#{dairyCowBarnController.selectedBarnView.unknownBirthRate}">
+                                <p:ajax update="@parent"/>
+                            </p:selectBooleanButton>
+                        </p:outputPanel>
+
 
                         <p:outputLabel for="deathRate" value="İşletmenin ortalama ölüm oranı (%)"/>
+                        <p:outputPanel styleClass="ui-inputgroup">
                         <p:inputNumber id="deathRate"
                                        value="#{dairyCowBarnController.selectedBarnView.deathRate}"
+                                           rendered="#{!dairyCowBarnController.selectedBarnView.unknownDeathRate}"
                                        maxValue="100"
                                        minValue="0"/>
+                            <p:selectBooleanButton onLabel="Biliyorum"
+                                                   offLabel="Bilmiyorum"
+                                                   value="#{dairyCowBarnController.selectedBarnView.unknownDeathRate}">
+                                <p:ajax update="@parent"/>
+                            </p:selectBooleanButton>
+                        </p:outputPanel>
 
                         <p:outputLabel for="inseminationRate" value="İşletmenin ortalama suni tohumlama sayısı"/>
+                        <p:outputPanel styleClass="ui-inputgroup">
                         <p:inputNumber id="inseminationRate"
                                        value="#{dairyCowBarnController.selectedBarnView.inseminationRate}"
+                                           rendered="#{!dairyCowBarnController.selectedBarnView.unknownInseminationRate}"
                                        maxValue="100"
                                        minValue="0"/>
+                            <p:selectBooleanButton onLabel="Biliyorum"
+                                                   offLabel="Bilmiyorum"
+                                                   value="#{dairyCowBarnController.selectedBarnView.unknownInseminationRate}">
+                                <p:ajax update="@parent"/>
+                            </p:selectBooleanButton>
+                        </p:outputPanel>
 
                         <p:outputLabel for="milkYield" value="Yıllık ortama hayvan başına süt verimi"/>
+                        <p:outputPanel styleClass="ui-inputgroup">
                         <p:inputNumber id="milkYield"
                                        value="#{dairyCowBarnController.selectedBarnView.milkYield}"
+                                           rendered="#{!dairyCowBarnController.selectedBarnView.unknownMilkYield}"
                                        maxValue="100"
                                        minValue="0"/>
+                            <p:selectBooleanButton onLabel="Biliyorum"
+                                                   offLabel="Bilmiyorum"
+                                                   value="#{dairyCowBarnController.selectedBarnView.unknownMilkYield}">
+                                <p:ajax update="@parent"/>
+                            </p:selectBooleanButton>
+                        </p:outputPanel>
                     </p:panelGrid>
 
                     <p:commandButton value="Vazgeç"

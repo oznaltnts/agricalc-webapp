@@ -21,10 +21,29 @@ public class DairyCowFeedView implements Serializable {
     private Long selectedFeedId;
     private Feed feed;
 
-    private double amountKg;
+    private Double amountKg;
     @NotNull(message = "Satın alma tarihi seçiniz")
     private LocalDateTime buyingDate;
     @NotNull(message = "Kilogram fiyatını giriniz")
     private BigDecimal buyingPriceKg;
 
+    private Double lactationRasyon;
+    private Double roughageRasyon;
+
+    public DairyCowFeedView(Long userFeedId, Long selectedFeedId, Feed feed, Double amountKg, LocalDateTime buyingDate, BigDecimal buyingPriceKg) {
+        this.userFeedId = userFeedId;
+        this.selectedFeedId = selectedFeedId;
+        this.feed = feed;
+        this.amountKg = amountKg;
+        this.buyingDate = buyingDate;
+        this.buyingPriceKg = buyingPriceKg;
+    }
+
+    public DairyCowFeedView(Long userFeedId, Feed feed, BigDecimal buyingPriceKg, Double lactationRasyon, Double roughageRasyon) {
+        this.userFeedId = userFeedId;
+        this.feed = feed;
+        this.buyingPriceKg = buyingPriceKg;
+        this.lactationRasyon = lactationRasyon;
+        this.roughageRasyon = roughageRasyon;
+    }
 }

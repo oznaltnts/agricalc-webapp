@@ -27,7 +27,11 @@ public class DairyCowFeedService {
     private UserDairyCowFeedRepository dairyCowFeedRepository;
 
     public List<DairyCowFeedView> getActiveFeedAsViewList(Long barnId) {
-        return dairyCowFeedRepository.findAllAsCowView(EnumStatus.ACTIVE, barnId);
+        return dairyCowFeedRepository.findAllAsCowFeedView(EnumStatus.ACTIVE, barnId);
+    }
+
+    public List<DairyCowFeedView> getFeedRasyonAsViewList(Long barnId) {
+        return dairyCowFeedRepository.findAllAsCowRasyonView(EnumStatus.ACTIVE, barnId);
     }
 
     @Transactional
@@ -50,6 +54,13 @@ public class DairyCowFeedService {
     public void removeUserFeed(Long selectedUserFeedId) {
         dairyCowFeedRepository.delete(dairyCowFeedRepository.getReferenceById(selectedUserFeedId));
 
+    }
+
+    @Transactional
+    public void saveFeedRasyonFromViewList(List<DairyCowFeedView> dairyCowFeedViewList) {
+        for (DairyCowFeedView selectedFeedView : dairyCowFeedViewList) {
+            dairyCowFeedRepository.saveRasyonValuesFromViewList(selectedFeedView.getUserFeedId(), selectedFeedView.getLactationRasyon(), selectedFeedView.getRoughageRasyon());
+        }
     }
 
 }

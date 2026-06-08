@@ -32,7 +32,8 @@
         </div>
         <div class="grid">
             <div class="col">
-                <h:form id="feedListForm" class="card">
+                <h:form id="feedListForm"
+                        class="card">
                     <h5 class="mt-0" style="font-weight: bold">Büyükbaş süt yemleri</h5>
 
                     <p:growl showDetail="true"
@@ -41,24 +42,27 @@
                     </p:growl>
 
                     <p:dataTable var="feedTable"
+                                 reflow="true"
                                  stripedRows="true"
+                                 size="small"
                                  value="#{dairyCowFeedController.dairyCowFeedViewList}">
                         <p:column headerText="Kategori" groupRow="true">
-                            <h:outputText style="font-weight: bold" value="#{msg[feedTable.feed.feedCategory]}"/>
+                            <h:outputText style="font-weight: bold" value="#{msg[feedTable.feed.feedCategory]}"
+                                          responsivePriority="3"/>
                         </p:column>
                         <p:column headerText="Yem tipi">
-                            <h:outputText value="#{msg[feedTable.feed.feedType]}"/>
+                            <h:outputText value="#{msg[feedTable.feed.feedType]}" responsivePriority="3"/>
                         </p:column>
                         <p:column headerText="Yem ismi">
                             <h:outputText value="#{feedTable.feed.name}"/>
                         </p:column>
-                        <p:column headerText="Kilogram miktarı (kg)">
+                        <p:column headerText="Kilogram miktarı (kg)" responsivePriority="2">
                             <h:outputText value="#{feedTable.amountKg}"/>
                         </p:column>
-                        <p:column headerText="Alış tarihi">
-                            <h:outputText value="#{feedTable.buyingDate}"/>
+                        <p:column headerText="Alış tarihi" responsivePriority="2">
+                            <h:outputText value="#{feedTable.buyingDate}" responsivePriority="2"/>
                         </p:column>
-                        <p:column headerText="Kilogram fiyatı (TL/kg)">
+                        <p:column headerText="Kilogram fiyatı (TL/kg)" responsivePriority="2">
                             <h:outputText value="#{feedTable.buyingPriceKg}"/>
                         </p:column>
                         <p:column style="width: 200px; text-align: center" headerText="Yönet">
@@ -72,37 +76,43 @@
                                              action="#{dairyCowFeedController.deleteUserFeed(feedTable)}"/>
                         </p:column>
                     </p:dataTable>
-                    <p:commandButton action="#{dairyCowFeedController.addNewFeedView}"
-                                     styleClass="m-1"
-                                     process="@this"
-                                     update="feedEditForm"
-                                     value="Yeni yem ekle"/>
 
-                    <p:outputPanel style="display: flex; justify-content: end;">
-                        <p:button value="Büyükbaş süt sayıları"
-                                  styleClass="m-1"
-                                  iconPos="left"
-                                  href="/secured/animal/dairy-cow-count"
-                                  icon="fa-solid fa-angles-left">
-                            <f:param name="barnId"
-                                     value="#{dairyCowFeedController.barnId}"/>
-                        </p:button>
-                        <p:button value="Büyükbaş süt yem rasyonu"
-                                  styleClass="m-1"
-                                  iconPos="right"
-                                  href="/secured/animal/dairy-cow-feed-rasyon"
-                                  icon="fa-solid fa-angles-right">
-                            <f:param name="barnId"
-                                     value="#{dairyCowFeedController.barnId}"/>
-                        </p:button>
+                    <p:outputPanel style="display: flex;">
+                        <p:commandButton action="#{dairyCowFeedController.addNewFeedView}"
+                                         styleClass="m-1"
+                                         process="@this"
+                                         update="feedEditForm"
+                                         value="Yeni yem ekle"/>
                     </p:outputPanel>
                 </h:form>
             </div>
         </div>
         <div class="grid">
             <div class="col">
+                <p:outputPanel style="display: flex; justify-content: space-between;">
+                    <p:button value="Büyükbaş süt sayıları"
+                              styleClass="m-1"
+                              iconPos="left"
+                              href="/secured/animal/dairy-cow-count"
+                              icon="fa-solid fa-angles-left">
+                        <f:param name="barnId"
+                                 value="#{dairyCowFeedController.barnId}"/>
+                    </p:button>
+                    <p:button value="Büyükbaş süt yem rasyonu"
+                              styleClass="m-1"
+                              iconPos="right"
+                              href="/secured/animal/dairy-cow-feed-rasyon"
+                              icon="fa-solid fa-angles-right">
+                        <f:param name="barnId"
+                                 value="#{dairyCowFeedController.barnId}"/>
+                    </p:button>
+                </p:outputPanel>
+            </div>
+        </div>
+        <div class="grid">
+            <div class="col">
                 <h:form id="feedEditForm"
-                        style="visibility: #{dairyCowFeedController.selectedFeedView eq null ? 'hidden' : 'visible'}"
+                        style="visibility: #{dairyCowFeedController.selectedFeedView eq null ? 'hidden' : 'visible'}; height: #{dairyCowFeedController.selectedFeedView eq null ? '0' : 'unset'}"
                         styleClass="card">
                     <h5 class="mt-0" style="font-weight: bold">Ekle/Düzenle</h5>
 
@@ -110,23 +120,25 @@
 
                     <p:panelGrid layout="flex"
                                  rendered="#{dairyCowFeedController.selectedFeedView ne null}"
-                                 columnClasses="col-3, col-9"
+                                 columnClasses="col-3 text-right, col-9"
                                  columns="2">
-                        <p:outputLabel for="feedSelect" value="Yem seçimi"/>
+                        <p:outputLabel for="feedSelect"
+                                       value="Yem seçimi - #{dairyCowFeedController.selectedFeedView.userFeedId ne null}: "/>
                         <p:outputPanel>
                             <p:selectOneMenu id="feedSelect"
-                                             disabled="#{dairyCowFeedController.selectedFeedView.userFeedId ne null}"
-                                             required="#{dairyCowFeedController.selectedFeedView.userFeedId eq null}"
+                                             readonly="#{dairyCowFeedController.selectedFeedView.userFeedId ne null}"
+                                             required="true"
                                              requiredMessage="feedSelect selectOneMenu required"
                                              value="#{dairyCowFeedController.selectedFeedView.selectedFeedId}">
-                                <f:selectItem itemLabel="seçiniz" itemValue=""/>
+                                <f:selectItem itemLabel="seçiniz" itemValue=""
+                                              itemDisabled="#{dairyCowFeedController.selectedFeedView.userFeedId ne null}"/>
                                 <f:selectItems value="#{dairyCowFeedController.feedList}"
                                                var="feedOption"/>
                             </p:selectOneMenu>
                             <p:message for="@previous"/>
                         </p:outputPanel>
 
-                        <p:outputLabel for="feedAmount" value="Kilogram miktarı (kg)"/>
+                        <p:outputLabel for="feedAmount" value="Kilogram miktarı (kg): "/>
                         <p:outputPanel>
                             <p:inputNumber id="feedAmount"
                                            required="true"
@@ -137,7 +149,7 @@
                             <p:message for="@previous"/>
                         </p:outputPanel>
 
-                        <p:outputLabel for="feedDate" value="Alış tarihi"/>
+                        <p:outputLabel for="feedDate" value="Alış tarihi: "/>
                         <p:outputPanel>
                             <p:datePicker id="feedDate"
                                           focusOnSelect="true"
@@ -151,7 +163,7 @@
                             <p:message for="@previous"/>
                         </p:outputPanel>
 
-                        <p:outputLabel for="feedPrice" value="Kilogram fiyatı (TL/kg)"/>
+                        <p:outputLabel for="feedPrice" value="Kilogram fiyatı (TL/kg): "/>
                         <p:outputPanel>
                             <p:inputNumber id="feedPrice"
                                            required="true"
@@ -162,21 +174,22 @@
                             <p:message for="@previous"/>
                         </p:outputPanel>
 
+                        <p:outputPanel/>
+                        <p:outputPanel style="display: flex;">
+                            <p:commandButton value="Kaydet"
+                                             process="@form"
+                                             update="@form feedListForm"
+                                             styleClass="m-1"
+                                             validateClient="true"
+                                             action="#{dairyCowFeedController.saveSelectedFeed}"/>
+                            <p:commandButton value="Vazgeç"
+                                             process="@this"
+                                             update="@form"
+                                             styleClass="m-1"
+                                             resetValues="true"
+                                             action="#{dairyCowFeedController.setSelectedFeedView(null)}"/>
+                        </p:outputPanel>
                     </p:panelGrid>
-
-                    <p:commandButton value="Vazgeç"
-                                     process="@this"
-                                     update="@form"
-                                     styleClass="m-1"
-                                     resetValues="true"
-                                     action="#{dairyCowFeedController.setSelectedFeedView(null)}"/>
-                    <p:commandButton value="Kaydet"
-                                     process="@form"
-                                     update="@form feedListForm"
-                                     styleClass="m-1"
-                                     validateClient="true"
-                                     action="#{dairyCowFeedController.saveSelectedFeed}"/>
-
                 </h:form>
                 <br/>
                 <p>Sorunuz mu var? <a href="#">Buraya</a> basın ve bize bildirin.</p>

@@ -42,25 +42,26 @@
                     </p:growl>
 
                     <p:dataTable var="cowCount"
+                                 reflow="true"
                                  stripedRows="true"
                                  size="small"
                                  value="#{dairyCowCountController.dairyCowCountViewList}">
                         <p:column headerText="Hayvan">
                             <h:outputText value="#{msg[cowCount.cowType]}:"/>
                         </p:column>
-                        <p:column headerText="Mevcut Hayvan Varlığı">
+                        <p:column headerText="Mevcut hayvan varlığı" responsivePriority="2">
                             <h:outputText value="#{cowCount.currentCount}"/>
                         </p:column>
-                        <p:column headerText="Bir Yıl İçinde Satın Alınması Plananan Hayvan (Adet)">
+                        <p:column headerText="Alınması plananan hayvan (Adet)" responsivePriority="3">
                             <h:outputText value="#{cowCount.purchaseCount}"/>
                         </p:column>
-                        <p:column headerText="Doğan Hayvanlar Dahil Bir Yıl İçinde Satılması Plananan Hayvan">
+                        <p:column headerText="Satılması plananan hayvan" responsivePriority="3">
                             <h:outputText value="#{cowCount.sellCount}"/>
                         </p:column>
-                        <!--
-                        <p:column headerText="Yıl Sonu Hayvan Varlığı">
+                        <p:column headerText="Yıl Sonu hayvan varlığı" responsivePriority="4">
                             <h:outputText value="#{cowCount.endYearCount}"/>
                         </p:column>
+                        <!--
                         <p:column headerText="Yıl İçinde Ortalama Beslenecek Hayvan">
                             <h:outputText value="#{cowCount.endYearFeedCount}"/>
                         </p:column>
@@ -83,42 +84,70 @@
                                              value="Düzenle"
                                              action="#{dairyCowCountController.editCount(cowCount)}"/>
                         </p:column>
-                        <p:columnGroup type="footer">
-                            <p:row>
-                                <p:column colspan="1"
-                                          style="text-align: right"
-                                          footerText="Toplam Büyükbaş Hayvan Sayısı:"/>
-                                <p:column colspan="4">
-                                    <f:facet name="footer">
-                                        <h:outputText value="#{dairyCowCountController.totalCount}"/>
-                                    </f:facet>
-                                </p:column>
-                            </p:row>
-                        </p:columnGroup>
                     </p:dataTable>
-
-                    <p:outputPanel style="display: flex; justify-content: end;">
-                        <p:button value="Büyükbaş süt ahırları"
-                                  styleClass="m-1"
-                                  iconPos="left"
-                                  href="/secured/animal/dairy-cow-barn"
-                                  icon="fa-solid fa-angles-left"/>
-                        <p:button value="Büyükbaş süt yemleri"
-                                  styleClass="m-1"
-                                  iconPos="right"
-                                  href="/secured/animal/dairy-cow-feed"
-                                  icon="fa-solid fa-angles-right">
-                            <f:param name="barnId"
-                                     value="#{dairyCowCountController.barnId}"/>
-                        </p:button>
-                    </p:outputPanel>
                 </h:form>
             </div>
         </div>
         <div class="grid">
             <div class="col">
+                <div id="totalCard"
+                     class="card">
+                    <div class="grid">
+                        <div class="col">
+                            <div class="card ">
+                                <span style="font-weight: bold">
+                                    Toplam Büyükbaş Hayvan Sayısı:
+                                </span>#{dairyCowCountController.calculateView.totalCount}
+                            </div>
+                        </div>
+                        <div class="col">
+                            <div class="card">
+                                <span style="font-weight: bold">
+                                    Ahır Doluluk Oranı:
+                                </span>#{dairyCowCountController.calculateView.totalBarnUsageRate}
+                            </div>
+                        </div>
+                        <div class="col">
+                            <div class="card">
+                                <span style="font-weight: bold">
+                                    Yıl Sonu Hayvan Varlığı:
+                                </span>#{dairyCowCountController.calculateView.endYearTotalCount}
+                            </div>
+                        </div>
+                        <div class="col">
+                            <div class="card">
+                                <span style="font-weight: bold">
+                                    Yıl Sonu Ahır Doluluk Oranı:
+                                </span>#{dairyCowCountController.calculateView.endYearBarnUsageRate}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="grid">
+            <div class="col">
+                <p:outputPanel style="display: flex; justify-content: space-between;">
+                    <p:button value="Büyükbaş süt ahırları"
+                              styleClass="m-1"
+                              iconPos="left"
+                              href="/secured/animal/dairy-cow-barn"
+                              icon="fa-solid fa-angles-left"/>
+                    <p:button value="Büyükbaş süt yemleri"
+                              styleClass="m-1"
+                              iconPos="right"
+                              href="/secured/animal/dairy-cow-feed"
+                              icon="fa-solid fa-angles-right">
+                        <f:param name="barnId"
+                                 value="#{dairyCowCountController.barnId}"/>
+                    </p:button>
+                </p:outputPanel>
+            </div>
+        </div>
+        <div class="grid">
+            <div class="col">
                 <h:form id="countEditForm"
-                        style="visibility: #{dairyCowCountController.selectedCountView eq null ? 'hidden' : 'visible'}"
+                        style="visibility: #{dairyCowCountController.selectedCountView eq null ? 'hidden' : 'visible'}; height: #{dairyCowCountController.selectedCountView eq null ? '0' : 'unset'}"
                         styleClass="card">
                     <h5 class="mt-0" style="font-weight: bold">Ekle/Düzenle</h5>
 
@@ -126,12 +155,12 @@
 
                     <p:panelGrid layout="flex"
                                  rendered="#{dairyCowCountController.selectedCountView ne null}"
-                                 columnClasses="col-3, col-9"
+                                 columnClasses="col-3 text-right, col-9"
                                  columns="2">
-                        <p:outputLabel for="@next" value="Hayvan"/>
+                        <p:outputLabel for="@next" value="Hayvan: "/>
                         <h:outputText value="#{msg[dairyCowCountController.selectedCountView.cowType]}"/>
 
-                        <p:outputLabel for="currentCount" value="Mevcut Hayvan Varlığı (adet)"/>
+                        <p:outputLabel for="currentCount" value="Mevcut Hayvan Varlığı (adet): "/>
                         <p:outputPanel>
                             <p:inputNumber id="currentCount"
                                            value="#{dairyCowCountController.selectedCountView.currentCount}"
@@ -143,7 +172,7 @@
                         </p:outputPanel>
 
                         <p:outputLabel for="purchaseCount"
-                                       value="Bir Yıl İçinde Satın Alınması Plananan Hayvan (Adet)"/>
+                                       value="Bir Yıl İçinde Satın Alınması Plananan Hayvan (Adet): "/>
                         <p:outputPanel>
                             <p:inputNumber id="purchaseCount"
                                            value="#{dairyCowCountController.selectedCountView.purchaseCount}"
@@ -155,7 +184,7 @@
                         </p:outputPanel>
 
                         <p:outputLabel for="sellCount"
-                                       value="Doğan Hayvanlar Dahil Bir Yıl İçinde Satılması Plananan Hayvan"/>
+                                       value="Doğan Hayvanlar Dahil Bir Yıl İçinde Satılması Plananan Hayvan: "/>
                         <p:outputPanel>
                             <p:inputNumber id="sellCount"
                                            value="#{dairyCowCountController.selectedCountView.sellCount}"
@@ -166,20 +195,24 @@
                             <p:message for="@previous"/>
                         </p:outputPanel>
 
+                        <p:outputPanel/>
+                        <p:outputPanel style="display: flex;">
+                            <p:commandButton value="Kaydet"
+                                             process="@form"
+                                             update="@form countListForm totalCard"
+                                             styleClass="m-1"
+                                             validateClient="true"
+                                             action="#{dairyCowCountController.saveSelectedCount}"/>
+                            <p:commandButton value="Vazgeç"
+                                             process="@this"
+                                             update="@form"
+                                             styleClass="m-1"
+                                             resetValues="true"
+                                             action="#{dairyCowCountController.setSelectedCountView(null)}"/>
+                        </p:outputPanel>
+
                     </p:panelGrid>
 
-                    <p:commandButton value="Vazgeç"
-                                     process="@this"
-                                     update="@form"
-                                     styleClass="m-1"
-                                     resetValues="true"
-                                     action="#{dairyCowCountController.setSelectedCountView(null)}"/>
-                    <p:commandButton value="Kaydet"
-                                     process="@form"
-                                     update="@form countListForm"
-                                     styleClass="m-1"
-                                     validateClient="true"
-                                     action="#{dairyCowCountController.saveSelectedCount}"/>
                 </h:form>
                 <br/>
                 <p>Sorunuz mu var? <a href="#">Buraya</a> basın ve bize bildirin.</p>

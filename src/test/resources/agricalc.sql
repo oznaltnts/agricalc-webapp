@@ -671,6 +671,8 @@ CREATE TABLE `user_dairy_cow_feeds`
     `amount_kg`              DOUBLE         NOT NULL,
     `buying_date`            DATETIME       NOT NULL,
     `buying_price`           DECIMAL(15, 3) NOT NULL,
+    `lactation`              DOUBLE         NULL     DEFAULT NULL,
+    `roughage`               DOUBLE         NULL     DEFAULT NULL,
     PRIMARY KEY (`id`),
     CONSTRAINT `FK_user_dairy_cow_feeds_user_dairy_cow_barns` FOREIGN KEY (`user_dairy_cow_barn_id`) REFERENCES `user_dairy_cow_barns` (`id`),
     CONSTRAINT `FK_user_dairy_cow_feeds_feeds` FOREIGN KEY (`feed_id`) REFERENCES `feeds` (`id`),

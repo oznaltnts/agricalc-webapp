@@ -34,4 +34,12 @@ public class UserDairyCowFeed extends AbstractEntity {
     @ToString.Include
     private BigDecimal buyingPrice;
 
+    @Column(name = "lactation")
+    @ToString.Include
+    private Double lactation;
+
+    @Column(name = "roughage")
+    @ToString.Include
+    private Double roughage;
+
 }

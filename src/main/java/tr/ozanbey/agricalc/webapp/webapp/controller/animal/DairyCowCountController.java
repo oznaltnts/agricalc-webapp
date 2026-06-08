@@ -10,6 +10,7 @@ import org.springframework.stereotype.Component;
 import tr.ozanbey.agricalc.webapp.service.enumtype.animal.EnumCowType;
 import tr.ozanbey.agricalc.webapp.service.service.animal.DairyCowCountService;
 import tr.ozanbey.agricalc.webapp.webapp.util.JSFUtils;
+import tr.ozanbey.agricalc.webapp.webapp.view.DairyCowCountCalculateView;
 import tr.ozanbey.agricalc.webapp.webapp.view.DairyCowCountView;
 
 import java.util.List;
@@ -28,46 +29,15 @@ public class DairyCowCountController extends DairyCowController {
     private EnumCowType[] cowTypes = EnumCowType.values();
     private List<DairyCowCountView> dairyCowCountViewList;
     private DairyCowCountView selectedCountView;
-    private int totalCount;
-    private int endYearTotalCount;
+    private DairyCowCountCalculateView calculateView;
 
     @PostConstruct
     public void init() {
     }
 
     public void fillDataTableValues() {
-        dairyCowCountViewList = dairyCowCountService.getCowCountListByBarnId(getBarnId());
-        calculateTotalRowCount();
-    }
-
-    private void calculateTotalRowCount() {
-        double totalCowCount = 0;
-        double totalEndYearCowCount = 0;
-        for (DairyCowCountView view : dairyCowCountViewList) {
-            totalCowCount = totalCowCount + (view.getCurrentCount() * view.getCoefficientValue());
-            totalEndYearCowCount = totalEndYearCowCount;
-        }
-        totalCount = (int) Math.round(totalCowCount);
-//            if (view.getCowType().equals(EnumCowType.COW)) {
-//                totalEndYearCowCount = totalEndYearCowCount + view.getEndYearCount();
-//                totalInYearFeedCount = totalInYearFeedCount + view.getEndYearFeedCount();
-//            } else if (view.getCowType().equals(EnumCowType.PREGNANT_HEIFER)) {
-//                totalEndYearCowCount = totalEndYearCowCount + (view.getEndYearCount() * 0.85);
-//                totalInYearFeedCount = totalInYearFeedCount + (view.getEndYearFeedCount() * 0.85);
-//            } else if (view.getCowType().equals(EnumCowType.HEIFER)) {
-//                totalEndYearCowCount = totalEndYearCowCount + (view.getEndYearCount() * 0.6);
-//                totalInYearFeedCount = totalInYearFeedCount + (view.getEndYearFeedCount() * 0.6);
-//            } else if (view.getCowType().equals(EnumCowType.STEER)) {
-//                totalEndYearCowCount = totalEndYearCowCount + (view.getEndYearCount() * 0.4);
-//                totalInYearFeedCount = totalInYearFeedCount + (view.getEndYearFeedCount() * 0.4);
-//            } else if (view.getCowType().equals(EnumCowType.CALF)) {
-//                totalEndYearCowCount = totalEndYearCowCount + (view.getEndYearCount() * 0.25);
-//                totalInYearFeedCount = totalInYearFeedCount + (view.getEndYearFeedCount() * 0.25);
-//            }
-        endYearTotalCount = (int) Math.round(totalEndYearCowCount);
-//        inYearTotalFeedCount = totalInYearFeedCount;
-//        totalBarnUsageRate = totalCowCount / getUserDairyCowBarn().getBarnCapacity() * 100;
-//        totalEndYearBarnUsageRate = totalEndYearCowCount / getUserDairyCowBarn().getBarnCapacity() * 100;
+        dairyCowCountViewList = dairyCowCountService.calculateCowCount(getBarnId(), getUserDairyCowBarn().getBirthRate(), getUserDairyCowBarn().getDeathRate());
+        calculateView = dairyCowCountService.calculateTotalRowCount(dairyCowCountViewList, getUserDairyCowBarn().getBarnCapacity());
     }
 
     public void editCount(DairyCowCountView view) {
@@ -114,7 +84,7 @@ public class DairyCowCountController extends DairyCowController {
                 .findAny();
         if (optionalCount.isPresent()) {
             DairyCowCountView view = optionalCount.get();
-            if (getUserDairyCowBarn().getBarnCapacity() < totalCount - (view.getCurrentCount() * view.getCoefficientValue()) + (selectedCountView.getCurrentCount() * view.getCoefficientValue())) {
+            if (getUserDairyCowBarn().getBarnCapacity() < calculateView.getTotalCount() - (view.getCurrentCount() * view.getCoefficientValue()) + (selectedCountView.getCurrentCount() * view.getCoefficientValue())) {
                 if (selectedCountView.getCowType().equals(EnumCowType.COW)) {
                     JSFUtils.addErrorMessage(null, "Ahırda fazla hayvan var", "Mevcut inek varlığı azaltın");
                 } else if (selectedCountView.getCowType().equals(EnumCowType.PREGNANT_HEIFER)) {
@@ -135,6 +105,5 @@ public class DairyCowCountController extends DairyCowController {
         }
         return isCountsOk;
     }
-
 
 }

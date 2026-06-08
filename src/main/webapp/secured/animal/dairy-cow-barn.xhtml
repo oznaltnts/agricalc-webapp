@@ -38,29 +38,31 @@
 
                     <p:dataTable var="dairyCowBarn"
                                  stripedRows="true"
+                                 size="small"
+                                 reflow="true"
                                  value="#{dairyCowBarnController.dairyCowBarnViews}">
                         <p:column headerText="Hayvan ırkı">
                             <h:outputText value="#{dairyCowBarn.dairyCowName}"/>
                         </p:column>
-                        <p:column headerText="Ahır kapasitesi">
+                        <p:column headerText="Ahır kapasitesi" responsivePriority="2">
                             <h:outputText value="#{dairyCowBarn.barnCapacity}"/>
                         </p:column>
-                        <p:column headerText="Sağmal inek kapasitesi">
+                        <p:column headerText="Sağmal kapasite" responsivePriority="3">
                             <h:outputText value="#{dairyCowBarn.milkingCapacity}"/>
                         </p:column>
-                        <p:column headerText="Ortalama doğum oranı">
+                        <p:column headerText="Doğum oranı" responsivePriority="4">
                             <h:outputText value="#{dairyCowBarn.unknownBirthRate ? 'Bilmiyorum' : dairyCowBarn.birthRate}"/>
                         </p:column>
-                        <p:column headerText="Ortalama ölüm oranı">
+                        <p:column headerText="Ölüm oranı" responsivePriority="4">
                             <h:outputText value="#{dairyCowBarn.unknownDeathRate ? 'Bilmiyorum' : dairyCowBarn.deathRate}"/>
                         </p:column>
-                        <p:column headerText="Ortalama suni tohumlama sayısı">
+                        <p:column headerText="Suni tohumlama" responsivePriority="5">
                             <h:outputText value="#{dairyCowBarn.unknownInseminationRate ? 'Bilmiyorum' : dairyCowBarn.inseminationRate}"/>
                         </p:column>
-                        <p:column headerText="Yıllık ortama hayvan başına süt verimi">
+                        <p:column headerText="Hayvan süt verimi" responsivePriority="5">
                             <h:outputText value="#{dairyCowBarn.unknownMilkYield ? 'Bilmiyorum' : dairyCowBarn.milkYield}"/>
                         </p:column>
-                        <p:column style="width: 200px; text-align: center" headerText="Yönet">
+                        <p:column style="width: 200px; text-align: center" headerText="Yönet" >
                             <p:commandButton update="barnEditForm"
                                              styleClass="m-1"
                                              value="Düzenle"
@@ -75,19 +77,20 @@
                             </p:button>
                         </p:column>
                     </p:dataTable>
-
-                    <p:commandButton action="#{dairyCowBarnController.addNewBarnView}"
-                                     styleClass="m-1"
-                                     process="@this"
-                                     update="barnEditForm"
-                                     value="Yeni ahır ekle"/>
+                    <p:outputPanel style="display: flex;">
+                        <p:commandButton action="#{dairyCowBarnController.addNewBarnView}"
+                                         styleClass="m-1"
+                                         process="@this"
+                                         update="barnEditForm"
+                                         value="Yeni ahır ekle"/>
+                    </p:outputPanel>
                 </h:form>
             </div>
         </div>
         <div class="grid">
             <div class="col">
                 <h:form id="barnEditForm"
-                        style="visibility: #{dairyCowBarnController.selectedBarnView eq null ? 'hidden' : 'visible'}"
+                        style="visibility: #{dairyCowBarnController.selectedBarnView eq null ? 'hidden' : 'visible'}; height: #{dairyCowBarnController.selectedBarnView eq null ? '0' : 'unset'}"
                         styleClass="card">
                     <h5 class="mt-0" style="font-weight: bold">Ekle/Düzenle</h5>
 
@@ -95,9 +98,9 @@
 
                     <p:panelGrid layout="flex"
                                  rendered="#{dairyCowBarnController.selectedBarnView ne null}"
-                                 columnClasses="col-3, col-9"
+                                 columnClasses="col-3 text-right, col-9"
                                  columns="2">
-                        <p:outputLabel for="barnCapacity" value="Ahır kapasitesi"/>
+                        <p:outputLabel for="barnCapacity" value="Ahır kapasitesi: "/>
                         <p:outputPanel>
                             <p:inputNumber id="barnCapacity"
                                            value="#{dairyCowBarnController.selectedBarnView.barnCapacity}"
@@ -108,7 +111,7 @@
                             <p:message for="@previous"/>
                         </p:outputPanel>
 
-                        <p:outputLabel for="milkingCapacity" value="Sağmal inek kapasitesi"/>
+                        <p:outputLabel for="milkingCapacity" value="Sağmal inek kapasitesi: "/>
                         <p:outputPanel>
                             <p:inputNumber id="milkingCapacity"
                                            value="#{dairyCowBarnController.selectedBarnView.milkingCapacity}"
@@ -120,7 +123,7 @@
                             <p:message for="@previous"/>
                         </p:outputPanel>
 
-                        <p:outputLabel for="dairyCowId" value="Hayvan ırkı"/>
+                        <p:outputLabel for="dairyCowId" value="Hayvan ırkı: "/>
                         <p:outputPanel>
                             <p:selectOneMenu id="dairyCowId"
                                              value="#{dairyCowBarnController.selectedBarnView.selectedDairyCowId}"
@@ -135,7 +138,7 @@
                             <p:message for="@previous"/>
                         </p:outputPanel>
 
-                        <p:outputLabel for="birthRate" value="İşletmenin ortalama doğum oranı (%)"/>
+                        <p:outputLabel for="birthRate" value="İşletmenin ortalama doğum oranı (%): "/>
                         <p:outputPanel styleClass="ui-inputgroup">
                             <p:inputNumber id="birthRate"
                                            value="#{dairyCowBarnController.selectedBarnView.birthRate}"
@@ -150,7 +153,7 @@
                         </p:outputPanel>
 
 
-                        <p:outputLabel for="deathRate" value="İşletmenin ortalama ölüm oranı (%)"/>
+                        <p:outputLabel for="deathRate" value="İşletmenin ortalama ölüm oranı (%): "/>
                         <p:outputPanel styleClass="ui-inputgroup">
                             <p:inputNumber id="deathRate"
                                            value="#{dairyCowBarnController.selectedBarnView.deathRate}"
@@ -164,7 +167,7 @@
                             </p:selectBooleanButton>
                         </p:outputPanel>
 
-                        <p:outputLabel for="inseminationRate" value="İşletmenin ortalama suni tohumlama sayısı"/>
+                        <p:outputLabel for="inseminationRate" value="İşletmenin ortalama suni tohumlama sayısı: "/>
                         <p:outputPanel styleClass="ui-inputgroup">
                             <p:inputNumber id="inseminationRate"
                                            value="#{dairyCowBarnController.selectedBarnView.inseminationRate}"
@@ -178,7 +181,7 @@
                             </p:selectBooleanButton>
                         </p:outputPanel>
 
-                        <p:outputLabel for="milkYield" value="Yıllık ortama hayvan başına süt verimi"/>
+                        <p:outputLabel for="milkYield" value="Yıllık ortama hayvan başına süt verimi: "/>
                         <p:outputPanel styleClass="ui-inputgroup">
                             <p:inputNumber id="milkYield"
                                            value="#{dairyCowBarnController.selectedBarnView.milkYield}"
@@ -191,20 +194,25 @@
                                 <p:ajax update="@parent"/>
                             </p:selectBooleanButton>
                         </p:outputPanel>
+
+                        <p:outputPanel/>
+                        <p:outputPanel style="display: flex;">
+                            <p:commandButton value="Kaydet"
+                                             process="@form"
+                                             update="@form barnListForm"
+                                             styleClass="m-1"
+                                             validateClient="true"
+                                             action="#{dairyCowBarnController.saveSelectedBarn}"/>
+                            <p:commandButton value="Vazgeç"
+                                             process="@this"
+                                             update="@form"
+                                             styleClass="m-1"
+                                             resetValues="true"
+                                             action="#{dairyCowBarnController.setSelectedBarnView(null)}"/>
+                        </p:outputPanel>
                     </p:panelGrid>
 
-                    <p:commandButton value="Vazgeç"
-                                     process="@this"
-                                     update="@form"
-                                     styleClass="m-1"
-                                     resetValues="true"
-                                     action="#{dairyCowBarnController.setSelectedBarnView(null)}"/>
-                    <p:commandButton value="Kaydet"
-                                     process="@form"
-                                     update="@form barnListForm"
-                                     styleClass="m-1"
-                                     validateClient="true"
-                                     action="#{dairyCowBarnController.saveSelectedBarn}"/>
+
 
                 </h:form>
                 <br/>

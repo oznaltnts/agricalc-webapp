@@ -57,9 +57,7 @@
                         <p:column headerText="Yem ismi">
                             <h:outputText value="#{feedTable.feed.name}"/>
                         </p:column>
-                        <p:column headerText="Kilogram fiyatı (TL/kg)">
-                            <h:outputText value="#{feedTable.buyingPriceKg}"/>
-                        </p:column>
+                        
                         <p:column headerText="Laktasyon döneminde günlük ortalama bir hayvana verilen miktar (Kg/Hayvan) *">
                             <p:inputNumber id="lactationInputNumber"
                                            placeholder="feedTableInputNumber inputNumber placeholder"
@@ -72,6 +70,7 @@
                                 />
                             </p:inputNumber>
                         </p:column>
+
                         <p:column headerText="Kuru dödemde günlük ortalama bir hayvana verilen miktar (Kg/Hayvan) *">
                             <p:inputNumber id="roughageInputNumber"
                                            placeholder="feedTableInputNumber inputNumber placeholder"
@@ -84,21 +83,15 @@
                             </p:inputNumber>
                         </p:column>
                     </p:dataTable>
-                    <p:messages showDetail="true" globalOnly="true"/>
+                    <p:messages showDetail="true">
+                        <p:autoUpdate/>
+                    </p:messages>
                 </h:form>
             </div>
         </div>
         <div class="grid">
             <div class="col">
-                <h:form style="display: flex; justify-content: space-between;">
-                    <p:commandButton value="Büyükbaş süt yemleri"
-                                     process="rasyonListForm"
-                                     update="rasyonListForm"
-                                     styleClass="m-1"
-                                     validateClient="true"
-                                     iconPos="left"
-                                     action="#{dairyCowFeedRasyonController.backSaveFeedRasyon}"
-                                     icon="fa-solid fa-angles-left"/>
+                <h:form style="display: flex; justify-content: space-between; flex-direction: row-reverse;">
                     <p:commandButton value="Büyükbaş süt işletme gelirleri"
                                      process="rasyonListForm"
                                      update="rasyonListForm"
@@ -107,6 +100,14 @@
                                      iconPos="right"
                                      action="#{dairyCowFeedRasyonController.nextSaveFeedRasyon}"
                                      icon="fa-solid fa-angles-right"/>
+                    <p:commandButton value="Büyükbaş süt yemleri"
+                                     process="rasyonListForm"
+                                     update="rasyonListForm"
+                                     styleClass="m-1"
+                                     validateClient="true"
+                                     iconPos="left"
+                                     action="#{dairyCowFeedRasyonController.backSaveFeedRasyon}"
+                                     icon="fa-solid fa-angles-left"/>
                 </h:form>
                 <br/>
                 <p>Sorunuz mu var? <a href="#">Buraya</a> basın ve bize bildirin.</p>

@@ -13,6 +13,7 @@ import tr.ozanbey.agricalc.webapp.webapp.view.DairyCowFeedView;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 @Component
 @ViewScoped
@@ -31,6 +32,7 @@ public class DairyCowFeedRasyonController extends DairyCowController {
     }
 
     public void fillDataTableValues() {
+        referenceViewList = new ArrayList<>();
         dairyCowFeedViewList = dairyCowFeedService.getFeedRasyonAsViewList(super.getBarnId());
         dairyCowFeedViewList.forEach(v -> {
             DairyCowFeedView dv = new DairyCowFeedView();
@@ -45,28 +47,27 @@ public class DairyCowFeedRasyonController extends DairyCowController {
         List<DairyCowFeedView> saveList = generateSaveList();
         if (!saveList.isEmpty()) {
             dairyCowFeedService.saveFeedRasyonFromViewList(dairyCowFeedViewList);
-            super.getNavigationController().redirectToUrl("/secured/animal/dairy-cow-expense?barnId=" + getBarnId());
         }
+        super.getNavigationController().redirectToUrl("/secured/animal/dairy-cow-cost?barnId=" + getBarnId());
     }
 
     public void backSaveFeedRasyon() throws IOException {
         List<DairyCowFeedView> saveList = generateSaveList();
         if (!saveList.isEmpty()) {
             dairyCowFeedService.saveFeedRasyonFromViewList(dairyCowFeedViewList);
-            super.getNavigationController().redirectToUrl("/secured/animal/dairy-cow-feed?barnId=" + getBarnId());
         }
+        super.getNavigationController().redirectToUrl("/secured/animal/dairy-cow-feed?barnId=" + getBarnId());
     }
 
     private List<DairyCowFeedView> generateSaveList() {
         List<DairyCowFeedView> returnSaveList = new ArrayList<>();
         for (DairyCowFeedView dv : dairyCowFeedViewList) {
             DairyCowFeedView refView = referenceViewList.stream().filter(r -> r.getUserFeedId().equals(dv.getUserFeedId())).findFirst().get();
-            if (!refView.getLactationRasyon().equals(dv.getLactationRasyon()) || !refView.getRoughageRasyon().equals(dv.getRoughageRasyon())) {
+            if (!Objects.equals(refView.getLactationRasyon(), dv.getLactationRasyon()) || !Objects.equals(refView.getRoughageRasyon(), dv.getRoughageRasyon())) {
                 returnSaveList.add(dv);
             }
         }
         return returnSaveList;
     }
-
 
 }

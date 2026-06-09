@@ -39,10 +39,9 @@ public class DairyCowFeedView implements Serializable {
         this.buyingPriceKg = buyingPriceKg;
     }
 
-    public DairyCowFeedView(Long userFeedId, Feed feed, BigDecimal buyingPriceKg, Double lactationRasyon, Double roughageRasyon) {
+    public DairyCowFeedView(Long userFeedId, Feed feed, Double lactationRasyon, Double roughageRasyon) {
         this.userFeedId = userFeedId;
         this.feed = feed;
-        this.buyingPriceKg = buyingPriceKg;
         this.lactationRasyon = lactationRasyon;
         this.roughageRasyon = roughageRasyon;
     }

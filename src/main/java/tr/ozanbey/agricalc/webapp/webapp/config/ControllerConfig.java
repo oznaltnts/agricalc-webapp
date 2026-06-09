@@ -30,12 +30,13 @@ public class ControllerConfig implements WebMvcConfigurer {
         registry.addViewController("/secured/animal/dairy-cow-count").setViewName("forward:/secured/animal/dairy-cow-count.xhtml");
         registry.addViewController("/secured/animal/dairy-cow-feed").setViewName("forward:/secured/animal/dairy-cow-feed.xhtml");
         registry.addViewController("/secured/animal/dairy-cow-feed-rasyon").setViewName("forward:/secured/animal/dairy-cow-feed-rasyon.xhtml");
-        registry.addViewController("/secured/animal/dairy-cow-expense").setViewName("forward:/secured/animal/dairy-cow-expense.xhtml");
+        registry.addViewController("/secured/animal/dairy-cow-cost").setViewName("forward:/secured/animal/dairy-cow-cost.xhtml");
 
         registry.addViewController("/secured/admin/user-management").setViewName("forward:/secured/admin/user-management.xhtml");
         registry.addViewController("/secured/admin/animal/cow-management").setViewName("forward:/secured/admin/animal/cow-management.xhtml");
         registry.addViewController("/secured/admin/animal/cow-coefficient").setViewName("forward:/secured/admin/animal/cow-coefficient.xhtml");
         registry.addViewController("/secured/admin/animal/feed-management").setViewName("forward:/secured/admin/animal/feed-management.xhtml");
+        registry.addViewController("/secured/admin/animal/cost-management").setViewName("forward:/secured/admin/animal/cost-management.xhtml");
 
         registry.addViewController("/common/access-denied").setViewName("forward:/common/access.xhtml");
         registry.addViewController("/common/error").setViewName("forward:/common/error.xhtml");

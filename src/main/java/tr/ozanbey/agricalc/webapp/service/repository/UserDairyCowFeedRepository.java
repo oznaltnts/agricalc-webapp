@@ -22,7 +22,7 @@ public interface UserDairyCowFeedRepository extends JpaRepository<UserDairyCowFe
     List<DairyCowFeedView> findAllAsCowFeedView(@Param("status") EnumStatus status, @Param("barnId") Long barnId);
 
     @Query("""
-            SELECT new tr.ozanbey.agricalc.webapp.webapp.view.DairyCowFeedView(t1.id, t1.feed, t1.buyingPrice, t1.lactation, t1.roughage)
+            SELECT new tr.ozanbey.agricalc.webapp.webapp.view.DairyCowFeedView(t1.id, t1.feed, t1.lactation, t1.roughage)
             FROM UserDairyCowFeed t1
             WHERE t1.userDairyCowBarn.id = :barnId
             AND t1.feed.status = :status

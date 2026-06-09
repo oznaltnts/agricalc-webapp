@@ -18,7 +18,7 @@ import java.util.Optional;
 @ViewScoped
 @Getter
 @Setter
-public class coefficientManagementController extends BaseController {
+public class CoefficientManagementController extends BaseController {
 
     @Autowired
     private DairyCowService dairyCowService;

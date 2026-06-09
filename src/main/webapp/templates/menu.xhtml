@@ -23,10 +23,11 @@
                 <p:menuitem value="Hakkımızda" icon="fa-solid fa-circle-info" url="#"/>
                 <sec:authorize access="hasAuthority('ADMIN')">
                     <p:menuitem value="Kullanıcılar" icon="fa-solid fa-user-gear" url="/secured/admin/user-management"/>
-                    <p:submenu label="Hayvancılık yönetimi" icon="fa-solid fa-sliders">
+                    <p:submenu label="Büyükbaş süt yönetimi" icon="fa-solid fa-sliders">
                         <p:menuitem value="Hayvan türleri" icon="fa-solid fa-cow" url="/secured/admin/animal/cow-management"/>
                         <p:menuitem value="Hayvan katsayıları" icon="fa-solid fa-cow" url="/secured/admin/animal/cow-coefficient"/>
                         <p:menuitem value="Hayvan yemleri" icon="fa-solid fa-wheat-awn" url="/secured/admin/animal/feed-management"/>
+                        <p:menuitem value="İşletme giderleri" icon="fa-solid fa-wheat-awn" url="/secured/admin/animal/cost-management"/>
                     </p:submenu>
                 </sec:authorize>
                 <sec:authorize access="hasAuthority('USER')">
@@ -37,7 +38,7 @@
                         <p:menuitem value="Üretim" icon="fa-solid fa-money-bill-wheat" url="/secured/plant-product"/>
                     </p:submenu>
                     <p:submenu label="Hayvansal" icon="fa-solid fa-cow">
-                        <p:menuitem value="Büyükbaş besi" icon="fa-solid fa-building-wheat" url="/secured/animal/dairy-cow-barn"/>
+                        <p:menuitem value="Büyükbaş süt" icon="fa-solid fa-building-wheat" url="/secured/animal/dairy-cow-barn"/>
                     </p:submenu>
                 </sec:authorize>
             </fr:menu>

@@ -113,5 +113,7 @@ public class DairyCowFeedController extends DairyCowController {
     public void deleteUserFeed(DairyCowFeedView feedView) {
         dairyCowFeedService.removeUserFeed(feedView.getUserFeedId());
         fillDataTableValues();
+        selectedFeedView = null;
     }
+
 }

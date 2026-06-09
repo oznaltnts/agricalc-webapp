@@ -5,105 +5,91 @@
                 xmlns:p="http://primefaces.org/ui"
                 template="/templates/template.xhtml">
 
-    <ui:define name="title">Yem yönetimi</ui:define>
+    <ui:define name="title">İşletme Giderleri yönetimi</ui:define>
 
     <ui:define name="content">
         <div class="grid">
             <div class="col">
-                <h:form id="feedListForm"
+                <h:form id="costListForm"
                         class="card">
-                    <h5 class="mt-0" style="font-weight: bold">Hayvan yemi yönetimi</h5>
+                    <h5 class="mt-0" style="font-weight: bold">İşletme giderleri yönetimi</h5>
 
                     <p:growl showDetail="true"
                              severity="info warn">
                         <p:autoUpdate/>
                     </p:growl>
 
-                    <p:dataTable var="feedTable"
+                    <p:dataTable var="costTable"
+                                 value="#{costManagementController.costList}"
                                  reflow="true"
-                                 size="small"
                                  stripedRows="true"
-                                 value="#{feedManagementController.feedList}">
-                        <p:column headerText="Yem tipi" groupRow="true">
+                                 size="small">
+                        <p:column headerText="Gider tipi" groupRow="true">
                             <h:outputText style="font-weight: bold"
-                                          value="#{msg[feedTable.feedCategory]} - #{msg[feedTable.feedType]}"/>
+                                          value="#{msg[costTable.costType]}"/>
                         </p:column>
-                        <p:column headerText="Yem ismi">
-                            <h:outputText value="#{feedTable.name}"/>
+                        <p:column headerText="Gider ismi">
+                            <h:outputText value="#{costTable.name}"/>
                         </p:column>
+
                         <p:column headerText="Statü">
-                            <h:outputText value="#{msg[feedTable.status]}"/>
+                            <h:outputText value="#{msg[costTable.status]}"/>
                         </p:column>
+
                         <p:column style="width: 100px; text-align: center" headerText="Yönet">
-                            <p:commandButton action="#{feedManagementController.editFeed(feedTable)}"
-                                             update="feedEditForm"
-                                             disabled="#{feedTable.status eq 'DELETED'}"
+                            <p:commandButton action="#{costManagementController.editCost(costTable)}"
+                                             update="costEditForm"
+                                             disabled="#{costTable.status eq 'DELETED'}"
                                              value="Düzenle"/>
                         </p:column>
                     </p:dataTable>
 
                     <p:outputPanel style="display: flex;">
-                        <p:commandButton action="#{feedManagementController.addNewFeedToCategory}"
+                        <p:commandButton action="#{costManagementController.addNewCostToCategory}"
                                          styleClass="m-1"
                                          process="@this"
-                                         update="feedEditForm"
-                                         value="Yeni yem ekle"/>
+                                         update="costEditForm"
+                                         value="Yeni gider ekle"/>
                     </p:outputPanel>
                 </h:form>
             </div>
         </div>
         <div class="grid">
             <div class="col">
-                <h:form id="feedEditForm"
-                        style="visibility: #{feedManagementController.selectedFeed eq null ? 'hidden' : 'visible'}; height: #{feedManagementController.selectedFeed eq null ? '0' : 'unset'}"
+                <h:form id="costEditForm"
+                        style="visibility: #{costManagementController.selectedCost eq null ? 'hidden' : 'visible'}; height: #{costManagementController.selectedCost eq null ? '0' : 'unset'}"
                         class="card">
-                    <h5 class="mt-0" style="font-weight: bold">Hayvan yemi güncelleme</h5>
+                    <h5 class="mt-0" style="font-weight: bold">İşletme gideri güncelleme</h5>
 
                     <p:messages showDetail="true" globalOnly="true"/>
 
                     <p:panelGrid layout="flex"
-                                 rendered="#{feedManagementController.selectedFeed ne null}"
+                                 rendered="#{costManagementController.selectedCost ne null}"
                                  columnClasses="col-3, col-9"
                                  columns="2">
-                        <p:outputLabel for="feedCate" value="Kategory"/>
+                        <p:outputLabel for="costType" value="Kategory"/>
                         <p:outputPanel>
-                            <p:selectOneButton id="feedCate"
+                            <p:selectOneButton id="costType"
                                                unselectable="false"
                                                required="true"
                                                requiredMessage="1111"
-                                               value="#{feedManagementController.selectedFeed.feedCategory}">
-                                <p:ajax update="subTypes"/>
-                                <f:selectItems value="#{feedManagementController.feedCategories}"
-                                               var="feedCategory"
-                                               itemLabel="#{msg[feedCategory]}"
-                                               itemValue="#{feedCategory}"/>
+                                               value="#{costManagementController.selectedCost.costType}">
+                                <f:selectItems value="#{costManagementController.costTypes}"
+                                               var="costType"
+                                               itemLabel="#{msg[costType]}"
+                                               itemValue="#{costType}"/>
                             </p:selectOneButton>
                             <p:message for="@previous"/>
                         </p:outputPanel>
 
-                        <p:outputLabel for="subTypes" value="Tip"/>
+                        <p:outputLabel for="costStatus" value="Statü"/>
                         <p:outputPanel>
-                            <p:selectOneButton id="subTypes"
-                                               unselectable="false"
-                                               required="true"
-                                               requiredMessage="aaaa"
-                                               value="#{feedManagementController.selectedFeed.feedType}">
-                                <f:selectItems var="feedType"
-                                               value="#{feedManagementController.selectedFeed.feedCategory.subTypes}"
-                                               itemLabel="#{msg[feedType]}"
-                                               itemValue="#{feedType}"/>
-                            </p:selectOneButton>
-                            <p:message for="@previous"/>
-                        </p:outputPanel>
-
-                        <p:outputLabel for="feedStatus" value="Statü"/>
-                        <p:outputPanel>
-                            <p:selectOneButton id="feedStatus"
+                            <p:selectOneButton id="costStatus"
                                                unselectable="false"
                                                required="true"
                                                requiredMessage="bbbb"
-                                               value="#{feedManagementController.selectedFeed.status}">
-                                <f:selectItems value="#{feedManagementController.statuses}"
+                                               value="#{costManagementController.selectedCost.status}">
+                                <f:selectItems value="#{costManagementController.statuses}"
                                                var="status"
                                                itemValue="#{status}"
                                                itemLabel="#{msg[status]}"/>
@@ -114,7 +100,7 @@
                         <p:outputLabel for="nameInput" value="İsmi"/>
                         <p:outputPanel>
                             <p:inputText id="nameInput"
-                                         value="#{feedManagementController.selectedFeed.name}"
+                                         value="#{costManagementController.selectedCost.name}"
                                          requiredMessage="cccc"
                                          required="true"/>
                             <p:message for="@previous"/>
@@ -124,16 +110,16 @@
                         <p:outputPanel style="display: flex;">
                             <p:commandButton value="Kaydet"
                                              process="@form"
-                                             update="@form feedListForm"
+                                             update="@form costListForm"
                                              styleClass="m-1"
                                              validateClient="true"
-                                             action="#{feedManagementController.saveSelectedFeed}"/>
+                                             action="#{costManagementController.saveSelectedCost}"/>
                             <p:commandButton value="Vazgeç"
                                              process="@this"
                                              update="@form"
                                              styleClass="m-1"
                                              resetValues="true"
-                                             action="#{feedManagementController.setSelectedFeed(null)}"/>
+                                             action="#{costManagementController.setSelectedCost(null)}"/>
                         </p:outputPanel>
                     </p:panelGrid>
                 </h:form>

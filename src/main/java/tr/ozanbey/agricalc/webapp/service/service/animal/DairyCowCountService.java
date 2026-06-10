@@ -27,71 +27,89 @@ public class DairyCowCountService {
     @Autowired
     private UserDairyCowCountRepository countRepository;
 
-    private List<DairyCowCountView> getCowCountListByBarnId(Long barnId) {
+    public List<DairyCowCountView> getCowCountListByBarnId(Long barnId) {
         return countRepository.findAsViewListByBarnId(barnId);
     }
 
-    public List<DairyCowCountView> calculateCowCount(Long barnId, Double birthRate, Double deathRate) {
-        List<DairyCowCountView> returnList = getCowCountListByBarnId(barnId);
-        int endYearCowCount = 0;
-        int endYearPregnantHeiferCount = 0;
-        int endYearHeiferCount = 0;
-        int endYearSteerCount = 0;
-        int endYearCalfCount = 0;
-        int calfCalcCount = 0;
-        for (DairyCowCountView cowCountView : returnList) {
+    public List<DairyCowCountView> calculateCowCount(List<DairyCowCountView> dairyCowCountViewList, Double birthRate, Double deathRate) {
+        double endYearCowOne = 0;
+        double endYearCowPregnant = 0;
+        double endYearPregnantHeifer = 0;
+        double endYearHeiferSteer = 0;
+        double endYearSteerCalf = 0;
+        double endYearCalf = 0;
+
+        for (DairyCowCountView cowCountView : dairyCowCountViewList) {
             if (cowCountView.getCowType().equals(EnumCowType.COW)) {
-                endYearCowCount = endYearCowCount + (cowCountView.getCurrentCount() + cowCountView.getPurchaseCount() - cowCountView.getSellCount());
+                endYearCowOne = cowCountView.getCurrentCount() + cowCountView.getPurchaseCount() - cowCountView.getSellCount();
             } else if (cowCountView.getCowType().equals(EnumCowType.PREGNANT_HEIFER)) {
-                endYearCowCount = endYearCowCount + (cowCountView.getCurrentCount() + cowCountView.getPurchaseCount() - cowCountView.getSellCount());
+                endYearCowPregnant = cowCountView.getCurrentCount() + cowCountView.getPurchaseCount() - cowCountView.getSellCount();
             } else if (cowCountView.getCowType().equals(EnumCowType.HEIFER)) {
-                endYearPregnantHeiferCount = cowCountView.getCurrentCount() + cowCountView.getPurchaseCount() - cowCountView.getSellCount();
+                endYearPregnantHeifer = cowCountView.getCurrentCount() + cowCountView.getPurchaseCount() - cowCountView.getSellCount();
             } else if (cowCountView.getCowType().equals(EnumCowType.STEER)) {
-                endYearHeiferCount = cowCountView.getCurrentCount() + cowCountView.getPurchaseCount() - cowCountView.getSellCount();
+                endYearHeiferSteer = cowCountView.getCurrentCount() + cowCountView.getPurchaseCount() - cowCountView.getSellCount();
             } else if (cowCountView.getCowType().equals(EnumCowType.CALF)) {
-                endYearSteerCount = cowCountView.getCurrentCount() + cowCountView.getPurchaseCount() - cowCountView.getSellCount();
-                calfCalcCount = cowCountView.getPurchaseCount() - cowCountView.getSellCount();
+                endYearSteerCalf = cowCountView.getCurrentCount() + cowCountView.getPurchaseCount() - cowCountView.getSellCount();
+                endYearCalf = cowCountView.getPurchaseCount() - cowCountView.getSellCount();
             }
         }
+
+        double endYearCowCount = endYearCowOne + endYearCowPregnant;
+
         if (birthRate != null && deathRate != null) {
-            endYearCalfCount = (int) Math.round(endYearCowCount * birthRate / 100 * ((100 - deathRate) / 100) + calfCalcCount);
+            endYearCalf = endYearCowCount * birthRate / 100 * ((100 - deathRate) / 100) + endYearCalf;
         } else if (birthRate != null) {
-            endYearCalfCount = (int) Math.round(endYearCowCount * birthRate / 100 * ((100 - 2) / 100) + calfCalcCount);
+            endYearCalf = endYearCowCount * birthRate / 100 * ((100 - 2) / 100) + endYearCalf;
         } else if (deathRate != null) {
-            endYearCalfCount = (int) Math.round(endYearCowCount * 95 / 100 * ((100 - deathRate) / 100) + calfCalcCount);
+            endYearCalf = endYearCowCount * 95 / 100 * ((100 - deathRate) / 100) + endYearCalf;
         } else {
-            endYearCalfCount = (int) Math.round(endYearCowCount * 95 / 100 * ((100 - 2) / 100) + calfCalcCount);
+            endYearCalf = endYearCowCount * 95 / 100 * ((100 - 2) / 100) + endYearCalf;
         }
 
-        for (DairyCowCountView cowCountView : returnList) {
+        for (DairyCowCountView cowCountView : dairyCowCountViewList) {
             if (cowCountView.getCowType().equals(EnumCowType.COW)) {
                 cowCountView.setEndYearCount(endYearCowCount);
+                cowCountView.setEndYearFeedCount(cowCountView.getCurrentCount() + ((double) (cowCountView.getPurchaseCount() - cowCountView.getSellCount()) / 2) + (endYearCowPregnant / 2));
             } else if (cowCountView.getCowType().equals(EnumCowType.PREGNANT_HEIFER)) {
-                cowCountView.setEndYearCount(endYearPregnantHeiferCount);
+                cowCountView.setEndYearCount(endYearPregnantHeifer);
+                cowCountView.setEndYearFeedCount((cowCountView.getCurrentCount() + endYearPregnantHeifer) / 2);
             } else if (cowCountView.getCowType().equals(EnumCowType.HEIFER)) {
-                cowCountView.setEndYearCount(endYearHeiferCount);
+                cowCountView.setEndYearCount(endYearHeiferSteer);
+                cowCountView.setEndYearFeedCount((cowCountView.getCurrentCount() + endYearHeiferSteer) / 2);
             } else if (cowCountView.getCowType().equals(EnumCowType.STEER)) {
-                cowCountView.setEndYearCount(endYearSteerCount);
+                cowCountView.setEndYearCount(endYearSteerCalf);
+                cowCountView.setEndYearFeedCount((cowCountView.getCurrentCount() + endYearSteerCalf) / 2);
             } else if (cowCountView.getCowType().equals(EnumCowType.CALF)) {
-                cowCountView.setEndYearCount(endYearCalfCount);
+                cowCountView.setEndYearCount(endYearCalf);
+                cowCountView.setEndYearFeedCount((cowCountView.getCurrentCount() + endYearCalf) / 2);
             }
         }
-        return returnList;
+        return dairyCowCountViewList;
     }
 
-    public DairyCowCountCalculateView calculateTotalRowCount(List<DairyCowCountView> dairyCowCountViewList, int barnCapacity) {
+    @Transactional
+    public DairyCowCountCalculateView calculateTotalRowCount(List<DairyCowCountView> dairyCowCountViewList, Long barnId, int barnCapacity) {
         DairyCowCountCalculateView calculateView = new DairyCowCountCalculateView();
         double totalCowCount = 0;
         double totalEndYearCowCount = 0;
+        double totalAverageFeedCount = 0;
         for (DairyCowCountView view : dairyCowCountViewList) {
             totalCowCount = totalCowCount + (view.getCurrentCount() * view.getCoefficientValue());
             totalEndYearCowCount = totalEndYearCowCount + (view.getEndYearCount() * view.getCoefficientValue());
+            totalAverageFeedCount = totalAverageFeedCount + (view.getEndYearFeedCount() * view.getCoefficientValue());
         }
-        calculateView.setTotalCount((int) Math.round(totalCowCount));
+        calculateView.setTotalCount(totalCowCount);
         calculateView.setTotalBarnUsageRate(totalCowCount / barnCapacity * 100);
-        calculateView.setEndYearTotalCount((int) Math.round(totalEndYearCowCount));
+        calculateView.setEndYearTotalCount(totalEndYearCowCount);
         calculateView.setEndYearBarnUsageRate(totalEndYearCowCount / barnCapacity * 100);
+        calculateView.setEndYearTotalFeedCount(totalAverageFeedCount);
+
+        saveAverageValue(barnId, totalEndYearCowCount, totalAverageFeedCount);
         return calculateView;
+    }
+
+    public void saveAverageValue(Long barnId, double totalAverageCount, double totalAverageFeedCount) {
+        barnRepository.saveAverageValuesFromCountList(barnId, totalAverageCount, totalAverageFeedCount);
     }
 
     @Transactional

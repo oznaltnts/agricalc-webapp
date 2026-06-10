@@ -7,6 +7,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.io.Serializable;
+import java.math.BigDecimal;
 
 @NoArgsConstructor
 @AllArgsConstructor
@@ -20,6 +21,8 @@ public class DairyCowBarnView implements Serializable {
     private String dairyCowName;
     private Integer barnCapacity;
     private Integer milkingCapacity;
+
+    private BigDecimal barnPrice;
 
     private Double birthRate;
     private Double deathRate;

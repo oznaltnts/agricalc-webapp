@@ -3,6 +3,7 @@ package tr.ozanbey.agricalc.webapp.service.domain;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 @Getter
@@ -29,6 +30,10 @@ public class UserDairyCowBarn extends AbstractStatusEntity {
     @ToString.Include
     private int milkingCapacity;
 
+    @Column(name = "barn_price")
+    @ToString.Include
+    private BigDecimal barnPrice;
+
     @Column(name = "birth_rate")
     @ToString.Include
     private Double birthRate;
@@ -45,10 +50,21 @@ public class UserDairyCowBarn extends AbstractStatusEntity {
     @ToString.Include
     private Double milkYield;
 
+    @Column(name = "average_total_count")
+    @ToString.Include
+    private Double averageTotalCount;
+
+    @Column(name = "average_feed_total_count")
+    @ToString.Include
+    private Double averageFeedTotalCount;
+
+    @OneToMany(mappedBy = "userDairyCowBarn", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<UserDairyCowCount> dairyCowCountList;
+
     @OneToMany(mappedBy = "userDairyCowBarn", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     private List<UserDairyCowFeed> dairyCowFeedList;
 
     @OneToMany(mappedBy = "userDairyCowBarn", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<UserDairyCowCount> dairyCowCountList;
+    private List<UserDairyCowCost> dairyCowCostList;
 
 }

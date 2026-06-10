@@ -2,6 +2,7 @@ package tr.ozanbey.agricalc.webapp.service.repository;
 
 import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import tr.ozanbey.agricalc.webapp.service.domain.UserDairyCowBarn;
@@ -23,6 +24,7 @@ public interface UserDairyCowBarnRepository extends JpaRepository<UserDairyCowBa
                 t1.dairyCow.name,
                 t1.barnCapacity,
                 t1.milkingCapacity,
+                t1.barnPrice,
                 t1.birthRate,
                 t1.deathRate,
                 t1.inseminationRate,
@@ -38,5 +40,14 @@ public interface UserDairyCowBarnRepository extends JpaRepository<UserDairyCowBa
             
             """)
     List<DairyCowBarnView> findAsViewListByStatusInAndUser_Id(@Param("statuses") EnumStatus[] statuses, @Param("userId") Long userId);
+
+
+    @Modifying
+    @Query("""
+            UPDATE UserDairyCowBarn t1
+            SET t1.averageTotalCount = :totalCount, t1.averageFeedTotalCount = :feedCount
+            WHERE t1.id = :userBarnId
+            """)
+    void saveAverageValuesFromCountList(@Param("userBarnId") Long userBarnId, @Param("totalCount") Double totalAverageCount, @Param("feedCount") Double totalAverageFeedCount);
 
 }

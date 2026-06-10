@@ -21,8 +21,9 @@
 
                     <p:dataTable value="#{cowManagementController.dairyCowList}"
                                  var="dairyCow"
-                                 size="small"
-                                 stripedRows="true">
+                                 reflow="true"
+                                 stripedRows="true"
+                                 size="small">
                         <p:column headerText="Yem ismi">
                             <h:outputText value="#{dairyCow.name}"/>
                         </p:column>

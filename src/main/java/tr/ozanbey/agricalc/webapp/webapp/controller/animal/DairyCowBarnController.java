@@ -50,6 +50,7 @@ public class DairyCowBarnController extends DairyCowController {
         selectedBarnView.setBarnId(view.getBarnId());
         selectedBarnView.setBarnCapacity(view.getBarnCapacity());
         selectedBarnView.setMilkingCapacity(view.getMilkingCapacity());
+        selectedBarnView.setBarnPrice(view.getBarnPrice());
         selectedBarnView.setBirthRate(view.getBirthRate());
         selectedBarnView.setDeathRate(view.getDeathRate());
         selectedBarnView.setInseminationRate(view.getInseminationRate());
@@ -90,9 +91,10 @@ public class DairyCowBarnController extends DairyCowController {
                     .findAny();
             if (optionalBarn.isPresent()) {
                 DairyCowBarnView barnView = optionalBarn.get();
-                return selectedBarnView.getBarnCapacity() != barnView.getBarnCapacity()
-                        || selectedBarnView.getMilkingCapacity() != barnView.getMilkingCapacity()
+                return !Objects.equals(selectedBarnView.getBarnCapacity(), barnView.getBarnCapacity())
+                        || !Objects.equals(selectedBarnView.getMilkingCapacity(), barnView.getMilkingCapacity())
                         || !selectedBarnView.getSelectedDairyCowId().equals(barnView.getSelectedDairyCowId())
+                        || !Objects.equals(selectedBarnView.getBarnPrice(), barnView.getBarnPrice())
                         || selectedBarnView.isUnknownBirthRate() != barnView.isUnknownBirthRate()
                         || !Objects.equals(selectedBarnView.getBirthRate(), barnView.getBirthRate())
                         || selectedBarnView.isUnknownDeathRate() != barnView.isUnknownDeathRate()

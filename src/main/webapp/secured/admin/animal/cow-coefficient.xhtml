@@ -21,8 +21,9 @@
 
                     <p:dataTable value="#{coefficientManagementController.coefficientList}"
                                  var="coefficient"
-                                 size="small"
-                                 stripedRows="true">
+                                 reflow="true"
+                                 stripedRows="true"
+                                 size="small">
                         <p:column headerText="Katsayı">
                             <h:outputText value="#{msg[coefficient.cowType]}"/>
                         </p:column>

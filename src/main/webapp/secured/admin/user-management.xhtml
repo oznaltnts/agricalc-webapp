@@ -25,7 +25,9 @@
 
                         <p:tab title="Kullanıcılar">
                             <p:dataTable value="#{userManagementController.userInfoList}"
+                                         reflow="true"
                                          stripedRows="true"
+                                         size="small"
                                          var="user">
                                 <p:column exportable="false" style="width:100px;text-align:center">
                                     <p:commandButton value="Düzenle"

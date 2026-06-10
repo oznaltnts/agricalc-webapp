@@ -13,9 +13,10 @@ import java.io.Serializable;
 @Setter
 public class DairyCowCountCalculateView implements Serializable {
 
-    private int totalCount;
+    private double totalCount;
     private double totalBarnUsageRate;
-    private int endYearTotalCount;
+    private double endYearTotalCount;
     private double endYearBarnUsageRate;
+    private double endYearTotalFeedCount;
 
 }

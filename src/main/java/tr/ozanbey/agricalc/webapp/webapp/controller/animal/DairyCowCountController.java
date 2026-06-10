@@ -36,8 +36,9 @@ public class DairyCowCountController extends DairyCowController {
     }
 
     public void fillDataTableValues() {
-        dairyCowCountViewList = dairyCowCountService.calculateCowCount(getBarnId(), getUserDairyCowBarn().getBirthRate(), getUserDairyCowBarn().getDeathRate());
-        calculateView = dairyCowCountService.calculateTotalRowCount(dairyCowCountViewList, getUserDairyCowBarn().getBarnCapacity());
+        dairyCowCountViewList = dairyCowCountService.getCowCountListByBarnId(getBarnId());
+        dairyCowCountViewList = dairyCowCountService.calculateCowCount(dairyCowCountViewList, getUserDairyCowBarn().getBirthRate(), getUserDairyCowBarn().getDeathRate());
+        calculateView = dairyCowCountService.calculateTotalRowCount(dairyCowCountViewList, getBarnId(), getUserDairyCowBarn().getBarnCapacity());
     }
 
     public void editCount(DairyCowCountView view) {

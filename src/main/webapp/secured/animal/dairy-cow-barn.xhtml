@@ -50,6 +50,9 @@
                         <p:column headerText="Sağmal kapasite" responsivePriority="3">
                             <h:outputText value="#{dairyCowBarn.milkingCapacity}"/>
                         </p:column>
+                        <p:column headerText="Tesis Fiyatı" responsivePriority="3">
+                            <h:outputText value="#{dairyCowBarn.barnPrice}"/>
+                        </p:column>
                         <p:column headerText="Doğum oranı" responsivePriority="4">
                             <h:outputText value="#{dairyCowBarn.unknownBirthRate ? 'Bilmiyorum' : dairyCowBarn.birthRate}"/>
                         </p:column>
@@ -136,6 +139,13 @@
                                                var="dairyCow"/>
                             </p:selectOneMenu>
                             <p:message for="@previous"/>
+                        </p:outputPanel>
+
+                        <p:outputLabel for="barnPrice" value="Süt İşletmesi Ahir Tipinden Sifir Tesis Fiyatı: "/>
+                        <p:outputPanel styleClass="ui-inputgroup">
+                            <p:inputNumber id="barnPrice"
+                                           value="#{dairyCowBarnController.selectedBarnView.barnPrice}"
+                                           minValue="0"/>
                         </p:outputPanel>
 
                         <p:outputLabel for="birthRate" value="İşletmenin ortalama doğum oranı (%): "/>

@@ -40,6 +40,7 @@ public class DairyCowBarnService {
         userDairyCowBarn.setDairyCow(dairyCowRepository.getReferenceById(editedDairyCowBarnView.getSelectedDairyCowId()));
         userDairyCowBarn.setBarnCapacity(editedDairyCowBarnView.getBarnCapacity());
         userDairyCowBarn.setMilkingCapacity(editedDairyCowBarnView.getMilkingCapacity());
+        userDairyCowBarn.setBarnPrice(editedDairyCowBarnView.getBarnPrice());
         if (editedDairyCowBarnView.isUnknownBirthRate())
             userDairyCowBarn.setBirthRate(null);
         else

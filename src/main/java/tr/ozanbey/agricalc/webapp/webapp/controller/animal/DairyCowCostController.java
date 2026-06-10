@@ -30,7 +30,6 @@ public class DairyCowCostController extends DairyCowController {
     private List<DairyCowCostView> dairyCowCostViewList;
     private DairyCowCostView selectedCostView;
 
-
     private EnumCostType[] costTypes = EnumCostType.values();
     private List<Cost> referenceList;
     private LocalDateTime today = LocalDateTime.now();
@@ -109,10 +108,13 @@ public class DairyCowCostController extends DairyCowController {
         Optional<Cost> optionalCost = referenceList.stream().filter(c -> c.getId().equals(selectedCostView.getSelectedCostId())).findFirst();
         if (optionalCost.isPresent()) {
             selectedCostView.setSelectedCost(optionalCost.get());
-            if (selectedCostView.getSelectedCostName() == null)
+            if (selectedCostView.getSelectedCostName() == null) {
                 selectedCostView.setSelectedCostName(optionalCost.get().getName());
+            }
             if (optionalCost.get().getCostType().equals(EnumCostType.INSEMINATION)) {
                 selectedCostView.setCount(getUserDairyCowBarn().getInseminationRate());
+            } else if (optionalCost.get().getCostType().equals(EnumCostType.TARSIM)) {
+                selectedCostView.setCount(getUserDairyCowBarn().getAverageFeedTotalCount());
             }
         }
     }

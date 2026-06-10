@@ -16,6 +16,7 @@ public interface UserDairyCowCountRepository extends JpaRepository<UserDairyCowC
                         COALESCE(t2.currentCount, 0),
                         COALESCE(t2.purchaseCount, 0),
                         COALESCE(t2.sellCount, 0),
+                        0,
                         0
                     )
             FROM DairyCowCoefficient t1

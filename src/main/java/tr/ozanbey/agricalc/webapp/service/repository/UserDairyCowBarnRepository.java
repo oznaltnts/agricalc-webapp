@@ -19,25 +19,18 @@ public interface UserDairyCowBarnRepository extends JpaRepository<UserDairyCowBa
 
     @Query("""
             SELECT new tr.ozanbey.agricalc.webapp.webapp.view.DairyCowBarnView(
-                t1.id,
-                t1.dairyCow.id,
-                t1.dairyCow.name,
-                t1.barnCapacity,
-                t1.milkingCapacity,
-                t1.barnPrice,
-                t1.birthRate,
-                t1.deathRate,
-                t1.inseminationRate,
-                t1.milkYield,
-                CASE WHEN t1.birthRate IS NULL THEN true ELSE false END,
-                CASE WHEN t1.deathRate IS NULL THEN true ELSE false END,
-                CASE WHEN t1.inseminationRate IS NULL THEN true ELSE false END,
-                CASE WHEN t1.milkYield IS NULL THEN true ELSE false END
+                t1.id, t1.dairyCow.id, t1.dairyCow.name,
+                t1.barnCapacity, t1.milkingCapacity, t1.barnPrice,
+                t1.birthRate, t1.deathRate, t1.inseminationRate, t1.milkYield,
+                    CASE WHEN t1.birthRate IS NULL THEN true ELSE false END,
+                    CASE WHEN t1.deathRate IS NULL THEN true ELSE false END,
+                    CASE WHEN t1.inseminationRate IS NULL THEN true ELSE false END,
+                    CASE WHEN t1.milkYield IS NULL THEN true ELSE false END,
+                t1.totalCount, t1.endYearTotalCount, t1.averageFeedTotalCount
                     )
                     FROM UserDairyCowBarn t1
                     WHERE t1.status in :statuses
                       AND t1.user.id = :userId
-            
             """)
     List<DairyCowBarnView> findAsViewListByStatusInAndUser_Id(@Param("statuses") EnumStatus[] statuses, @Param("userId") Long userId);
 
@@ -45,9 +38,9 @@ public interface UserDairyCowBarnRepository extends JpaRepository<UserDairyCowBa
     @Modifying
     @Query("""
             UPDATE UserDairyCowBarn t1
-            SET t1.averageTotalCount = :totalCount, t1.averageFeedTotalCount = :feedCount
+            SET t1.totalCount = :totalCount, t1.endYearTotalCount = :endYearCount, t1.averageFeedTotalCount = :averageFeedCount
             WHERE t1.id = :userBarnId
             """)
-    void saveAverageValuesFromCountList(@Param("userBarnId") Long userBarnId, @Param("totalCount") Double totalAverageCount, @Param("feedCount") Double totalAverageFeedCount);
+    void saveAverageValuesFromCountList(@Param("userBarnId") Long userBarnId, @Param("totalCount") double totalCount, @Param("endYearCount") Double endYearCount, @Param("averageFeedCount") Double averageFeedCount);
 
 }

@@ -22,6 +22,6 @@ public class DairyCowCountView implements Serializable {
     private int purchaseCount;
     private int sellCount;
     private double endYearCount;
-    private double endYearFeedCount;
+    private double averageFeedCount;
 
 }

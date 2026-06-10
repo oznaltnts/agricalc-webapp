@@ -57,6 +57,12 @@ public class DairyCowBarnService {
             userDairyCowBarn.setMilkYield(null);
         else
             userDairyCowBarn.setMilkYield(editedDairyCowBarnView.getMilkYield());
+        if (userDairyCowBarn.getTotalCount() == null)
+            userDairyCowBarn.setTotalCount(0d);
+        if (userDairyCowBarn.getEndYearTotalCount() == null)
+            userDairyCowBarn.setEndYearTotalCount(0d);
+        if (userDairyCowBarn.getAverageFeedTotalCount() == null)
+            userDairyCowBarn.setAverageFeedTotalCount(0d);
         barnRepository.save(userDairyCowBarn);
     }
 

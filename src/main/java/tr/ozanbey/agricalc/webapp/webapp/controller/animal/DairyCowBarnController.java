@@ -59,6 +59,9 @@ public class DairyCowBarnController extends DairyCowController {
         selectedBarnView.setUnknownDeathRate(view.isUnknownDeathRate());
         selectedBarnView.setUnknownInseminationRate(view.isUnknownInseminationRate());
         selectedBarnView.setUnknownMilkYield(view.isUnknownMilkYield());
+        selectedBarnView.setTotalCount(view.getTotalCount());
+        selectedBarnView.setEndYearTotalCount(view.getEndYearTotalCount());
+        selectedBarnView.setAverageFeedTotalCount(view.getAverageFeedTotalCount());
 
         if (dairyCowList == null || dairyCowList.isEmpty()) {
             dairyCowList = super.getDairyCowService().getDairyCowsByStatuses(new EnumStatus[]{EnumStatus.ACTIVE});

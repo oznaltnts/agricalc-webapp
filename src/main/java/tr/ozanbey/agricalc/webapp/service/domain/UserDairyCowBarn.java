@@ -50,9 +50,13 @@ public class UserDairyCowBarn extends AbstractStatusEntity {
     @ToString.Include
     private Double milkYield;
 
-    @Column(name = "average_total_count")
+    @Column(name = "total_count")
     @ToString.Include
-    private Double averageTotalCount;
+    private Double totalCount;
+
+    @Column(name = "end_year_total_count")
+    @ToString.Include
+    private Double endYearTotalCount;
 
     @Column(name = "average_feed_total_count")
     @ToString.Include

@@ -37,8 +37,17 @@ public class DairyCowCountController extends DairyCowController {
 
     public void fillDataTableValues() {
         dairyCowCountViewList = dairyCowCountService.getCowCountListByBarnId(getBarnId());
-        dairyCowCountViewList = dairyCowCountService.calculateCowCount(dairyCowCountViewList, getUserDairyCowBarn().getBirthRate(), getUserDairyCowBarn().getDeathRate());
-        calculateView = dairyCowCountService.calculateTotalRowCount(dairyCowCountViewList, getBarnId(), getUserDairyCowBarn().getBarnCapacity());
+        generateCalculateView();
+    }
+
+    private void generateCalculateView() {
+        calculateView = new DairyCowCountCalculateView(
+                getUserDairyCowBarn().getTotalCount(),
+                getUserDairyCowBarn().getTotalCount() / getUserDairyCowBarn().getBarnCapacity() * 100,
+                getUserDairyCowBarn().getEndYearTotalCount(),
+                getUserDairyCowBarn().getEndYearTotalCount() / getUserDairyCowBarn().getBarnCapacity() * 100,
+                getUserDairyCowBarn().getAverageFeedTotalCount()
+        );
     }
 
     public void editCount(DairyCowCountView view) {
@@ -46,15 +55,18 @@ public class DairyCowCountController extends DairyCowController {
         selectedCountView.setCountId(view.getCountId());
         selectedCountView.setCoefId(view.getCoefId());
         selectedCountView.setCowType(view.getCowType());
+        selectedCountView.setCoefficientValue(view.getCoefficientValue());
         selectedCountView.setCurrentCount(view.getCurrentCount());
         selectedCountView.setPurchaseCount(view.getPurchaseCount());
         selectedCountView.setSellCount(view.getSellCount());
+        selectedCountView.setEndYearCount(view.getEndYearCount());
+        selectedCountView.setAverageFeedCount(view.getAverageFeedCount());
     }
 
     public void saveSelectedCount() {
         if (checkIsThereChange()) {
             if (checkCurrentCountOK()) {
-                dairyCowCountService.saveUserCount(selectedCountView, getBarnId());
+                dairyCowCountService.saveCountList(dairyCowCountViewList, selectedCountView, getUserDairyCowBarn());
                 fillDataTableValues();
                 selectedCountView = null;
             }

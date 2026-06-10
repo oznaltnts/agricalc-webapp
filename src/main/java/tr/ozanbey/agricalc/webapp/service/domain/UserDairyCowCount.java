@@ -31,4 +31,12 @@ public class UserDairyCowCount extends AbstractEntity {
     @ToString.Include
     private Integer sellCount;
 
+    @Column(name = "end_year_count")
+    @ToString.Include
+    private Double endYearCount;
+
+    @Column(name = "average_feed_count")
+    @ToString.Include
+    private Double averageFeedCount;
+
 }

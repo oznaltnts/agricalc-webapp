@@ -19,7 +19,7 @@ public class UserDairyCowCost extends AbstractEntity {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "cost_id", referencedColumnName = "id", nullable = false)
-    private Cost cost;
+    private DairyCowCost dairyCowCost;
 
     @Column(name = "count")
     @ToString.Include

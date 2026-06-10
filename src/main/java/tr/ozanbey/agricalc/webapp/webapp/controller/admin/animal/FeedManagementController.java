@@ -11,7 +11,7 @@ import tr.ozanbey.agricalc.webapp.service.domain.Feed;
 import tr.ozanbey.agricalc.webapp.service.enumtype.EnumStatus;
 import tr.ozanbey.agricalc.webapp.service.enumtype.animal.EnumFeedCategory;
 import tr.ozanbey.agricalc.webapp.service.enumtype.animal.EnumFeedType;
-import tr.ozanbey.agricalc.webapp.service.service.FeedService;
+import tr.ozanbey.agricalc.webapp.service.service.animal.DairyCowFeedService;
 import tr.ozanbey.agricalc.webapp.webapp.controller.BaseController;
 
 import java.util.List;
@@ -24,7 +24,7 @@ import java.util.Optional;
 public class FeedManagementController extends BaseController {
 
     @Autowired
-    private FeedService feedService;
+    private DairyCowFeedService dairyCowFeedService;
 
     private EnumStatus[] statuses = EnumStatus.values();
     private EnumFeedCategory[] feedCategories = EnumFeedCategory.values();
@@ -38,7 +38,7 @@ public class FeedManagementController extends BaseController {
     }
 
     private void fillDataTableValues() {
-        feedList = feedService.getFeedsByStatuses(statuses);
+        feedList = dairyCowFeedService.getFeedsByStatuses(statuses);
     }
 
     public void addNewFeedToCategory() {
@@ -57,7 +57,7 @@ public class FeedManagementController extends BaseController {
 
     public void saveSelectedFeed() {
         if (checkIsThereChange()) {
-            feedService.saveFeed(selectedFeed);
+            dairyCowFeedService.saveFeed(selectedFeed);
             fillDataTableValues();
         }
         selectedFeed = null;

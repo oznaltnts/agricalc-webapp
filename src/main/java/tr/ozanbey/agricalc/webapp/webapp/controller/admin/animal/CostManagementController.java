@@ -7,10 +7,10 @@ import lombok.Getter;
 import lombok.Setter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import tr.ozanbey.agricalc.webapp.service.domain.Cost;
+import tr.ozanbey.agricalc.webapp.service.domain.DairyCowCost;
 import tr.ozanbey.agricalc.webapp.service.enumtype.EnumStatus;
 import tr.ozanbey.agricalc.webapp.service.enumtype.animal.EnumCostType;
-import tr.ozanbey.agricalc.webapp.service.service.CostService;
+import tr.ozanbey.agricalc.webapp.service.service.animal.DairyCowCostService;
 import tr.ozanbey.agricalc.webapp.webapp.controller.BaseController;
 
 import java.util.List;
@@ -23,12 +23,12 @@ import java.util.Optional;
 public class CostManagementController extends BaseController {
 
     @Autowired
-    private CostService costService;
+    private DairyCowCostService dairyCowCostService;
 
     private EnumStatus[] statuses = EnumStatus.values();
     private EnumCostType[] costTypes = EnumCostType.values();
-    private List<Cost> costList;
-    private Cost selectedCost;
+    private List<DairyCowCost> dairyCowCostList;
+    private DairyCowCost selectedDairyCowCost;
 
     @PostConstruct
     public void init() {
@@ -36,38 +36,38 @@ public class CostManagementController extends BaseController {
     }
 
     private void fillDataTableValues() {
-        costList = costService.getCostsByStatuses(statuses);
+        dairyCowCostList = dairyCowCostService.getCostsByStatuses(statuses);
     }
 
     public void addNewCostToCategory() {
-        selectedCost = new Cost();
-        selectedCost.setStatus(EnumStatus.ACTIVE);
+        selectedDairyCowCost = new DairyCowCost();
+        selectedDairyCowCost.setStatus(EnumStatus.ACTIVE);
     }
 
-    public void editCost(Cost cost) {
-        selectedCost = new Cost();
-        selectedCost.setId(cost.getId());
-        selectedCost.setStatus(cost.getStatus());
-        selectedCost.setCostType(cost.getCostType());
-        selectedCost.setName(cost.getName());
+    public void editCost(DairyCowCost dairyCowCost) {
+        selectedDairyCowCost = new DairyCowCost();
+        selectedDairyCowCost.setId(dairyCowCost.getId());
+        selectedDairyCowCost.setStatus(dairyCowCost.getStatus());
+        selectedDairyCowCost.setCostType(dairyCowCost.getCostType());
+        selectedDairyCowCost.setName(dairyCowCost.getName());
     }
 
     public void saveSelectedCost() {
         if (checkIsThereChange()) {
-            costService.saveCost(selectedCost);
+            dairyCowCostService.saveCost(selectedDairyCowCost);
             fillDataTableValues();
         }
-        selectedCost = null;
+        selectedDairyCowCost = null;
     }
 
     public boolean checkIsThereChange() {
-        if (selectedCost.getId() != null) {
-            Optional<Cost> optionalCost = costList.stream().filter(v -> v.getId().equals(selectedCost.getId())).findFirst();
+        if (selectedDairyCowCost.getId() != null) {
+            Optional<DairyCowCost> optionalCost = dairyCowCostList.stream().filter(v -> v.getId().equals(selectedDairyCowCost.getId())).findFirst();
             if (optionalCost.isPresent()) {
-                Cost cost = optionalCost.get();
-                return !selectedCost.getCostType().equals(cost.getCostType())
-                        || !selectedCost.getName().equals(cost.getName())
-                        || !selectedCost.getStatus().equals(cost.getStatus());
+                DairyCowCost dairyCowCost = optionalCost.get();
+                return !selectedDairyCowCost.getCostType().equals(dairyCowCost.getCostType())
+                        || !selectedDairyCowCost.getName().equals(dairyCowCost.getName())
+                        || !selectedDairyCowCost.getStatus().equals(dairyCowCost.getStatus());
             }
         }
         return true;

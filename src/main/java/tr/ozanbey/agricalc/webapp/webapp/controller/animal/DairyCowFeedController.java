@@ -48,7 +48,7 @@ public class DairyCowFeedController extends DairyCowController {
         selectedFeedView = new DairyCowFeedView();
 
         feedList = new ArrayList<>();
-        List<Feed> activeFeedList = super.getDairyCowService().getFeedsByStatuses(new EnumStatus[]{EnumStatus.ACTIVE});
+        List<Feed> activeFeedList = dairyCowFeedService.getFeedsByStatuses(new EnumStatus[]{EnumStatus.ACTIVE});
         for (EnumFeedCategory category : EnumFeedCategory.values()) {
             SelectItemGroup subFeeds = new SelectItemGroup(JSFUtils.getLocaleMessage(category.name()));
             SelectItem[] selectItems = activeFeedList.stream()

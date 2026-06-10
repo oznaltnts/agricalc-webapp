@@ -15,7 +15,7 @@ import tr.ozanbey.agricalc.webapp.service.enumtype.animal.EnumCostType;
 @NoArgsConstructor
 @AllArgsConstructor
 @ToString(onlyExplicitlyIncluded = true)
-public class Cost extends AbstractStatusEntity {
+public class DairyCowCost extends AbstractStatusEntity {
 
     @Convert(converter = EnumCostTypeConverter.class)
     @Column(name = "cost_type", nullable = false, columnDefinition = "TINYINT")

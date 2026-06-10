@@ -5,7 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import tr.ozanbey.agricalc.webapp.service.domain.Cost;
+import tr.ozanbey.agricalc.webapp.service.domain.DairyCowCost;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
@@ -18,7 +18,7 @@ public class DairyCowCostView implements Serializable {
 
     private Long userCostId;
     private Long selectedCostId;
-    private Cost selectedCost;
+    private DairyCowCost selectedDairyCowCost;
     private String selectedCostName;
 
     private Double count;

@@ -716,4 +716,32 @@ CREATE TABLE `user_dairy_cow_costs`
     ENGINE = InnoDB
     AUTO_INCREMENT = 1;
 
+CREATE TABLE `dairy_cow_incomes`
+(
+    `id`     BIGINT       NOT NULL AUTO_INCREMENT,
+    `idate`  DATETIME     NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    `udate`  DATETIME     NULL     DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP,
+    `status` TINYINT      NOT NULL COMMENT '-1:deleted, 0:passive, 1:active',
+    `name`   VARCHAR(255) NOT NULL,
+    `unit`   VARCHAR(25)  NOT NULL,
+    PRIMARY KEY (`id`),
+    INDEX idx_dairy_cow_incomes (`status`)
+)
+    ENGINE = InnoDB
+    AUTO_INCREMENT = 1;
+
+CREATE TABLE `user_dairy_cow_incomes`
+(
+    `id`                     BIGINT         NOT NULL AUTO_INCREMENT,
+    `idate`                  DATETIME       NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    `user_dairy_cow_barn_id` BIGINT         NOT NULL,
+    `dairy_cow_income_id`    BIGINT         NOT NULL,
+    `income_value`           DECIMAL(15, 3) NOT NULL,
+    PRIMARY KEY (`id`),
+    CONSTRAINT `FK_user_dairy_cow_incomes_user_dairy_cow_barns` FOREIGN KEY (`user_dairy_cow_barn_id`) REFERENCES `user_dairy_cow_barns` (`id`),
+    CONSTRAINT `FK_user_dairy_cow_incomes_dairy_cow_incomes` FOREIGN KEY (`dairy_cow_income_id`) REFERENCES `dairy_cow_incomes` (`id`),
+    INDEX idx_user_dairy_cow_incomes (`user_dairy_cow_barn_id`)
+)
+    ENGINE = InnoDB
+    AUTO_INCREMENT = 1;
 

@@ -4,9 +4,10 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import tr.ozanbey.agricalc.webapp.service.domain.DairyCowCost;
 import tr.ozanbey.agricalc.webapp.service.domain.UserDairyCowCost;
 import tr.ozanbey.agricalc.webapp.service.enumtype.EnumStatus;
-import tr.ozanbey.agricalc.webapp.service.repository.CostRepository;
+import tr.ozanbey.agricalc.webapp.service.repository.DairyCowCostRepository;
 import tr.ozanbey.agricalc.webapp.service.repository.UserDairyCowBarnRepository;
 import tr.ozanbey.agricalc.webapp.service.repository.UserDairyCowCostRepository;
 import tr.ozanbey.agricalc.webapp.webapp.view.DairyCowCostView;
@@ -18,16 +19,25 @@ import java.util.List;
 public class DairyCowCostService {
 
     @Autowired
-    private CostRepository costRepository;
+    private DairyCowCostRepository dairyCowCostRepository;
 
     @Autowired
     private UserDairyCowBarnRepository barnRepository;
 
     @Autowired
-    private UserDairyCowCostRepository dairyCowCostRepository;
+    private UserDairyCowCostRepository userDairyCowCostRepository;
+
+    public List<DairyCowCost> getCostsByStatuses(EnumStatus[] statuses) {
+        return dairyCowCostRepository.findByStatusInOrderByCostTypeAsc(statuses);
+    }
+
+    @Transactional
+    public void saveCost(DairyCowCost selectedDairyCowCost) {
+        dairyCowCostRepository.save(selectedDairyCowCost);
+    }
 
     public List<DairyCowCostView> getActiveCostAsViewList(Long barnId) {
-        return dairyCowCostRepository.findAllAsCowCostView(EnumStatus.ACTIVE, barnId);
+        return userDairyCowCostRepository.findAllAsCowCostView(EnumStatus.ACTIVE, barnId);
     }
 
     @Transactional
@@ -36,21 +46,20 @@ public class DairyCowCostService {
         if (selectedCostView.getUserCostId() == null) {
             userDairyCowCost = new UserDairyCowCost();
         } else {
-            userDairyCowCost = dairyCowCostRepository.getReferenceById(selectedCostView.getUserCostId());
+            userDairyCowCost = userDairyCowCostRepository.getReferenceById(selectedCostView.getUserCostId());
         }
         userDairyCowCost.setUserDairyCowBarn(barnRepository.getReferenceById(barnId));
-        userDairyCowCost.setCost(selectedCostView.getSelectedCost());
+        userDairyCowCost.setDairyCowCost(selectedCostView.getSelectedDairyCowCost());
         userDairyCowCost.setCostName(selectedCostView.getSelectedCostName());
         userDairyCowCost.setCount(selectedCostView.getCount());
         userDairyCowCost.setTotalCost(selectedCostView.getTotalCost());
         userDairyCowCost.setHourlyOrInterest(selectedCostView.getHourlyOrInterest());
-        dairyCowCostRepository.save(userDairyCowCost);
+        userDairyCowCostRepository.save(userDairyCowCost);
     }
 
     @Transactional
     public void removeUserCost(Long selectedUserCostId) {
-        dairyCowCostRepository.delete(dairyCowCostRepository.getReferenceById(selectedUserCostId));
-
+        userDairyCowCostRepository.delete(userDairyCowCostRepository.getReferenceById(selectedUserCostId));
     }
 
 }

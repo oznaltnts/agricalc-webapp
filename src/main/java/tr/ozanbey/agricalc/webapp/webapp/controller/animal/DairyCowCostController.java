@@ -7,7 +7,7 @@ import lombok.Getter;
 import lombok.Setter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import tr.ozanbey.agricalc.webapp.service.domain.Cost;
+import tr.ozanbey.agricalc.webapp.service.domain.DairyCowCost;
 import tr.ozanbey.agricalc.webapp.service.enumtype.EnumStatus;
 import tr.ozanbey.agricalc.webapp.service.enumtype.animal.EnumCostType;
 import tr.ozanbey.agricalc.webapp.service.service.animal.DairyCowCostService;
@@ -31,7 +31,7 @@ public class DairyCowCostController extends DairyCowController {
     private DairyCowCostView selectedCostView;
 
     private EnumCostType[] costTypes = EnumCostType.values();
-    private List<Cost> referenceList;
+    private List<DairyCowCost> referenceList;
     private LocalDateTime today = LocalDateTime.now();
 
     @PostConstruct
@@ -40,27 +40,27 @@ public class DairyCowCostController extends DairyCowController {
 
     public void fillDataTableValues() {
         dairyCowCostViewList = dairyCowCostService.getActiveCostAsViewList(super.getBarnId());
-        referenceList = super.getDairyCowService().getCostsByStatuses(new EnumStatus[]{EnumStatus.ACTIVE});
+        referenceList = dairyCowCostService.getCostsByStatuses(new EnumStatus[]{EnumStatus.ACTIVE});
     }
 
     public void addNewCostView() {
         selectedCostView = new DairyCowCostView();
-        selectedCostView.setSelectedCost(new Cost());
+        selectedCostView.setSelectedDairyCowCost(new DairyCowCost());
     }
 
-    public List<Cost> getFromReferenceList() {
-        return referenceList.stream().filter(r -> r.getCostType().equals(selectedCostView.getSelectedCost().getCostType())).toList();
+    public List<DairyCowCost> getFromReferenceList() {
+        return referenceList.stream().filter(r -> r.getCostType().equals(selectedCostView.getSelectedDairyCowCost().getCostType())).toList();
     }
 
     public void editUserCost(DairyCowCostView costView) {
         selectedCostView = new DairyCowCostView();
         selectedCostView.setUserCostId(costView.getUserCostId());
-        selectedCostView.setSelectedCostId(costView.getSelectedCost().getId());
-        selectedCostView.setSelectedCost(costView.getSelectedCost());
+        selectedCostView.setSelectedCostId(costView.getSelectedDairyCowCost().getId());
+        selectedCostView.setSelectedDairyCowCost(costView.getSelectedDairyCowCost());
         if (costView.getSelectedCostName() != null)
             selectedCostView.setSelectedCostName(costView.getSelectedCostName());
         else
-            selectedCostView.setSelectedCostName(costView.getSelectedCost().getName());
+            selectedCostView.setSelectedCostName(costView.getSelectedDairyCowCost().getName());
         selectedCostView.setCount(costView.getCount());
         selectedCostView.setTotalCost(costView.getTotalCost());
         selectedCostView.setHourlyOrInterest(costView.getHourlyOrInterest());
@@ -90,11 +90,11 @@ public class DairyCowCostController extends DairyCowController {
         return true;
     }
 
-    public boolean checkCostAdded(Cost cost) {
+    public boolean checkCostAdded(DairyCowCost dairyCowCost) {
         return dairyCowCostViewList.stream().anyMatch(v ->
-                !cost.getCostType().equals(EnumCostType.MAINTENANCE_SALARY)
-                        && !cost.getCostType().equals(EnumCostType.MAINTENANCE_HOURLY)
-                        && v.getSelectedCost().getId().equals(cost.getId())
+                !dairyCowCost.getCostType().equals(EnumCostType.MAINTENANCE_SALARY)
+                        && !dairyCowCost.getCostType().equals(EnumCostType.MAINTENANCE_HOURLY)
+                        && v.getSelectedDairyCowCost().getId().equals(dairyCowCost.getId())
         );
     }
 
@@ -105,9 +105,9 @@ public class DairyCowCostController extends DairyCowController {
     }
 
     public void handleCostTypeSelect() {
-        Optional<Cost> optionalCost = referenceList.stream().filter(c -> c.getId().equals(selectedCostView.getSelectedCostId())).findFirst();
+        Optional<DairyCowCost> optionalCost = referenceList.stream().filter(c -> c.getId().equals(selectedCostView.getSelectedCostId())).findFirst();
         if (optionalCost.isPresent()) {
-            selectedCostView.setSelectedCost(optionalCost.get());
+            selectedCostView.setSelectedDairyCowCost(optionalCost.get());
             if (selectedCostView.getSelectedCostName() == null) {
                 selectedCostView.setSelectedCostName(optionalCost.get().getName());
             }

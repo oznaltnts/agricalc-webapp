@@ -25,7 +25,8 @@
                         <p:menuitem value="Yemler"/>
                         <p:menuitem value="Yem rasyonu"/>
                         <p:menuitem value="Giderler"/>
-                        <p:menuitem value="Confirmation"/>
+                        <p:menuitem value="Gelirler"/>
+                        <p:menuitem value="Sonuçlar"/>
                     </p:steps>
                 </div>
             </div>
@@ -47,7 +48,8 @@
                                  size="small"
                                  value="#{dairyCowCostController.dairyCowCostViewList}">
                         <p:column headerText="Gider tipi" groupRow="true">
-                            <h:outputText style="font-weight: bold" value="#{msg[costTable.selectedCost.costType]}"
+                            <h:outputText style="font-weight: bold"
+                                          value="#{msg[costTable.selectedDairyCowCost.costType]}"
                                           responsivePriority="3"/>
                         </p:column>
                         <p:column headerText="Gider ismi">
@@ -57,7 +59,7 @@
                         <p:column headerText="Sayısı/miktarı"
                                   responsivePriority="2">
                             <h:outputText value="#{costTable.count}"
-                                          rendered="#{costTable.selectedCost.costType.columns.contains('COUNT')}"/>
+                                          rendered="#{costTable.selectedDairyCowCost.costType.columns.contains('COUNT')}"/>
                         </p:column>
 
                         <p:column headerText="Toplam gideri"
@@ -68,7 +70,7 @@
                         <p:column headerText="Saati/faizi"
                                   responsivePriority="2">
                             <h:outputText value="#{costTable.hourlyOrInterest}"
-                                          rendered="#{costTable.selectedCost.costType.columns.contains('HOUR')}"/>
+                                          rendered="#{costTable.selectedDairyCowCost.costType.columns.contains('HOUR')}"/>
                         </p:column>
 
                         <p:column style="width: 200px; text-align: center" headerText="Yönet">
@@ -107,7 +109,6 @@
                     <p:button value="Büyükbaş süt gelirleri"
                               styleClass="m-1"
                               iconPos="right"
-                              disabled="true"
                               href="/secured/animal/dairy-cow-income"
                               icon="fa-solid fa-angles-right">
                         <f:param name="barnId"
@@ -133,7 +134,7 @@
                                        value="Gider tipi:"/>
                         <p:outputPanel>
                             <p:selectOneButton id="costType"
-                                               value="#{dairyCowCostController.selectedCostView.selectedCost.costType}"
+                                               value="#{dairyCowCostController.selectedCostView.selectedDairyCowCost.costType}"
                                                required="true"
                                                requiredMessage="Lütfen seçim yapınız"
                                                unselectable="false">
@@ -159,10 +160,10 @@
                                         process="@this"
                                         listener="#{dairyCowCostController.handleCostTypeSelect}"/>
                                 <f:selectItems value="#{dairyCowCostController.fromReferenceList}"
-                                               var="cost"
-                                               itemValue="#{cost.id}"
-                                               itemDisabled="#{dairyCowCostController.checkCostAdded(cost)}"
-                                               itemLabel="#{cost.name}"/>
+                                               var="dairyCowCost"
+                                               itemValue="#{dairyCowCost.id}"
+                                               itemDisabled="#{dairyCowCostController.checkCostAdded(dairyCowCost)}"
+                                               itemLabel="#{dairyCowCost.name}"/>
                             </p:selectOneButton>
                             <p:message for="@previous"/>
                         </p:outputPanel>
@@ -178,12 +179,12 @@
                         </p:outputPanel>
 
                         <p:outputLabel for="costCount"
-                                       rendered="#{dairyCowCostController.selectedCostView.selectedCost.costType.columns.contains('COUNT')}"
+                                       rendered="#{dairyCowCostController.selectedCostView.selectedDairyCowCost.costType.columns.contains('COUNT')}"
                                        value="Sayısı/miktarı:"/>
-                        <p:outputPanel rendered="#{dairyCowCostController.selectedCostView.selectedCost.costType.columns.contains('COUNT')}">
+                        <p:outputPanel rendered="#{dairyCowCostController.selectedCostView.selectedDairyCowCost.costType.columns.contains('COUNT')}">
                             <p:inputNumber id="costCount"
-                                           readonly="#{dairyCowCostController.selectedCostView.selectedCost.costType eq 'INSEMINATION' or dairyCowCostController.selectedCostView.selectedCost.costType eq 'TARSIM'}"
-                                           required="#{dairyCowCostController.selectedCostView.selectedCost.costType ne 'INSEMINATION' and dairyCowCostController.selectedCostView.selectedCost.costType ne 'TARSIM'}"
+                                           readonly="#{dairyCowCostController.selectedCostView.selectedDairyCowCost.costType eq 'INSEMINATION' or dairyCowCostController.selectedCostView.selectedDairyCowCost.costType eq 'TARSIM'}"
+                                           required="#{dairyCowCostController.selectedCostView.selectedDairyCowCost.costType ne 'INSEMINATION' and dairyCowCostController.selectedCostView.selectedDairyCowCost.costType ne 'TARSIM'}"
                                            requiredMessage="costCount inputNumber required"
                                            value="#{dairyCowCostController.selectedCostView.count}"
                                            maxValue="999999999999"
@@ -204,9 +205,9 @@
                         </p:outputPanel>
 
                         <p:outputLabel for="hourInterest"
-                                       rendered="#{dairyCowCostController.selectedCostView.selectedCost.costType.columns.contains('HOUR')}"
+                                       rendered="#{dairyCowCostController.selectedCostView.selectedDairyCowCost.costType.columns.contains('HOUR')}"
                                        value="Saati/faizi:"/>
-                        <p:outputPanel rendered="#{dairyCowCostController.selectedCostView.selectedCost.costType.columns.contains('HOUR')}">
+                        <p:outputPanel rendered="#{dairyCowCostController.selectedCostView.selectedDairyCowCost.costType.columns.contains('HOUR')}">
                             <p:inputNumber id="hourInterest"
                                            required="true"
                                            requiredMessage="hourInterest inputNumber required"

@@ -4,6 +4,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import tr.ozanbey.agricalc.webapp.service.domain.Feed;
 import tr.ozanbey.agricalc.webapp.service.domain.UserDairyCowFeed;
 import tr.ozanbey.agricalc.webapp.service.enumtype.EnumStatus;
 import tr.ozanbey.agricalc.webapp.service.repository.FeedRepository;
@@ -25,6 +26,15 @@ public class DairyCowFeedService {
 
     @Autowired
     private UserDairyCowFeedRepository dairyCowFeedRepository;
+
+    public List<Feed> getFeedsByStatuses(EnumStatus[] statuses) {
+        return feedRepository.findByStatusInOrderByFeedCategoryAscFeedTypeAsc(statuses);
+    }
+
+    @Transactional
+    public void saveFeed(Feed selectedFeed) {
+        feedRepository.save(selectedFeed);
+    }
 
     public List<DairyCowFeedView> getActiveFeedAsViewList(Long barnId) {
         return dairyCowFeedRepository.findAllAsCowFeedView(EnumStatus.ACTIVE, barnId);
@@ -53,7 +63,6 @@ public class DairyCowFeedService {
     @Transactional
     public void removeUserFeed(Long selectedUserFeedId) {
         dairyCowFeedRepository.delete(dairyCowFeedRepository.getReferenceById(selectedUserFeedId));
-
     }
 
     @Transactional

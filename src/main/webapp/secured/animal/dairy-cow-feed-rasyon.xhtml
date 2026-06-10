@@ -25,7 +25,8 @@
                         <p:menuitem value="Yemler"/>
                         <p:menuitem value="Yem rasyonu"/>
                         <p:menuitem value="Giderler"/>
-                        <p:menuitem value="Confirmation"/>
+                        <p:menuitem value="Gelirler"/>
+                        <p:menuitem value="Sonuçlar"/>
                     </p:steps>
                 </div>
             </div>
@@ -66,8 +67,7 @@
                                            requiredMessage="lactationInputNumber inputNumber requiredMessage"
                                            maxValue="999999999999"
                                            minValue="0">
-                                <p:ajax update="lactationInputNumber roughageInputNumber"
-                                />
+                                <p:ajax update="lactationInputNumber roughageInputNumber"/>
                             </p:inputNumber>
                         </p:column>
 
@@ -92,7 +92,7 @@
         <div class="grid">
             <div class="col">
                 <h:form style="display: flex; justify-content: space-between; flex-direction: row-reverse;">
-                    <p:commandButton value="Büyükbaş süt işletme gelirleri"
+                    <p:commandButton value="Büyükbaş süt işletme giderleri"
                                      process="rasyonListForm"
                                      update="rasyonListForm"
                                      styleClass="m-1"

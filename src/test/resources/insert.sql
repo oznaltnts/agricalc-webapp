@@ -274,3 +274,19 @@ INSERT INTO `tektarim`.`dairy_cow_coefficients` (`cow_type`, `value`) VALUES ('1
 INSERT INTO `tektarim`.`dairy_cow_coefficients` (`cow_type`, `value`) VALUES ('2', '0.6');
 INSERT INTO `tektarim`.`dairy_cow_coefficients` (`cow_type`, `value`) VALUES ('3', '0.4');
 INSERT INTO `tektarim`.`dairy_cow_coefficients` (`cow_type`, `value`) VALUES ('4', '0.25');
+
+INSERT INTO `tektarim`.`dairy_cow_incomes` (`status`, `name`, `unit`) VALUES ('1', 'İşletmenin hayvan başına elde ettiği süt verimi ', '(Lt/Gün/1 İnek)');
+INSERT INTO `tektarim`.`dairy_cow_incomes` (`status`, `name`, `unit`) VALUES ('1', 'İşletmenin çiğ süt net satış fiyatı (Kalite Primi Dahil)', '(TL/Lt)');
+INSERT INTO `tektarim`.`dairy_cow_incomes` (`status`, `name`, `unit`) VALUES ('1', 'Ortalama reforme inek fiyatı', '(TL/Adet)');
+INSERT INTO `tektarim`.`dairy_cow_incomes` (`status`, `name`, `unit`) VALUES ('1', 'Ortalama gebe düve satış fiyatı', '(TL/Adet)');
+INSERT INTO `tektarim`.`dairy_cow_incomes` (`status`, `name`, `unit`) VALUES ('1', 'Ortalama düve fiyatı', '(TL/Adet)');
+INSERT INTO `tektarim`.`dairy_cow_incomes` (`status`, `name`, `unit`) VALUES ('1', 'Ortalama dana fiyatı', '(TL/Adet)');
+INSERT INTO `tektarim`.`dairy_cow_incomes` (`status`, `name`, `unit`) VALUES ('1', 'Ortalama buzağı fiyatı', '(TL/Adet)');
+INSERT INTO `tektarim`.`dairy_cow_incomes` (`status`, `name`, `unit`) VALUES ('1', 'Ortalama inek fiyatı', '(TL/Adet)');
+INSERT INTO `tektarim`.`dairy_cow_incomes` (`status`, `name`, `unit`) VALUES ('1', 'Süt destek primi', '(TL/Lt)');
+INSERT INTO `tektarim`.`dairy_cow_incomes` (`status`, `name`, `unit`) VALUES ('1', 'Buzağı desteği', '(TL/Adet)');
+INSERT INTO `tektarim`.`dairy_cow_incomes` (`status`, `name`, `unit`) VALUES ('1', 'Soy kütüğü desteği', '(TL/Adet)');
+INSERT INTO `tektarim`.`dairy_cow_incomes` (`status`, `name`, `unit`) VALUES ('1', 'Hastalıktan ari işletme desteği', '(TL/Adet)');
+INSERT INTO `tektarim`.`dairy_cow_incomes` (`status`, `name`, `unit`) VALUES ('1', 'Gübre satış yada biyogaz feliriniz varsa giriniz', '(TL/Yıl)');
+INSERT INTO `tektarim`.`dairy_cow_incomes` (`status`, `name`, `unit`) VALUES ('1', 'Varsa diğer gelir giriniz', '(TL/Yıl)');
+

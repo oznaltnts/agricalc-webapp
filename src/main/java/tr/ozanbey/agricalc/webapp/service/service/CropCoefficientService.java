@@ -9,7 +9,7 @@ import tr.ozanbey.agricalc.webapp.service.repository.CropCoefficientValueReposit
 import java.util.List;
 
 @Service
-public class CropCoefficientService extends BaseService {
+public class CropCoefficientService {
 
     @Autowired
     private CropCoefficientRepository cropCoefficientRepository;

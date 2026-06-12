@@ -5,7 +5,7 @@ import org.springframework.stereotype.Service;
 import tr.ozanbey.agricalc.webapp.service.repository.CityCropFieldHarvestAverageValueRepository;
 
 @Service
-public class CityCropFieldHarvestAverageValueService extends BaseService {
+public class CityCropFieldHarvestAverageValueService {
 
     @Autowired
     private CityCropFieldHarvestAverageValueRepository valueRepository;

@@ -27,17 +27,17 @@ public class GuestPreferences implements Serializable {
     @Setter
     private String menuMode = "layout-horizontal";
 
-    private String darkMode = "dark";
+    private String darkMode = "light";
 
     private String componentTheme = "green";
 
-    private String topbarTheme = "dark";
+    private String topbarTheme = "light";
 
-    private String menuTheme = "dark";
+    private String menuTheme = "light";
 
     private String inputStyle = "outlined";
 
-    private boolean lightLogo = true;
+    private boolean lightLogo = false;
 
     private final List<ComponentTheme> componentThemes = new ArrayList<>();
 

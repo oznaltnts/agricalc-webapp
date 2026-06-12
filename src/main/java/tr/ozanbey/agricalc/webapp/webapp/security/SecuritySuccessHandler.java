@@ -7,6 +7,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 import org.springframework.stereotype.Component;
+import tr.ozanbey.agricalc.webapp.service.enumtype.EnumRole;
 
 import java.io.IOException;
 
@@ -22,16 +23,16 @@ public class SecuritySuccessHandler implements AuthenticationSuccessHandler {
         long loginFailureCount = loginController.isAccountBlocked(currentUser.getUser().getId());
         if (loginFailureCount > 2) {
             SecurityContextHolder.clearContext();
-            response.sendRedirect("/public/login?error=blocked");
+            response.sendRedirect("/login?error=blocked");
         } else {
             loginController.clearLoginFailures(currentUser.getUser().getId());
             loginController.createLoginSuccess(currentUser.getUser().getId());
             loginController.updateLastLoginInfo(currentUser.getUser());
             loginController.assignUserPreference(currentUser.getUser().getId());
-            if (currentUser.getUser().getBeforeLastLogin() == null)
-                response.sendRedirect("/secured/profile");
+            if (currentUser.getUser().getUserRole().equals(EnumRole.ADMIN))
+                response.sendRedirect("/secured/admin/user-management");
             else
-                response.sendRedirect("/secured/plant-asset");
+                response.sendRedirect("/secured/animal/dairy-cow-barn");
         }
     }
 

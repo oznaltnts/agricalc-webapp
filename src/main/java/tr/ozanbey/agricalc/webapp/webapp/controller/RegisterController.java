@@ -2,8 +2,6 @@ package tr.ozanbey.agricalc.webapp.webapp.controller;
 
 
 import jakarta.annotation.PostConstruct;
-import jakarta.faces.application.FacesMessage;
-import jakarta.faces.context.FacesContext;
 import jakarta.faces.view.ViewScoped;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
@@ -12,6 +10,7 @@ import lombok.Setter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import tr.ozanbey.agricalc.webapp.service.service.UserService;
+import tr.ozanbey.agricalc.webapp.webapp.util.JSFUtils;
 
 @Component("registerController")
 @ViewScoped
@@ -21,6 +20,9 @@ public class RegisterController extends BaseController {
 
     @Autowired
     private UserService userService;
+
+    @Autowired
+    private NavigationController navigationController;
 
     private final String regexPattern = "^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=\\S+$).{8,}$";
 
@@ -40,14 +42,11 @@ public class RegisterController extends BaseController {
     public void register() {
         try {
             userService.registerUser(phone, password);
-            FacesContext.getCurrentInstance().addMessage(null,
-                    new FacesMessage(FacesMessage.SEVERITY_INFO, "Kayıt başarılı", "5 saniye içinde giriş ekranına yönlendirileceksiniz."));
-            NavigationController.redirectToLoginWithDuration(5000);
+            JSFUtils.addInfoMessage(null, "Kayıt başarılı", "5 saniye içinde giriş ekranına yönlendirileceksiniz.");
+            navigationController.redirectToLoginWithDuration(5000);
         } catch (Exception e) {
-            FacesContext.getCurrentInstance().addMessage(null,
-                    new FacesMessage(FacesMessage.SEVERITY_ERROR, "Kullanıcı mevcut", "Bu bilgiler ile kullanıcı zaten kayıtlı."));
+            JSFUtils.addErrorMessage(null, "Kullanıcı mevcut", "Bu bilgiler ile kullanıcı zaten kayıtlı.");
         }
     }
-
 
 }

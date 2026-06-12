@@ -9,7 +9,7 @@ import tr.ozanbey.agricalc.webapp.service.repository.CityDieselDistanceValueRepo
 import java.util.List;
 
 @Service
-public class CityDieselDistanceService extends BaseService {
+public class CityDieselDistanceService {
 
     @Autowired
     private CityDieselDistanceRepository dieselDistanceRepository;

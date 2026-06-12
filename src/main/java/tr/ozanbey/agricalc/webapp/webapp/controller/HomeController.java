@@ -2,8 +2,6 @@ package tr.ozanbey.agricalc.webapp.webapp.controller;
 
 
 import jakarta.annotation.PostConstruct;
-import jakarta.faces.application.FacesMessage;
-import jakarta.faces.context.FacesContext;
 import jakarta.faces.view.ViewScoped;
 import lombok.Getter;
 import lombok.Setter;
@@ -13,8 +11,9 @@ import tr.ozanbey.agricalc.webapp.service.domain.City;
 import tr.ozanbey.agricalc.webapp.service.domain.CityCrop;
 import tr.ozanbey.agricalc.webapp.service.domain.Crop;
 import tr.ozanbey.agricalc.webapp.service.service.HomeService;
+import tr.ozanbey.agricalc.webapp.webapp.util.JSFUtils;
+import tr.ozanbey.agricalc.webapp.webapp.view.HomePageView;
 
-import java.math.BigDecimal;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -32,7 +31,7 @@ public class HomeController extends BaseController {
     private Long selectedCityId;
     private Set<Crop> cropList = new LinkedHashSet<>();
     private Long selectedCropId;
-    private Map<String, BigDecimal> calculateMap;
+    private List<HomePageView> resultList;
 
     @PostConstruct
     public void init() {
@@ -45,16 +44,16 @@ public class HomeController extends BaseController {
 
     public void calculateIncome() {
         if (selectedCityId == null) {
-            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_WARN, "Şehir bulunamadı", "Eşleşme başarısız"));
+            JSFUtils.addWarnMessage(null, "Şehir bulunamadı", "Eşleşme başarısız");
         }
         if (selectedCropId == null) {
-            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_WARN, "Ürün bulunamadı", "Eşleşme başarısız"));
+            JSFUtils.addWarnMessage(null, "Ürün bulunamadı", "Eşleşme başarısız");
         }
         Optional<CityCrop> selectedCityCrop = cityCropList.stream().filter(cc -> cc.getCrop().getId().equals(selectedCropId) && cc.getCity().getId().equals(selectedCityId)).findFirst();
         if (selectedCityCrop.isPresent()) {
-            calculateMap = homeService.calculate(selectedCityCrop.get());
+            resultList = homeService.calculate(selectedCityCrop.get());
         } else {
-            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Şehir - Ürün bulunamadı", "Eşleşme başarısız"));
+            JSFUtils.addErrorMessage(null, "Şehir - Ürün bulunamadı", "Eşleşme başarısız");
         }
     }
 

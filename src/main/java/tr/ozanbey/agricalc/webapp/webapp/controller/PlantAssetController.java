@@ -38,7 +38,7 @@ public class PlantAssetController extends BaseController {
     }
 
     public void onTabChange(TabChangeEvent event) {
-        selectedAssetDetail = null;
+        cancelSaveButton();
         selectedAssetType = (EnumPlantAsset) event.getData();
     }
 
@@ -71,15 +71,19 @@ public class PlantAssetController extends BaseController {
                 .filter(pa -> pa.getPlantAsset().equals(selectedAssetType))
                 .findFirst();
         if (assetView.isPresent()) {
-            Optional<UserPlantAssetView.AssetDetail> optionalAsset = assetView.get().getDetailList().stream()
-                    .filter(d -> selectedAssetDetail.getRecordId().equals(d.getRecordId()))
-                    .findFirst();
-            if (optionalAsset.isEmpty()) {
+            if (selectedAssetDetail.getRecordId() != null) {
+                Optional<UserPlantAssetView.AssetDetail> optionalAsset = assetView.get().getDetailList().stream()
+                        .filter(d -> selectedAssetDetail.getRecordId().equals(d.getRecordId()))
+                        .findFirst();
+                if (optionalAsset.isEmpty()) {
+                    assetView.get().getDetailList().add(selectedAssetDetail);
+                }
+            } else {
                 assetView.get().getDetailList().add(selectedAssetDetail);
             }
             updatePlantAsset(assetView.get());
         }
-        selectedAssetDetail = null;
+        cancelSaveButton();
     }
 
     public void deleteRow(UserPlantAssetView.AssetDetail assetDetail) {
@@ -87,14 +91,9 @@ public class PlantAssetController extends BaseController {
                 .filter(pa -> pa.getPlantAsset().equals(selectedAssetType))
                 .findFirst();
         if (assetView.isPresent()) {
-            Optional<UserPlantAssetView.AssetDetail> optionalAsset = assetView.get().getDetailList().stream()
-                    .filter(d -> d.getRecordId().equals(assetDetail.getRecordId()))
-                    .findFirst();
-            if (optionalAsset.isPresent()) {
-                assetView.get().getDetailList().remove(assetDetail);
-            }
+            assetView.get().getDetailList().remove(assetDetail);
             updatePlantAsset(assetView.get());
-            selectedAssetDetail = null;
+            cancelSaveButton();
         }
     }
 

@@ -17,10 +17,33 @@ public class CurrentUserDetailsService implements UserDetailsService {
     @Override
     public UserDetails loadUserByUsername(String phone) throws UsernameNotFoundException {
 
-        String formatted = "+90" + phone.replaceAll("\\D", "");
+        String formatted = normalizePhone(phone);
+
         User user = loginController.getUserByPhoneAndStatus(formatted, EnumStatus.ACTIVE)
                 .orElseThrow(() -> new UsernameNotFoundException((String.format("User with phone=%s was not found", formatted))));
         return new CurrentUser(user);
+    }
+
+    private String normalizePhone(String phone) {
+        if (phone == null || phone.isBlank()) {
+            return phone;
+        }
+        // Zaten canonical formatta mı?
+        if (phone.matches("^\\+90\\d{10}$")) {
+            return phone;
+        }
+        // Tüm non-digit karakterleri kaldır
+        String digits = phone.replaceAll("\\D", "");
+        // 0534xxxxxxx → 534xxxxxxx
+        if (digits.startsWith("0")) {
+            digits = digits.substring(1);
+        }
+        // 90534xxxxxxx → 534xxxxxxx
+        if (digits.startsWith("90") && digits.length() == 12) {
+            digits = digits.substring(2);
+        }
+        // Final canonical format
+        return "+90" + digits;
     }
 
 }

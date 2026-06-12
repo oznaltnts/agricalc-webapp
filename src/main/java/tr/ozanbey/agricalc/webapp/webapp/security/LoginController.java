@@ -19,8 +19,6 @@ import java.util.Optional;
 @Setter
 public class LoginController {
 
-    private boolean rememberMe;
-
     @Autowired
     private UserService userService;
 

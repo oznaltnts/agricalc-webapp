@@ -14,7 +14,7 @@ import java.util.Optional;
 
 @Slf4j
 @Service
-public class ExpenseService extends BaseService {
+public class ExpenseService {
 
     private final GeneralCoefficientService generalCoefficientService;
 
@@ -182,15 +182,15 @@ public class ExpenseService extends BaseService {
         BigDecimal leafTotal = (manHourLeafDec.multiply(manTLLeafDec)).setScale(3, RoundingMode.HALF_UP);
         //Diğer bakım işlemleri  yapılmakta mıdır
         BigDecimal manHourOtherDec = getAsBigDecimalByQIdAndCoefficientTypeAndValue(questionDTOList, 55L,
-                cropCoefficientList, EnumCropCoefficientType.OTHER, EnumCropCoefficientValue.OTHER_LABOR);
+                cropCoefficientList, EnumCropCoefficientType.OTHER_COEFFICIENT, EnumCropCoefficientValue.OTHER_LABOR);
         BigDecimal manTLOtherDec = getAsBigDecimalByQuestionIdAndWorkingValue(questionDTOList, 40L, workingHour.getValue());
         //Diğer bakım işlemleri  yapılmakta mıdır
         BigDecimal machineLtOtherDec = getAsBigDecimalByQIdAndCoefficientTypeAndValue(questionDTOList, 55L,
-                cropCoefficientList, EnumCropCoefficientType.OTHER, EnumCropCoefficientValue.OTHER_DIESEL);
+                cropCoefficientList, EnumCropCoefficientType.OTHER_COEFFICIENT, EnumCropCoefficientValue.OTHER_DIESEL);
         BigDecimal machineTLOtherDec = machineTLCuttingDec;
         //Diğer bakım işlemleri  yapılmakta mıdır
         BigDecimal materialKgOtherDec = getAsBigDecimalByQIdAndCoefficientTypeAndValue(questionDTOList, 55L,
-                cropCoefficientList, EnumCropCoefficientType.OTHER, EnumCropCoefficientValue.OTHER_MATERIAL);
+                cropCoefficientList, EnumCropCoefficientType.OTHER_COEFFICIENT, EnumCropCoefficientValue.OTHER_MATERIAL);
         BigDecimal materialTLOtherDec = getAsBigDecimalByQuestionId(questionDTOList, 57L);
         BigDecimal otherTotal = (manHourOtherDec.multiply(manTLOtherDec)).add(machineLtOtherDec.multiply(machineTLOtherDec)).add(materialKgOtherDec.multiply(materialTLOtherDec)).setScale(3, RoundingMode.HALF_UP);
         //işçilik
@@ -1679,10 +1679,7 @@ public class ExpenseService extends BaseService {
     }
 
     private BigDecimal getWaterPriceTotalValueAsBigDecimal(Optional<CityCropWateringValue> wateringValueOptional) {
-        if (wateringValueOptional.isPresent()) {
-            return wateringValueOptional.get().getMaintenance().setScale(3, RoundingMode.HALF_UP);
-        }
-        return BigDecimal.ZERO;
+        return wateringValueOptional.map(cityCropWateringValue -> cityCropWateringValue.getMaintenance().setScale(3, RoundingMode.HALF_UP)).orElse(BigDecimal.ZERO);
     }
 
     private BigDecimal getAsBigDecimalByQIdAndTypeValueNakil(List<QuestionWithFirstValue> questionDTOList, Long questionId, Long verimQuestionId,

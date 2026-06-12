@@ -25,11 +25,11 @@ public class SecurityFailureHandler extends SimpleUrlAuthenticationFailureHandle
         if (userId != null) {
             long failureCount = loginController.createLoginFailure(userId);
             if (failureCount > 2) {
-                super.setDefaultFailureUrl("/public/login?error=blocked");
+                super.setDefaultFailureUrl("/login?error=blocked");
             } else
-                super.setDefaultFailureUrl("/public/login?&error=" + failureCount);
+                super.setDefaultFailureUrl("/login?&error=" + failureCount);
         } else
-            super.setDefaultFailureUrl("/public/login?error=usernotfound");
+            super.setDefaultFailureUrl("/login?error=usernotfound");
 
         super.onAuthenticationFailure(httpServletRequest, httpServletResponse, e);
     }

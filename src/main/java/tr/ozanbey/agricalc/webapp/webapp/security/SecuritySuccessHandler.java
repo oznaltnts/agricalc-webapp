@@ -32,7 +32,7 @@ public class SecuritySuccessHandler implements AuthenticationSuccessHandler {
             if (currentUser.getUser().getUserRole().equals(EnumRole.ADMIN))
                 response.sendRedirect("/secured/admin/user-management");
             else
-                response.sendRedirect("/secured/animal/dairy-cow-barn");
+                response.sendRedirect("/secured/animal/dairy-cow/barn");
         }
     }
 

@@ -75,7 +75,7 @@ public class ProfileController extends BaseController {
         if (tabNum == 1) {
             informationView.setEditInfo(false);
             JSFUtils.addInfoMessage(null, "Kayıt başarılı", "Kullanıcı bilgileriniz güncellenmiştir.");
-//TODO            navigationController.redirectToUrlWithDuration("/secured/plant-asset", 3000);
+//TODO            navigationController.redirectToUrlWithDuration("/secured/plantation/asset", 3000);
         } else {
             PrimeFaces.current().executeScript("PF('profileTabWidget').select(1);");
         }

@@ -1,0 +1,29 @@
+package tr.ozanbey.agricalc.webapp.webapp.view.animal.dairycow;
+
+import jakarta.validation.constraints.NotNull;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+import tr.ozanbey.agricalc.webapp.service.domain.animal.dairycow.DairyCowCost;
+
+import java.io.Serializable;
+import java.math.BigDecimal;
+
+@NoArgsConstructor
+@AllArgsConstructor
+@Getter
+@Setter
+public class DairyCowCostView implements Serializable {
+
+    private Long userCostId;
+    private Long selectedCostId;
+    private DairyCowCost selectedDairyCowCost;
+    private String selectedCostName;
+
+    private Double count;
+    @NotNull(message = "Brüt gider giriniz")
+    private BigDecimal totalCost;
+    private Double hourlyOrInterest;
+
+}

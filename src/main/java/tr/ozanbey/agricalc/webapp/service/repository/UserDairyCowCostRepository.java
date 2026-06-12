@@ -1,5 +1,6 @@
 package tr.ozanbey.agricalc.webapp.service.repository;
 
+import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -19,5 +20,8 @@ public interface UserDairyCowCostRepository extends JpaRepository<UserDairyCowCo
             ORDER BY t1.dairyCowCost.costType ASC
             """)
     List<DairyCowCostView> findAllAsCowCostView(@Param("status") EnumStatus status, @Param("barnId") Long barnId);
+
+    @EntityGraph(attributePaths = {"dairyCowCost"})
+    List<UserDairyCowCost> findByUserDairyCowBarn_Id(Long barnId);
 
 }

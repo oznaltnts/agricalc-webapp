@@ -132,17 +132,21 @@ public class DairyCowCountService {
         double totalCowCount = 0;
         double totalEndYearCowCount = 0;
         double totalAverageFeedCount = 0;
+        double totalAverageMilkingCount = 0;
         for (DairyCowCountView view : dairyCowCountViewList) {
             totalCowCount = totalCowCount + (view.getCurrentCount() * view.getCoefficientValue());
             totalEndYearCowCount = totalEndYearCowCount + (view.getEndYearCount() * view.getCoefficientValue());
             totalAverageFeedCount = totalAverageFeedCount + (view.getAverageFeedCount() * view.getCoefficientValue());
+            if (view.getCowType().equals(EnumCowType.COW) || view.getCowType().equals(EnumCowType.PREGNANT_HEIFER)) {
+                totalAverageMilkingCount = totalAverageMilkingCount + totalAverageFeedCount;
+            }
         }
 
-        saveAverageValue(barnId, totalCowCount, totalEndYearCowCount, totalAverageFeedCount);
+        saveAverageValue(barnId, totalCowCount, totalEndYearCowCount, totalAverageFeedCount, totalAverageMilkingCount);
     }
 
-    private void saveAverageValue(Long barnId, double totalCowCount, double totalEndYearCowCount, double totalAverageFeedCount) {
-        barnRepository.saveAverageValuesFromCountList(barnId, totalCowCount, totalEndYearCowCount, totalAverageFeedCount);
+    private void saveAverageValue(Long barnId, double totalCowCount, double totalEndYearCowCount, double totalAverageFeedCount, double totalAverageMilkingCount) {
+        barnRepository.saveAverageValuesFromCountList(barnId, totalCowCount, totalEndYearCowCount, totalAverageFeedCount, totalAverageMilkingCount);
     }
 
 }

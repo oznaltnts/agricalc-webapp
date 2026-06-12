@@ -20,4 +20,6 @@ public interface UserDairyCowIncomeRepository extends JpaRepository<UserDairyCow
             """)
     List<DairyCowIncomeView> findAsViewListByBarnId(@Param("barnId") Long barnId);
 
+    List<UserDairyCowIncome> findByUserDairyCowBarn_Id(Long barnId);
+
 }

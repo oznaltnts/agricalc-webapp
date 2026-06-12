@@ -18,7 +18,7 @@ public class UserDairyCowCost extends AbstractEntity {
     private UserDairyCowBarn userDairyCowBarn;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "cost_id", referencedColumnName = "id", nullable = false)
+    @JoinColumn(name = "dairy_cow_cost_id", referencedColumnName = "id", nullable = false)
     private DairyCowCost dairyCowCost;
 
     @Column(name = "count")

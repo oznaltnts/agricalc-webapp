@@ -34,8 +34,11 @@ public class DairyCowBarnView implements Serializable {
     private boolean unknownInseminationRate;
     private boolean unknownMilkYield;
 
+    private Integer lactationPeriod;
+
     private Double totalCount;
     private Double endYearTotalCount;
     private Double averageFeedTotalCount;
+    private Double averageMilkingCount;
 
 }

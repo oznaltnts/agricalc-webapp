@@ -55,6 +55,7 @@ public class DairyCowBarnController extends DairyCowController {
         selectedBarnView.setDeathRate(view.getDeathRate());
         selectedBarnView.setInseminationRate(view.getInseminationRate());
         selectedBarnView.setMilkYield(view.getMilkYield());
+        selectedBarnView.setLactationPeriod(view.getLactationPeriod());
         selectedBarnView.setUnknownBirthRate(view.isUnknownBirthRate());
         selectedBarnView.setUnknownDeathRate(view.isUnknownDeathRate());
         selectedBarnView.setUnknownInseminationRate(view.isUnknownInseminationRate());
@@ -62,6 +63,7 @@ public class DairyCowBarnController extends DairyCowController {
         selectedBarnView.setTotalCount(view.getTotalCount());
         selectedBarnView.setEndYearTotalCount(view.getEndYearTotalCount());
         selectedBarnView.setAverageFeedTotalCount(view.getAverageFeedTotalCount());
+        selectedBarnView.setAverageMilkingCount(view.getAverageMilkingCount());
 
         if (dairyCowList == null || dairyCowList.isEmpty()) {
             dairyCowList = super.getDairyCowService().getDairyCowsByStatuses(new EnumStatus[]{EnumStatus.ACTIVE});
@@ -105,7 +107,8 @@ public class DairyCowBarnController extends DairyCowController {
                         || selectedBarnView.isUnknownInseminationRate() != barnView.isUnknownInseminationRate()
                         || !Objects.equals(selectedBarnView.getInseminationRate(), barnView.getInseminationRate())
                         || selectedBarnView.isUnknownMilkYield() != barnView.isUnknownMilkYield()
-                        || !Objects.equals(selectedBarnView.getMilkYield(), barnView.getMilkYield());
+                        || !Objects.equals(selectedBarnView.getMilkYield(), barnView.getMilkYield())
+                        || !Objects.equals(selectedBarnView.getLactationPeriod(), barnView.getLactationPeriod());
             }
         }
         return true;

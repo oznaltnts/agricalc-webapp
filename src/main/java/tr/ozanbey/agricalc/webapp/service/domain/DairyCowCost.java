@@ -11,7 +11,7 @@ import tr.ozanbey.agricalc.webapp.service.enumtype.animal.EnumCostType;
 @Getter
 @Setter
 @Entity
-@Table(name = "costs")
+@Table(name = "dairy_cow_costs")
 @NoArgsConstructor
 @AllArgsConstructor
 @ToString(onlyExplicitlyIncluded = true)

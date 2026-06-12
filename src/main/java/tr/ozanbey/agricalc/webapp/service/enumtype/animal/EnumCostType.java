@@ -15,8 +15,9 @@ public enum EnumCostType {
     VETERINARY(3, List.of("COST")),                         // Veterner Hizmetleri
     INSEMINATION(4, List.of("COUNT", "COST")),                  // Suni Tohumlama Gideri
     INSURANCE(5, List.of("COST")),                          // Hayvan Hayat Sigortası
-    INTEREST(6, List.of("COUNT", "COST", "HOUR")),              // işletme Sermayesi Faizi Hesabı
-    TARSIM(7, List.of("COUNT", "COST"));                        // Bir Birim Süt Hayvanı Gideri
+    INTEREST_SUBSIDIZED(6, List.of("COUNT", "COST", "HOUR")),   // İşletmenin Kullandığı Sübvansiyonlu Kredi
+    INTEREST_UNSUBSIDIZED(7, List.of("COUNT", "COST", "HOUR")), // İşletmenin Kullandığı Sübvansiyonsuz Kredi
+    TARSIM(8, List.of("COUNT", "COST"));                        // Bir Birim Süt Hayvanı Gideri
 
     private final int value;
     private final List<String> columns;

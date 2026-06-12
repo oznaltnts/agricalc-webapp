@@ -41,6 +41,7 @@ public class DairyCowBarnService {
         userDairyCowBarn.setBarnCapacity(editedDairyCowBarnView.getBarnCapacity());
         userDairyCowBarn.setMilkingCapacity(editedDairyCowBarnView.getMilkingCapacity());
         userDairyCowBarn.setBarnPrice(editedDairyCowBarnView.getBarnPrice());
+
         if (editedDairyCowBarnView.isUnknownBirthRate())
             userDairyCowBarn.setBirthRate(null);
         else
@@ -57,12 +58,17 @@ public class DairyCowBarnService {
             userDairyCowBarn.setMilkYield(null);
         else
             userDairyCowBarn.setMilkYield(editedDairyCowBarnView.getMilkYield());
+
+        userDairyCowBarn.setLactationPeriod(editedDairyCowBarnView.getLactationPeriod());
+
         if (userDairyCowBarn.getTotalCount() == null)
             userDairyCowBarn.setTotalCount(0d);
         if (userDairyCowBarn.getEndYearTotalCount() == null)
             userDairyCowBarn.setEndYearTotalCount(0d);
         if (userDairyCowBarn.getAverageFeedTotalCount() == null)
             userDairyCowBarn.setAverageFeedTotalCount(0d);
+        if (userDairyCowBarn.getAverageMilkingCount() == null)
+            userDairyCowBarn.setAverageMilkingCount(0d);
         barnRepository.save(userDairyCowBarn);
     }
 

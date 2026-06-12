@@ -66,6 +66,9 @@
                         <p:column headerText="Hayvan süt verimi" responsivePriority="5">
                             <h:outputText value="#{dairyCowBarn.unknownMilkYield ? 'Bilmiyorum' : dairyCowBarn.milkYield}"/>
                         </p:column>
+                        <p:column headerText="Laktasyon süresi" responsivePriority="5">
+                            <h:outputText value="#{dairyCowBarn.lactationPeriod}"/>
+                        </p:column>
                         <p:column style="width: 200px; text-align: center" headerText="Yönet" >
                             <p:commandButton update="barnEditForm"
                                              styleClass="m-1"
@@ -204,6 +207,18 @@
                                                    value="#{dairyCowBarnController.selectedBarnView.unknownMilkYield}">
                                 <p:ajax update="@parent"/>
                             </p:selectBooleanButton>
+                        </p:outputPanel>
+
+                        <p:outputLabel for="lactationPeriod" value="Ortalama Laktasyon (Süt alma) süresi: "/>
+                        <p:outputPanel>
+                            <p:inputNumber id="lactationPeriod"
+                                           value="#{dairyCowBarnController.selectedBarnView.lactationPeriod}"
+                                           minValue="1"
+                                           decimalPlaces="0"
+                                           required="true"
+                                           symbol=" gün / 1 yıl" symbolPosition="s"
+                                           requiredMessage="lactationPeriod inputNumber requiredMessage"/>
+                            <p:message for="@previous"/>
                         </p:outputPanel>
 
                         <p:outputPanel/>

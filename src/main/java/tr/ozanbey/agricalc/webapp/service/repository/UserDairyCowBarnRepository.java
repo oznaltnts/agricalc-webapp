@@ -26,7 +26,8 @@ public interface UserDairyCowBarnRepository extends JpaRepository<UserDairyCowBa
                     CASE WHEN t1.deathRate IS NULL THEN true ELSE false END,
                     CASE WHEN t1.inseminationRate IS NULL THEN true ELSE false END,
                     CASE WHEN t1.milkYield IS NULL THEN true ELSE false END,
-                t1.totalCount, t1.endYearTotalCount, t1.averageFeedTotalCount
+                t1.lactationPeriod,
+                t1.totalCount, t1.endYearTotalCount, t1.averageFeedTotalCount, t1.averageMilkingCount
                     )
                     FROM UserDairyCowBarn t1
                     WHERE t1.status in :statuses
@@ -34,13 +35,12 @@ public interface UserDairyCowBarnRepository extends JpaRepository<UserDairyCowBa
             """)
     List<DairyCowBarnView> findAsViewListByStatusInAndUser_Id(@Param("statuses") EnumStatus[] statuses, @Param("userId") Long userId);
 
-
     @Modifying
     @Query("""
             UPDATE UserDairyCowBarn t1
-            SET t1.totalCount = :totalCount, t1.endYearTotalCount = :endYearCount, t1.averageFeedTotalCount = :averageFeedCount
+            SET t1.totalCount = :totalCount, t1.endYearTotalCount = :endYearCount, t1.averageFeedTotalCount = :averageFeedCount, t1.averageMilkingCount = :milkingCount
             WHERE t1.id = :userBarnId
             """)
-    void saveAverageValuesFromCountList(@Param("userBarnId") Long userBarnId, @Param("totalCount") double totalCount, @Param("endYearCount") Double endYearCount, @Param("averageFeedCount") Double averageFeedCount);
+    void saveAverageValuesFromCountList(@Param("userBarnId") Long userBarnId, @Param("totalCount") double totalCount, @Param("endYearCount") Double endYearCount, @Param("averageFeedCount") Double averageFeedCount, @Param("milkingCount") Double totalAverageMilkingCount);
 
 }

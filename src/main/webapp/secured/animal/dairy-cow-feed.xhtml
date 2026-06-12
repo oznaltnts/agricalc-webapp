@@ -128,7 +128,7 @@
                         <p:outputPanel>
                             <p:selectOneMenu id="feedSelect"
                                              readonly="#{dairyCowFeedController.selectedFeedView.userFeedId ne null}"
-                                             required="true"
+                                             required="#{dairyCowFeedController.selectedFeedView.userFeedId eq null}"
                                              requiredMessage="feedSelect selectOneMenu required"
                                              value="#{dairyCowFeedController.selectedFeedView.selectedFeedId}">
                                 <f:selectItem itemLabel="seçiniz" itemValue=""

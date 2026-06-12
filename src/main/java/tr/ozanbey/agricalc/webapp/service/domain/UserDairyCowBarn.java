@@ -50,6 +50,10 @@ public class UserDairyCowBarn extends AbstractStatusEntity {
     @ToString.Include
     private Double milkYield;
 
+    @Column(name = "lactation_period", nullable = false)
+    @ToString.Include
+    private Integer lactationPeriod;
+
     @Column(name = "total_count")
     @ToString.Include
     private Double totalCount;
@@ -61,6 +65,10 @@ public class UserDairyCowBarn extends AbstractStatusEntity {
     @Column(name = "average_feed_total_count")
     @ToString.Include
     private Double averageFeedTotalCount;
+
+    @Column(name = "average_milking_count")
+    @ToString.Include
+    private Double averageMilkingCount;
 
     @OneToMany(mappedBy = "userDairyCowBarn", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     private List<UserDairyCowCount> dairyCowCountList;

@@ -572,7 +572,6 @@ CREATE TABLE `user_plant_parcels`
     `potassium`       VARCHAR(255)   NULL     DEFAULT NULL,
     `watering_source` VARCHAR(255)   NULL     DEFAULT NULL,
     `watering_type`   VARCHAR(255)   NULL     DEFAULT NULL,
-##    `water_price`     DECIMAL(15, 3) NULL     DEFAULT NULL,
     `electric_source` VARCHAR(255)   NULL     DEFAULT NULL,
     PRIMARY KEY (`id`),
     UNIQUE (`user_id`, `parcel_name`),

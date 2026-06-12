@@ -66,9 +66,8 @@
                     <h1>Tarlanın Bereketini Hesapla,<br/>Kazancını Tektarım ile Artır.</h1>
                     <h2>Dijital tarım asistanınızla, toprağınızın potansiyelini keşfedin.</h2>
                     <p>Şehir - ürün seçerek hesaplama yapın</p>
-                    <p:growl id="growl"
-                             showDetail="true"
-                             severity="info warn error">
+                    <p:growl showDetail="true"
+                             severity="info warn">
                         <p:autoUpdate/>
                     </p:growl>
 
@@ -76,7 +75,6 @@
 
                     <p:outputPanel styleClass="ui-float-label mt-5">
                         <p:selectOneMenu id="cityMenu"
-                                         style="width: 350px"
                                          filter="true"
                                          filterMatchMode="startsWith"
                                          value="#{homeController.selectedCityId}">
@@ -93,7 +91,6 @@
                     </p:outputPanel>
                     <p:outputPanel styleClass="ui-float-label mt-5">
                         <p:selectOneMenu id="cropMenu"
-                                         style="width: 350px"
                                          filter="true"
                                          filterMatchMode="contains"
                                          value="#{homeController.selectedCropId}">
@@ -126,7 +123,7 @@
                                          icon="pi pi-question"
                                          process="@none"
                                          update="@none"
-                                         action="#{homeController.navigateToHowItWorks}"/>
+                                         action="#{navigationController.redirectToUrl('/public/how-it-works')}"/>
                     </p:outputPanel>
                 </h:form>
             </div>
@@ -152,7 +149,7 @@
                                          icon="pi pi-question"
                                          process="@none"
                                          update="@none"
-                                         action="#{homeController.navigateToHowItWorks}"/>
+                                         action="#{navigationController.redirectToUrl('/public/how-it-works')}"/>
                     </p:outputPanel>
                 </h:form>
             </div>

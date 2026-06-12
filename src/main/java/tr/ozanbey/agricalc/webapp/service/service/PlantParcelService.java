@@ -14,7 +14,7 @@ import java.util.List;
 
 @Service
 @Slf4j
-public class PlantParcelService extends BaseService {
+public class PlantParcelService {
 
     @Autowired
     private UserPlantParcelRepository plantParcelRepository;

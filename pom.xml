@@ -89,6 +89,12 @@
 			<systemPath>${basedir}/lib/freya-theme-5.0.0-jakarta.jar</systemPath>
 		</dependency>
 		<dependency>
+			<groupId>org.webjars</groupId>
+			<artifactId>font-awesome</artifactId>
+			<version>7.2.0</version>
+			<scope>compile</scope>
+		</dependency>
+		<dependency>
 			<groupId>org.projectlombok</groupId>
 			<artifactId>lombok</artifactId>
 			<optional>true</optional>
@@ -120,6 +126,5 @@
 			</plugin>
 		</plugins>
 	</build>
-
 
 </project>

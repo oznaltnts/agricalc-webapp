@@ -11,7 +11,7 @@ import java.util.List;
 
 @Service
 @Slf4j
-public class CropService extends BaseService {
+public class CropService {
 
     @Autowired
     private CropRepository cropRepository;

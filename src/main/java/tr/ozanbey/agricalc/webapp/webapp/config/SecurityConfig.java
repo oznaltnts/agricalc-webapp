@@ -35,7 +35,7 @@ public class SecurityConfig {
                         .ignoringRequestMatchers("/jakarta.faces.resource/**", "/public/**", "/common/**")
                 )
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/jakarta.faces.resource/**").permitAll()
+                        .requestMatchers("/jakarta.faces.resource/**", "/webjars/**").permitAll()
                         .requestMatchers("/", "/register", "/login", "/common/**", "/public/**").permitAll()
                         // admin özel
                         .requestMatchers("/secured/admin/**").hasAuthority("ADMIN")

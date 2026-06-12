@@ -1,0 +1,131 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="jakarta.faces.html"
+                xmlns:f="jakarta.faces.core"
+                xmlns:ui="jakarta.faces.facelets"
+                xmlns:p="http://primefaces.org/ui"
+                template="/templates/template.xhtml">
+
+    <ui:define name="title">İşletme Giderleri yönetimi</ui:define>
+
+    <ui:define name="content">
+        <div class="grid">
+            <div class="col">
+                <h:form id="costListForm"
+                        class="card">
+                    <h5 class="mt-0" style="font-weight: bold">İşletme giderleri yönetimi</h5>
+
+                    <p:growl showDetail="true"
+                             severity="info warn">
+                        <p:autoUpdate/>
+                    </p:growl>
+
+                    <p:dataTable var="costTable"
+                                 value="#{costManagementController.dairyCowCostList}"
+                                 reflow="true"
+                                 stripedRows="true"
+                                 size="small">
+                        <p:column headerText="Gider tipi" groupRow="true">
+                            <h:outputText style="font-weight: bold"
+                                          value="#{msg[costTable.costType]}"/>
+                        </p:column>
+                        <p:column headerText="Gider ismi">
+                            <h:outputText value="#{costTable.name}"/>
+                        </p:column>
+
+                        <p:column headerText="Statü">
+                            <h:outputText value="#{msg[costTable.status]}"/>
+                        </p:column>
+
+                        <p:column style="width: 100px; text-align: center" headerText="Yönet">
+                            <p:commandButton action="#{costManagementController.editCost(costTable)}"
+                                             update="costEditForm"
+                                             disabled="#{costTable.status eq 'DELETED'}"
+                                             value="Düzenle"/>
+                        </p:column>
+                    </p:dataTable>
+
+                    <p:outputPanel style="display: flex;">
+                        <p:commandButton action="#{costManagementController.addNewCostToCategory}"
+                                         styleClass="m-1"
+                                         process="@this"
+                                         update="costEditForm"
+                                         value="Yeni gider ekle"/>
+                    </p:outputPanel>
+                </h:form>
+            </div>
+        </div>
+        <div class="grid">
+            <div class="col">
+                <h:form id="costEditForm"
+                        style="visibility: #{costManagementController.selectedDairyCowCost eq null ? 'hidden' : 'visible'}; height: #{costManagementController.selectedDairyCowCost eq null ? '0' : 'unset'}"
+                        class="card">
+                    <h5 class="mt-0" style="font-weight: bold">İşletme gideri güncelleme</h5>
+
+                    <p:messages showDetail="true" globalOnly="true"/>
+
+                    <p:panelGrid layout="flex"
+                                 rendered="#{costManagementController.selectedDairyCowCost ne null}"
+                                 columnClasses="col-3, col-9"
+                                 columns="2">
+                        <p:outputLabel for="costType" value="Kategory"/>
+                        <p:outputPanel>
+                            <p:selectOneButton id="costType"
+                                               unselectable="false"
+                                               required="true"
+                                               requiredMessage="1111"
+                                               value="#{costManagementController.selectedDairyCowCost.costType}">
+                                <f:selectItems value="#{costManagementController.costTypes}"
+                                               var="costType"
+                                               itemLabel="#{msg[costType]}"
+                                               itemValue="#{costType}"/>
+                            </p:selectOneButton>
+                            <p:message for="@previous"/>
+                        </p:outputPanel>
+
+                        <p:outputLabel for="costStatus" value="Statü"/>
+                        <p:outputPanel>
+                            <p:selectOneButton id="costStatus"
+                                               unselectable="false"
+                                               required="true"
+                                               requiredMessage="bbbb"
+                                               value="#{costManagementController.selectedDairyCowCost.status}">
+                                <f:selectItems value="#{costManagementController.statuses}"
+                                               var="status"
+                                               itemValue="#{status}"
+                                               itemLabel="#{msg[status]}"/>
+                            </p:selectOneButton>
+                            <p:message for="@previous"/>
+                        </p:outputPanel>
+
+                        <p:outputLabel for="nameInput" value="İsmi"/>
+                        <p:outputPanel>
+                            <p:inputText id="nameInput"
+                                         value="#{costManagementController.selectedDairyCowCost.name}"
+                                         requiredMessage="cccc"
+                                         required="true"/>
+                            <p:message for="@previous"/>
+                        </p:outputPanel>
+
+                        <p:outputPanel/>
+                        <p:outputPanel style="display: flex;">
+                            <p:commandButton value="Kaydet"
+                                             process="@form"
+                                             update="@form costListForm"
+                                             styleClass="m-1"
+                                             validateClient="true"
+                                             action="#{costManagementController.saveSelectedCost}"/>
+                            <p:commandButton value="Vazgeç"
+                                             process="@this"
+                                             update="@form"
+                                             styleClass="m-1"
+                                             resetValues="true"
+                                             action="#{costManagementController.selectedDairyCowCost(null)}"/>
+                        </p:outputPanel>
+                    </p:panelGrid>
+                </h:form>
+                <br/>
+                <p>Sorunuz mu var? <a href="#">Buraya</a> basın ve bize bildirin.</p>
+            </div>
+        </div>
+    </ui:define>
+</ui:composition>

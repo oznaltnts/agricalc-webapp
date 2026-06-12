@@ -7,6 +7,7 @@
       xmlns:sec="https://joinfaces.org/security"
       lang="en">
 <f:view locale="#{localeController.locale}">
+    <ui:insert name="metadata"/>
 
     <h:head>
         <f:facet name="first">
@@ -55,6 +56,8 @@
         <h:outputStylesheet name="css/primeflex.min.css" library="freya-layout" />
         <h:outputStylesheet name="css/#{guestPreferences.layout}.css" library="freya-layout" />
         <h:outputStylesheet name="css/demo-#{guestPreferences.darkMode}.css" library="demo" />
+
+        <link rel="stylesheet" href="#{request.contextPath}/webjars/font-awesome/7.2.0/css/all.min.css" />
     </h:body>
 </f:view>
 </html>

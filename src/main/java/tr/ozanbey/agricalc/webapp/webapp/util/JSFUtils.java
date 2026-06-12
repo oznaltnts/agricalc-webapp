@@ -16,31 +16,24 @@ public class JSFUtils {
         return ResourceBundle.getBundle("messages", localeController.getLocale()).getString(key);
     }
 
-    public static void addInfoMsg(String msg, String component) {
-        addMsg(msg, FacesMessage.SEVERITY_INFO, component);
+    public static void addInfoMessage(String component, String summary, String detail) {
+        addMessage(component, FacesMessage.SEVERITY_INFO, summary, detail);
     }
 
-    public static void addErrorMsg(String msg, String component) {
-        addMsg(msg, FacesMessage.SEVERITY_ERROR, component);
+    public static void addErrorMessage(String component, String summary, String detail) {
+        addMessage(component, FacesMessage.SEVERITY_ERROR, summary, detail);
     }
 
-    public static void addWarnMsg(String msg, String component) {
-        addMsg(msg, FacesMessage.SEVERITY_WARN, component);
+    public static void addWarnMessage(String component, String summary, String detail) {
+        addMessage(component, FacesMessage.SEVERITY_WARN, summary, detail);
     }
 
-    private static void addMsg(String msg, FacesMessage.Severity severity, String component) {
-        FacesContext.getCurrentInstance().addMessage(component, new FacesMessage(severity, msg, ""));
+    public static void addFatalMessage(String component, String summary, String detail) {
+        addMessage(component, FacesMessage.SEVERITY_FATAL, summary, detail);
     }
 
-    public static void putSessionMapParam(String key, Object value) {
-        FacesContext.getCurrentInstance().getExternalContext().getSessionMap().put(key, value);
+    private static void addMessage(String component, FacesMessage.Severity severity, String summary, String detail) {
+        FacesContext.getCurrentInstance().addMessage(component, new FacesMessage(severity, summary, detail));
     }
 
-    public static void removeSessionMapParam(String key) {
-        FacesContext.getCurrentInstance().getExternalContext().getSessionMap().remove(key);
-    }
-
-    public static Object getSessionMapParam(String key) {
-        return FacesContext.getCurrentInstance().getExternalContext().getSessionMap().get(key);
-    }
 }

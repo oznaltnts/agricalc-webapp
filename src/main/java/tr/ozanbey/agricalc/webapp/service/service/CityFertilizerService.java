@@ -9,7 +9,7 @@ import tr.ozanbey.agricalc.webapp.service.repository.CityFertilizerValueReposito
 import java.util.List;
 
 @Service
-public class CityFertilizerService extends BaseService {
+public class CityFertilizerService {
 
     @Autowired
     private CityFertilizerRepository cityFertilizerRepository;

@@ -7,7 +7,7 @@ import tr.ozanbey.agricalc.webapp.service.repository.UserPlantParcelRepository;
 
 @Service
 @Slf4j
-public class UserParcelService extends BaseService {
+public class UserParcelService {
 
     @Autowired
     private UserPlantParcelRepository plantParcelRepository;

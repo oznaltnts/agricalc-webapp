@@ -8,7 +8,7 @@ import tr.ozanbey.agricalc.webapp.service.repository.CityCropWateringValueReposi
 import java.util.Optional;
 
 @Service
-public class CityCropWateringValueService extends BaseService {
+public class CityCropWateringValueService {
 
     @Autowired
     private CityCropWateringValueRepository wateringValueRepository;

@@ -1,9 +1,9 @@
 package tr.ozanbey.agricalc.webapp.service.service;
 
-import jakarta.transaction.Transactional;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import tr.ozanbey.agricalc.webapp.service.domain.*;
 import tr.ozanbey.agricalc.webapp.service.enumtype.EnumRole;
 import tr.ozanbey.agricalc.webapp.service.enumtype.EnumStatus;
@@ -22,7 +22,7 @@ import java.util.Optional;
 
 @Service
 @Slf4j
-public class UserService extends BaseService {
+public class UserService {
 
     @Autowired
     private UserRepository userRepository;
@@ -150,6 +150,10 @@ public class UserService extends BaseService {
     @Transactional
     public void updatePreferences(Long userId, String menuMode, String darkMode, String componentTheme, String topbarTheme, String menuTheme, String inputStyle, boolean lightLogo) {
         preferenceRepository.updatePreferenceForUser(userId, menuMode, darkMode, componentTheme, topbarTheme, menuTheme, inputStyle, lightLogo);
+    }
+
+    public List<UserInformationView> getUsersAsInfoViewList() {
+        return informationRepository.findAllAsInfoView();
     }
 
 }

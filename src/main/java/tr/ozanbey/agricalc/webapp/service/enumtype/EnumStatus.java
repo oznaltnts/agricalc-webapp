@@ -2,6 +2,8 @@ package tr.ozanbey.agricalc.webapp.service.enumtype;
 
 import lombok.Getter;
 
+import java.util.Objects;
+
 @Getter
 public enum EnumStatus {
     DELETED(-1),
@@ -16,7 +18,7 @@ public enum EnumStatus {
 
     public static EnumStatus fromValue(Integer value) {
         for (EnumStatus s : EnumStatus.values()) {
-            if (s.value == value) {
+            if (Objects.equals(s.value, value)) {
                 return s;
             }
         }

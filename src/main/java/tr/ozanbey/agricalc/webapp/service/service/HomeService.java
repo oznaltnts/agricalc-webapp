@@ -13,7 +13,7 @@ import java.util.List;
 import java.util.Optional;
 
 @Service
-public class HomeService extends BaseService {
+public class HomeService {
 
     private final CityCropService cityCropService;
     private final CityCropQuestionService cityCropQuestionService;

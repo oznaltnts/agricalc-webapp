@@ -1,9 +1,9 @@
 package tr.ozanbey.agricalc.webapp.service.service;
 
-import jakarta.transaction.Transactional;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import tr.ozanbey.agricalc.webapp.service.domain.User;
 import tr.ozanbey.agricalc.webapp.service.domain.UserPlantAsset;
 import tr.ozanbey.agricalc.webapp.service.domain.UserPlantAssetDetail;
@@ -18,7 +18,7 @@ import java.util.Optional;
 
 @Service
 @Slf4j
-public class PlantAssetService extends BaseService {
+public class PlantAssetService {
 
     @Autowired
     private UserPlantAssetRepository plantAssetRepository;
@@ -50,7 +50,7 @@ public class PlantAssetService extends BaseService {
                     detail.setAssetType(viewDetail.getSeedingType().toString());
                 else if (view.getPlantAsset().equals(EnumPlantAsset.HARVESTING))
                     detail.setAssetType(viewDetail.getHarvestingType());
-                else if (view.getPlantAsset().equals(EnumPlantAsset.OTHER))
+                else if (view.getPlantAsset().equals(EnumPlantAsset.OTHER_MACHINE))
                     detail.setAssetType(viewDetail.getOtherType().toString());
 
                 detail.setSprayingTank(viewDetail.getSprayingTank());
@@ -89,7 +89,7 @@ public class PlantAssetService extends BaseService {
                         detailView.setSeedingType(UserPlantAssetView.SeedingType.valueOf(detail.getAssetType()));
                     else if (asset.equals(EnumPlantAsset.HARVESTING))
                         detailView.setHarvestingType(detail.getAssetType());
-                    else if (asset.equals(EnumPlantAsset.OTHER))
+                    else if (asset.equals(EnumPlantAsset.OTHER_MACHINE))
                         detailView.setOtherType(UserPlantAssetView.OtherType.valueOf(detail.getAssetType()));
                     detailView.setSprayingTank(detail.getSprayingTank());
                     if (detail.getRentIncomePrice() != null) {

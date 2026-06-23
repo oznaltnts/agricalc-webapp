@@ -62,7 +62,9 @@ public class DairyCowFeedRasyonController extends DairyCowController {
     private List<DairyCowFeedView> generateSaveList() {
         List<DairyCowFeedView> returnSaveList = new ArrayList<>();
         for (DairyCowFeedView dv : dairyCowFeedViewList) {
-            DairyCowFeedView refView = referenceViewList.stream().filter(r -> r.getUserFeedId().equals(dv.getUserFeedId())).findFirst().get();
+            DairyCowFeedView refView = referenceViewList.stream()
+                    .filter(r -> r.getUserFeedId().equals(dv.getUserFeedId()))
+                    .findFirst().get();
             if (!Objects.equals(refView.getLactationRasyon(), dv.getLactationRasyon()) || !Objects.equals(refView.getRoughageRasyon(), dv.getRoughageRasyon())) {
                 returnSaveList.add(dv);
             }

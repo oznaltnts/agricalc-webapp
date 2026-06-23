@@ -345,7 +345,6 @@ INSERT INTO `dairy_cow_costs` (`status`, `cost_type`, `name`) VALUES (1,4,'Ortal
 INSERT INTO `dairy_cow_costs` (`status`, `cost_type`, `name`) VALUES (1,5,'Sigorta Yaptırdınız mı?');
 INSERT INTO `dairy_cow_costs` (`status`, `cost_type`, `name`) VALUES (1,6,'İşletmenin Kullandığı Sübvansiyonlu Kredi');
 INSERT INTO `dairy_cow_costs` (`status`, `cost_type`, `name`) VALUES (1,7,'İşletmenin Kullandığı Sübvansiyonsuz Kredi');
-INSERT INTO `dairy_cow_costs` (`status`, `cost_type`, `name`) VALUES (1,8,'Bir Birim Fiyat (TARSİM)');
 
 INSERT INTO `dairy_cow_incomes` (`status`, `name`, `unit`) VALUES ('1', 'İşletmenin hayvan başına elde ettiği süt verimi ', '(Lt/Gün/1 İnek)');
 INSERT INTO `dairy_cow_incomes` (`status`, `name`, `unit`) VALUES ('1', 'İşletmenin çiğ süt net satış fiyatı (Kalite Primi Dahil)', '(TL/Lt)');

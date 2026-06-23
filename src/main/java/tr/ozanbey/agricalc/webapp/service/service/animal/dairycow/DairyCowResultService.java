@@ -48,9 +48,16 @@ public class DairyCowResultService {
         BigDecimal averageFeedCount = BigDecimal.ZERO;
         for (UserDairyCowFeed userFeed : userFeedList) {
             if (userFeed.getLactation() != null)
-                lactationValue = lactationValue.add(userFeed.getBuyingPrice().multiply(BigDecimal.valueOf(userFeed.getLactation())).multiply(BigDecimal.valueOf(userFeed.getUserDairyCowBarn().getLactationPeriod())));
+                lactationValue = lactationValue.add(
+                        userFeed.getBuyingPrice()
+                                .multiply(BigDecimal.valueOf(userFeed.getLactation()))
+                                .multiply(BigDecimal.valueOf(userFeed.getUserDairyCowBarn().getLactationPeriod())));
             if (userFeed.getRoughage() != null)
-                roughageValue = roughageValue.add(userFeed.getBuyingPrice().multiply(BigDecimal.valueOf(userFeed.getRoughage())).multiply(BigDecimal.valueOf(365).subtract(BigDecimal.valueOf(userFeed.getUserDairyCowBarn().getLactationPeriod()))));
+                roughageValue = roughageValue.add(
+                        userFeed.getBuyingPrice()
+                                .multiply(BigDecimal.valueOf(userFeed.getRoughage()))
+                                .multiply(BigDecimal.valueOf(365)
+                                        .subtract(BigDecimal.valueOf(userFeed.getUserDairyCowBarn().getLactationPeriod()))));
             averageFeedCount = BigDecimal.valueOf(userFeed.getUserDairyCowBarn().getAverageFeedTotalCount());
         }
         BigDecimal costPerAnimal = lactationValue.add(roughageValue);
@@ -86,7 +93,9 @@ public class DairyCowResultService {
                     maintenanceCost = maintenanceCost.add(
                             cowCost.getTotalCost()
                                     .multiply(BigDecimal.valueOf(cowCost.getHourlyOrInterest()))
-                                    .multiply(BigDecimal.valueOf(365 / 8)));
+                                    .multiply(BigDecimal.valueOf(365))
+                                    .divide(BigDecimal.valueOf(8), 10, RoundingMode.HALF_UP)
+                    );
                 } else if (cowCost.getDairyCowCost().getCostType().equals(EnumCostType.ENERGY_WATER)) {
                     //Enerji - Su Gideri Soruları
                     energyCost = energyCost.add(
@@ -113,7 +122,8 @@ public class DairyCowResultService {
                             cowCost.getTotalCost()
                                     .multiply(BigDecimal.valueOf(cowCost.getCount()))
                                     .multiply(BigDecimal.valueOf(cowCost.getHourlyOrInterest()))
-                                    .divide(BigDecimal.valueOf(100 / 12), 10, RoundingMode.HALF_UP));
+                                    .divide(BigDecimal.valueOf(100), 10, RoundingMode.HALF_UP)
+                                    .divide(BigDecimal.valueOf(12), 10, RoundingMode.HALF_UP));
                     interestCostTwo = interestCostTwo.add(cowCost.getTotalCost());
                 } else if (cowCost.getDairyCowCost().getCostType().equals(EnumCostType.INTEREST_UNSUBSIDIZED)) {
                     //İşletmenin Kullandığı Sübvansiyonsuz Kredi
@@ -121,7 +131,8 @@ public class DairyCowResultService {
                             cowCost.getTotalCost()
                                     .multiply(BigDecimal.valueOf(cowCost.getCount()))
                                     .multiply(BigDecimal.valueOf(cowCost.getHourlyOrInterest()))
-                                    .divide(BigDecimal.valueOf(100 / 12), 10, RoundingMode.HALF_UP));
+                                    .divide(BigDecimal.valueOf(100), 10, RoundingMode.HALF_UP)
+                                    .divide(BigDecimal.valueOf(12), 10, RoundingMode.HALF_UP));
                     interestCostTwo = interestCostTwo.add(cowCost.getTotalCost());
                     interestCostThree = interestCostThree.add(BigDecimal.valueOf(cowCost.getHourlyOrInterest()));
                 }
@@ -185,7 +196,7 @@ public class DairyCowResultService {
                 familyPrimIncome = familyPrimIncome.add(BigDecimal.valueOf(cowCount.getEndYearCount()));
                 sickFreeIncome = sickFreeIncome.add(BigDecimal.valueOf(cowCount.getEndYearCount()));
             } else if (cowCount.getDairyCowCoefficient().getCowType().equals(EnumCowType.PREGNANT_HEIFER)) {
-                averageCowCount = averageCowCount + cowCount.getAverageFeedCount() * 0.25;
+                averageCowCount = averageCowCount + cowCount.getAverageFeedCount();
                 pregnantHeiferToSell = cowCount.getSellCount();
                 pregnantHeiferToBuy = cowCount.getPurchaseCount();
                 familyPrimIncome = familyPrimIncome.add(BigDecimal.valueOf(cowCount.getEndYearCount()));
@@ -252,6 +263,7 @@ public class DairyCowResultService {
                 .subtract(steerPrice.multiply(BigDecimal.valueOf(steerToBuy)))
                 .subtract(calfPrice.multiply(BigDecimal.valueOf(calfToBuy)));
         milkPrimIncome = milkPrimIncome.multiply(BigDecimal.valueOf(365));
+
         returnList.add(new DairyCowResultIncomeView(1, null, "Hayvan Alım satım Geliri", animalSellBuyIncome));
         returnList.add(new DairyCowResultIncomeView(2, "Destekleme Gelirleri", "Süt Primi", milkPrimIncome));
         returnList.add(new DairyCowResultIncomeView(3, "Destekleme Gelirleri", "Buzağı Primi", calfPrimIncome));
@@ -284,7 +296,7 @@ public class DairyCowResultService {
                 .add(amortisationCost)
                 .add(depreciationView.getBarnAmortisationPrice());
 
-        returnList.add(new DairyCowResultIncomeView(8, null, "Toplam Brüt  Gelir", totalIncome));
+        returnList.add(new DairyCowResultIncomeView(8, null, "Toplam Brüt Gelir", totalIncome));
         returnList.add(new DairyCowResultIncomeView(9, null, "Toplam Gider", totalExpense));
         returnList.add(new DairyCowResultIncomeView(10, null, "Net Gelir (TL)", totalIncome.subtract(totalExpense)));
         returnList.add(new DairyCowResultIncomeView(11, null, null, amortisationCost));

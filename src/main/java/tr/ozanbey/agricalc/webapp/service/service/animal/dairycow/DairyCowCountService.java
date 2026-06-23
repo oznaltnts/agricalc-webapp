@@ -34,7 +34,9 @@ public class DairyCowCountService {
 
     @Transactional
     public void saveCountList(List<DairyCowCountView> dairyCowCountViewList, DairyCowCountView selectedCountView, UserDairyCowBarn barn) {
-        dairyCowCountViewList.stream().filter(v -> v.getCowType().equals(selectedCountView.getCowType())).forEach(match -> {
+        dairyCowCountViewList.stream()
+                .filter(v -> v.getCowType().equals(selectedCountView.getCowType()))
+                .forEach(match -> {
             match.setCountId(selectedCountView.getCountId());
             match.setCoefId(selectedCountView.getCoefId());
             match.setCowType(selectedCountView.getCowType());

@@ -26,6 +26,13 @@ public class ControllerConfig implements WebMvcConfigurer {
         registry.addViewController("/secured/plantation/parcel").setViewName("forward:/secured/plantation/plant-parcel.xhtml");
         registry.addViewController("/secured/plantation/product").setViewName("forward:/secured/plantation/plant-product.xhtml");
 
+        registry.addViewController("/secured/animal/dairy-cow/barn-new").setViewName("forward:/secured/animal/dairy-cow/dairy-cow-barn-new.xhtml");
+        registry.addViewController("/secured/animal/dairy-cow/count-new").setViewName("forward:/secured/animal/dairy-cow/dairy-cow-count-new.xhtml");
+        registry.addViewController("/secured/animal/dairy-cow/feed-new").setViewName("forward:/secured/animal/dairy-cow/dairy-cow-feed-new.xhtml");
+        registry.addViewController("/secured/animal/dairy-cow/feed-rasyon-new").setViewName("forward:/secured/animal/dairy-cow/dairy-cow-feed-rasyon-new.xhtml");
+        registry.addViewController("/secured/animal/dairy-cow/cost-new").setViewName("forward:/secured/animal/dairy-cow/dairy-cow-cost-new.xhtml");
+        registry.addViewController("/secured/animal/dairy-cow/income-new").setViewName("forward:/secured/animal/dairy-cow/dairy-cow-income-new.xhtml");
+
         registry.addViewController("/secured/animal/dairy-cow/barn").setViewName("forward:/secured/animal/dairy-cow/dairy-cow-barn.xhtml");
         registry.addViewController("/secured/animal/dairy-cow/count").setViewName("forward:/secured/animal/dairy-cow/dairy-cow-count.xhtml");
         registry.addViewController("/secured/animal/dairy-cow/feed").setViewName("forward:/secured/animal/dairy-cow/dairy-cow-feed.xhtml");

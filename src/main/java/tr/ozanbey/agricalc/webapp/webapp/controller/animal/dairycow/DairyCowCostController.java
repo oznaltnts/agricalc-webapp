@@ -113,8 +113,6 @@ public class DairyCowCostController extends DairyCowController {
             }
             if (optionalCost.get().getCostType().equals(EnumCostType.INSEMINATION)) {
                 selectedCostView.setCount(getUserDairyCowBarn().getInseminationRate());
-            } else if (optionalCost.get().getCostType().equals(EnumCostType.TARSIM)) {
-                selectedCostView.setCount(getUserDairyCowBarn().getAverageFeedTotalCount());
             }
         }
     }

@@ -17,7 +17,7 @@ public interface UserDairyCowCostRepository extends JpaRepository<UserDairyCowCo
             FROM UserDairyCowCost t1
             WHERE t1.userDairyCowBarn.id = :barnId
             AND t1.dairyCowCost.status = :status
-            ORDER BY t1.dairyCowCost.costType ASC
+            ORDER BY t1.insertDate ASC
             """)
     List<DairyCowCostView> findAllAsCowCostView(@Param("status") EnumStatus status, @Param("barnId") Long barnId);
 

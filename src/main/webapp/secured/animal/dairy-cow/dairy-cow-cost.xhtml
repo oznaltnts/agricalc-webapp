@@ -183,8 +183,8 @@
                                        value="Sayısı/miktarı:"/>
                         <p:outputPanel rendered="#{dairyCowCostController.selectedCostView.selectedDairyCowCost.costType.columns.contains('COUNT')}">
                             <p:inputNumber id="costCount"
-                                           readonly="#{dairyCowCostController.selectedCostView.selectedDairyCowCost.costType eq 'INSEMINATION' or dairyCowCostController.selectedCostView.selectedDairyCowCost.costType eq 'TARSIM'}"
-                                           required="#{dairyCowCostController.selectedCostView.selectedDairyCowCost.costType ne 'INSEMINATION' and dairyCowCostController.selectedCostView.selectedDairyCowCost.costType ne 'TARSIM'}"
+                                           readonly="#{dairyCowCostController.selectedCostView.selectedDairyCowCost.costType eq 'INSEMINATION'}"
+                                           required="#{dairyCowCostController.selectedCostView.selectedDairyCowCost.costType ne 'INSEMINATION'}"
                                            requiredMessage="costCount inputNumber required"
                                            value="#{dairyCowCostController.selectedCostView.count}"
                                            maxValue="999999999999"

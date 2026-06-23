@@ -33,7 +33,6 @@ public class DairyCowCountController extends DairyCowController {
 
     @PostConstruct
     public void init() {
-        System.out.println("DairyCowCountController");
     }
 
     public void fillDataTableValues() {

@@ -46,4 +46,18 @@ public class DairyCowIncomeService {
         }
     }
 
+    @Transactional
+    public void saveIncomeFromView(DairyCowIncomeView view, Long barnId) {
+        UserDairyCowIncome userDairyCowIncome;
+        if (view.getUserIncomeId() == null) {
+            userDairyCowIncome = new UserDairyCowIncome();
+        } else {
+            userDairyCowIncome = userDairyCowIncomeRepository.getReferenceById(view.getUserIncomeId());
+        }
+        userDairyCowIncome.setUserDairyCowBarn(barnRepository.getReferenceById(barnId));
+        userDairyCowIncome.setDairyCowIncome(dairyCowIncomeRepository.getReferenceById(view.getIncomeId()));
+        userDairyCowIncome.setIncomeValue(view.getIncomeValue());
+        userDairyCowIncomeRepository.save(userDairyCowIncome);
+    }
+
 }

@@ -72,4 +72,9 @@ public class DairyCowFeedService {
         }
     }
 
+    @Transactional
+    public void updateLactationValues(DairyCowFeedView view) {
+        dairyCowFeedRepository.saveRasyonValuesFromViewList(view.getUserFeedId(), view.getLactationRasyon(), view.getRoughageRasyon());
+
+    }
 }

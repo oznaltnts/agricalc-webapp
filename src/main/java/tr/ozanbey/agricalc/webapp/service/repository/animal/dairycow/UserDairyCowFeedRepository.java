@@ -19,7 +19,7 @@ public interface UserDairyCowFeedRepository extends JpaRepository<UserDairyCowFe
             FROM UserDairyCowFeed t1
             WHERE t1.userDairyCowBarn.id = :barnId
             AND t1.feed.status = :status
-            ORDER BY t1.feed.feedCategory ASC, t1.feed.feedType ASC
+            ORDER BY t1.insertDate ASC
             """)
     List<DairyCowFeedView> findAllAsCowFeedView(@Param("status") EnumStatus status, @Param("barnId") Long barnId);
 
@@ -28,7 +28,7 @@ public interface UserDairyCowFeedRepository extends JpaRepository<UserDairyCowFe
             FROM UserDairyCowFeed t1
             WHERE t1.userDairyCowBarn.id = :barnId
             AND t1.feed.status = :status
-            ORDER BY t1.feed.feedCategory ASC, t1.feed.feedType ASC
+            ORDER BY t1.insertDate ASC
             """)
     List<DairyCowFeedView> findAllAsCowRasyonView(@Param("status") EnumStatus status, @Param("barnId") Long barnId);
 
@@ -57,7 +57,7 @@ public interface UserDairyCowFeedRepository extends JpaRepository<UserDairyCowFe
                         )
             FROM UserDairyCowFeed t1
             WHERE t1.userDairyCowBarn.id = :barnId
-            ORDER BY t1.feed.feedCategory ASC, t1.feed.feedType ASC
+            ORDER BY t1.insertDate ASC
             """)
     List<DairyCowResultFeedView> findAsResultViewListByBarnId(@Param("barnId") Long barnId);
 

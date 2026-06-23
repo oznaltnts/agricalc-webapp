@@ -49,7 +49,7 @@ public class DairyCowCostService {
             userDairyCowCost = userDairyCowCostRepository.getReferenceById(selectedCostView.getUserCostId());
         }
         userDairyCowCost.setUserDairyCowBarn(barnRepository.getReferenceById(barnId));
-        userDairyCowCost.setDairyCowCost(selectedCostView.getSelectedDairyCowCost());
+        userDairyCowCost.setDairyCowCost(dairyCowCostRepository.getReferenceById(selectedCostView.getSelectedCostId()));
         userDairyCowCost.setCostName(selectedCostView.getSelectedCostName());
         userDairyCowCost.setCount(selectedCostView.getCount());
         userDairyCowCost.setTotalCost(selectedCostView.getTotalCost());

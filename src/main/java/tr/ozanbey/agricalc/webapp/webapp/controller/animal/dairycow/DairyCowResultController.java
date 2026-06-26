@@ -7,9 +7,11 @@ import lombok.Getter;
 import lombok.Setter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import tr.ozanbey.agricalc.webapp.service.enumtype.animal.dairycow.EnumCowType;
 import tr.ozanbey.agricalc.webapp.service.service.animal.dairycow.DairyCowResultService;
 import tr.ozanbey.agricalc.webapp.webapp.view.animal.dairycow.*;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -35,10 +37,15 @@ public class DairyCowResultController extends DairyCowController {
 
     public void fillDataTableValues() {
         countYearCalculationList = cowResultService.calculateCountList(getBarnId());
+        BigDecimal inseminationMultiplier = BigDecimal.ZERO;
+        for (DairyCowResultCountView countView : countYearCalculationList) {
+            if (countView.getCowType().equals(EnumCowType.COW) || countView.getCowType().equals(EnumCowType.PREGNANT_HEIFER))
+                inseminationMultiplier = inseminationMultiplier.add(BigDecimal.valueOf(countView.getAverageFeedCount()));
+        }
         feedStockCalculationList = cowResultService.calculateFeedList(getBarnId());
         feedTotalView = cowResultService.calculateFeedTotalView(getBarnId());
         depreciationView = cowResultService.calculateCostTotalView(getUserDairyCowBarn(),
-                feedTotalView.getTotalCostPerBarn());
+                feedTotalView.getTotalCostPerBarn(), inseminationMultiplier);
         List<DairyCowResultIncomeView> incomeCalculationList = cowResultService.calculateIncomeTotalView(getBarnId(),
                 feedTotalView.getTotalCostPerBarn(),
                 depreciationView);

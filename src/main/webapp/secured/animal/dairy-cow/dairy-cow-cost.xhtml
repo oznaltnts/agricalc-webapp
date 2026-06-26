@@ -15,13 +15,31 @@
         </f:metadata>
     </ui:define>
 
+    <ui:define name="head">
+        <style type="text/css">
+            .inputMaxWidthClass {
+                width: 100%;
+                min-width: unset!important;
+            }
+            @media (max-width: 640px) {
+                .ui-datatable-reflow .ui-datatable-data td[role="gridcell"] .ui-column-title {
+                    max-width: unset;
+                    width: 100%;
+                }
+                .steps-desktop {
+                    display: none;
+                }
+            }
+        </style>
+    </ui:define>
+
     <ui:define name="content">
         <div class="grid">
             <div class="col">
                 <div class="card">
                     <p:steps activeIndex="4">
-                        <p:menuitem value="Ahırlar"/>
-                        <p:menuitem value="Hayvanlar"/>
+                        <p:menuitem value="Ahırlar" containerStyleClass="steps-desktop"/>
+                        <p:menuitem value="Hayvanlar" containerStyleClass="steps-desktop"/>
                         <p:menuitem value="Yemler"/>
                         <p:menuitem value="Yem rasyonu"/>
                         <p:menuitem value="Giderler"/>
@@ -37,60 +55,131 @@
                         class="card">
                     <h5 class="mt-0" style="font-weight: bold">Büyükbaş süt işletme giderleri</h5>
 
-                    <p:growl showDetail="true"
-                             severity="info warn">
+                    <p:growl id="growl"
+                             showDetail="true"
+                             severity="info warn error">
                         <p:autoUpdate/>
                     </p:growl>
 
-                    <p:dataTable var="costTable"
+                    <p:dataTable id="cowCostTable"
+                                 var="costTable"
                                  reflow="true"
                                  stripedRows="true"
                                  size="small"
+                                 editable="true"
+                                 widgetVar="cowCostWidget"
                                  value="#{dairyCowCostController.dairyCowCostViewList}">
-                        <p:column headerText="Gider tipi" groupRow="true">
-                            <h:outputText style="font-weight: bold"
-                                          value="#{msg[costTable.selectedDairyCowCost.costType]}"
-                                          responsivePriority="3"/>
+
+                        <p:ajax event="rowEditInit" listener="#{dairyCowCostController.onRowEditInit}"/>
+                        <p:ajax event="rowEdit" listener="#{dairyCowCostController.onRowEdit}"/>
+                        <p:ajax event="rowEditCancel" listener="#{dairyCowCostController.onRowCancel}"/>
+
+                        <p:column headerText="Gider tipi">
+                            <p:cellEditor>
+                                <f:facet name="output">
+                                    <h:outputText value="#{costTable.selectedDairyCowCost.name}"/>
+                                </f:facet>
+                                <f:facet name="input">
+                                    <p:selectOneMenu value="#{costTable.selectedCostId}"
+                                                     styleClass="inputMaxWidthClass"
+                                                     required="true"
+                                                     requiredMessage="Lütfen seçim yapınız">
+                                        <p:ajax update="countEditor costEditor hourEditor"
+                                                listener="#{dairyCowCostController.handleCostSelect(costTable)}"/>
+                                        <f:selectItem itemLabel="seçiniz"
+                                                      itemValue=""/>
+                                        <f:selectItems value="#{dairyCowCostController.costList}"
+                                                       itemValue="#{cost.id}"
+                                                       itemLabel="#{cost.name}"
+                                                       var="cost"/>
+                                    </p:selectOneMenu>
+                                </f:facet>
+                            </p:cellEditor>
                         </p:column>
+
                         <p:column headerText="Gider ismi">
-                            <h:outputText value="#{costTable.selectedCostName}"/>
+                            <p:cellEditor>
+                                <f:facet name="output">
+                                    <h:outputText value="#{costTable.selectedCostName}"/>
+                                </f:facet>
+                                <f:facet name="input">
+                                    <p:inputText value="#{costTable.selectedCostName}"
+                                                 styleClass="inputMaxWidthClass"
+                                                 requiredMessage="costName inputText requiredMessage"
+                                                 required="true"/>
+                                </f:facet>
+                            </p:cellEditor>
                         </p:column>
 
-                        <p:column headerText="Sayısı/miktarı"
-                                  responsivePriority="2">
-                            <h:outputText value="#{costTable.count}"
-                                          rendered="#{costTable.selectedDairyCowCost.costType.columns.contains('COUNT')}"/>
+                        <p:column headerText="Sayısı/miktarı">
+                            <p:cellEditor id="countEditor">
+                                <f:facet name="output">
+                                    <h:outputText value="#{costTable.count}"
+                                                  rendered="#{costTable.selectedDairyCowCost.costType.columns.contains('COUNT')}"/>
+                                </f:facet>
+                                <f:facet name="input">
+                                    <p:inputNumber value="#{costTable.count}"
+                                                   inputStyleClass="inputMaxWidthClass"
+                                                   rendered="#{costTable.selectedDairyCowCost.costType.columns.contains('COUNT')}"
+                                                   required="true"
+                                                   requiredMessage="costCount inputNumber required"/>
+                                </f:facet>
+                            </p:cellEditor>
                         </p:column>
 
-                        <p:column headerText="Toplam gideri"
-                                  responsivePriority="2">
-                            <h:outputText value="#{costTable.totalCost}"/>
+                        <p:column headerText="Toplam gideri">
+                            <p:cellEditor id="costEditor">
+                                <f:facet name="output">
+                                    <h:outputText value="#{costTable.totalCost}"
+                                                  rendered="#{costTable.selectedDairyCowCost.costType.columns.contains('COST')}"/>
+                                </f:facet>
+                                <f:facet name="input">
+                                    <p:inputNumber value="#{costTable.totalCost}"
+                                                   inputStyleClass="inputMaxWidthClass"
+                                                   rendered="#{costTable.selectedDairyCowCost.costType.columns.contains('COST')}"
+                                                   required="true"
+                                                   requiredMessage="totalCost inputNumber required"/>
+                                </f:facet>
+                            </p:cellEditor>
                         </p:column>
 
-                        <p:column headerText="Saati/faizi"
-                                  responsivePriority="2">
-                            <h:outputText value="#{costTable.hourlyOrInterest}"
-                                          rendered="#{costTable.selectedDairyCowCost.costType.columns.contains('HOUR')}"/>
+                        <p:column headerText="Saati/faizi">
+                            <p:cellEditor id="hourEditor">
+                                <f:facet name="output">
+                                    <h:outputText value="#{costTable.hourlyOrInterest}"
+                                                  rendered="#{costTable.selectedDairyCowCost.costType.columns.contains('HOUR')}"/>
+                                </f:facet>
+                                <f:facet name="input">
+                                    <p:inputNumber value="#{costTable.hourlyOrInterest}"
+                                                   inputStyleClass="inputMaxWidthClass"
+                                                   rendered="#{costTable.selectedDairyCowCost.costType.columns.contains('HOUR')}"
+                                                   required="true"
+                                                   requiredMessage="hourInterest inputNumber required"/>
+                                </f:facet>
+                            </p:cellEditor>
                         </p:column>
 
-                        <p:column style="width: 200px; text-align: center" headerText="Yönet">
-                            <p:commandButton update="costEditForm"
-                                             styleClass="m-1"
-                                             value="Düzenle"
-                                             action="#{dairyCowCostController.editUserCost(costTable)}"/>
-                            <p:commandButton update="costListForm"
-                                             styleClass="m-1"
-                                             value="Kaldır"
+                        <p:column style="width: calc(56px + 0.5rem)" headerText="Düzenle">
+                            <p:rowEditor editTitle="Edit Row"
+                                         cancelTitle="Cancel Edit"
+                                         saveTitle="Save Row"/>
+                        </p:column>
+
+                        <p:column headerText="Kaldır" style="width: 51px;text-align: right">
+                            <p:commandButton update="cowCostTable"
+                                             styleClass="rounded-button ui-button-danger ui-button-flat"
+                                             icon="fa-regular fa-square-minus"
                                              action="#{dairyCowCostController.deleteUserCost(costTable)}"/>
                         </p:column>
                     </p:dataTable>
 
                     <p:outputPanel style="display: flex;">
-                        <p:commandButton action="#{dairyCowCostController.addNewCostView}"
-                                         styleClass="m-1"
+                        <p:commandButton value="Yeni gider ekle"
                                          process="@this"
-                                         update="costEditForm"
-                                         value="Yeni gider ekle"/>
+                                         styleClass="m-1"
+                                         update="cowCostTable"
+                                         action="#{dairyCowCostController.onAddNew}"
+                                         oncomplete="PF('cowCostWidget').showRowEditors(PF('cowCostWidget').tbody.children().last());"/>
                     </p:outputPanel>
                 </h:form>
             </div>
@@ -115,125 +204,6 @@
                                  value="#{dairyCowCostController.barnId}"/>
                     </p:button>
                 </p:outputPanel>
-            </div>
-        </div>
-        <div class="grid">
-            <div class="col">
-                <h:form id="costEditForm"
-                        style="visibility: #{dairyCowCostController.selectedCostView eq null ? 'hidden' : 'visible'}; height: #{dairyCowCostController.selectedCostView eq null ? '0' : 'unset'}"
-                        styleClass="card">
-                    <h5 class="mt-0" style="font-weight: bold">Ekle/Düzenle</h5>
-
-                    <p:messages showDetail="true" globalOnly="true"/>
-
-                    <p:panelGrid layout="flex"
-                                 rendered="#{dairyCowCostController.selectedCostView ne null}"
-                                 columnClasses="col-3 text-right, col-9"
-                                 columns="2">
-                        <p:outputLabel for="costType"
-                                       value="Gider tipi:"/>
-                        <p:outputPanel>
-                            <p:selectOneButton id="costType"
-                                               value="#{dairyCowCostController.selectedCostView.selectedDairyCowCost.costType}"
-                                               required="true"
-                                               requiredMessage="Lütfen seçim yapınız"
-                                               unselectable="false">
-                                <p:ajax update="costEditForm"
-                                        process="@this"/>
-                                <f:selectItems value="#{dairyCowCostController.costTypes}"
-                                               var="type"
-                                               itemLabel="#{msg[type]}"
-                                               itemValue="#{type}"/>
-                            </p:selectOneButton>
-                            <p:message for="@previous"/>
-                        </p:outputPanel>
-
-                        <p:outputLabel for="costSelect"
-                                       value="Gider seçimi:"/>
-                        <p:outputPanel>
-                            <p:selectOneButton id="costSelect"
-                                               value="#{dairyCowCostController.selectedCostView.selectedCostId}"
-                                               required="true"
-                                               requiredMessage="Lütfen seçim yapınız"
-                                               unselectable="false">
-                                <p:ajax update="costEditForm"
-                                        process="@this"
-                                        listener="#{dairyCowCostController.handleCostTypeSelect}"/>
-                                <f:selectItems value="#{dairyCowCostController.fromReferenceList}"
-                                               var="dairyCowCost"
-                                               itemValue="#{dairyCowCost.id}"
-                                               itemDisabled="#{dairyCowCostController.checkCostAdded(dairyCowCost)}"
-                                               itemLabel="#{dairyCowCost.name}"/>
-                            </p:selectOneButton>
-                            <p:message for="@previous"/>
-                        </p:outputPanel>
-
-                        <p:outputLabel for="costName"
-                                       value="Gider ismi:"/>
-                        <p:outputPanel>
-                            <p:inputText id="costName"
-                                         value="#{dairyCowCostController.selectedCostView.selectedCostName}"
-                                         requiredMessage="costName inputText requiredMessage"
-                                         required="true"/>
-                            <p:message for="@previous"/>
-                        </p:outputPanel>
-
-                        <p:outputLabel for="costCount"
-                                       rendered="#{dairyCowCostController.selectedCostView.selectedDairyCowCost.costType.columns.contains('COUNT')}"
-                                       value="Sayısı/miktarı:"/>
-                        <p:outputPanel rendered="#{dairyCowCostController.selectedCostView.selectedDairyCowCost.costType.columns.contains('COUNT')}">
-                            <p:inputNumber id="costCount"
-                                           readonly="#{dairyCowCostController.selectedCostView.selectedDairyCowCost.costType eq 'INSEMINATION'}"
-                                           required="#{dairyCowCostController.selectedCostView.selectedDairyCowCost.costType ne 'INSEMINATION'}"
-                                           requiredMessage="costCount inputNumber required"
-                                           value="#{dairyCowCostController.selectedCostView.count}"
-                                           maxValue="999999999999"
-                                           minValue="0"/>
-                            <p:message for="@previous"/>
-                        </p:outputPanel>
-
-                        <p:outputLabel for="totalCost"
-                                       value="Toplam gideri:"/>
-                        <p:outputPanel>
-                            <p:inputNumber id="totalCost"
-                                           required="true"
-                                           requiredMessage="totalCost inputNumber required"
-                                           value="#{dairyCowCostController.selectedCostView.totalCost}"
-                                           maxValue="999999999999"
-                                           minValue="0"/>
-                            <p:message for="@previous"/>
-                        </p:outputPanel>
-
-                        <p:outputLabel for="hourInterest"
-                                       rendered="#{dairyCowCostController.selectedCostView.selectedDairyCowCost.costType.columns.contains('HOUR')}"
-                                       value="Saati/faizi:"/>
-                        <p:outputPanel rendered="#{dairyCowCostController.selectedCostView.selectedDairyCowCost.costType.columns.contains('HOUR')}">
-                            <p:inputNumber id="hourInterest"
-                                           required="true"
-                                           requiredMessage="hourInterest inputNumber required"
-                                           value="#{dairyCowCostController.selectedCostView.hourlyOrInterest}"
-                                           maxValue="999999999999"
-                                           minValue="0"/>
-                            <p:message for="@previous"/>
-                        </p:outputPanel>
-
-                        <p:outputPanel/>
-                        <p:outputPanel style="display: flex;">
-                            <p:commandButton value="Kaydet"
-                                             process="@form"
-                                             update="@form costListForm"
-                                             styleClass="m-1"
-                                             validateClient="true"
-                                             action="#{dairyCowCostController.saveSelectedCost}"/>
-                            <p:commandButton value="Vazgeç"
-                                             process="@this"
-                                             update="@form"
-                                             styleClass="m-1"
-                                             resetValues="true"
-                                             action="#{dairyCowCostController.setSelectedCostView(null)}"/>
-                        </p:outputPanel>
-                    </p:panelGrid>
-                </h:form>
                 <br/>
                 <p>Sorunuz mu var? <a href="#">Buraya</a> basın ve bize bildirin.</p>
             </div>

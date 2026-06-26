@@ -15,30 +15,49 @@
         </f:metadata>
     </ui:define>
 
+    <ui:define name="head">
+        <style type="text/css">
+            .inputMaxWidthClass {
+                width: 100%;
+            }
+            @media (max-width: 640px) {
+                .ui-datatable-reflow .ui-datatable-data td[role="gridcell"] .ui-column-title {
+                    max-width: unset;
+                    width: 100%;
+                }
+                .steps-desktop {
+                    display: none;
+                }
+            }
+        </style>
+    </ui:define>
+
     <ui:define name="content">
         <div class="grid">
             <div class="col">
                 <div class="card">
                     <p:steps activeIndex="3">
-                        <p:menuitem value="Ahırlar"/>
+                        <p:menuitem value="Ahırlar" containerStyleClass="steps-desktop"/>
                         <p:menuitem value="Hayvanlar"/>
                         <p:menuitem value="Yemler"/>
                         <p:menuitem value="Yem rasyonu"/>
                         <p:menuitem value="Giderler"/>
                         <p:menuitem value="Gelirler"/>
-                        <p:menuitem value="Sonuçlar"/>
+                        <p:menuitem value="Sonuçlar" containerStyleClass="steps-desktop"/>
                     </p:steps>
                 </div>
             </div>
         </div>
+        
         <div class="grid">
             <div class="col">
                 <h:form id="rasyonListForm"
                         class="card">
                     <h5 class="mt-0" style="font-weight: bold">Büyükbaş süt yem rasyon</h5>
 
-                    <p:growl showDetail="true"
-                             severity="info warn">
+                    <p:growl id="growl"
+                             showDetail="true"
+                             severity="info warn error">
                         <p:autoUpdate/>
                     </p:growl>
 
@@ -48,44 +67,45 @@
                                  reflow="true"
                                  stripedRows="true"
                                  size="small"
+                                 widgetVar="feedTableWidget"
+                                 editable="true"
                                  value="#{dairyCowFeedRasyonController.dairyCowFeedViewList}">
-                        <p:column headerText="Kategori" groupRow="true">
-                            <h:outputText style="font-weight: bold" value="#{msg[feedTable.feed.feedCategory]}"/>
-                        </p:column>
-                        <p:column headerText="Yem tipi" groupRow="true">
-                            <h:outputText value="#{msg[feedTable.feed.feedType]}"/>
-                        </p:column>
+
+                        <p:ajax event="rowEditInit" listener="#{dairyCowFeedRasyonController.onRowEditInit}"/>
+                        <p:ajax event="rowEdit" listener="#{dairyCowFeedRasyonController.onRowEdit}"/>
+                        <p:ajax event="rowEditCancel" listener="#{dairyCowFeedRasyonController.onRowCancel}"/>
+
                         <p:column headerText="Yem ismi">
                             <h:outputText value="#{feedTable.feed.name}"/>
                         </p:column>
-                        
-                        <p:column headerText="Laktasyon döneminde günlük ortalama bir hayvana verilen miktar (Kg/Hayvan) *">
-                            <p:inputNumber id="lactationInputNumber"
-                                           placeholder="feedTableInputNumber inputNumber placeholder"
-                                           value="#{feedTable.lactationRasyon}"
-                                           required="#{feedTable.lactationRasyon eq null and feedTable.roughageRasyon eq null}"
-                                           requiredMessage="lactationInputNumber inputNumber requiredMessage"
-                                           maxValue="999999999999"
-                                           minValue="0">
-                                <p:ajax update="lactationInputNumber roughageInputNumber"/>
-                            </p:inputNumber>
+                        <p:column headerText="Laktasyon döneminde günlük ortalama bir hayvana verilen miktar (Kg/Hayvan)">
+                            <p:cellEditor>
+                                <f:facet name="output">
+                                    <h:outputText value="#{feedTable.lactationRasyon}"/>
+                                </f:facet>
+                                <f:facet name="input">
+                                    <p:inputNumber value="#{feedTable.lactationRasyon}"
+                                                   inputStyleClass="inputMaxWidthClass"/>
+                                </f:facet>
+                            </p:cellEditor>
                         </p:column>
-
-                        <p:column headerText="Kuru dödemde günlük ortalama bir hayvana verilen miktar (Kg/Hayvan) *">
-                            <p:inputNumber id="roughageInputNumber"
-                                           placeholder="feedTableInputNumber inputNumber placeholder"
-                                           value="#{feedTable.roughageRasyon}"
-                                           required="#{feedTable.lactationRasyon eq null and feedTable.roughageRasyon eq null}"
-                                           requiredMessage="roughageInputNumber inputNumber requiredMessage"
-                                           maxValue="999999999999"
-                                           minValue="0">
-                                <p:ajax update="lactationInputNumber roughageInputNumber"/>
-                            </p:inputNumber>
+                        <p:column headerText="Kuru dödemde günlük ortalama bir hayvana verilen miktar (Kg/Hayvan)">
+                            <p:cellEditor>
+                                <f:facet name="output">
+                                    <h:outputText value="#{feedTable.roughageRasyon}"/>
+                                </f:facet>
+                                <f:facet name="input">
+                                    <p:inputNumber value="#{feedTable.roughageRasyon}"
+                                                   inputStyleClass="inputMaxWidthClass"/>
+                                </f:facet>
+                            </p:cellEditor>
+                        </p:column>
+                        <p:column style="width: calc(56px + 0.5rem)" headerText="Düzenle">
+                            <p:rowEditor editTitle="Edit Row"
+                                         cancelTitle="Cancel Edit"
+                                         saveTitle="Save Row"/>
                         </p:column>
                     </p:dataTable>
-                    <p:messages showDetail="true">
-                        <p:autoUpdate/>
-                    </p:messages>
                 </h:form>
             </div>
         </div>

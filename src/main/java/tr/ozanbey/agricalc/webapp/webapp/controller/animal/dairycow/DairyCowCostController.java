@@ -5,18 +5,17 @@ import jakarta.annotation.PostConstruct;
 import jakarta.faces.view.ViewScoped;
 import lombok.Getter;
 import lombok.Setter;
+import org.primefaces.event.RowEditEvent;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import tr.ozanbey.agricalc.webapp.service.domain.animal.dairycow.DairyCowCost;
 import tr.ozanbey.agricalc.webapp.service.enumtype.EnumStatus;
-import tr.ozanbey.agricalc.webapp.service.enumtype.animal.dairycow.EnumCostType;
 import tr.ozanbey.agricalc.webapp.service.service.animal.dairycow.DairyCowCostService;
 import tr.ozanbey.agricalc.webapp.webapp.view.animal.dairycow.DairyCowCostView;
 
-import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
-import java.util.Optional;
 
 @Component
 @ViewScoped
@@ -28,93 +27,75 @@ public class DairyCowCostController extends DairyCowController {
     private DairyCowCostService dairyCowCostService;
 
     private List<DairyCowCostView> dairyCowCostViewList;
-    private DairyCowCostView selectedCostView;
+    private DairyCowCostView referenceCostView;
 
-    private EnumCostType[] costTypes = EnumCostType.values();
-    private List<DairyCowCost> referenceList;
-    private LocalDateTime today = LocalDateTime.now();
+    private List<DairyCowCost> costList = new ArrayList<>();
 
     @PostConstruct
     public void init() {
+        costList = dairyCowCostService.getCostsByStatuses(new EnumStatus[]{EnumStatus.ACTIVE});
     }
 
     public void fillDataTableValues() {
         dairyCowCostViewList = dairyCowCostService.getActiveCostAsViewList(super.getBarnId());
-        referenceList = dairyCowCostService.getCostsByStatuses(new EnumStatus[]{EnumStatus.ACTIVE});
     }
 
-    public void addNewCostView() {
-        selectedCostView = new DairyCowCostView();
-        selectedCostView.setSelectedDairyCowCost(new DairyCowCost());
+    public void onRowEditInit(RowEditEvent<DairyCowCostView> event) {
+        DairyCowCostView view = event.getObject();
+        referenceCostView = new DairyCowCostView();
+        referenceCostView.setUserCostId(view.getUserCostId());
+        referenceCostView.setSelectedCostId(view.getSelectedCostId());
+        referenceCostView.setSelectedDairyCowCost(view.getSelectedDairyCowCost());
+        referenceCostView.setSelectedCostName(view.getSelectedCostName());
+        referenceCostView.setCount(view.getCount());
+        referenceCostView.setTotalCost(view.getTotalCost());
+        referenceCostView.setHourlyOrInterest(view.getHourlyOrInterest());
     }
 
-    public List<DairyCowCost> getFromReferenceList() {
-        return referenceList.stream().filter(r -> r.getCostType().equals(selectedCostView.getSelectedDairyCowCost().getCostType())).toList();
-    }
-
-    public void editUserCost(DairyCowCostView costView) {
-        selectedCostView = new DairyCowCostView();
-        selectedCostView.setUserCostId(costView.getUserCostId());
-        selectedCostView.setSelectedCostId(costView.getSelectedDairyCowCost().getId());
-        selectedCostView.setSelectedDairyCowCost(costView.getSelectedDairyCowCost());
-        if (costView.getSelectedCostName() != null)
-            selectedCostView.setSelectedCostName(costView.getSelectedCostName());
-        else
-            selectedCostView.setSelectedCostName(costView.getSelectedDairyCowCost().getName());
-        selectedCostView.setCount(costView.getCount());
-        selectedCostView.setTotalCost(costView.getTotalCost());
-        selectedCostView.setHourlyOrInterest(costView.getHourlyOrInterest());
-    }
-
-    public void saveSelectedCost() {
-        if (checkIsThereChange()) {
-            dairyCowCostService.saveUserCost(selectedCostView, getBarnId());
+    public void onRowEdit(RowEditEvent<DairyCowCostView> event) {
+        DairyCowCostView view = event.getObject();
+        if (checkIsThereChange(view)) {
+            dairyCowCostService.saveUserCost(view, getBarnId());
             fillDataTableValues();
         }
-        selectedCostView = null;
+        referenceCostView = null;
     }
 
-    public boolean checkIsThereChange() {
-        if (selectedCostView.getUserCostId() != null) {
-            Optional<DairyCowCostView> optionalCost = dairyCowCostViewList.stream()
-                    .filter(v -> v.getUserCostId().equals(selectedCostView.getUserCostId()))
-                    .findFirst();
-            if (optionalCost.isPresent()) {
-                DairyCowCostView cost = optionalCost.get();
-                return !Objects.equals(selectedCostView.getCount(), cost.getCount())
-                        || !Objects.equals(selectedCostView.getTotalCost(), cost.getTotalCost())
-                        || !Objects.equals(selectedCostView.getHourlyOrInterest(), cost.getHourlyOrInterest())
-                        || !Objects.equals(selectedCostView.getSelectedCostName(), cost.getSelectedCostName());
-            }
+    private boolean checkIsThereChange(DairyCowCostView view) {
+        if (referenceCostView != null) {
+            return !Objects.equals(referenceCostView.getCount(), view.getCount())
+                    || !Objects.equals(referenceCostView.getTotalCost(), view.getTotalCost())
+                    || !Objects.equals(referenceCostView.getHourlyOrInterest(), view.getHourlyOrInterest())
+                    || !Objects.equals(referenceCostView.getSelectedCostId(), view.getSelectedCostId())
+                    || !Objects.equals(referenceCostView.getSelectedCostName(), view.getSelectedCostName());
         }
         return true;
     }
 
-    public boolean checkCostAdded(DairyCowCost dairyCowCost) {
-        return dairyCowCostViewList.stream().anyMatch(v ->
-                !dairyCowCost.getCostType().equals(EnumCostType.MAINTENANCE_SALARY)
-                        && !dairyCowCost.getCostType().equals(EnumCostType.MAINTENANCE_HOURLY)
-                        && v.getSelectedDairyCowCost().getId().equals(dairyCowCost.getId())
-        );
+    public void onRowCancel(RowEditEvent<DairyCowCostView> event) {
+        DairyCowCostView view = event.getObject();
+        if ((view.getSelectedCostId() == null) ||
+                (view.getSelectedDairyCowCost().getCostType().getColumns().contains("COUNT") && view.getCount() == null) ||
+                (view.getSelectedDairyCowCost().getCostType().getColumns().contains("HOUR") && view.getHourlyOrInterest() == null) ||
+                (view.getSelectedDairyCowCost().getCostType().getColumns().contains("COST") && view.getTotalCost() == null)) {
+            dairyCowCostViewList.removeLast();
+        }
+        referenceCostView = null;
+    }
+
+    public void onAddNew() {
+        dairyCowCostViewList.add(new DairyCowCostView());
+        referenceCostView = null;
     }
 
     public void deleteUserCost(DairyCowCostView costView) {
         dairyCowCostService.removeUserCost(costView.getUserCostId());
         fillDataTableValues();
-        selectedCostView = null;
+        referenceCostView = null;
     }
 
-    public void handleCostTypeSelect() {
-        Optional<DairyCowCost> optionalCost = referenceList.stream().filter(c -> c.getId().equals(selectedCostView.getSelectedCostId())).findFirst();
-        if (optionalCost.isPresent()) {
-            selectedCostView.setSelectedDairyCowCost(optionalCost.get());
-            if (selectedCostView.getSelectedCostName() == null) {
-                selectedCostView.setSelectedCostName(optionalCost.get().getName());
-            }
-            if (optionalCost.get().getCostType().equals(EnumCostType.INSEMINATION)) {
-                selectedCostView.setCount(getUserDairyCowBarn().getInseminationRate());
-            }
-        }
+    public void handleCostSelect(DairyCowCostView view) {
+        view.setSelectedDairyCowCost(costList.stream().filter(c -> c.getId().equals(view.getSelectedCostId())).findFirst().get());
     }
 
 }

@@ -36,6 +36,12 @@
                 <h:form class="card">
                     <h5 class="mt-0" style="font-weight: bold">Büyükbaş süt hayvan hesaplamaları</h5>
 
+                    <p:growl id="growl"
+                             showDetail="true"
+                             severity="info warn error">
+                        <p:autoUpdate/>
+                    </p:growl>
+
                     <p:dataTable var="countCalc"
                                  stripedRows="true"
                                  size="small"

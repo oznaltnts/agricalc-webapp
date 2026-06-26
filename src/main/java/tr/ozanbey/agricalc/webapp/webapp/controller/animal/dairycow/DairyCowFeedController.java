@@ -7,6 +7,7 @@ import jakarta.faces.model.SelectItemGroup;
 import jakarta.faces.view.ViewScoped;
 import lombok.Getter;
 import lombok.Setter;
+import org.primefaces.event.RowEditEvent;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import tr.ozanbey.agricalc.webapp.service.domain.animal.dairycow.Feed;
@@ -19,7 +20,7 @@ import tr.ozanbey.agricalc.webapp.webapp.view.animal.dairycow.DairyCowFeedView;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
+import java.util.Objects;
 
 @Component
 @ViewScoped
@@ -31,23 +32,13 @@ public class DairyCowFeedController extends DairyCowController {
     private DairyCowFeedService dairyCowFeedService;
 
     private List<DairyCowFeedView> dairyCowFeedViewList;
-    private DairyCowFeedView selectedFeedView;
+    private DairyCowFeedView referenceFeedView;
 
-    private List<SelectItem> feedList;
+    private List<SelectItem> feedList = new ArrayList<>();
     private LocalDateTime today = LocalDateTime.now();
 
     @PostConstruct
     public void init() {
-    }
-
-    public void fillDataTableValues() {
-        dairyCowFeedViewList = dairyCowFeedService.getActiveFeedAsViewList(super.getBarnId());
-    }
-
-    public void addNewFeedView() {
-        selectedFeedView = new DairyCowFeedView();
-
-        feedList = new ArrayList<>();
         List<Feed> activeFeedList = dairyCowFeedService.getFeedsByStatuses(new EnumStatus[]{EnumStatus.ACTIVE});
         for (EnumFeedCategory category : EnumFeedCategory.values()) {
             SelectItemGroup subFeeds = new SelectItemGroup(JSFUtils.getLocaleMessage(category.name()));
@@ -55,65 +46,67 @@ public class DairyCowFeedController extends DairyCowController {
                     .filter(f -> f.getFeedCategory().equals(category))
                     .map(f -> new SelectItem(
                             f.getId(),
-                            JSFUtils.getLocaleMessage(f.getFeedType().name()) + " - " + f.getName(),
-                            "",
-                            checkFeedAdded(f))
+                            f.getName())
                     ).toArray(SelectItem[]::new);
             subFeeds.setSelectItems(selectItems);
             feedList.add(subFeeds);
         }
     }
 
-    public void editUserFeed(DairyCowFeedView feedView) {
-        selectedFeedView = new DairyCowFeedView();
-        selectedFeedView.setUserFeedId(feedView.getUserFeedId());
-        selectedFeedView.setFeed(feedView.getFeed());
-        selectedFeedView.setSelectedFeedId(feedView.getFeed().getId());
-        selectedFeedView.setAmountKg(feedView.getAmountKg());
-        selectedFeedView.setBuyingDate(feedView.getBuyingDate());
-        selectedFeedView.setBuyingPriceKg(feedView.getBuyingPriceKg());
-
-        feedList = new ArrayList<>();
-        SelectItemGroup subFeeds = new SelectItemGroup(JSFUtils.getLocaleMessage(feedView.getFeed().getFeedCategory().name()));
-        subFeeds.setSelectItems(new SelectItem(
-                feedView.getFeed().getId(),
-                JSFUtils.getLocaleMessage(feedView.getFeed().getFeedType().name()) + " - " + feedView.getFeed().getName(),
-                "",
-                checkFeedAdded(feedView.getFeed())));
-        feedList.add(subFeeds);
+    public void fillDataTableValues() {
+        dairyCowFeedViewList = dairyCowFeedService.getActiveFeedAsViewList(super.getBarnId());
     }
 
-    public void saveSelectedFeed() {
-        if (checkIsThereChange()) {
-            dairyCowFeedService.saveUserFeed(selectedFeedView, getBarnId());
+    public void onRowEditInit(RowEditEvent<DairyCowFeedView> event) {
+        DairyCowFeedView view = event.getObject();
+
+        referenceFeedView = new DairyCowFeedView();
+        referenceFeedView.setUserFeedId(view.getUserFeedId());
+        referenceFeedView.setFeed(view.getFeed());
+        referenceFeedView.setSelectedFeedId(view.getFeed().getId());
+        referenceFeedView.setAmountKg(view.getAmountKg());
+        referenceFeedView.setBuyingDate(view.getBuyingDate());
+        referenceFeedView.setBuyingPriceKg(view.getBuyingPriceKg());
+    }
+
+    public void onRowEdit(RowEditEvent<DairyCowFeedView> event) {
+        DairyCowFeedView view = event.getObject();
+        if (checkIsThereChange(view)) {
+            dairyCowFeedService.saveUserFeed(view, getBarnId());
             fillDataTableValues();
         }
-        selectedFeedView = null;
+        referenceFeedView = null;
     }
 
-    public boolean checkIsThereChange() {
-        if (selectedFeedView.getUserFeedId() != null) {
-            Optional<DairyCowFeedView> optionalFeed = dairyCowFeedViewList.stream()
-                    .filter(v -> v.getUserFeedId().equals(selectedFeedView.getUserFeedId()))
-                    .findFirst();
-            if (optionalFeed.isPresent()) {
-                DairyCowFeedView feed = optionalFeed.get();
-                return selectedFeedView.getAmountKg() != feed.getAmountKg()
-                        || !selectedFeedView.getBuyingDate().equals(feed.getBuyingDate())
-                        || !selectedFeedView.getBuyingPriceKg().equals(feed.getBuyingPriceKg());
-            }
+    private boolean checkIsThereChange(DairyCowFeedView view) {
+        if (referenceFeedView != null) {
+            return !Objects.equals(referenceFeedView.getAmountKg(), view.getAmountKg())
+                    || !referenceFeedView.getBuyingDate().equals(view.getBuyingDate())
+                    || !referenceFeedView.getBuyingPriceKg().equals(view.getBuyingPriceKg());
         }
         return true;
     }
 
-    private boolean checkFeedAdded(Feed feed) {
-        return dairyCowFeedViewList.stream().anyMatch(v -> v.getFeed().getId().equals(feed.getId()));
+    public void onRowCancel(RowEditEvent<DairyCowFeedView> event) {
+        DairyCowFeedView view = event.getObject();
+        if (view.getSelectedFeedId() == null
+                || view.getAmountKg() == null
+                || view.getBuyingDate() == null
+                || view.getBuyingPriceKg() == null) {
+            dairyCowFeedViewList.removeLast();
+        }
+        referenceFeedView = null;
+    }
+
+    public void onAddNew() {
+        dairyCowFeedViewList.add(new DairyCowFeedView());
+        referenceFeedView = null;
     }
 
     public void deleteUserFeed(DairyCowFeedView feedView) {
         dairyCowFeedService.removeUserFeed(feedView.getUserFeedId());
         fillDataTableValues();
-        selectedFeedView = null;
+        referenceFeedView = null;
     }
 
 }

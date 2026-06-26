@@ -66,7 +66,7 @@ public class DairyCowResultService {
         return new DairyCowResultFeedTotalView(lactationValue, roughageValue, costPerAnimal, costPerBarn);
     }
 
-    public DairyCowResultDepreciationView calculateCostTotalView(UserDairyCowBarn userDairyCowBarn, BigDecimal yearlyFeedCost) {
+    public DairyCowResultDepreciationView calculateCostTotalView(UserDairyCowBarn userDairyCowBarn, BigDecimal yearlyFeedCost, BigDecimal inseminationMultiplier) {
         BigDecimal maintenanceCost = BigDecimal.ZERO;
         BigDecimal energyCost = BigDecimal.ZERO;
         BigDecimal veterinaryCost = BigDecimal.ZERO;
@@ -112,7 +112,7 @@ public class DairyCowResultService {
                     inseminationCost = inseminationCost.add(
                             cowCost.getTotalCost()
                                     .multiply(BigDecimal.valueOf(cowCost.getCount()))
-                                    .multiply(BigDecimal.valueOf(userDairyCowBarn.getAverageMilkingCount())));
+                                    .multiply(inseminationMultiplier));
                 } else if (cowCost.getDairyCowCost().getCostType().equals(EnumCostType.INSURANCE)) {
                     //Hayvan Hayat Sigortası
                     insuranceCost = insuranceCost.add(cowCost.getTotalCost());

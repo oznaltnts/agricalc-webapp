@@ -5,13 +5,16 @@ import jakarta.annotation.PostConstruct;
 import jakarta.faces.view.ViewScoped;
 import lombok.Getter;
 import lombok.Setter;
+import org.primefaces.PrimeFaces;
+import org.primefaces.component.datatable.DataTable;
+import org.primefaces.event.RowEditEvent;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import tr.ozanbey.agricalc.webapp.service.service.animal.dairycow.DairyCowFeedService;
+import tr.ozanbey.agricalc.webapp.webapp.util.JSFUtils;
 import tr.ozanbey.agricalc.webapp.webapp.view.animal.dairycow.DairyCowFeedView;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
@@ -24,52 +27,78 @@ public class DairyCowFeedRasyonController extends DairyCowController {
     @Autowired
     private DairyCowFeedService dairyCowFeedService;
 
-    private List<DairyCowFeedView> referenceViewList;
     private List<DairyCowFeedView> dairyCowFeedViewList;
+    private DairyCowFeedView referenceFeedView;
 
     @PostConstruct
     public void init() {
     }
 
     public void fillDataTableValues() {
-        referenceViewList = new ArrayList<>();
         dairyCowFeedViewList = dairyCowFeedService.getFeedRasyonAsViewList(super.getBarnId());
-        dairyCowFeedViewList.forEach(v -> {
-            DairyCowFeedView dv = new DairyCowFeedView();
-            dv.setUserFeedId(v.getUserFeedId());
-            dv.setLactationRasyon(v.getLactationRasyon());
-            dv.setRoughageRasyon(v.getRoughageRasyon());
-            referenceViewList.add(dv);
-        });
+    }
+
+    public void onRowEditInit(RowEditEvent<DairyCowFeedView> event) {
+        DairyCowFeedView view = event.getObject();
+        referenceFeedView = new DairyCowFeedView();
+        referenceFeedView.setLactationRasyon(view.getLactationRasyon());
+        referenceFeedView.setRoughageRasyon(view.getRoughageRasyon());
+    }
+
+    public void onRowEdit(RowEditEvent<DairyCowFeedView> event) {
+        DairyCowFeedView view = event.getObject();
+        int rowIndex = ((DataTable) event.getComponent()).getRowIndex();
+        if (checkRowValidation(view, rowIndex)) {
+            if (checkIsThereChange(view)) {
+                dairyCowFeedService.updateLactationValues(view);
+                fillDataTableValues();
+            }
+            referenceFeedView = null;
+        }
+    }
+
+    private boolean checkIsThereChange(DairyCowFeedView view) {
+        if (referenceFeedView != null) {
+            return !Objects.equals(referenceFeedView.getLactationRasyon(), view.getLactationRasyon())
+                    || !Objects.equals(referenceFeedView.getRoughageRasyon(), view.getRoughageRasyon());
+        }
+        return true;
+    }
+
+    public void onRowCancel(RowEditEvent<DairyCowFeedView> event) {
+        referenceFeedView = null;
     }
 
     public void nextSaveFeedRasyon() throws IOException {
-        List<DairyCowFeedView> saveList = generateSaveList();
-        if (!saveList.isEmpty()) {
-            dairyCowFeedService.saveFeedRasyonFromViewList(dairyCowFeedViewList);
+        if (checkPageValidation()) {
+            super.getNavigationController().redirectToUrl("/secured/animal/dairy-cow/cost-new?barnId=" + getBarnId());
         }
-        super.getNavigationController().redirectToUrl("/secured/animal/dairy-cow/cost?barnId=" + getBarnId());
     }
 
     public void backSaveFeedRasyon() throws IOException {
-        List<DairyCowFeedView> saveList = generateSaveList();
-        if (!saveList.isEmpty()) {
-            dairyCowFeedService.saveFeedRasyonFromViewList(dairyCowFeedViewList);
+        if (checkPageValidation()) {
+            super.getNavigationController().redirectToUrl("/secured/animal/dairy-cow/feed-new?barnId=" + getBarnId());
         }
-        super.getNavigationController().redirectToUrl("/secured/animal/dairy-cow/feed?barnId=" + getBarnId());
     }
 
-    private List<DairyCowFeedView> generateSaveList() {
-        List<DairyCowFeedView> returnSaveList = new ArrayList<>();
-        for (DairyCowFeedView dv : dairyCowFeedViewList) {
-            DairyCowFeedView refView = referenceViewList.stream()
-                    .filter(r -> r.getUserFeedId().equals(dv.getUserFeedId()))
-                    .findFirst().get();
-            if (!Objects.equals(refView.getLactationRasyon(), dv.getLactationRasyon()) || !Objects.equals(refView.getRoughageRasyon(), dv.getRoughageRasyon())) {
-                returnSaveList.add(dv);
+    private boolean checkPageValidation() {
+        int rowIndex = 0;
+        for (DairyCowFeedView view : dairyCowFeedViewList) {
+            if (!checkRowValidation(view, rowIndex)) {
+                return false;
             }
+            rowIndex++;
         }
-        return returnSaveList;
+        return true;
+    }
+
+    private boolean checkRowValidation(DairyCowFeedView view, int rowIndex) {
+        if (view.getLactationRasyon() != null || view.getRoughageRasyon() != null) {
+            return true;
+        }
+        PrimeFaces.current().executeScript("PF('feedTableWidget').showRowEditors(PF('feedTableWidget').tbody.children().eq(" + rowIndex + "));");
+        JSFUtils.addErrorMessage("growl", "Laktasyon dönemi ve/veya kuru dönem kullanım miktarı giriniz.", view.getFeed().getName());
+        return false;
     }
 
 }

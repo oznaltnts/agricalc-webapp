@@ -5,13 +5,12 @@ import jakarta.annotation.PostConstruct;
 import jakarta.faces.view.ViewScoped;
 import lombok.Getter;
 import lombok.Setter;
+import org.primefaces.event.RowEditEvent;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import tr.ozanbey.agricalc.webapp.service.service.animal.dairycow.DairyCowIncomeService;
 import tr.ozanbey.agricalc.webapp.webapp.view.animal.dairycow.DairyCowIncomeView;
 
-import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
@@ -24,54 +23,41 @@ public class DairyCowIncomeController extends DairyCowController {
     @Autowired
     private DairyCowIncomeService incomeService;
 
-    private List<DairyCowIncomeView> referenceViewList;
     private List<DairyCowIncomeView> incomeViewList;
+    private DairyCowIncomeView referenceView;
 
     @PostConstruct
     public void init() {
     }
 
     public void fillDataTableValues() {
-        referenceViewList = new ArrayList<>();
         incomeViewList = incomeService.getDairyCowIncomeAsViewList(super.getBarnId());
-        incomeViewList.forEach(v -> {
-            DairyCowIncomeView dv = new DairyCowIncomeView();
-            dv.setUserIncomeId(v.getUserIncomeId());
-            dv.setIncomeValue(v.getIncomeValue());
-            referenceViewList.add(dv);
-        });
     }
 
-    public void nextSaveIncome() throws IOException {
-        List<DairyCowIncomeView> saveList = generateSaveList();
-        if (!saveList.isEmpty()) {
-            incomeService.saveIncomeFromViewList(saveList, getBarnId());
-        }
-        super.getNavigationController().redirectToUrl("/secured/animal/dairy-cow/result?barnId=" + getBarnId());
+    public void onRowEditInit(RowEditEvent<DairyCowIncomeView> event) {
+        DairyCowIncomeView view = event.getObject();
+        referenceView = new DairyCowIncomeView();
+        referenceView.setUserIncomeId(view.getUserIncomeId());
+        referenceView.setIncomeId(view.getIncomeId());
+        referenceView.setIncomeName(view.getIncomeName());
+        referenceView.setIncomeUnit(view.getIncomeUnit());
+        referenceView.setIncomeValue(view.getIncomeValue());
     }
 
-    public void backSaveIncome() throws IOException {
-        List<DairyCowIncomeView> saveList = generateSaveList();
-        if (!saveList.isEmpty()) {
-            incomeService.saveIncomeFromViewList(saveList, getBarnId());
+    public void onRowEdit(RowEditEvent<DairyCowIncomeView> event) {
+        DairyCowIncomeView view = event.getObject();
+        if (checkIsThereChange(view)) {
+            incomeService.saveIncomeFromView(view, getBarnId());
+            fillDataTableValues();
         }
-        super.getNavigationController().redirectToUrl("/secured/animal/dairy-cow/cost?barnId=" + getBarnId());
+        referenceView = null;
     }
 
-    private List<DairyCowIncomeView> generateSaveList() {
-        List<DairyCowIncomeView> returnSaveList = new ArrayList<>();
-        for (DairyCowIncomeView dv : incomeViewList) {
-            if (dv.getUserIncomeId() == null) {
-                if (dv.getIncomeValue() != null)
-                    returnSaveList.add(dv);
-            } else {
-                DairyCowIncomeView refView = referenceViewList.stream().filter(r -> dv.getUserIncomeId().equals(r.getUserIncomeId())).findFirst().get();
-                if (!Objects.equals(refView.getIncomeValue(), dv.getIncomeValue())) {
-                    returnSaveList.add(dv);
-                }
-            }
+    private boolean checkIsThereChange(DairyCowIncomeView view) {
+        if (referenceView != null) {
+            return !Objects.equals(referenceView.getIncomeValue(), view.getIncomeValue());
         }
-        return returnSaveList;
+        return true;
     }
 
 }

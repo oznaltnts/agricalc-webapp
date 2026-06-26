@@ -7,7 +7,8 @@ import jakarta.faces.context.FacesContext;
 import jakarta.faces.view.ViewScoped;
 import lombok.Getter;
 import lombok.Setter;
-import org.primefaces.PrimeFaces;
+import org.primefaces.component.datatable.DataTable;
+import org.primefaces.event.RowEditEvent;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import tr.ozanbey.agricalc.webapp.service.domain.animal.dairycow.DairyCow;
@@ -18,7 +19,6 @@ import tr.ozanbey.agricalc.webapp.webapp.view.animal.dairycow.DairyCowBarnView;
 
 import java.util.List;
 import java.util.Objects;
-import java.util.Optional;
 
 @Component
 @ViewScoped
@@ -30,101 +30,101 @@ public class DairyCowBarnController extends DairyCowController {
     private DairyCowBarnService dairyCowBarnService;
 
     private List<DairyCowBarnView> dairyCowBarnViews;
-    private DairyCowBarnView selectedBarnView;
+    private DairyCowBarnView referenceBarnView;
 
     private List<DairyCow> dairyCowList;
 
     @PostConstruct
     public void init() {
         fillDataTableValues();
+        dairyCowList = super.getDairyCowService().getDairyCowsByStatuses(new EnumStatus[]{EnumStatus.ACTIVE});
     }
 
     private void fillDataTableValues() {
         dairyCowBarnViews = dairyCowBarnService.getBarnsAsViewList(getCurrentUser().getUser().getId());
     }
 
-    public void editBarn(DairyCowBarnView view) {
-        selectedBarnView = new DairyCowBarnView();
-        selectedBarnView.setDairyCowName(view.getDairyCowName());
-        selectedBarnView.setSelectedDairyCowId(view.getSelectedDairyCowId());
-        selectedBarnView.setBarnId(view.getBarnId());
-        selectedBarnView.setBarnCapacity(view.getBarnCapacity());
-        selectedBarnView.setMilkingCapacity(view.getMilkingCapacity());
-        selectedBarnView.setBarnPrice(view.getBarnPrice());
-        selectedBarnView.setBirthRate(view.getBirthRate());
-        selectedBarnView.setDeathRate(view.getDeathRate());
-        selectedBarnView.setInseminationRate(view.getInseminationRate());
-        selectedBarnView.setMilkYield(view.getMilkYield());
-        selectedBarnView.setLactationPeriod(view.getLactationPeriod());
-        selectedBarnView.setUnknownBirthRate(view.isUnknownBirthRate());
-        selectedBarnView.setUnknownDeathRate(view.isUnknownDeathRate());
-        selectedBarnView.setUnknownInseminationRate(view.isUnknownInseminationRate());
-        selectedBarnView.setUnknownMilkYield(view.isUnknownMilkYield());
-        selectedBarnView.setTotalCount(view.getTotalCount());
-        selectedBarnView.setEndYearTotalCount(view.getEndYearTotalCount());
-        selectedBarnView.setAverageFeedTotalCount(view.getAverageFeedTotalCount());
-        selectedBarnView.setAverageMilkingCount(view.getAverageMilkingCount());
+    public void onRowEditInit(RowEditEvent<DairyCowBarnView> event) {
+        DairyCowBarnView view = event.getObject();
 
-        if (dairyCowList == null || dairyCowList.isEmpty()) {
-            dairyCowList = super.getDairyCowService().getDairyCowsByStatuses(new EnumStatus[]{EnumStatus.ACTIVE});
-        }
+        referenceBarnView = new DairyCowBarnView();
+        referenceBarnView.setBarnId(view.getBarnId());
+        referenceBarnView.setDairyCowName(view.getDairyCowName());
+        referenceBarnView.setSelectedDairyCowId(view.getSelectedDairyCowId());
+        referenceBarnView.setBarnCapacity(view.getBarnCapacity());
+        referenceBarnView.setMilkingCapacity(view.getMilkingCapacity());
+        referenceBarnView.setBarnPrice(view.getBarnPrice());
+        referenceBarnView.setBirthRate(view.getBirthRate());
+        referenceBarnView.setDeathRate(view.getDeathRate());
+        referenceBarnView.setInseminationRate(view.getInseminationRate());
+        referenceBarnView.setMilkYield(view.getMilkYield());
+        referenceBarnView.setLactationPeriod(view.getLactationPeriod());
+        referenceBarnView.setUnknownBirthRate(view.isUnknownBirthRate());
+        referenceBarnView.setUnknownDeathRate(view.isUnknownDeathRate());
+        referenceBarnView.setUnknownInseminationRate(view.isUnknownInseminationRate());
+        referenceBarnView.setUnknownMilkYield(view.isUnknownMilkYield());
+        referenceBarnView.setTotalCount(view.getTotalCount());
+        referenceBarnView.setEndYearTotalCount(view.getEndYearTotalCount());
+        referenceBarnView.setAverageFeedTotalCount(view.getAverageFeedTotalCount());
+        referenceBarnView.setAverageMilkingCount(view.getAverageMilkingCount());
     }
 
-    public void addNewBarnView() {
-        selectedBarnView = new DairyCowBarnView();
-        if (dairyCowList == null || dairyCowList.isEmpty()) {
-            dairyCowList = super.getDairyCowService().getDairyCowsByStatuses(new EnumStatus[]{EnumStatus.ACTIVE});
+    public void onRowEdit(RowEditEvent<DairyCowBarnView> event) {
+        DairyCowBarnView view = event.getObject();
+        if (checkIsThereChange(view)) {
+            dairyCowBarnService.saveUserBarn(view, getCurrentUser().getUser());
+            fillDataTableValues();
         }
+        referenceBarnView = null;
     }
 
-    public void saveSelectedBarn() {
-        if (checkIsThereChange()) {
-            if (isValuesValid()) {
-                dairyCowBarnService.saveUserBarn(selectedBarnView, getCurrentUser().getUser());
-                fillDataTableValues();
-                selectedBarnView = null;
-            }
-        } else {
-            selectedBarnView = null;
-        }
-    }
-
-    private boolean checkIsThereChange() {
-        if (selectedBarnView.getBarnId() != null) {
-            Optional<DairyCowBarnView> optionalBarn = dairyCowBarnViews.stream()
-                    .filter(b -> b.getBarnId().equals(selectedBarnView.getBarnId()))
-                    .findAny();
-            if (optionalBarn.isPresent()) {
-                DairyCowBarnView barnView = optionalBarn.get();
-                return !Objects.equals(selectedBarnView.getBarnCapacity(), barnView.getBarnCapacity())
-                        || !Objects.equals(selectedBarnView.getMilkingCapacity(), barnView.getMilkingCapacity())
-                        || !selectedBarnView.getSelectedDairyCowId().equals(barnView.getSelectedDairyCowId())
-                        || !Objects.equals(selectedBarnView.getBarnPrice(), barnView.getBarnPrice())
-                        || selectedBarnView.isUnknownBirthRate() != barnView.isUnknownBirthRate()
-                        || !Objects.equals(selectedBarnView.getBirthRate(), barnView.getBirthRate())
-                        || selectedBarnView.isUnknownDeathRate() != barnView.isUnknownDeathRate()
-                        || !Objects.equals(selectedBarnView.getDeathRate(), barnView.getDeathRate())
-                        || selectedBarnView.isUnknownInseminationRate() != barnView.isUnknownInseminationRate()
-                        || !Objects.equals(selectedBarnView.getInseminationRate(), barnView.getInseminationRate())
-                        || selectedBarnView.isUnknownMilkYield() != barnView.isUnknownMilkYield()
-                        || !Objects.equals(selectedBarnView.getMilkYield(), barnView.getMilkYield())
-                        || !Objects.equals(selectedBarnView.getLactationPeriod(), barnView.getLactationPeriod());
-            }
+    private boolean checkIsThereChange(DairyCowBarnView view) {
+        if (referenceBarnView != null) {
+            return !Objects.equals(referenceBarnView.getBarnCapacity(), view.getBarnCapacity())
+                    || !Objects.equals(referenceBarnView.getMilkingCapacity(), view.getMilkingCapacity())
+                    || !referenceBarnView.getSelectedDairyCowId().equals(view.getSelectedDairyCowId())
+                    || !Objects.equals(referenceBarnView.getBarnPrice(), view.getBarnPrice())
+                    || referenceBarnView.isUnknownBirthRate() != view.isUnknownBirthRate()
+                    || !Objects.equals(referenceBarnView.getBirthRate(), view.getBirthRate())
+                    || referenceBarnView.isUnknownDeathRate() != view.isUnknownDeathRate()
+                    || !Objects.equals(referenceBarnView.getDeathRate(), view.getDeathRate())
+                    || referenceBarnView.isUnknownInseminationRate() != view.isUnknownInseminationRate()
+                    || !Objects.equals(referenceBarnView.getInseminationRate(), view.getInseminationRate())
+                    || referenceBarnView.isUnknownMilkYield() != view.isUnknownMilkYield()
+                    || !Objects.equals(referenceBarnView.getMilkYield(), view.getMilkYield())
+                    || !Objects.equals(referenceBarnView.getLactationPeriod(), view.getLactationPeriod());
         }
         return true;
     }
 
-    private boolean isValuesValid() {
-        if (selectedBarnView.getBarnCapacity() * 0.9 < selectedBarnView.getMilkingCapacity()) {
-            JSFUtils.addErrorMessage(null, "Sağmal İnek Kapasitesi", "Ahır kapasitesinin %90'nı geçemez.");
-            UIInput inputComponent = (UIInput) FacesContext.getCurrentInstance().getViewRoot().findComponent("barnEditForm:milkingCapacity");
-            if (inputComponent != null) {
-                inputComponent.setValid(false);
-                PrimeFaces.current().focus("barnEditForm:milkingCapacity");
-            }
-            return false;
+    public void onRowCancel(RowEditEvent<DairyCowBarnView> event) {
+        DairyCowBarnView view = event.getObject();
+        if (view.getSelectedDairyCowId() == null
+                || view.getBarnCapacity() == null
+                || view.getMilkingCapacity() == null
+                || view.getLactationPeriod() == null) {
+            dairyCowBarnViews.removeLast();
         }
-        return true;
+        referenceBarnView = null;
+    }
+
+    public void onAddNew() {
+        dairyCowBarnViews.add(new DairyCowBarnView());
+        referenceBarnView = null;
+    }
+
+    public void validateMilkingCapacity(DairyCowBarnView inputView) {
+        if (inputView.getBarnCapacity() != null && inputView.getMilkingCapacity() != null && inputView.getBarnCapacity() * 0.9 < inputView.getMilkingCapacity()) {
+            JSFUtils.addErrorMessage("growl", "Sağmal İnek Kapasitesi", "Ahır kapasitesinin %90'nı geçemez.");
+            int viewIndex = dairyCowBarnViews.indexOf(inputView);
+            DataTable table = (DataTable) FacesContext.getCurrentInstance().getViewRoot().findComponent("barnListForm:dairyCowTable");
+            table.setRowIndex(viewIndex);
+            UIInput input = (UIInput) table.findComponent("milkingCapacityInput");
+            if (input != null) {
+                input.setValid(false);
+                inputView.setMilkingCapacity(null);
+            }
+        }
     }
 
 }

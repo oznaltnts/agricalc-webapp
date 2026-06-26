@@ -71,13 +71,13 @@ public class DairyCowFeedRasyonController extends DairyCowController {
 
     public void nextSaveFeedRasyon() throws IOException {
         if (checkPageValidation()) {
-            super.getNavigationController().redirectToUrl("/secured/animal/dairy-cow/cost-new?barnId=" + getBarnId());
+            super.getNavigationController().redirectToUrl("/secured/animal/dairy-cow/cost?barnId=" + getBarnId());
         }
     }
 
     public void backSaveFeedRasyon() throws IOException {
         if (checkPageValidation()) {
-            super.getNavigationController().redirectToUrl("/secured/animal/dairy-cow/feed-new?barnId=" + getBarnId());
+            super.getNavigationController().redirectToUrl("/secured/animal/dairy-cow/feed?barnId=" + getBarnId());
         }
     }
 

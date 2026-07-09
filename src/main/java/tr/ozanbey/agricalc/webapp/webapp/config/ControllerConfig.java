@@ -22,9 +22,14 @@ public class ControllerConfig implements WebMvcConfigurer {
 
         registry.addViewController("/secured/profile").setViewName("forward:/secured/profile.xhtml");
 
-        registry.addViewController("/secured/plantation/asset").setViewName("forward:/secured/plantation/plant-asset.xhtml");
-        registry.addViewController("/secured/plantation/parcel").setViewName("forward:/secured/plantation/plant-parcel.xhtml");
-        registry.addViewController("/secured/plantation/product").setViewName("forward:/secured/plantation/plant-product.xhtml");
+        registry.addViewController("/secured/plantation/farmer").setViewName("forward:/secured/plantation/farmer-profile.xhtml");
+        registry.addViewController("/secured/plantation/business").setViewName("forward:/secured/plantation/business-profile.xhtml");
+        registry.addViewController("/secured/plantation/parcel").setViewName("forward:/secured/plantation/parcel-profile.xhtml");
+        registry.addViewController("/secured/plantation/income").setViewName("forward:/secured/plantation/income-profile.xhtml");
+
+        registry.addViewController("/secured/plantation/asset-old").setViewName("forward:/secured/plantation/plant-asset.xhtml");
+        registry.addViewController("/secured/plantation/parcel-old").setViewName("forward:/secured/plantation/plant-parcel.xhtml");
+        registry.addViewController("/secured/plantation/product-old").setViewName("forward:/secured/plantation/plant-product.xhtml");
 
         registry.addViewController("/secured/animal/dairy-cow/barn").setViewName("forward:/secured/animal/dairy-cow/dairy-cow-barn.xhtml");
         registry.addViewController("/secured/animal/dairy-cow/count").setViewName("forward:/secured/animal/dairy-cow/dairy-cow-count.xhtml");

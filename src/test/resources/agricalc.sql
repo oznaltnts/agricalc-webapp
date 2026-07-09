@@ -424,6 +424,7 @@ CREATE TABLE `users`
     `idate`             DATETIME     NOT NULL DEFAULT CURRENT_TIMESTAMP,
     `udate`             DATETIME     NULL     DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP,
     `status`            TINYINT      NOT NULL COMMENT '-1: deleted, 0:passive, 1:active',
+    `name`              VARCHAR(255) NOT NULL,
     `phone`             VARCHAR(25)  NOT NULL,
     `password`          VARCHAR(255) NOT NULL,
     `last_login`        DATETIME     NULL     DEFAULT NULL,
@@ -745,6 +746,77 @@ CREATE TABLE `user_dairy_cow_incomes`
     CONSTRAINT `FK_user_dairy_cow_incomes_user_dairy_cow_barns` FOREIGN KEY (`user_dairy_cow_barn_id`) REFERENCES `user_dairy_cow_barns` (`id`),
     CONSTRAINT `FK_user_dairy_cow_incomes_dairy_cow_incomes` FOREIGN KEY (`dairy_cow_income_id`) REFERENCES `dairy_cow_incomes` (`id`),
     INDEX idx_user_dairy_cow_incomes (`user_dairy_cow_barn_id`)
+)
+    ENGINE = InnoDB
+    AUTO_INCREMENT = 1;
+
+
+##plantation
+
+CREATE TABLE `plantation_products`
+(
+    `id`     BIGINT       NOT NULL AUTO_INCREMENT,
+    `idate`  DATETIME     NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    `udate`  DATETIME     NULL     DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP,
+    `status` TINYINT      NOT NULL COMMENT '-1:deleted, 0:passive, 1:active',
+    `name`   VARCHAR(255) NOT NULL,
+    PRIMARY KEY (`id`),
+    INDEX idx_plantation_products (`status`)
+)
+    ENGINE = InnoDB
+    AUTO_INCREMENT = 1;
+
+CREATE TABLE `plantation_product_options`
+(
+    `id`                    BIGINT       NOT NULL AUTO_INCREMENT,
+    `idate`                 DATETIME     NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    `plantation_product_id` BIGINT       NOT NULL,
+    `name`                  VARCHAR(255) NOT NULL,
+    PRIMARY KEY (`id`),
+    CONSTRAINT `FK_plantation_product_options_plantation_products` FOREIGN KEY (`plantation_product_id`) REFERENCES `plantation_products` (`id`),
+    INDEX idx_plantation_product_options (`plantation_product_id`)
+)
+    ENGINE = InnoDB
+    AUTO_INCREMENT = 1;
+
+CREATE TABLE `plantation_questions`
+(
+    `id`     BIGINT       NOT NULL AUTO_INCREMENT,
+    `idate`  DATETIME     NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    `udate`  DATETIME     NULL     DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP,
+    `status` TINYINT      NOT NULL COMMENT '-1:deleted, 0:passive, 1:active',
+    `value`  VARCHAR(255) NOT NULL,
+    PRIMARY KEY (`id`),
+    INDEX idx_plantation_questions (`status`)
+)
+    ENGINE = InnoDB
+    AUTO_INCREMENT = 1;
+
+CREATE TABLE `plantation_question_options`
+(
+    `id`                     BIGINT       NOT NULL AUTO_INCREMENT,
+    `idate`                  DATETIME     NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    `plantation_question_id` BIGINT       NOT NULL,
+    `value`                  VARCHAR(255) NOT NULL,
+    PRIMARY KEY (`id`),
+    CONSTRAINT `FK_plantation_question_options_plantation_questions` FOREIGN KEY (`plantation_question_id`) REFERENCES `plantation_questions` (`id`),
+    INDEX idx_plantation_question_options (`plantation_question_id`)
+)
+    ENGINE = InnoDB
+    AUTO_INCREMENT = 1;
+
+CREATE TABLE `plantation_product_questions`
+(
+    `id`                     BIGINT   NOT NULL AUTO_INCREMENT,
+    `idate`                  DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    `plantation_product_id`  BIGINT   NOT NULL,
+    `plantation_question_id` BIGINT   NOT NULL,
+    `minimum_value`          DOUBLE   NULL     DEFAULT NULL,
+    `maximum_value`          DOUBLE   NULL     DEFAULT NULL,
+    PRIMARY KEY (`id`),
+    CONSTRAINT `FK_plantation_product_questions_plantation_products` FOREIGN KEY (`plantation_product_id`) REFERENCES `plantation_products` (`id`),
+    CONSTRAINT `FK_plantation_product_questions_plantation_questions` FOREIGN KEY (`plantation_question_id`) REFERENCES `plantation_questions` (`id`),
+    INDEX idx_plantation_product_questions (`plantation_product_id`)
 )
     ENGINE = InnoDB
     AUTO_INCREMENT = 1;

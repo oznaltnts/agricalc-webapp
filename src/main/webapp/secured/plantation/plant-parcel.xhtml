@@ -112,22 +112,19 @@
                                                value="Ada numarası"/>
                                 <p:inputNumber placeholder="Ada numarası"
                                                min="0"
-                                               inputStyle="width: 200px"
                                                decimalPlaces="0"
                                                value="#{plantParcelController.selectedParcelView.adaNumber}"/>
                                 <p:outputLabel for="@next"
                                                value="Pafta numarası"/>
                                 <p:inputNumber placeholder="Pafta numarası"
                                                min="0"
-                                               inputStyle="width: 200px"
                                                decimalPlaces="0"
                                                value="#{plantParcelController.selectedParcelView.paftaNumber}"/>
                                 <p:outputLabel for="@next"
                                                value="Alan (Dekar)"/>
                                 <p:inputNumber placeholder="Alan (Dekar)"
                                                value="#{plantParcelController.selectedParcelView.areaDecare}"
-                                               min="0"
-                                               inputStyle="width: 200px"/>
+                                               min="0"/>
                                 <p:outputLabel for="@next"
                                                value="Bu parsel kiralık mı?"/>
                                 <p:selectOneButton value="#{plantParcelController.selectedParcelView.rent}">
@@ -149,7 +146,6 @@
                                                    symbol="₺ "
                                                    min="0"
                                                    rendered="#{plantParcelController.selectedParcelView.rent ne null and !plantParcelController.selectedParcelView.rent}"
-                                                   inputStyle="width: 200px"
                                                    decimalPlaces="0"
                                                    value="#{plantParcelController.selectedParcelView.parcelPrice}"/>
                                     <p:inputNumber id="rentPrice"
@@ -157,7 +153,6 @@
                                                    symbol="₺ "
                                                    min="0"
                                                    rendered="#{plantParcelController.selectedParcelView.rent ne null and plantParcelController.selectedParcelView.rent}"
-                                                   inputStyle="width: 200px"
                                                    decimalPlaces="0"
                                                    value="#{plantParcelController.selectedParcelView.rentPrice}"/>
                                 </p:outputPanel>

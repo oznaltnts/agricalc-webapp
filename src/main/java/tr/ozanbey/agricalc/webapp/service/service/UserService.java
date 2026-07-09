@@ -4,11 +4,13 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import tr.ozanbey.agricalc.webapp.service.domain.*;
+import tr.ozanbey.agricalc.webapp.service.domain.City;
+import tr.ozanbey.agricalc.webapp.service.domain.User;
+import tr.ozanbey.agricalc.webapp.service.domain.UserInformation;
+import tr.ozanbey.agricalc.webapp.service.domain.UserRole;
 import tr.ozanbey.agricalc.webapp.service.enumtype.EnumRole;
 import tr.ozanbey.agricalc.webapp.service.enumtype.EnumStatus;
 import tr.ozanbey.agricalc.webapp.service.repository.UserInformationRepository;
-import tr.ozanbey.agricalc.webapp.service.repository.UserPreferenceRepository;
 import tr.ozanbey.agricalc.webapp.service.repository.UserRepository;
 import tr.ozanbey.agricalc.webapp.service.repository.UserRoleRepository;
 import tr.ozanbey.agricalc.webapp.webapp.util.helpers.DateHelper;
@@ -31,14 +33,7 @@ public class UserService {
     private UserRoleRepository roleRepository;
 
     @Autowired
-    private UserPreferenceRepository preferenceRepository;
-
-    @Autowired
     private UserInformationRepository informationRepository;
-
-    public UserPreference getPreferenceByUserId(Long userId) {
-        return preferenceRepository.findByUser_Id(userId);
-    }
 
     public Optional<User> getUserIdByPhoneAndStatus(String phone, EnumStatus status) {
         return userRepository.findByPhoneAndStatus(phone, status);
@@ -51,17 +46,16 @@ public class UserService {
             throw new Exception("Bu numara ile kullanıcı mevcut");
         }
 
-        User user = saveUser(formatted, password);
-        generatePreferenceForUser(user);
+        saveUser(formatted, password);
     }
 
-    private User saveUser(String formatted, String password) {
+    private void saveUser(String formatted, String password) {
         User user = new User();
         user.setStatus(EnumStatus.ACTIVE);
         user.setPhone(formatted);
         user.setPassword(CryptoUtils.oneWayHash(password));
         assignRoleToUser(user, EnumRole.USER);
-        return userRepository.save(user);
+        userRepository.save(user);
     }
 
     private void assignRoleToUser(User user, EnumRole enumRole) {
@@ -74,11 +68,6 @@ public class UserService {
     private boolean checkUserExistByPhone(String phone) {
         Optional<User> optionalUser = userRepository.findByPhone(phone);
         return optionalUser.isPresent();
-    }
-
-    private void generatePreferenceForUser(User user) {
-        UserPreference userPreference = UserPreference.createWithTemplateData(user);
-        preferenceRepository.save(userPreference);
     }
 
     @Transactional
@@ -145,11 +134,6 @@ public class UserService {
                 || !Objects.equals(info.getDistrict(), view.getDistrict())
                 || !Objects.equals(info.getVillage(), view.getVillage())
                 || !Objects.equals(info.getNeighborhood(), view.getNeighborhood());
-    }
-
-    @Transactional
-    public void updatePreferences(Long userId, String menuMode, String darkMode, String componentTheme, String topbarTheme, String menuTheme, String inputStyle, boolean lightLogo) {
-        preferenceRepository.updatePreferenceForUser(userId, menuMode, darkMode, componentTheme, topbarTheme, menuTheme, inputStyle, lightLogo);
     }
 
     public List<UserInformationView> getUsersAsInfoViewList() {

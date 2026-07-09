@@ -1,0 +1,58 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="jakarta.faces.html"
+                xmlns:f="jakarta.faces.core"
+                xmlns:ui="jakarta.faces.facelets"
+                xmlns:p="http://primefaces.org/ui"
+                template="/templates/template.xhtml">
+
+    <ui:define name="title">Arazi Bilgilerim</ui:define>
+
+    <ui:define name="head">
+        <style type="text/css">
+        </style>
+    </ui:define>
+
+    <ui:define name="content">
+        <div class="grid">
+            <div class="col">
+                <div class="card">
+                    <p:steps activeIndex="2">
+                        <p:menuitem value="Üretici bilgileri"/>
+                        <p:menuitem value="Demirbaş bilgileri"/>
+                        <p:menuitem value="Arazi bilgileri"/>
+                        <p:menuitem value="Gelir bilgileri"/>
+                        <p:menuitem value="Gider bilgileri"/>
+                        <p:menuitem value="Sonuçlar" containerStyleClass="steps-desktop"/>
+                    </p:steps>
+                </div>
+            </div>
+        </div>
+
+        <div class="grid">
+            <div class="col">
+                <h:form class="card">
+                    <p:growl id="growl"
+                             showDetail="true"
+                             severity="info warn error">
+                        <p:autoUpdate/>
+                    </p:growl>
+
+                    <p:focus context="@next"/>
+
+                    <h5 class="mt-0" style="font-weight: bold">Üretim profili</h5>
+
+                    <p:panelGrid layout="flex"
+                                 contentStyle="align-items: center;"
+                                 contentStyleClass="ui-fluid"
+                                 columnClasses="col-12 md:col-3 xl:col-2, col-12 md:col-9 xl:col-4, col-12 md:col-3 xl:col-2, col-12 md:col-9 xl:col-4"
+                                 columns="4">
+
+                    </p:panelGrid>
+
+                </h:form>
+                <br/>
+                <p>Sorunuz mu var? <a href="#">Buraya</a> basın ve bize bildirin.</p>
+            </div>
+        </div>
+    </ui:define>
+</ui:composition>

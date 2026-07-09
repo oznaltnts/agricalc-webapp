@@ -32,13 +32,24 @@
                         </li>
                     </sec:authorize>
                     <sec:authorize access="isAuthenticated()">
-                        <li class="user-profile">
-                            <a href="#{request.contextPath}/logout">
-                                <span style="white-space: nowrap;font-weight: 600;">Çıkış yap</span>
+                        <li class="topbar-item user-profile">
+                            <a href="#">
+                                <span style="white-space: nowrap;font-weight: 600;">Ayarlar</span>
                             </a>
+                            <ul>
+                                <li>
+                                    <a href="#{request.contextPath}/secured/profile">
+                                        <span>Hesap bilgilerim</span>
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="#{request.contextPath}/logout">
+                                        <span style="white-space: nowrap;font-weight: 600;">Çıkış yap</span>
+                                    </a>
+                                </li>
+                            </ul>
                         </li>
                     </sec:authorize>
-
                 </ul>
             </div>
         </div>

@@ -1,0 +1,453 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="jakarta.faces.html"
+                xmlns:f="jakarta.faces.core"
+                xmlns:ui="jakarta.faces.facelets"
+                xmlns:p="http://primefaces.org/ui"
+                template="/templates/template.xhtml">
+
+    <ui:define name="title">Gelir Bilgilerim</ui:define>
+
+    <ui:define name="head">
+        <style type="text/css">
+        </style>
+    </ui:define>
+
+    <ui:define name="content">
+        <div class="grid">
+            <div class="col">
+                <div class="card">
+                    <p:steps activeIndex="3">
+                        <p:menuitem value="Üretici bilgileri"/>
+                        <p:menuitem value="Demirbaş bilgileri"/>
+                        <p:menuitem value="Arazi bilgileri"/>
+                        <p:menuitem value="Gelir bilgileri"/>
+                        <p:menuitem value="Gider bilgileri"/>
+                        <p:menuitem value="Sonuçlar" containerStyleClass="steps-desktop"/>
+                    </p:steps>
+                </div>
+            </div>
+        </div>
+
+        <div class="grid">
+            <div class="col">
+                <h:form class="card">
+                    <p:growl id="growl"
+                             showDetail="true"
+                             severity="info warn error">
+                        <p:autoUpdate/>
+                    </p:growl>
+
+                    <p:focus context="@next"/>
+
+                    <h5 class="mt-0" style="font-weight: bold">Ürün profili</h5>
+
+                    <p:panelGrid layout="flex"
+                                 contentStyle="align-items: center;"
+                                 contentStyleClass="ui-fluid"
+                                 columnClasses="col-12 md:col-3 xl:col-2, col-12 md:col-9 xl:col-4, col-12 md:col-3 xl:col-2, col-12 md:col-9 xl:col-4"
+                                 columns="4">
+
+                        <p:outputLabel for="@next"
+                                       value="Ürün"/>
+                        <p:selectOneMenu value="#{productProfileController.plantationIncomeView.selectedProductId}"
+                                         required="true"
+                                         requiredMessage="Devam etmek için seçim yapınız.">
+                            <p:ajax listener="#{productProfileController.onSelectEvent}"
+                                    process="@this"
+                                    update="@parent"/>
+                            <f:selectItem itemLabel="Ürün seçiniz"
+                                          itemValue=""/>
+                            <f:selectItems value="#{productProfileController.plantationProductList}"
+                                           var="product"
+                                           itemLabel="#{product.name}"
+                                           itemValue="#{product.id}"/>
+                        </p:selectOneMenu>
+
+                        <p:outputLabel for="@next"
+                                       rendered="#{productProfileController.plantationIncomeView.selectedProduct.productOptionList.size() gt 0}"
+                                       value="Ürün çeşidi"/>
+                        <p:selectOneMenu value="#{productProfileController.plantationIncomeView.selectedProductOptionId}"
+                                         rendered="#{productProfileController.plantationIncomeView.selectedProduct.productOptionList.size() gt 0}">
+                            <p:ajax process="@this"/>
+                            <f:selectItem itemLabel="Ürün çeşidi seçiniz"
+                                          itemValue=""/>
+                            <f:selectItems var="productOption"
+                                           value="#{productProfileController.plantationIncomeView.selectedProduct.productOptionList}"
+                                           itemValue="#{productOption.id}"
+                                           itemLabel="#{productOption.name}"/>
+                        </p:selectOneMenu>
+
+                        <p:outputLabel for="@next"
+                                       rendered="#{productProfileController.questionRenderer(1)}"
+                                       value="#{productProfileController.plantationIncomeView.selectedProduct.productQuestionList.stream().filter(q->q.plantationQuestion.id eq 1).findFirst().get().plantationQuestion.value}"/>
+                        <p:selectOneButton unselectable="true"
+                                           value="#{productProfileController.plantationIncomeView.selectedAnacOptionId}"
+                                           rendered="#{productProfileController.questionRenderer(1)}"
+                                           requiredMessage="Seçiniz"
+                                           required="true">
+                            <p:ajax process="@this"/>
+                            <f:selectItems var="anacOption"
+                                           itemLabel="#{anacOption.value}"
+                                           itemValue="#{anacOption.id}"
+                                           value="#{productProfileController.plantationIncomeView.selectedProduct.productQuestionList.stream().filter(q->q.plantationQuestion.id eq 1).findFirst().get().plantationQuestion.questionOptionList}"/>
+                        </p:selectOneButton>
+
+                        <p:outputLabel for="@next"
+                                       rendered="#{[141,208,209,210].contains(productProfileController.plantationIncomeView.selectedProductId)}"
+                                       value="Üretim tekniği"/>
+                        <p:selectOneMenu value="#{productProfileController.plantationIncomeView.selectedTechnique}"
+                                         rendered="#{[141,208,209,210].contains(productProfileController.plantationIncomeView.selectedProductId)}">
+                            <p:ajax process="@this"/>
+                            <f:selectItem itemLabel="Üretim tekniği seçiniz"
+                                          itemValue=""/>
+                            <f:selectItems var="uretimTeknigi"
+                                           itemLabel="#{uretimTeknigi}"
+                                           itemValue="#{uretimTeknigi}"
+                                           value="#{productProfileController.productionTechniqueList}"/>
+                        </p:selectOneMenu>
+
+                        <p:outputLabel for="@next"
+                                       value="#{productProfileController.plantationIncomeView.selectedProduct.productQuestionList.stream().filter(q->q.plantationQuestion.id eq 2).findFirst().get().plantationQuestion.value}"
+                                       rendered="#{productProfileController.questionRenderer(2)}"/>
+                        <p:inputNumber value="#{productProfileController.plantationIncomeView.plantingYear}"
+                                       rendered="#{productProfileController.questionRenderer(2)}">
+                            <p:ajax process="@this"/>
+                        </p:inputNumber>
+
+                        <p:outputLabel for="@next"
+                                       value="#{productProfileController.plantationIncomeView.selectedProduct.productQuestionList.stream().filter(q->q.plantationQuestion.id eq 3).findFirst().get().plantationQuestion.value}"
+                                       rendered="#{productProfileController.questionRenderer(3)}"/>
+                        <p:inputNumber value="#{productProfileController.plantationIncomeView.rowSpacing}"
+                                       rendered="#{productProfileController.questionRenderer(3)}">
+                            <p:ajax process="@this"/>
+                        </p:inputNumber>
+
+                        <p:outputLabel for="@next"
+                                       value="#{productProfileController.plantationIncomeView.selectedProduct.productQuestionList.stream().filter(q->q.plantationQuestion.id eq 4).findFirst().get().plantationQuestion.value}"
+                                       rendered="#{productProfileController.questionRenderer(4)}"/>
+                        <p:inputNumber value="#{productProfileController.plantationIncomeView.colSpacing}"
+                                       rendered="#{productProfileController.questionRenderer(4)}">
+                            <p:ajax process="@this"/>
+                        </p:inputNumber>
+
+                        <p:outputLabel for="@next"
+                                       value="#{productProfileController.plantationIncomeView.selectedProduct.productQuestionList.stream().filter(q->q.plantationQuestion.id eq 5).findFirst().get().plantationQuestion.value}"
+                                       rendered="#{productProfileController.questionRenderer(5)}"/>
+                        <p:selectOneButton unselectable="false"
+                                           value="#{productProfileController.plantationIncomeView.selectedSellOptionId}"
+                                           rendered="#{productProfileController.questionRenderer(5)}"
+                                           requiredMessage="Seçiniz"
+                                           required="true">
+                            <p:ajax update="@parent"
+                                    process="@this"/>
+                            <f:selectItems var="sellOption"
+                                           itemLabel="#{sellOption.value}"
+                                           itemValue="#{sellOption.id}"
+                                           value="#{productProfileController.plantationIncomeView.selectedProduct.productQuestionList.stream().filter(q->q.plantationQuestion.id eq 5).findFirst().get().plantationQuestion.questionOptionList}"/>
+                        </p:selectOneButton>
+
+                        <p:outputLabel for="@next"
+                                       value="#{productProfileController.plantationIncomeView.selectedProduct.productQuestionList.stream().filter(q->q.plantationQuestion.id eq 6).findFirst().get().plantationQuestion.value}"
+                                       rendered="#{productProfileController.questionRenderer(6)}"/>
+                        <p:selectOneButton unselectable="false"
+                                           value="#{productProfileController.plantationIncomeView.selectedSellOptionId}"
+                                           rendered="#{productProfileController.questionRenderer(6)}"
+                                           requiredMessage="Seçiniz"
+                                           required="true">
+                            <p:ajax update="@parent"
+                                    process="@this"/>
+                            <f:selectItems var="sellOption"
+                                           itemLabel="#{sellOption.value}"
+                                           itemValue="#{sellOption.id}"
+                                           value="#{productProfileController.plantationIncomeView.selectedProduct.productQuestionList.stream().filter(q->q.plantationQuestion.id eq 6).findFirst().get().plantationQuestion.questionOptionList}"/>
+                        </p:selectOneButton>
+
+                        <p:outputLabel for="@next"
+                                       value="#{productProfileController.plantationIncomeView.selectedProduct.productQuestionList.stream().filter(q->q.plantationQuestion.id eq 7).findFirst().get().plantationQuestion.value}"
+                                       rendered="#{productProfileController.questionRenderer(7)}"/>
+                        <p:selectOneButton unselectable="false"
+                                           value="#{productProfileController.plantationIncomeView.selectedSellOptionId}"
+                                           rendered="#{productProfileController.questionRenderer(7)}"
+                                           requiredMessage="Seçiniz"
+                                           required="true">
+                            <p:ajax update="@parent"
+                                    process="@this"/>
+                            <f:selectItems var="sellOption"
+                                           itemLabel="#{sellOption.value}"
+                                           itemValue="#{sellOption.id}"
+                                           value="#{productProfileController.plantationIncomeView.selectedProduct.productQuestionList.stream().filter(q->q.plantationQuestion.id eq 7).findFirst().get().plantationQuestion.questionOptionList}"/>
+                        </p:selectOneButton>
+
+                        <p:outputLabel for="@next"
+                                       value="#{productProfileController.plantationIncomeView.selectedProduct.productQuestionList.stream().filter(q->q.plantationQuestion.id eq 8).findFirst().get().plantationQuestion.value}"
+                                       rendered="#{productProfileController.questionRenderer(8)}"/>
+                        <p:inputNumber value="#{productProfileController.plantationIncomeView.expectedYield}"
+                                       rendered="#{productProfileController.questionRenderer(8)}">
+                            <p:ajax process="@this"/>
+                        </p:inputNumber>
+
+                        <p:outputLabel for="@next"
+                                       value="#{productProfileController.plantationIncomeView.selectedProduct.productQuestionList.stream().filter(q->q.plantationQuestion.id eq 9).findFirst().get().plantationQuestion.value}"
+                                       rendered="#{productProfileController.questionRenderer(9)}"/>
+                        <p:inputNumber value="#{productProfileController.plantationIncomeView.expectedYield}"
+                                       rendered="#{productProfileController.questionRenderer(9)}">
+                            <p:ajax process="@this"/>
+                        </p:inputNumber>
+
+                        <p:outputLabel for="@next"
+                                       value="#{productProfileController.plantationIncomeView.selectedProduct.productQuestionList.stream().filter(q->q.plantationQuestion.id eq 10).findFirst().get().plantationQuestion.value}"
+                                       rendered="#{productProfileController.questionRenderer(10)}"/>
+                        <p:inputNumber value="#{productProfileController.plantationIncomeView.expectedYield}"
+                                       rendered="#{productProfileController.questionRenderer(10)}">
+                            <p:ajax process="@this"/>
+                        </p:inputNumber>
+
+                        <p:outputLabel for="@next"
+                                       value="#{productProfileController.plantationIncomeView.selectedProduct.productQuestionList.stream().filter(q->q.plantationQuestion.id eq 11).findFirst().get().plantationQuestion.value}"
+                                       rendered="#{productProfileController.questionRenderer(11)}"/>
+                        <p:inputNumber value="#{productProfileController.plantationIncomeView.expectedYield}"
+                                       rendered="#{productProfileController.questionRenderer(11)}">
+                            <p:ajax process="@this"/>
+                        </p:inputNumber>
+
+                        <p:outputLabel for="@next"
+                                       value="#{productProfileController.plantationIncomeView.selectedProduct.productQuestionList.stream().filter(q->q.plantationQuestion.id eq 12).findFirst().get().plantationQuestion.value}"
+                                       rendered="#{productProfileController.questionRenderer(12)}"/>
+                        <p:inputNumber value="#{productProfileController.plantationIncomeView.expectedYield}"
+                                       rendered="#{productProfileController.questionRenderer(12)}">
+                            <p:ajax process="@this"/>
+                        </p:inputNumber>
+
+                        <p:outputLabel for="@next"
+                                       value="#{productProfileController.plantationIncomeView.selectedProduct.productQuestionList.stream().filter(q->q.plantationQuestion.id eq 13).findFirst().get().plantationQuestion.value}"
+                                       rendered="#{productProfileController.questionRenderer(13)}"/>
+                        <p:inputNumber value="#{productProfileController.plantationIncomeView.expectedYield}"
+                                       rendered="#{productProfileController.questionRenderer(13)}">
+                            <p:ajax process="@this"/>
+                        </p:inputNumber>
+
+                        <p:outputLabel for="@next"
+                                       value="#{productProfileController.plantationIncomeView.selectedProduct.productQuestionList.stream().filter(q->q.plantationQuestion.id eq 14).findFirst().get().plantationQuestion.value}"
+                                       rendered="#{productProfileController.questionRenderer(14)}"/>
+                        <p:inputNumber value="#{productProfileController.plantationIncomeView.expectedYield}"
+                                       rendered="#{productProfileController.questionRenderer(14)}">
+                            <p:ajax process="@this"/>
+                        </p:inputNumber>
+
+                        <p:outputLabel for="@next"
+                                       value="#{productProfileController.plantationIncomeView.selectedProduct.productQuestionList.stream().filter(q->q.plantationQuestion.id eq 37).findFirst().get().plantationQuestion.value}"
+                                       rendered="#{productProfileController.questionRenderer(37)}"/>
+                        <p:inputNumber value="#{productProfileController.plantationIncomeView.expectedYield}"
+                                       rendered="#{productProfileController.questionRenderer(37)}">
+                            <p:ajax process="@this"/>
+                        </p:inputNumber>
+
+                        <p:outputLabel for="@next"
+                                       value="#{productProfileController.plantationIncomeView.selectedProduct.productQuestionList.stream().filter(q->q.plantationQuestion.id eq 15).findFirst().get().plantationQuestion.value}"
+                                       rendered="#{productProfileController.questionRenderer(15)}"/>
+                        <p:inputNumber value="#{productProfileController.plantationIncomeView.lowQualityYieldRate}"
+                                       rendered="#{productProfileController.questionRenderer(15)}">
+                            <p:ajax update="@parent" process="@this"/>
+                        </p:inputNumber>
+
+                        <p:outputLabel for="@next"
+                                       value="#{productProfileController.plantationIncomeView.selectedProduct.productQuestionList.stream().filter(q->q.plantationQuestion.id eq 16).findFirst().get().plantationQuestion.value}"
+                                       rendered="#{productProfileController.questionRenderer(16)}"/>
+                        <p:inputNumber value="#{productProfileController.plantationIncomeView.averageJuiceYield}"
+                                       rendered="#{productProfileController.questionRenderer(16)}">
+                            <p:ajax update="@parent" process="@this"/>
+                        </p:inputNumber>
+
+                        <p:outputLabel for="@next"
+                                       value="#{productProfileController.plantationIncomeView.selectedProduct.productQuestionList.stream().filter(q->q.plantationQuestion.id eq 17).findFirst().get().plantationQuestion.value}"
+                                       rendered="#{productProfileController.questionRenderer(17)}"/>
+                        <p:inputNumber value="#{productProfileController.plantationIncomeView.averageSideProductYield}"
+                                       rendered="#{productProfileController.questionRenderer(17)}">
+                            <p:ajax update="@parent" process="@this"/>
+                        </p:inputNumber>
+
+                        <p:outputLabel for="@next"
+                                       value="#{productProfileController.plantationIncomeView.selectedProduct.productQuestionList.stream().filter(q->q.plantationQuestion.id eq 18).findFirst().get().plantationQuestion.value}"
+                                       rendered="#{productProfileController.questionRenderer(18)}"/>
+                        <p:inputNumber value="#{productProfileController.plantationIncomeView.averageSideProductYield}"
+                                       rendered="#{productProfileController.questionRenderer(18)}">
+                            <p:ajax update="@parent" process="@this"/>
+                        </p:inputNumber>
+
+                        <p:outputLabel for="@next"
+                                       value="#{productProfileController.plantationIncomeView.selectedProduct.productQuestionList.stream().filter(q->q.plantationQuestion.id eq 19).findFirst().get().plantationQuestion.value}"
+                                       rendered="#{productProfileController.questionRenderer(19)}"/>
+                        <p:inputNumber value="#{productProfileController.plantationIncomeView.averageSideProductYield}"
+                                       rendered="#{productProfileController.questionRenderer(19)}">
+                            <p:ajax update="@parent" process="@this"/>
+                        </p:inputNumber>
+
+                        <p:outputLabel for="@next"
+                                       value="#{productProfileController.plantationIncomeView.selectedProduct.productQuestionList.stream().filter(q->q.plantationQuestion.id eq 20).findFirst().get().plantationQuestion.value}"
+                                       rendered="#{productProfileController.questionRenderer(20)}"/>
+                        <p:inputNumber value="#{productProfileController.plantationIncomeView.averageSideProductYield}"
+                                       rendered="#{productProfileController.questionRenderer(20)}">
+                            <p:ajax update="@parent" process="@this"/>
+                        </p:inputNumber>
+
+                        <p:outputLabel for="@next"
+                                       value="#{productProfileController.plantationIncomeView.selectedProduct.productQuestionList.stream().filter(q->q.plantationQuestion.id eq 21).findFirst().get().plantationQuestion.value}"
+                                       rendered="#{productProfileController.questionRenderer(21)}"/>
+                        <p:inputNumber value="#{productProfileController.plantationIncomeView.averageSideProductYield}"
+                                       rendered="#{productProfileController.questionRenderer(21)}">
+                            <p:ajax update="@parent" process="@this"/>
+                        </p:inputNumber>
+
+                        <p:outputLabel for="@next"
+                                       value="#{productProfileController.plantationIncomeView.selectedProduct.productQuestionList.stream().filter(q->q.plantationQuestion.id eq 22).findFirst().get().plantationQuestion.value}"
+                                       rendered="#{productProfileController.questionRenderer(22)}"/>
+                        <p:inputNumber value="#{productProfileController.plantationIncomeView.averageSideProductYield}"
+                                       rendered="#{productProfileController.questionRenderer(22)}">
+                            <p:ajax update="@parent" process="@this"/>
+                        </p:inputNumber>
+
+                        <p:outputLabel for="@next"
+                                       value="#{productProfileController.plantationIncomeView.selectedProduct.productQuestionList.stream().filter(q->q.plantationQuestion.id eq 23).findFirst().get().plantationQuestion.value}"
+                                       rendered="#{productProfileController.questionRenderer(23)}"/>
+                        <p:inputNumber value="#{productProfileController.plantationIncomeView.averageSideSafranYield}"
+                                       rendered="#{productProfileController.questionRenderer(23)}">
+                            <p:ajax update="@parent" process="@this"/>
+                        </p:inputNumber>
+
+                        <p:outputLabel for="@next"
+                                       value="#{productProfileController.plantationIncomeView.selectedProduct.productQuestionList.stream().filter(q->q.plantationQuestion.id eq 24).findFirst().get().plantationQuestion.value}"
+                                       rendered="#{productProfileController.questionRenderer(24)}"/>
+                        <p:inputNumber value="#{productProfileController.plantationIncomeView.previousAveragePrice}"
+                                       rendered="#{productProfileController.questionRenderer(24)}">
+                            <p:ajax process="@this"/>
+                        </p:inputNumber>
+
+                        <p:outputLabel for="@next"
+                                       value="#{productProfileController.plantationIncomeView.selectedProduct.productQuestionList.stream().filter(q->q.plantationQuestion.id eq 25).findFirst().get().plantationQuestion.value}"
+                                       rendered="#{productProfileController.questionRenderer(25)}"/>
+                        <p:inputNumber value="#{productProfileController.plantationIncomeView.previousAveragePrice}"
+                                       rendered="#{productProfileController.questionRenderer(25)}">
+                            <p:ajax process="@this"/>
+                        </p:inputNumber>
+
+                        <p:outputLabel for="@next"
+                                       value="#{productProfileController.plantationIncomeView.selectedProduct.productQuestionList.stream().filter(q->q.plantationQuestion.id eq 26).findFirst().get().plantationQuestion.value}"
+                                       rendered="#{productProfileController.questionRenderer(26)}"/>
+                        <p:inputNumber value="#{productProfileController.plantationIncomeView.previousAveragePrice}"
+                                       rendered="#{productProfileController.questionRenderer(26)}">
+                            <p:ajax process="@this"/>
+                        </p:inputNumber>
+
+                        <p:outputLabel for="@next"
+                                       value="#{productProfileController.plantationIncomeView.selectedProduct.productQuestionList.stream().filter(q->q.plantationQuestion.id eq 27).findFirst().get().plantationQuestion.value}"
+                                       rendered="#{productProfileController.questionRenderer(27)}"/>
+                        <p:inputNumber value="#{productProfileController.plantationIncomeView.currentExpectedPrice}"
+                                       rendered="#{productProfileController.questionRenderer(27)}">
+                            <p:ajax process="@this"/>
+                        </p:inputNumber>
+
+                        <p:outputLabel for="@next"
+                                       value="#{productProfileController.plantationIncomeView.selectedProduct.productQuestionList.stream().filter(q->q.plantationQuestion.id eq 28).findFirst().get().plantationQuestion.value}"
+                                       rendered="#{productProfileController.questionRenderer(28)}"/>
+                        <p:inputNumber value="#{productProfileController.plantationIncomeView.currentExpectedPrice}"
+                                       rendered="#{productProfileController.questionRenderer(28)}">
+                            <p:ajax process="@this"/>
+                        </p:inputNumber>
+
+                        <p:outputLabel for="@next"
+                                       value="#{productProfileController.plantationIncomeView.selectedProduct.productQuestionList.stream().filter(q->q.plantationQuestion.id eq 29).findFirst().get().plantationQuestion.value}"
+                                       rendered="#{productProfileController.questionRenderer(29)}"/>
+                        <p:inputNumber value="#{productProfileController.plantationIncomeView.currentExpectedPrice}"
+                                       rendered="#{productProfileController.questionRenderer(29)}">
+                            <p:ajax process="@this"/>
+                        </p:inputNumber>
+
+                        <p:outputLabel for="@next"
+                                       value="#{productProfileController.plantationIncomeView.selectedProduct.productQuestionList.stream().filter(q->q.plantationQuestion.id eq 30).findFirst().get().plantationQuestion.value}"
+                                       rendered="#{productProfileController.questionRenderer(30)}"/>
+                        <p:inputNumber value="#{productProfileController.plantationIncomeView.currentLowQualityOrJuicePrice}"
+                                       rendered="#{productProfileController.questionRenderer(30)}">
+                            <p:ajax process="@this"/>
+                        </p:inputNumber>
+
+                        <p:outputLabel for="@next"
+                                       value="#{productProfileController.plantationIncomeView.selectedProduct.productQuestionList.stream().filter(q->q.plantationQuestion.id eq 31).findFirst().get().plantationQuestion.value}"
+                                       rendered="#{productProfileController.questionRenderer(31)}"/>
+                        <p:inputNumber value="#{productProfileController.plantationIncomeView.currentLowQualityOrJuicePrice}"
+                                       rendered="#{productProfileController.questionRenderer(31)}">
+                            <p:ajax process="@this"/>
+                        </p:inputNumber>
+
+                        <p:outputLabel for="@next"
+                                       value="#{productProfileController.plantationIncomeView.selectedProduct.productQuestionList.stream().filter(q->q.plantationQuestion.id eq 32).findFirst().get().plantationQuestion.value}"
+                                       rendered="#{productProfileController.questionRenderer(32)}"/>
+                        <p:inputNumber value="#{productProfileController.plantationIncomeView.currentExpectedSideProductPrice}"
+                                       rendered="#{productProfileController.questionRenderer(32)}">
+                            <p:ajax process="@this"/>
+                        </p:inputNumber>
+
+                        <p:outputLabel for="@next"
+                                       value="#{productProfileController.plantationIncomeView.selectedProduct.productQuestionList.stream().filter(q->q.plantationQuestion.id eq 33).findFirst().get().plantationQuestion.value}"
+                                       rendered="#{productProfileController.questionRenderer(33)}"/>
+                        <p:selectOneMenu value="#{productProfileController.plantationIncomeView.selectedPlanting}"
+                                         rendered="#{productProfileController.questionRenderer(33)}">
+                            <p:ajax process="@this"/>
+                            <f:selectItem itemLabel="Ay seçiniz"
+                                          itemValue=""/>
+                            <f:selectItems value="#{productProfileController.months}"
+                                           var="monthStart"
+                                           itemLabel="#{msg[monthStart]}"
+                                           itemValue="#{monthStart}"/>
+                        </p:selectOneMenu>
+
+                        <p:outputLabel for="@next"
+                                       value="#{productProfileController.plantationIncomeView.selectedProduct.productQuestionList.stream().filter(q->q.plantationQuestion.id eq 34).findFirst().get().plantationQuestion.value}"
+                                       rendered="#{productProfileController.questionRenderer(34)}"/>
+                        <p:selectOneMenu value="#{productProfileController.plantationIncomeView.selectedHarvestStart}"
+                                         rendered="#{productProfileController.questionRenderer(34)}">
+                            <p:ajax process="@this"/>
+                            <f:selectItem itemLabel="Ay seçiniz"
+                                          itemValue=""/>
+                            <f:selectItems value="#{productProfileController.months}"
+                                           var="monthEnd"
+                                           itemLabel="#{msg[monthEnd]}"
+                                           itemValue="#{monthEnd}"/>
+                        </p:selectOneMenu>
+
+                        <p:outputLabel for="@next"
+                                       value="#{productProfileController.plantationIncomeView.selectedProduct.productQuestionList.stream().filter(q->q.plantationQuestion.id eq 35).findFirst().get().plantationQuestion.value}"
+                                       rendered="#{productProfileController.questionRenderer(35)}"/>
+                        <p:selectOneMenu value="#{productProfileController.plantationIncomeView.selectedHarvestEnd}"
+                                         rendered="#{productProfileController.questionRenderer(35)}">
+                            <p:ajax process="@this"/>
+                            <f:selectItem itemLabel="Ay seçiniz"
+                                          itemValue=""/>
+                            <f:selectItems value="#{productProfileController.months}"
+                                           var="monthEnd"
+                                           itemLabel="#{msg[monthEnd]}"
+                                           itemValue="#{monthEnd}"/>
+                        </p:selectOneMenu>
+
+                        <p:outputLabel for="@next"
+                                       value="Ürün satış dönemi"/>
+                        <p:selectOneMenu value="#{productProfileController.plantationIncomeView.selectedSellPeriodId}">
+                            <p:ajax process="@this"/>
+                            <f:selectItem itemLabel="Dönem seçiniz"
+                                          itemValue=""/>
+                        </p:selectOneMenu>
+
+                    </p:panelGrid>
+
+                    <p:commandButton value="Hesapla"
+                                     action="#{productProfileController.calculationButton}"
+                                     process="@parent"
+                                     styleClass="m-1"
+                                     update="@parent"/>
+
+                </h:form>
+                <br/>
+                <p>Sorunuz mu var? <a href="#">Buraya</a> basın ve bize bildirin.</p>
+            </div>
+        </div>
+    </ui:define>
+</ui:composition>

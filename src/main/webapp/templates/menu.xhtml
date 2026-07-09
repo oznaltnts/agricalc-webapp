@@ -31,11 +31,19 @@
                     </p:submenu>
                 </sec:authorize>
                 <sec:authorize access="hasAuthority('USER')">
-                    <p:menuitem value="Üretici bilgileri" icon="fa-solid fa-user-pen" url="/secured/profile"/>
+
                     <p:submenu label="Bitkisel" icon="fa-solid fa-wheat-awn">
-                        <p:menuitem value="Demirbaş" icon="fa-solid fa-tractor" url="/secured/plantation/asset"/>
-                        <p:menuitem value="Parsel" icon="fa-solid fa-earth-africa" url="/secured/plantation/parcel"/>
-                        <p:menuitem value="Üretim" icon="fa-solid fa-money-bill-wheat" url="/secured/plantation/product"/>
+                        <p:menuitem value="Çiftçilik bilgileri" icon="fa-solid fa-user-pen" url="/secured/plantation/farmer"/>
+                        <p:menuitem value="İşletme bilgileri" icon="fa-solid fa-tractor" url="/secured/plantation/business"/>
+                        <p:menuitem value="Arazi bilgileri" icon="fa-solid fa-tractor" url="/secured/plantation/parcel"/>
+                        <p:menuitem value="Gelir bilgileri" icon="fa-solid fa-tractor" url="/secured/plantation/income"/>
+                    </p:submenu>
+
+                    <p:submenu label="Bitkisel Eski" icon="fa-solid fa-wheat-awn">
+                        <p:menuitem value="Kişisel bilgiler" icon="fa-solid fa-user-pen" url="/secured/profile"/>
+                        <p:menuitem value="Demirbaş" icon="fa-solid fa-tractor" url="/secured/plantation/asset-old"/>
+                        <p:menuitem value="Parsel" icon="fa-solid fa-earth-africa" url="/secured/plantation/parcel-old"/>
+                        <p:menuitem value="Üretim" icon="fa-solid fa-money-bill-wheat" url="/secured/plantation/product-old"/>
                     </p:submenu>
                     <p:submenu label="Hayvansal" icon="fa-solid fa-cow">
                         <p:menuitem value="Büyükbaş süt" icon="fa-solid fa-building-wheat" url="/secured/animal/dairy-cow/barn"/>

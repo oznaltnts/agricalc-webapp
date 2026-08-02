@@ -7,6 +7,7 @@ import jakarta.persistence.Table;
 import lombok.*;
 import tr.ozanbey.agricalc.webapp.service.converter.LongListConverter;
 
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.Objects;
 
@@ -30,6 +31,15 @@ public class City extends AbstractEntity {
     @Column(name = "neighbors_ids")
     @Convert(converter = LongListConverter.class)
     private List<Long> neighborsIds;
+
+    @Column(name = "diesel_price")
+    private BigDecimal dieselPrice;
+
+    @Column(name = "fuel_price")
+    private BigDecimal fuelPrice;
+
+    @Column(name = "electricity")
+    private Double electricity;
 
     public City(Long selectedCityId) {
         super.setId(selectedCityId);

@@ -3,7 +3,6 @@ package tr.ozanbey.agricalc.webapp.service.service.plantation;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import tr.ozanbey.agricalc.webapp.service.domain.plantation.PlantationProductQuestion;
-import tr.ozanbey.agricalc.webapp.webapp.view.plantation.PlantationIncomeView;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -13,21 +12,6 @@ import java.util.Optional;
 @Service
 @Slf4j
 public class IncomeCalculationService {
-
-    //25
-    private Double treePerDecare(Double rowSpacing, Double colSpacing) {
-        return 1000 / (rowSpacing * colSpacing);
-    }
-
-    //1250
-    private Double mainProductKgYieldAsKgPerTree(Double treePerDecare, Double averageYieldAsKgPerTree) {
-        return treePerDecare * averageYieldAsKgPerTree;
-    }
-
-    //18750
-    private BigDecimal mainProductKgGrossIncomeAsKgPerTree(Double mainProductKgYieldAsKgPerTree, BigDecimal averageExpectedPricePerKg) {
-        return BigDecimal.valueOf(mainProductKgYieldAsKgPerTree).multiply(averageExpectedPricePerKg);
-    }
 
     //17250
     private BigDecimal mainProductKgGrossIncomeAsKgPerDecare(Double averageYieldAsKgPerDecare, BigDecimal averageExpectedPricePerKg) {
@@ -76,38 +60,18 @@ public class IncomeCalculationService {
 
     //147583
     private BigDecimal mainProductGrossIncome(BigDecimal averageExpectedPricePerKg,
-                                              BigDecimal mainProductKgGrossIncomeAsKgPerTree,
                                               BigDecimal mainProductKgGrossIncomeAsKgPerDecare,
                                               Double averageExpectedYieldAsUnitPerDecare, BigDecimal mainProductKgGrossIncomeAsUnitPerDecare,
                                               BigDecimal mainProductKgGrossIncomePerHarvestAsKgPerDecare,
                                               Double mainProductKgYieldAsGrPerDecare,
                                               BigDecimal averageExpectedPricePerUnit,
                                               Double averageExpectedYieldAsBundlePerDecare, BigDecimal averageExpectedPricePerBundle) {
-        return mainProductKgGrossIncomeAsKgPerTree
-                .add(mainProductKgGrossIncomeAsKgPerDecare)
+        return mainProductKgGrossIncomeAsKgPerDecare
                 .add(mainProductKgGrossIncomeAsUnitPerDecare)
                 .add(mainProductKgGrossIncomePerHarvestAsKgPerDecare)
                 .add(mainProductKgGrossIncomeAsGrPerDecare(mainProductKgYieldAsGrPerDecare, averageExpectedPricePerKg))
                 .add(mainProductUnitGrossIncomeAsUnitPerDecare(averageExpectedYieldAsUnitPerDecare, averageExpectedPricePerUnit))
                 .add(mainProductBundleGrossIncomeAsBundlePerDecare(averageExpectedYieldAsBundlePerDecare, averageExpectedPricePerBundle));
-    }
-
-    //1125
-    private Double highQualityMainProductKgYieldAsKgPerTree(Double treePerDecare, Double averageYieldAsKgPerTree, Double lowQualityRate) {
-        return treePerDecare * averageYieldAsKgPerTree * (100 - lowQualityRate) / 100;
-    }
-
-    //125
-    private Double lowQualityMainProductKgYieldAsKgPerTree(Double mainProductKgYieldAsKgPerTree, Double lowQualityRate) {
-        return mainProductKgYieldAsKgPerTree * lowQualityRate / 100;
-    }
-
-    //17125
-    private BigDecimal highQualityMainProductKgGrossIncomeAsKgPerTree(Double treePerDecare, Double averageYieldAsKgPerTree, Double lowQualityRate,
-                                                                      BigDecimal averageExpectedPricePerKg,
-                                                                      Double mainProductKgYieldAsKgPerTree, BigDecimal lowQualityExpectedPrice) {
-        return BigDecimal.valueOf(highQualityMainProductKgYieldAsKgPerTree(treePerDecare, averageYieldAsKgPerTree, lowQualityRate)).multiply(averageExpectedPricePerKg)
-                .add(BigDecimal.valueOf(lowQualityMainProductKgYieldAsKgPerTree(mainProductKgYieldAsKgPerTree, lowQualityRate)).multiply(lowQualityExpectedPrice));
     }
 
     //1035
@@ -178,23 +142,22 @@ public class IncomeCalculationService {
     }
 
     //106762,74
-    private BigDecimal highQualityMainProductGrossIncome(Double treePerDecare, Double averageYieldAsKgPerTree, Double lowQualityRate,
+    private BigDecimal highQualityMainProductGrossIncome(Double lowQualityRate,
                                                          BigDecimal averageExpectedPricePerKg,
-                                                         Double mainProductKgYieldAsKgPerTree, BigDecimal lowQualityExpectedPrice,
+                                                         BigDecimal lowQualityExpectedPrice,
                                                          Double averageYieldAsKgPerDecare,
                                                          Double mainProductKgYieldAsUnitPerDecare,
                                                          Double mainProductKgYieldPerHarvest,
                                                          Double mainProductKgYieldAsGrPerDecare) {
-        return highQualityMainProductKgGrossIncomeAsKgPerTree(treePerDecare, averageYieldAsKgPerTree, lowQualityRate, averageExpectedPricePerKg, mainProductKgYieldAsKgPerTree, lowQualityExpectedPrice)
-                .add(highQualityMainProductKgGrossIncomeAsKgPerDecare(averageYieldAsKgPerDecare, lowQualityRate, averageExpectedPricePerKg, lowQualityExpectedPrice))
+        return highQualityMainProductKgGrossIncomeAsKgPerDecare(averageYieldAsKgPerDecare, lowQualityRate, averageExpectedPricePerKg, lowQualityExpectedPrice)
                 .add(highQualityMainProductKgGrossIncomeAsUnitPerDecare(mainProductKgYieldAsUnitPerDecare, lowQualityRate, averageExpectedPricePerKg, lowQualityExpectedPrice))
                 .add(highQualityMainProductKgGrossIncomePerHarvestAsKgPerDecare(mainProductKgYieldPerHarvest, lowQualityRate, averageExpectedPricePerKg, lowQualityExpectedPrice))
                 .add(highQualityMainProductKgGrossIncomeAsGrPerDecare(mainProductKgYieldAsGrPerDecare, lowQualityRate, averageExpectedPricePerKg, lowQualityExpectedPrice));
     }
 
     //19350
-    private BigDecimal lowQualityMainProductKgGrossIncomeAsKgPerTree(BigDecimal mainProductKgGrossIncomeAsKgPerTree, Double averageYieldForJuice, BigDecimal expectedPriceForJuice) {
-        return mainProductKgGrossIncomeAsKgPerTree.add(BigDecimal.valueOf(averageYieldForJuice).multiply(expectedPriceForJuice));
+    private BigDecimal lowQualityMainProductKgGrossIncomeAsKgPerTree(Double averageYieldForJuice, BigDecimal expectedPriceForJuice) {
+        return BigDecimal.valueOf(averageYieldForJuice).multiply(expectedPriceForJuice);
     }
 
     //0,55
@@ -208,9 +171,9 @@ public class IncomeCalculationService {
     }
 
     //19443,55
-    private BigDecimal lowQualityMainProductGrossIncome(BigDecimal averageExpectedPricePerKg, BigDecimal mainProductKgGrossIncomeAsKgPerTree, Double averageYieldForJuice, BigDecimal expectedPriceForJuice,
+    private BigDecimal lowQualityMainProductGrossIncome(BigDecimal averageExpectedPricePerKg, Double averageYieldForJuice, BigDecimal expectedPriceForJuice,
                                                         Double mainProductKgYieldAsGrPerDecare, BigDecimal expectedPriceForSideProductPerGr, Double averageSideProductYield) {
-        return lowQualityMainProductKgGrossIncomeAsKgPerTree(mainProductKgGrossIncomeAsKgPerTree, averageYieldForJuice, expectedPriceForJuice)
+        return lowQualityMainProductKgGrossIncomeAsKgPerTree(averageYieldForJuice, expectedPriceForJuice)
                 .add(lowQualityMainProductKgGrossIncomeAsGrPerDecare(mainProductKgYieldAsGrPerDecare, averageExpectedPricePerKg, expectedPriceForSideProductPerGr, averageSideProductYield));
     }
 
@@ -312,7 +275,7 @@ public class IncomeCalculationService {
     }
 
     //639286,79
-    private BigDecimal totalGrossIncome(BigDecimal averageExpectedPricePerKg, Double rowSpacing, Double colSpacing, Double averageYieldAsKgPerTree, Double averageYieldAsKgPerDecare, Double averageExpectedYieldAsUnitPerDecare, Double lowQualityRate, Double averageYieldPerHarvest, Integer harvestCount, Double yieldAsGrPerDecare,
+    private BigDecimal totalGrossIncome(BigDecimal averageExpectedPricePerKg, Double averageYieldAsKgPerDecare, Double averageExpectedYieldAsUnitPerDecare, Double lowQualityRate, Double averageYieldPerHarvest, Integer harvestCount, Double yieldAsGrPerDecare,
                                         BigDecimal averageExpectedPricePerUnit, Double averageExpectedYieldAsBundlePerDecare, BigDecimal averageExpectedPricePerBundle,
                                         BigDecimal lowQualityExpectedPrice,
                                         Double averageYieldForJuice, BigDecimal expectedPriceForJuice, BigDecimal expectedPriceForSideProductPerGr, Double averageSideProductYield,
@@ -320,13 +283,6 @@ public class IncomeCalculationService {
                                         Double averageYieldSideGrainProduct,
                                         Double averageYieldSideFeedProduct,
                                         Double averageYieldSideKernelProduct) {
-        Double treePerDecare;
-        if (rowSpacing == 0d || colSpacing == 0d)
-            treePerDecare = 0d;
-        else
-            treePerDecare = treePerDecare(rowSpacing, colSpacing);
-        Double mainProductKgYieldAsKgPerTree = mainProductKgYieldAsKgPerTree(treePerDecare, averageYieldAsKgPerTree);
-        BigDecimal mainProductKgGrossIncomeAsKgPerTree = mainProductKgGrossIncomeAsKgPerTree(mainProductKgYieldAsKgPerTree, averageExpectedPricePerKg);
         BigDecimal mainProductKgGrossIncomeAsKgPerDecare = mainProductKgGrossIncomeAsKgPerDecare(averageYieldAsKgPerDecare, averageExpectedPricePerKg);
         Double mainProductKgYieldAsUnitPerDecare = mainProductKgYieldAsUnitPerDecare(averageExpectedYieldAsUnitPerDecare, lowQualityRate);
         BigDecimal mainProductKgGrossIncomeAsUnitPerDecare = mainProductKgGrossIncomeAsUnitPerDecare(mainProductKgYieldAsUnitPerDecare, averageExpectedPricePerKg);
@@ -334,51 +290,47 @@ public class IncomeCalculationService {
         BigDecimal mainProductKgGrossIncomePerHarvestAsKgPerDecare = mainProductKgGrossIncomePerHarvestAsKgPerDecare(mainProductKgYieldPerHarvest, averageExpectedPricePerKg);
         Double mainProductKgYieldAsGrPerDecare = mainProductKgYieldAsGrPerDecare(yieldAsGrPerDecare);
 
-        return mainProductGrossIncome(averageExpectedPricePerKg, mainProductKgGrossIncomeAsKgPerTree, mainProductKgGrossIncomeAsKgPerDecare, averageExpectedYieldAsUnitPerDecare, mainProductKgGrossIncomeAsUnitPerDecare, mainProductKgGrossIncomePerHarvestAsKgPerDecare, mainProductKgYieldAsGrPerDecare, averageExpectedPricePerUnit, averageExpectedYieldAsBundlePerDecare, averageExpectedPricePerBundle)
-                .add(highQualityMainProductGrossIncome(treePerDecare, averageYieldAsKgPerTree, lowQualityRate, averageExpectedPricePerKg, mainProductKgYieldAsKgPerTree, lowQualityExpectedPrice, averageYieldAsKgPerDecare, mainProductKgYieldAsUnitPerDecare, mainProductKgYieldPerHarvest, mainProductKgYieldAsGrPerDecare))
-                .add(lowQualityMainProductGrossIncome(averageExpectedPricePerKg, mainProductKgGrossIncomeAsKgPerTree, averageYieldForJuice, expectedPriceForJuice, mainProductKgYieldAsGrPerDecare, expectedPriceForSideProductPerGr, averageSideProductYield))
+        return mainProductGrossIncome(averageExpectedPricePerKg, mainProductKgGrossIncomeAsKgPerDecare, averageExpectedYieldAsUnitPerDecare, mainProductKgGrossIncomeAsUnitPerDecare, mainProductKgGrossIncomePerHarvestAsKgPerDecare, mainProductKgYieldAsGrPerDecare, averageExpectedPricePerUnit, averageExpectedYieldAsBundlePerDecare, averageExpectedPricePerBundle)
+                .add(highQualityMainProductGrossIncome(lowQualityRate, averageExpectedPricePerKg, lowQualityExpectedPrice, averageYieldAsKgPerDecare, mainProductKgYieldAsUnitPerDecare, mainProductKgYieldPerHarvest, mainProductKgYieldAsGrPerDecare))
+                .add(lowQualityMainProductGrossIncome(averageExpectedPricePerKg, averageYieldForJuice, expectedPriceForJuice, mainProductKgYieldAsGrPerDecare, expectedPriceForSideProductPerGr, averageSideProductYield))
                 .add(sideStrawProductGrossIncome(mainProductKgGrossIncomeAsKgPerDecare, averageYieldSideStrawProduct, expectedPriceForSideProductPerKg, mainProductKgGrossIncomeAsUnitPerDecare, mainProductKgGrossIncomePerHarvestAsKgPerDecare))
                 .add(sideGrainProductGrossIncome(mainProductKgGrossIncomeAsKgPerDecare, averageYieldSideGrainProduct, expectedPriceForSideProductPerKg, mainProductKgGrossIncomeAsUnitPerDecare, mainProductKgGrossIncomePerHarvestAsKgPerDecare))
                 .add(sideFeedProductGrossIncome(mainProductKgGrossIncomeAsKgPerDecare, averageYieldSideFeedProduct, expectedPriceForSideProductPerKg, mainProductKgGrossIncomeAsUnitPerDecare, mainProductKgGrossIncomePerHarvestAsKgPerDecare))
                 .add(sideKernelProductGrossIncome(mainProductKgGrossIncomeAsKgPerDecare, averageYieldSideKernelProduct, expectedPriceForSideProductPerKg, mainProductKgGrossIncomeAsUnitPerDecare, mainProductKgGrossIncomePerHarvestAsKgPerDecare));
     }
 
-    public BigDecimal calculateIncome(PlantationIncomeView incomeView) {
-        List<PlantationProductQuestion> questionList = incomeView.getSelectedProduct().getProductQuestionList();
-        BigDecimal averageExpectedPricePerKg = decimalValueSetter(questionList, 27L, incomeView.getCurrentExpectedPrice());
-        Double rowSpacing = doubleValueSetter(questionList, 3L, incomeView.getRowSpacing());
-        Double colSpacing = doubleValueSetter(questionList, 4L, incomeView.getColSpacing());
-        Double averageYieldAsKgPerTree = doubleValueSetter(questionList, 8L, incomeView.getExpectedYield());
-        Double averageYieldAsKgPerDecare = doubleValueSetter(questionList, 9L, incomeView.getExpectedYield());
-        Double averageExpectedYieldAsUnitPerDecare = doubleValueSetter(questionList, 12L, incomeView.getExpectedYield());
-        Double lowQualityRate = doubleValueSetter(questionList, 15L, incomeView.getLowQualityYieldRate());
-        Double averageYieldPerHarvest = doubleValueSetter(questionList, 14L, incomeView.getExpectedYield());
-        Integer harvestCount = incomeView.getHarvestCount();
-        Double yieldAsGrPerDecare = doubleValueSetter(questionList, 10L, incomeView.getExpectedYield());
+    public BigDecimal calculateIncome(List<PlantationProductQuestion> productQuestionList) {
+        BigDecimal averageExpectedPricePerKg = decimalValueSetter(productQuestionList, 30L);
+        Double averageYieldAsKgPerDecare = doubleValueSetter(productQuestionList, 12L);
+        Double averageExpectedYieldAsUnitPerDecare = doubleValueSetter(productQuestionList, 15L);
+        Double lowQualityRate = doubleValueSetter(productQuestionList, 18L);
+        Double averageYieldPerHarvest = doubleValueSetter(productQuestionList, 17L);
+        Integer harvestCount = integerValueSetter(productQuestionList, 299L);
+        Double yieldAsGrPerDecare = doubleValueSetter(productQuestionList, 13L);
 
-        BigDecimal averageExpectedPricePerUnit = decimalValueSetter(questionList, 28L, incomeView.getCurrentExpectedPrice());
-        Double averageExpectedYieldAsBundlePerDecare = doubleValueSetter(questionList, 13L, incomeView.getExpectedYield());
-        BigDecimal averageExpectedPricePerBundle = decimalValueSetter(questionList, 29L, incomeView.getCurrentExpectedPrice());
+        BigDecimal averageExpectedPricePerUnit = decimalValueSetter(productQuestionList, 31L);
+        Double averageExpectedYieldAsBundlePerDecare = doubleValueSetter(productQuestionList, 16L);
+        BigDecimal averageExpectedPricePerBundle = decimalValueSetter(productQuestionList, 32L);
 
-        BigDecimal lowQualityExpectedPrice = decimalValueSetter(questionList, 30L, incomeView.getCurrentLowQualityOrJuicePrice());
+        BigDecimal lowQualityExpectedPrice = decimalValueSetter(productQuestionList, 33L);
 
-        Double averageYieldForJuice = doubleValueSetter(questionList, 16L, incomeView.getAverageJuiceYield());
-        BigDecimal expectedPriceForJuice = decimalValueSetter(questionList, 31L, incomeView.getCurrentLowQualityOrJuicePrice());
-        BigDecimal expectedPriceForSideProductPerGr = decimalValueSetter(questionList, 32L, incomeView.getCurrentExpectedSideProductPrice());
+        Double averageYieldForJuice = doubleValueSetter(productQuestionList, 19L);
+        BigDecimal expectedPriceForJuice = decimalValueSetter(productQuestionList, 34L);
+        BigDecimal expectedPriceForSideProductPerGr = decimalValueSetter(productQuestionList, 36L);
         if (expectedPriceForSideProductPerGr != null)
             expectedPriceForSideProductPerGr = expectedPriceForSideProductPerGr.divide(BigDecimal.valueOf(1000), 10, RoundingMode.HALF_UP);
-        Double averageSideProductYield = doubleValueSetter(questionList, 23L, incomeView.getAverageSideSafranYield());
+        Double averageSideProductYield = doubleValueSetter(productQuestionList, 26L);
 
-        Double averageYieldSideStrawProduct = doubleValueSetter(questionList, 17L, incomeView.getAverageSideProductYield());
-        BigDecimal expectedPriceForSideProductPerKg = decimalValueSetter(questionList, 32L, incomeView.getCurrentExpectedSideProductPrice());
+        Double averageYieldSideStrawProduct = doubleValueSetter(productQuestionList, 20L);
+        BigDecimal expectedPriceForSideProductPerKg = decimalValueSetter(productQuestionList, 35L);
 
-        Double averageYieldSideGrainProduct = doubleValueSetter(questionList, 18L, incomeView.getAverageSideProductYield());
+        Double averageYieldSideGrainProduct = doubleValueSetter(productQuestionList, 21L);
 
-        Double averageYieldSideFeedProduct = doubleValueSetter(questionList, 19L, incomeView.getAverageSideProductYield());
+        Double averageYieldSideFeedProduct = doubleValueSetter(productQuestionList, 22L);
 
-        Double averageYieldSideKernelProduct = doubleValueSetter(questionList, 20L, incomeView.getAverageSideProductYield());
+        Double averageYieldSideKernelProduct = doubleValueSetter(productQuestionList, 23L);
 
-        return totalGrossIncome(averageExpectedPricePerKg, rowSpacing, colSpacing, averageYieldAsKgPerTree, averageYieldAsKgPerDecare, averageExpectedYieldAsUnitPerDecare, lowQualityRate, averageYieldPerHarvest, harvestCount, yieldAsGrPerDecare,
+        return totalGrossIncome(averageExpectedPricePerKg, averageYieldAsKgPerDecare, averageExpectedYieldAsUnitPerDecare, lowQualityRate, averageYieldPerHarvest, harvestCount, yieldAsGrPerDecare,
                 averageExpectedPricePerUnit, averageExpectedYieldAsBundlePerDecare, averageExpectedPricePerBundle,
                 lowQualityExpectedPrice,
                 averageYieldForJuice, expectedPriceForJuice, expectedPriceForSideProductPerGr, averageSideProductYield,
@@ -388,36 +340,52 @@ public class IncomeCalculationService {
                 averageYieldSideKernelProduct);
     }
 
-    private BigDecimal decimalValueSetter(List<PlantationProductQuestion> questionList, Long questionId, BigDecimal incomeValue) {
+    private BigDecimal decimalValueSetter(List<PlantationProductQuestion> questionList, Long questionId) {
         Optional<PlantationProductQuestion> optional = questionList.stream()
                 .filter(q -> q.getPlantationQuestion().getId().equals(questionId))
                 .findAny();
         if (optional.isPresent()) {
-            if (optional.get().getMaximumValue() != null && incomeValue.compareTo(BigDecimal.valueOf(optional.get().getMaximumValue())) > 0) {
-                return BigDecimal.valueOf(optional.get().getMaximumValue());
-            } else if (optional.get().getMinimumValue() != null && BigDecimal.valueOf(optional.get().getMinimumValue()).compareTo(incomeValue) > 0) {
-                return BigDecimal.valueOf(optional.get().getMinimumValue());
+            if (optional.get().getMaximumValue() != null && optional.get().getBigDecimalValue().compareTo(optional.get().getMaximumValue()) > 0) {
+                return optional.get().getMaximumValue();
+            } else if (optional.get().getMinimumValue() != null && optional.get().getMinimumValue().compareTo(optional.get().getBigDecimalValue()) > 0) {
+                return optional.get().getMinimumValue();
             } else {
-                return incomeValue;
+                return optional.get().getBigDecimalValue();
             }
         }
         return BigDecimal.ZERO;
     }
 
-    private Double doubleValueSetter(List<PlantationProductQuestion> questionList, Long questionId, Double incomeValue) {
+    private Double doubleValueSetter(List<PlantationProductQuestion> questionList, Long questionId) {
         Optional<PlantationProductQuestion> optional = questionList.stream()
                 .filter(q -> q.getPlantationQuestion().getId().equals(questionId))
                 .findAny();
         if (optional.isPresent()) {
-            if (optional.get().getMaximumValue() != null && incomeValue > optional.get().getMaximumValue()) {
-                return optional.get().getMaximumValue();
-            } else if (optional.get().getMinimumValue() != null && optional.get().getMinimumValue() > incomeValue) {
-                return optional.get().getMinimumValue();
+            if (optional.get().getMaximumValue() != null && optional.get().getDoubleValue() > optional.get().getMaximumValue().doubleValue()) {
+                return optional.get().getMaximumValue().doubleValue();
+            } else if (optional.get().getMinimumValue() != null && optional.get().getMinimumValue().doubleValue() > optional.get().getDoubleValue()) {
+                return optional.get().getMinimumValue().doubleValue();
             } else {
-                return incomeValue;
+                return optional.get().getDoubleValue();
             }
         }
-        return null;
+        return 0d;
+    }
+
+    private Integer integerValueSetter(List<PlantationProductQuestion> questionList, Long questionId) {
+        Optional<PlantationProductQuestion> optional = questionList.stream()
+                .filter(q -> q.getPlantationQuestion().getId().equals(questionId))
+                .findAny();
+        if (optional.isPresent()) {
+            if (optional.get().getMaximumValue() != null && optional.get().getIntegerValue().doubleValue() > optional.get().getMaximumValue().doubleValue()) {
+                return optional.get().getMaximumValue().intValue();
+            } else if (optional.get().getMinimumValue() != null && optional.get().getMinimumValue().doubleValue() > optional.get().getIntegerValue().doubleValue()) {
+                return optional.get().getMinimumValue().intValue();
+            } else {
+                return optional.get().getIntegerValue();
+            }
+        }
+        return 0;
     }
 
 

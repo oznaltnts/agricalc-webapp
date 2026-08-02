@@ -1,4 +1,4 @@
-package tr.ozanbey.agricalc.webapp.webapp.controller.plantation;
+package tr.ozanbey.agricalc.webapp.webapp.controller;
 
 
 import jakarta.annotation.PostConstruct;
@@ -11,6 +11,7 @@ import tr.ozanbey.agricalc.webapp.service.domain.City;
 import tr.ozanbey.agricalc.webapp.service.enumtype.plantation.EnumFarmerType;
 import tr.ozanbey.agricalc.webapp.service.service.CityService;
 import tr.ozanbey.agricalc.webapp.service.service.UserService;
+import tr.ozanbey.agricalc.webapp.webapp.controller.plantation.PlantationController;
 import tr.ozanbey.agricalc.webapp.webapp.view.FarmerProfileView;
 
 import java.util.List;

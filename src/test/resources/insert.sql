@@ -244,9 +244,6 @@ INSERT INTO `tektarim`.`users` (`status`, `phone`, `password`) VALUES (1, '+9053
 
 INSERT INTO `tektarim`.`user_roles` (`user_id`, `role`) VALUES (1, 1);
 
-INSERT INTO `tektarim`.`user_preferences` (`user_id`, `menu_mode`, `dark_mode`, `component_theme`, `topbar_theme`, `menu_theme`, `input_style`, `light_logo`)
-VALUES (1, 'layout-horizontal', 'dark', 'green', 'dark', 'dark', 'outlined', 1);
-
 INSERT INTO `tektarim`.`dairy_cow_coefficients` (`cow_type`, `value`) VALUES ('0', '1');
 INSERT INTO `tektarim`.`dairy_cow_coefficients` (`cow_type`, `value`) VALUES ('1', '0.85');
 INSERT INTO `tektarim`.`dairy_cow_coefficients` (`cow_type`, `value`) VALUES ('2', '0.6');
@@ -585,4 +582,45 @@ INSERT INTO `plantation_products` (`id`,`status`,`name`) VALUES (220,1,'Yulaf (O
 INSERT INTO `plantation_products` (`id`,`status`,`name`) VALUES (221,1,'Yulaf (Tohumluk)');
 INSERT INTO `plantation_products` (`id`,`status`,`name`) VALUES (222,1,'Zeytin (Sofralık)');
 INSERT INTO `plantation_products` (`id`,`status`,`name`) VALUES (223,1,'Zeytin (Yağlık)');
+
+INSERT INTO plantation_coefficients (coef_type,diesel_value,labor_value) VALUES ('SOIL_BLASTING','5','2');
+INSERT INTO plantation_coefficients (coef_type,diesel_value,labor_value) VALUES ('DEEP_PLOW','2.8','0.16');
+INSERT INTO plantation_coefficients (coef_type,diesel_value,labor_value) VALUES ('SECONDARY_OPERATION','0.95','0.09');
+INSERT INTO plantation_coefficients (coef_type,diesel_value,labor_value) VALUES ('DRILL_PLANTING','0.7','0.1');
+INSERT INTO plantation_coefficients (coef_type,diesel_value,labor_value) VALUES ('BASE_FERTILIZER','0','0.015');
+INSERT INTO plantation_coefficients (coef_type,diesel_value,labor_value) VALUES ('TOP_FERTILIZER','0.25','0.12');
+INSERT INTO plantation_coefficients (coef_type,diesel_value,labor_value) VALUES ('LIQUID_FERTILIZER','0.4','0.17');
+INSERT INTO plantation_coefficients (coef_type,diesel_value,labor_value) VALUES ('ANIMAL_FERTILIZER','2.5','3');
+INSERT INTO plantation_coefficients (coef_type,diesel_value,labor_value) VALUES ('HUMIC_ACID','0','0.01');
+INSERT INTO plantation_coefficients (coef_type,diesel_value,labor_value) VALUES ('LEONARDIDE','0','2');
+INSERT INTO plantation_coefficients (coef_type,diesel_value,labor_value) VALUES ('WORM_COMPOST','0','0.01');
+INSERT INTO plantation_coefficients (coef_type,diesel_value,labor_value) VALUES ('BIO_CONDITIONER','0.25','0.2');
+INSERT INTO plantation_coefficients (coef_type,diesel_value,labor_value) VALUES ('TRACTOR_TILLER',null,'0.17');
+INSERT INTO plantation_coefficients (coef_type,diesel_value,labor_value) VALUES ('WEED_CONTROL','0.15','0.3');
+INSERT INTO plantation_coefficients (coef_type,diesel_value,labor_value) VALUES ('DRIP_IRRIGATION','0.65','0.15');
+INSERT INTO plantation_coefficients (coef_type,diesel_value,labor_value) VALUES ('SPRINKLER_IRRIGATION','1.4','2');
+INSERT INTO plantation_coefficients (coef_type,diesel_value,labor_value) VALUES ('SPRAY_IRRIGATION','1.2','0.3');
+INSERT INTO plantation_coefficients (coef_type,diesel_value,labor_value) VALUES ('FURROW_IRRIGATION','0','1.5');
+INSERT INTO plantation_coefficients (coef_type,diesel_value,labor_value) VALUES ('SURFACE_IRRIGATION','0','2');
+INSERT INTO plantation_coefficients (coef_type,diesel_value,labor_value) VALUES ('PIVOT_IRRIGATION','0.3','0.25');
+INSERT INTO plantation_coefficients (coef_type,diesel_value,labor_value) VALUES ('DRUM_IRRIGATION','0.7','0.8');
+INSERT INTO plantation_coefficients (coef_type,diesel_value,labor_value) VALUES ('MACHINE_SPRAYING','0.55','0.15');
+INSERT INTO plantation_coefficients (coef_type,diesel_value,labor_value) VALUES ('BACKPACK_SPRAYING','0.9','4');
+INSERT INTO plantation_coefficients (coef_type,diesel_value,labor_value) VALUES ('IRRIGATION_SPRAYING','0','0.05');
+INSERT INTO plantation_coefficients (coef_type,diesel_value,labor_value) VALUES ('LOADED_TRANSPORT','0.5','0');
+
+INSERT INTO plantation_coefficients (coef_type,diesel_value,labor_value) VALUES ('WORKING_HOURS',null,'8');
+INSERT INTO plantation_coefficients (coef_type,diesel_value,labor_value) VALUES ('MALE_WORKER_RATIO',null,'0.2');
+INSERT INTO plantation_coefficients (coef_type,diesel_value,labor_value) VALUES ('FEMALE_WORKER_RATIO',null,'0.8');
+INSERT INTO plantation_coefficients (coef_type,diesel_value,labor_value) VALUES ('IRRIGATION_SPECIFIC_CONSUMPTION_CONSTANT',null,'0.25');
+INSERT INTO plantation_coefficients (coef_type,diesel_value,labor_value) VALUES ('PUMP_EFFICIENCY_CONSTANT',null,'0.65');
+INSERT INTO plantation_coefficients (coef_type,diesel_value,labor_value) VALUES ('MOTOR_EFFICIENCY_CONSTANT',null,'0.9');
+INSERT INTO plantation_coefficients (coef_type,diesel_value,labor_value) VALUES ('CONSTANT_NUMBER',null,'367');
+INSERT INTO plantation_coefficients (coef_type,diesel_value,labor_value) VALUES ('PUMP_MOTOR_EFFICIENCY',null,'0.6');
+INSERT INTO plantation_coefficients (coef_type,diesel_value,labor_value) VALUES ('GRAVITY',null,'9.81');
+INSERT INTO plantation_coefficients (coef_type,diesel_value,labor_value) VALUES ('POLE_SERVICE_LIFE',null,'3');
+INSERT INTO plantation_coefficients (coef_type,diesel_value,labor_value) VALUES ('TRACTOR_CARRYING_CAPACITY',null,'4000');
+INSERT INTO plantation_coefficients (coef_type,diesel_value,labor_value) VALUES ('CARRYING_CAPACITY',null,'0.65');
+
+
 

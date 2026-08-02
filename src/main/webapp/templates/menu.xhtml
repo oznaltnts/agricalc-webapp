@@ -21,8 +21,10 @@
                 <p:menuitem value="Ana sayfa" icon="fa-solid fa-home" url="/"/>
                 <p:menuitem value="Nasıl çalışır?" icon="fa-solid fa-question" url="/public/how-it-works"/>
                 <p:menuitem value="Hakkımızda" icon="fa-solid fa-circle-info" url="#"/>
+
                 <sec:authorize access="hasAuthority('ADMIN')">
                     <p:menuitem value="Kullanıcılar" icon="fa-solid fa-user-gear" url="/secured/admin/user-management"/>
+
                     <p:submenu label="Büyükbaş süt yönetimi" icon="fa-solid fa-sliders">
                         <p:menuitem value="Hayvan türleri" icon="fa-solid fa-cow" url="/secured/admin/animal/dairy-cow/cow-management"/>
                         <p:menuitem value="Hayvan katsayıları" icon="fa-solid fa-cow" url="/secured/admin/animal/dairy-cow/cow-coefficient"/>
@@ -30,21 +32,16 @@
                         <p:menuitem value="İşletme giderleri" icon="fa-solid fa-wheat-awn" url="/secured/admin/animal/dairy-cow/cost-management"/>
                     </p:submenu>
                 </sec:authorize>
+
                 <sec:authorize access="hasAuthority('USER')">
+                    <p:menuitem value="Çiftçilik bilgileri" icon="fa-solid fa-user-pen" url="/secured/farmer"/>
 
                     <p:submenu label="Bitkisel" icon="fa-solid fa-wheat-awn">
-                        <p:menuitem value="Çiftçilik bilgileri" icon="fa-solid fa-user-pen" url="/secured/plantation/farmer"/>
                         <p:menuitem value="İşletme bilgileri" icon="fa-solid fa-tractor" url="/secured/plantation/business"/>
                         <p:menuitem value="Arazi bilgileri" icon="fa-solid fa-tractor" url="/secured/plantation/parcel"/>
-                        <p:menuitem value="Gelir bilgileri" icon="fa-solid fa-tractor" url="/secured/plantation/income"/>
+                        <p:menuitem value="Plan bilgileri" icon="fa-solid fa-tractor" url="/secured/plantation/parcel-plan"/>
                     </p:submenu>
 
-                    <p:submenu label="Bitkisel Eski" icon="fa-solid fa-wheat-awn">
-                        <p:menuitem value="Kişisel bilgiler" icon="fa-solid fa-user-pen" url="/secured/profile"/>
-                        <p:menuitem value="Demirbaş" icon="fa-solid fa-tractor" url="/secured/plantation/asset-old"/>
-                        <p:menuitem value="Parsel" icon="fa-solid fa-earth-africa" url="/secured/plantation/parcel-old"/>
-                        <p:menuitem value="Üretim" icon="fa-solid fa-money-bill-wheat" url="/secured/plantation/product-old"/>
-                    </p:submenu>
                     <p:submenu label="Hayvansal" icon="fa-solid fa-cow">
                         <p:menuitem value="Büyükbaş süt" icon="fa-solid fa-building-wheat" url="/secured/animal/dairy-cow/barn"/>
                     </p:submenu>

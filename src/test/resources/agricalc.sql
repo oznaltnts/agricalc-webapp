@@ -3,11 +3,14 @@ USE `tektarim`;
 
 CREATE TABLE `cities`
 (
-    `id`            BIGINT       NOT NULL AUTO_INCREMENT,
-    `idate`         DATETIME     NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    `code`          VARCHAR(25)  NOT NULL,
-    `name`          VARCHAR(255) NOT NULL,
-    `neighbors_ids` VARCHAR(45)  NULL     DEFAULT NULL,
+    `id`            BIGINT         NOT NULL AUTO_INCREMENT,
+    `idate`         DATETIME       NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    `code`          VARCHAR(25)    NOT NULL,
+    `name`          VARCHAR(255)   NOT NULL,
+    `neighbors_ids` VARCHAR(45)    NULL     DEFAULT NULL,
+    `diesel_price`  DECIMAL(15, 3) NOT NULL DEFAULT 75,
+    `fuel_price`    DECIMAL(15, 3) NOT NULL DEFAULT 80,
+    `electricity`   DECIMAL(15, 3) NOT NULL DEFAULT 4,
     PRIMARY KEY (`id`),
     UNIQUE (`code`)
 )
@@ -476,26 +479,6 @@ CREATE TABLE `user_login_successes`
     ENGINE = InnoDB
     AUTO_INCREMENT = 1;
 
-CREATE TABLE `user_preferences`
-(
-    `id`              BIGINT      NOT NULL AUTO_INCREMENT,
-    `idate`           DATETIME    NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    `user_id`         BIGINT      NOT NULL,
-    `menu_mode`       VARCHAR(25) NOT NULL,
-    `dark_mode`       VARCHAR(25) NOT NULL,
-    `component_theme` VARCHAR(25) NOT NULL,
-    `topbar_theme`    VARCHAR(25) NOT NULL,
-    `menu_theme`      VARCHAR(25) NOT NULL,
-    `input_style`     VARCHAR(25) NOT NULL,
-    `light_logo`      TINYINT     NOT NULL,
-    PRIMARY KEY (`id`),
-    UNIQUE (`user_id`),
-    CONSTRAINT `FK_user_preferences_users` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`),
-    INDEX idx_user_preferences (`user_id`)
-)
-    ENGINE = InnoDB
-    AUTO_INCREMENT = 1;
-
 CREATE TABLE `user_informations`
 (
     `id`           BIGINT       NOT NULL AUTO_INCREMENT,
@@ -781,13 +764,17 @@ CREATE TABLE `plantation_product_options`
 
 CREATE TABLE `plantation_questions`
 (
-    `id`     BIGINT       NOT NULL AUTO_INCREMENT,
-    `idate`  DATETIME     NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    `udate`  DATETIME     NULL     DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP,
-    `status` TINYINT      NOT NULL COMMENT '-1:deleted, 0:passive, 1:active',
-    `value`  VARCHAR(255) NOT NULL,
+    `id`          BIGINT       NOT NULL AUTO_INCREMENT,
+    `idate`       DATETIME     NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    `udate`       DATETIME     NULL     DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP,
+    `status`      TINYINT      NOT NULL COMMENT '-1:deleted, 0:passive, 1:active',
+    `q_value`     VARCHAR(255) NOT NULL,
+    `q_type`      VARCHAR(255) NOT NULL,
+    `a_type`      VARCHAR(255) NOT NULL,
+    `r_type`      VARCHAR(45)  NOT NULL,
+    `is_required` TINYINT      NOT NULL DEFAULT '1',
     PRIMARY KEY (`id`),
-    INDEX idx_plantation_questions (`status`)
+    INDEX idx_plantation_questions (`status`, `q_type`)
 )
     ENGINE = InnoDB
     AUTO_INCREMENT = 1;
@@ -820,4 +807,64 @@ CREATE TABLE `plantation_product_questions`
 )
     ENGINE = InnoDB
     AUTO_INCREMENT = 1;
+
+CREATE TABLE `plantation_coefficients`
+(
+    `id`           BIGINT       NOT NULL AUTO_INCREMENT,
+    `idate`        DATETIME     NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    `coef_type`    VARCHAR(255) NOT NULL,
+    `diesel_value` DOUBLE       NULL     DEFAULT NULL,
+    `labor_value`  DOUBLE       NOT NULL,
+    PRIMARY KEY (`id`),
+    UNIQUE (`coef_type`),
+    INDEX idx_plantation_coefficients (`coef_type`)
+)
+    ENGINE = InnoDB
+    AUTO_INCREMENT = 1;
+
+CREATE TABLE `user_plantation_plans`
+(
+    `id`           BIGINT         NOT NULL AUTO_INCREMENT,
+    `idate`        DATETIME       NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    `udate`        DATETIME       NULL     DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP,
+    `status`       TINYINT        NOT NULL COMMENT '-1:deleted, 0:passive, 1:active',
+    `parcel_id`    BIGINT         NOT NULL,
+    `product_id`   BIGINT         NOT NULL,
+    `start_date`   DATE           NULL     DEFAULT NULL,
+    `gross_income` DECIMAL(15, 3) NULL     DEFAULT NULL,
+    PRIMARY KEY (`id`),
+    CONSTRAINT `FK_user_plantation_plans_parcel` FOREIGN KEY (`parcel_id`) REFERENCES `user_plant_parcels` (`id`),
+    CONSTRAINT `FK_user_plantation_plans_product` FOREIGN KEY (`product_id`) REFERENCES `plantation_products` (`id`)
+)
+    ENGINE = InnoDB
+    AUTO_INCREMENT = 1;
+
+CREATE TABLE `user_parcel_answers`
+(
+    `id`                  BIGINT       NOT NULL AUTO_INCREMENT,
+    `idate`               DATETIME     NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    `user_parcel_id`      BIGINT       NOT NULL,
+    `product_question_id` BIGINT       NOT NULL,
+    `answer_value`        VARCHAR(255) NOT NULL,
+    PRIMARY KEY (`id`),
+    CONSTRAINT `FK_user_parcel_answers_user_parcels` FOREIGN KEY (`user_parcel_id`) REFERENCES `user_plant_parcels` (`id`),
+    CONSTRAINT `FK_user_parcel_answers_questions` FOREIGN KEY (`product_question_id`) REFERENCES `plantation_product_questions` (`id`)
+)
+    ENGINE = InnoDB
+    AUTO_INCREMENT = 1;
+
+CREATE TABLE `user_plant_plan_answers`
+(
+    `id`                  BIGINT       NOT NULL AUTO_INCREMENT,
+    `idate`               DATETIME     NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    `plant_plan_id`       BIGINT       NOT NULL,
+    `product_question_id` BIGINT       NOT NULL,
+    `answer_value`        VARCHAR(255) NOT NULL,
+    PRIMARY KEY (`id`),
+    CONSTRAINT `FK_user_plant_plan_answers_plans` FOREIGN KEY (`plant_plan_id`) REFERENCES `user_plantation_plans` (`id`),
+    CONSTRAINT `FK_user_plant_plan_answers_questions` FOREIGN KEY (`product_question_id`) REFERENCES `plantation_product_questions` (`id`)
+)
+    ENGINE = InnoDB
+    AUTO_INCREMENT = 1;
+
 

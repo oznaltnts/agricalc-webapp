@@ -4,8 +4,11 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import tr.ozanbey.agricalc.webapp.service.domain.plantation.PlantationProduct;
+import tr.ozanbey.agricalc.webapp.service.domain.plantation.PlantationProductOption;
 import tr.ozanbey.agricalc.webapp.service.domain.plantation.PlantationProductQuestion;
 import tr.ozanbey.agricalc.webapp.service.enumtype.EnumStatus;
+import tr.ozanbey.agricalc.webapp.service.enumtype.plantation.EnumPlantationQuestionType;
+import tr.ozanbey.agricalc.webapp.service.repository.plantation.PlantationProductOptionRepository;
 import tr.ozanbey.agricalc.webapp.service.repository.plantation.PlantationProductQuestionRepository;
 import tr.ozanbey.agricalc.webapp.service.repository.plantation.PlantationProductRepository;
 
@@ -21,12 +24,19 @@ public class PlantationProductService {
     @Autowired
     private PlantationProductQuestionRepository productQuestionRepository;
 
+    @Autowired
+    private PlantationProductOptionRepository productOptionRepository;
+
     public List<PlantationProduct> getActiveProducts(EnumStatus status) {
         return productRepository.findByStatusOrderByNameAsc(status);
     }
 
-    public List<PlantationProductQuestion> getActiveQuestionByProduct(Long productId) {
-        return productQuestionRepository.getQuestionListByPlantationProduct_IdOrderByIdAsc(productId);
+    public List<PlantationProductQuestion> getActiveQuestionByQuestionType(Long productId, EnumStatus status, EnumPlantationQuestionType questionType) {
+        return productQuestionRepository.getQuestionListByProductIdAndQuestionStatusAndQuestionTypeOrderByIdAsc(productId, status, questionType);
+    }
+
+    public List<PlantationProductOption> getProductOption(Long productId) {
+        return productOptionRepository.findByPlantationProductIdOrderByNameAsc(productId);
     }
 
 }

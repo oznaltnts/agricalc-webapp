@@ -4,6 +4,9 @@ import jakarta.persistence.*;
 import lombok.*;
 import tr.ozanbey.agricalc.webapp.service.domain.AbstractEntity;
 
+import java.math.BigDecimal;
+import java.util.List;
+
 @Getter
 @Setter
 @Entity
@@ -23,10 +26,34 @@ public class PlantationProductQuestion extends AbstractEntity {
 
     @Column(name = "minimum_value")
     @ToString.Include
-    private Double minimumValue;
+    private BigDecimal minimumValue;
 
     @Column(name = "maximum_value")
     @ToString.Include
-    private Double maximumValue;
+    private BigDecimal maximumValue;
+
+    @OneToMany(mappedBy = "productQuestion", fetch = FetchType.LAZY)
+    private List<UserPlantPlanAnswer> questionAnswerList;
+
+    @Transient
+    private String selectedAnswer;
+
+    @Transient
+    private Long selectedAnswerId;
+
+    @Transient
+    private List<Long> selectedAnswerIds;
+
+    @Transient
+    private Integer integerValue;
+
+    @Transient
+    private Double doubleValue;
+
+    @Transient
+    private BigDecimal bigDecimalValue;
+
+    @Transient
+    private boolean dontAskAgain;
 
 }

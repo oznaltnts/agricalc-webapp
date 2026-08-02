@@ -16,10 +16,9 @@
         <div class="grid">
             <div class="col">
                 <div class="card">
-                    <p:steps activeIndex="2">
-                        <p:menuitem value="Üretici bilgileri"/>
-                        <p:menuitem value="Demirbaş bilgileri"/>
+                    <p:steps activeIndex="0">
                         <p:menuitem value="Arazi bilgileri"/>
+                        <p:menuitem value="Planlama bilgileri"/>
                         <p:menuitem value="Gelir bilgileri"/>
                         <p:menuitem value="Gider bilgileri"/>
                         <p:menuitem value="Sonuçlar" containerStyleClass="steps-desktop"/>
@@ -37,18 +36,43 @@
                         <p:autoUpdate/>
                     </p:growl>
 
-                    <p:focus context="@next"/>
+                    <h5 class="mt-0" style="font-weight: bold">Arazi profili</h5>
 
-                    <h5 class="mt-0" style="font-weight: bold">Üretim profili</h5>
-
-                    <p:panelGrid layout="flex"
-                                 contentStyle="align-items: center;"
-                                 contentStyleClass="ui-fluid"
-                                 columnClasses="col-12 md:col-3 xl:col-2, col-12 md:col-9 xl:col-4, col-12 md:col-3 xl:col-2, col-12 md:col-9 xl:col-4"
-                                 columns="4">
-
-                    </p:panelGrid>
-
+                    <p:dataTable stripedRows="true"
+                                 emptyMessage="Henüz arazi eklemediniz"
+                                 var="parcel"
+                                 reflow="true"
+                                 value="#{parcelProfileController.plantParcelList}">
+                        <p:column headerText="Tipi">
+                            <h:outputText value="#{msg[parcel.parcelType]}"/>
+                        </p:column>
+                        <p:column headerText="Adı">
+                            <h:outputText value="#{parcel.parcelName}"/>
+                        </p:column>
+                        <p:column headerText="Şehir">
+                            <h:outputText value="todo"/>
+                        </p:column>
+                        <p:column headerText="İlçe">
+                            <h:outputText value="todo"/>
+                        </p:column>
+                        <p:column headerText="Ada no">
+                            <h:outputText value="#{parcel.adaNumber}"/>
+                        </p:column>
+                        <p:column headerText="Pafta no">
+                            <h:outputText value="#{parcel.paftaNumber}"/>
+                        </p:column>
+                        <p:column headerText="Boyut (Dekar)">
+                            <h:outputText value="#{parcel.areaDecare}"/>
+                        </p:column>
+                        <p:column headerText="Üretim Planla" style="width: 86px;text-align: right">
+                            <p:button href="/secured/plantation/parcel-plan"
+                                      styleClass="rounded-button ui-button-flat"
+                                      icon="fa-solid fa-right-long">
+                                <f:param name="parcelId"
+                                         value="#{parcel.id}"/>
+                            </p:button>
+                        </p:column>
+                    </p:dataTable>
                 </h:form>
                 <br/>
                 <p>Sorunuz mu var? <a href="#">Buraya</a> basın ve bize bildirin.</p>

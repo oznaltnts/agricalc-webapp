@@ -71,51 +71,6 @@
                         <p:autoUpdate/>
                     </p:growl>
 
-                    <p:focus context="@next"/>
-
-                    <p:outputPanel styleClass="ui-float-label mt-5">
-                        <p:selectOneMenu id="cityMenu"
-                                         filter="true"
-                                         filterMatchMode="startsWith"
-                                         value="#{homeController.selectedCityId}">
-                            <p:ajax update="cropMenu calculateButton"
-                                    listener="#{homeController.handleCropMenuOnSelect}"/>
-                            <f:selectItem itemLabel="Şehir seçiniz" itemValue=""/>
-                            <f:selectItems value="#{homeController.cityList}"
-                                           var="city"
-                                           itemLabel="#{city.name}"
-                                           itemValue="#{city.id}"/>
-                        </p:selectOneMenu>
-                        <p:outputLabel for="@previous" value="Şehir seçiniz" style="margin-left: 0.3rem"/>
-                        <p:message for="cityMenu"/>
-                    </p:outputPanel>
-                    <p:outputPanel styleClass="ui-float-label mt-5">
-                        <p:selectOneMenu id="cropMenu"
-                                         filter="true"
-                                         filterMatchMode="contains"
-                                         value="#{homeController.selectedCropId}">
-                            <p:ajax update="cityMenu calculateButton"
-                                    listener="#{homeController.handleCityMenuOnSelect}"/>
-                            <f:selectItem itemLabel="Ürün seçiniz" itemValue=""/>
-                            <f:selectItems value="#{homeController.cropList}"
-                                           var="crop"
-                                           itemLabel="#{crop.name}"
-                                           itemValue="#{crop.id}"/>
-                        </p:selectOneMenu>
-                        <p:outputLabel for="@previous" value="Ürün seçiniz" style="margin-left: 0.3rem"/>
-                        <p:message for="cropMenu"/>
-                    </p:outputPanel>
-                    <p:outputPanel styleClass="mt-5">
-                        <p:commandButton id="calculateButton"
-                                         value="Hesapla"
-                                         icon="pi pi-check"
-                                         process="@form"
-                                         disabled="#{homeController.selectedCropId eq null or homeController.selectedCityId eq null}"
-                                         update="resultForm"
-                                         oncomplete="smoothScrollToResultForm();"
-                                         action="#{homeController.calculateIncome}"
-                                         validateClient="true"/>
-                    </p:outputPanel>
                     <p:outputPanel styleClass="mt-5">
                         <p:commandButton id="howItWorksButton"
                                          ajax="false"
@@ -134,14 +89,6 @@
                     <h1>Tarlanın Bereketini Hesapla,<br/>Kazancını Tektarım ile Artır.</h1>
                     <h2>Dijital tarım asistanınızla, toprağınızın potansiyelini keşfedin.</h2>
                     <p></p>
-                    <ui:repeat value="#{homeController.resultList}" var="result">
-                        <p:outputPanel styleClass="result mt-5">
-                            <h:outputText value="#{result.resultLabel}: "/>
-                            <h:outputText value="#{result.resultValue}" rendered="#{!result.price}"/>
-                            <h:outputText value="#{result.resultValue}" rendered="#{result.price}"
-                                          converter="#{priceDecimalFormatter}"/>
-                        </p:outputPanel>
-                    </ui:repeat>
                     <p:outputPanel styleClass="mt-5">
                         <p:commandButton id="howItWorksButton"
                                          ajax="false"

@@ -1,4 +1,4 @@
-package tr.ozanbey.agricalc.webapp.webapp.controller;
+package tr.ozanbey.agricalc.webapp.webapp.controller.plantation;
 
 
 import jakarta.annotation.PostConstruct;
@@ -12,7 +12,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import tr.ozanbey.agricalc.webapp.service.enumtype.plantation.EnumParcelDetail;
 import tr.ozanbey.agricalc.webapp.service.enumtype.plantation.EnumParcelType;
-import tr.ozanbey.agricalc.webapp.service.service.PlantParcelService;
+import tr.ozanbey.agricalc.webapp.service.service.plantation.PlantParcelService;
+import tr.ozanbey.agricalc.webapp.webapp.controller.BaseController;
 import tr.ozanbey.agricalc.webapp.webapp.view.ParcelInformationView;
 
 import java.util.ArrayList;

@@ -158,7 +158,7 @@ public class ExpenseBalingProfileController extends BaseController {
 
     public void nextSaveExpense() throws IOException {
         plantationPlanService.savePlanAnswers(plantationPlan, EnumPlantationQuestionType.EXPENSE_BALING);
-        plantationPlan.setBalingCost(costCalculationService.calculateBalingCost(plantationPlan.getProduct().getProductQuestionList()));
+        plantationPlan.setBalingCost(costCalculationService.calculateBalingCost(plantationPlan.getProduct().getProductQuestionList(), plantationPlan.getId()));
         plantationPlanService.updatePlantationPlanIncome(plantationPlan);
         super.navigationController.redirectToUrl("/secured/plantation/expense-packaging-profile?parcelPlanId=" + parcelPlanId);
     }

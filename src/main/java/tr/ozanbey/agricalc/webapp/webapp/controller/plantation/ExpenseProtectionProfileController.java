@@ -195,7 +195,7 @@ public class ExpenseProtectionProfileController extends BaseController {
 
     public void nextSaveExpense() throws IOException {
         plantationPlanService.savePlanAnswers(plantationPlan, EnumPlantationQuestionType.EXPENSE_PROTECTION);
-        plantationPlan.setProtectionPost(costCalculationService.calculatePlantProtectionCost(plantationPlan.getProduct().getProductQuestionList()));
+        plantationPlan.setProtectionCost(costCalculationService.calculatePlantProtectionCost(plantationPlan.getProduct().getProductQuestionList(), plantationPlan.getId()));
         plantationPlanService.updatePlantationPlanIncome(plantationPlan);
         super.navigationController.redirectToUrl("/secured/plantation/expense-harvest-profile?parcelPlanId=" + parcelPlanId);
     }

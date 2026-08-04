@@ -7,13 +7,13 @@ import lombok.Getter;
 import lombok.Setter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import tr.ozanbey.agricalc.webapp.service.domain.UserPlantParcel;
 import tr.ozanbey.agricalc.webapp.service.domain.plantation.PlantationProduct;
+import tr.ozanbey.agricalc.webapp.service.domain.plantation.UserPlantParcel;
 import tr.ozanbey.agricalc.webapp.service.domain.plantation.UserPlantationPlan;
 import tr.ozanbey.agricalc.webapp.service.enumtype.EnumStatus;
-import tr.ozanbey.agricalc.webapp.service.service.UserParcelService;
 import tr.ozanbey.agricalc.webapp.service.service.plantation.PlantationPlanService;
 import tr.ozanbey.agricalc.webapp.service.service.plantation.PlantationProductService;
+import tr.ozanbey.agricalc.webapp.service.service.plantation.UserParcelService;
 import tr.ozanbey.agricalc.webapp.webapp.controller.BaseController;
 
 import java.io.IOException;

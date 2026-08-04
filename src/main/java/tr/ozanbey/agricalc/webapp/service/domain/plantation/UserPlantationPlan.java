@@ -6,7 +6,6 @@ import lombok.Setter;
 import lombok.ToString;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 import tr.ozanbey.agricalc.webapp.service.domain.AbstractStatusEntity;
-import tr.ozanbey.agricalc.webapp.service.domain.UserPlantParcel;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -62,7 +61,7 @@ public class UserPlantationPlan extends AbstractStatusEntity {
 
     @Column(name = "protection_cost")
     @ToString.Include
-    private BigDecimal protectionPost;
+    private BigDecimal protectionCost;
 
     @Column(name = "harvest_cost")
     @ToString.Include

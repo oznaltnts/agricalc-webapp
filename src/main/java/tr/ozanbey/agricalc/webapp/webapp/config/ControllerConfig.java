@@ -42,6 +42,8 @@ public class ControllerConfig implements WebMvcConfigurer {
         registry.addViewController("/secured/plantation/expense-baling-profile").setViewName("forward:/secured/plantation/expense-baling-profile.xhtml");
         registry.addViewController("/secured/plantation/expense-packaging-profile").setViewName("forward:/secured/plantation/expense-packaging-profile.xhtml");
 
+        registry.addViewController("/secured/plantation/plan-result").setViewName("forward:/secured/plantation/plan-result.xhtml");
+
         registry.addViewController("/secured/plantation/expense-general-profile").setViewName("forward:/secured/plantation/general-profile.xhtml");
 
         registry.addViewController("/secured/plantation/asset-old").setViewName("forward:/secured/plantation/old/plant-asset.xhtml");

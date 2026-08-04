@@ -1,15 +1,15 @@
-package tr.ozanbey.agricalc.webapp.service.service;
+package tr.ozanbey.agricalc.webapp.service.service.plantation;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import tr.ozanbey.agricalc.webapp.service.domain.User;
-import tr.ozanbey.agricalc.webapp.service.domain.UserPlantAsset;
-import tr.ozanbey.agricalc.webapp.service.domain.UserPlantAssetDetail;
+import tr.ozanbey.agricalc.webapp.service.domain.plantation.UserPlantAsset;
+import tr.ozanbey.agricalc.webapp.service.domain.plantation.UserPlantAssetDetail;
 import tr.ozanbey.agricalc.webapp.service.enumtype.plantation.EnumPlantAsset;
-import tr.ozanbey.agricalc.webapp.service.repository.UserPlantAssetDetailRepository;
-import tr.ozanbey.agricalc.webapp.service.repository.UserPlantAssetRepository;
+import tr.ozanbey.agricalc.webapp.service.repository.plantation.UserPlantAssetDetailRepository;
+import tr.ozanbey.agricalc.webapp.service.repository.plantation.UserPlantAssetRepository;
 import tr.ozanbey.agricalc.webapp.webapp.view.UserPlantAssetView;
 
 import java.util.ArrayList;

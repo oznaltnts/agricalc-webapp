@@ -1,8 +1,15 @@
 package tr.ozanbey.agricalc.webapp.service.service.plantation;
 
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import tr.ozanbey.agricalc.webapp.service.domain.plantation.PlantationCoefficient;
 import tr.ozanbey.agricalc.webapp.service.domain.plantation.PlantationProductQuestion;
+import tr.ozanbey.agricalc.webapp.service.domain.plantation.UserPlantPlanAnswer;
+import tr.ozanbey.agricalc.webapp.service.enumtype.plantation.EnumCoefficientType;
+import tr.ozanbey.agricalc.webapp.service.repository.plantation.PlantationCoefficientRepository;
+import tr.ozanbey.agricalc.webapp.service.repository.plantation.UserParcelAnswerRepository;
+import tr.ozanbey.agricalc.webapp.service.repository.plantation.UserPlantPlanAnswerRepository;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -12,6 +19,52 @@ import java.util.Optional;
 @Service
 @Slf4j
 public class CostCalculationService {
+
+    @Autowired
+    private PlantationCoefficientRepository coefficientRepository;
+
+    @Autowired
+    private UserPlantPlanAnswerRepository planAnswerRepository;
+
+    @Autowired
+    private UserParcelAnswerRepository parcelAnswerRepository;
+
+    /*todo aşağıdaki ValueSetter methodları için?
+    soru cevaplanmadıysa 0 mı kabul edilmeli? minimum değer mi alınmalı, 2 durum da farklı sonuç yaratacak
+    */
+
+    private BigDecimal decimalAnswerSetter(List<UserPlantPlanAnswer> answerList, Long questionId) {
+        Optional<UserPlantPlanAnswer> optional = answerList.stream()
+                .filter(a -> a.getProductQuestion().getPlantationQuestion().getId().equals(questionId))
+                .findAny();
+        if (optional.isPresent()) {
+            if (optional.get().getProductQuestion().getMaximumValue() != null && new BigDecimal(optional.get().getAnswerValue()).compareTo(optional.get().getProductQuestion().getMaximumValue()) > 0) {
+                return optional.get().getProductQuestion().getMaximumValue();
+            } else if (optional.get().getProductQuestion().getMinimumValue() != null && optional.get().getProductQuestion().getMinimumValue().compareTo(new BigDecimal(optional.get().getAnswerValue())) > 0) {
+                return optional.get().getProductQuestion().getMinimumValue();
+            } else {
+                return new BigDecimal(optional.get().getAnswerValue());
+            }
+        }
+        return BigDecimal.ZERO;
+    }
+
+    private Double doubleAnswerSetter(List<UserPlantPlanAnswer> answerList, Long questionId) {
+        Optional<UserPlantPlanAnswer> optional = answerList.stream()
+                .filter(a -> a.getProductQuestion().getPlantationQuestion().getId().equals(questionId))
+                .findAny();
+        if (optional.isPresent() && optional.get().getProductQuestion().getDoubleValue() != null) {
+            if (optional.get().getProductQuestion().getMaximumValue() != null && optional.get().getProductQuestion().getDoubleValue() > optional.get().getProductQuestion().getMaximumValue().doubleValue()) {
+                return optional.get().getProductQuestion().getMaximumValue().doubleValue();
+            } else if (optional.get().getProductQuestion().getMinimumValue() != null && optional.get().getProductQuestion().getMinimumValue().doubleValue() > optional.get().getProductQuestion().getDoubleValue()) {
+                return optional.get().getProductQuestion().getMinimumValue().doubleValue();
+            } else {
+                return optional.get().getProductQuestion().getDoubleValue();
+            }
+        }
+        return 0d;
+    }
+
     private BigDecimal decimalValueSetter(List<PlantationProductQuestion> questionList, Long questionId) {
         Optional<PlantationProductQuestion> optional = questionList.stream()
                 .filter(q -> q.getPlantationQuestion().getId().equals(questionId))
@@ -121,22 +174,24 @@ public class CostCalculationService {
     }
 
     public BigDecimal calculateSoilPrep(List<PlantationProductQuestion> productQuestionList) {
+        List<PlantationCoefficient> coefficientList = coefficientRepository.findByEnumCoefficientTypeIn(EnumCoefficientType.values());
+
         Integer soilPrepLaserOperationCount = 1;
         Integer soilPrepLumpSumAmount = 1;
         BigDecimal soilPrepLumpSumPrice = decimalValueSetter(productQuestionList, 44L);
         Integer soilPrepBlastingOperationCount = 1;
         Double soilPrepBlastingFrequency = doubleValueSetter(productQuestionList, 45L);
-        Double soilPrepBlastingDieselRate = 5d;
+        Double soilPrepBlastingDieselRate = coefficientList.stream().filter(c -> c.getEnumCoefficientType().equals(EnumCoefficientType.SOIL_BLASTING)).findFirst().get().getDieselValue();
         BigDecimal cityDieselPrice = BigDecimal.valueOf(75);
-        Double soilPrepBlastingLaborRate = 2d;
+        Double soilPrepBlastingLaborRate = coefficientList.stream().filter(c -> c.getEnumCoefficientType().equals(EnumCoefficientType.SOIL_BLASTING)).findFirst().get().getLaborValue();
         BigDecimal maleDailyWage = decimalValueSetter(productQuestionList, 41L);
-        Double workHoursPerDay = 8d;
+        Double workHoursPerDay = coefficientList.stream().filter(c -> c.getEnumCoefficientType().equals(EnumCoefficientType.WORKING_HOURS)).findFirst().get().getLaborValue();
         Integer soilPrepDeepPlowOperationCount = 1;
-        Double soilPrepDeepPlowDieselRate = 2.8d;
-        Double soilPrepDeepPlowLaborRate = 0.16d;
+        Double soilPrepDeepPlowDieselRate = coefficientList.stream().filter(c -> c.getEnumCoefficientType().equals(EnumCoefficientType.DEEP_PLOW)).findFirst().get().getDieselValue();
+        Double soilPrepDeepPlowLaborRate = coefficientList.stream().filter(c -> c.getEnumCoefficientType().equals(EnumCoefficientType.DEEP_PLOW)).findFirst().get().getLaborValue();
         Double soilPrepSecondaryOperationCount = doubleValueSetter(productQuestionList, 47L);
-        Double soilPrepSecondaryDieselRate = 0.95d;
-        Double soilPrepSecondaryLaborRate = 0.09d;
+        Double soilPrepSecondaryDieselRate = coefficientList.stream().filter(c -> c.getEnumCoefficientType().equals(EnumCoefficientType.SECONDARY_OPERATION)).findFirst().get().getDieselValue();
+        Double soilPrepSecondaryLaborRate = coefficientList.stream().filter(c -> c.getEnumCoefficientType().equals(EnumCoefficientType.SECONDARY_OPERATION)).findFirst().get().getLaborValue();
         return soilPrepTotalCost(soilPrepLaserOperationCount, soilPrepLumpSumAmount, soilPrepLumpSumPrice,
                 soilPrepBlastingOperationCount, soilPrepBlastingFrequency, soilPrepBlastingDieselRate, cityDieselPrice, soilPrepBlastingLaborRate, maleDailyWage, workHoursPerDay,
                 soilPrepDeepPlowOperationCount, soilPrepDeepPlowDieselRate, soilPrepDeepPlowLaborRate,
@@ -344,7 +399,10 @@ public class CostCalculationService {
                 .add(plantingHourCostPerDecare(workPowerHour, workPowerCount, workingWomanLaborPrice));
     }
 
-    public BigDecimal calculatePlantingCost(List<PlantationProductQuestion> productQuestionList) {
+    public BigDecimal calculatePlantingCost(List<PlantationProductQuestion> productQuestionList, Long plantationPlanId) {
+        List<PlantationCoefficient> coefficientList = coefficientRepository.findByEnumCoefficientTypeIn(EnumCoefficientType.values());
+        List<UserPlantPlanAnswer> previousAnswerList = planAnswerRepository.findByPlantationPlan_IdAndProductQuestion_PlantationQuestion_IdIn(plantationPlanId, List.of(41L, 42L));
+
         Double seedKgPerDecare = doubleValueSetter(productQuestionList, 57L);
         BigDecimal seedPricePerKg = decimalValueSetter(productQuestionList, 61L);
         Double seedGrPerDecare = doubleValueSetter(productQuestionList, 58L);
@@ -353,11 +411,11 @@ public class CostCalculationService {
         Double decarePerBag = doubleValueSetter(productQuestionList, 60L);
         BigDecimal seedBagPrice = decimalValueSetter(productQuestionList, 63L);
         Double seedUsageYear = doubleValueSetter(productQuestionList, 69L);
-        Double seederEnergyPerDecare = 0.7d;
+        Double seederEnergyPerDecare = coefficientList.stream().filter(c -> c.getEnumCoefficientType().equals(EnumCoefficientType.DRILL_PLANTING)).findFirst().get().getDieselValue();
         BigDecimal cityDieselPrice = BigDecimal.valueOf(75);
-        Double seederLaborPerDecare = 0.1d;
-        BigDecimal maleDailyWage = BigDecimal.valueOf(2000);
-        Double workHoursPerDay = 8d;
+        Double seederLaborPerDecare = coefficientList.stream().filter(c -> c.getEnumCoefficientType().equals(EnumCoefficientType.DRILL_PLANTING)).findFirst().get().getLaborValue();
+        BigDecimal maleDailyWage = decimalAnswerSetter(previousAnswerList, 41L);
+        Double workHoursPerDay = coefficientList.stream().filter(c -> c.getEnumCoefficientType().equals(EnumCoefficientType.WORKING_HOURS)).findFirst().get().getLaborValue();
         Integer plantingSeederLumpSumAmount = 1;
         BigDecimal plantingLumpSumPrice = decimalValueSetter(productQuestionList, 66L);
         Double seedHandHourPerDecare = doubleValueSetter(productQuestionList, 67L);
@@ -369,13 +427,13 @@ public class CostCalculationService {
         Integer plantingSteelingPerDecare = integerValueSetter(productQuestionList, 72L);
         BigDecimal steelingUnitPrice = decimalValueSetter(productQuestionList, 74L);
         Double averagePlantingHandPerPerson = doubleValueSetter(productQuestionList, 76L);
-        BigDecimal femaleDailyWage = BigDecimal.valueOf(1800);
+        BigDecimal femaleDailyWage = decimalAnswerSetter(previousAnswerList, 42L);
         Double drillPlantingPerHour = doubleValueSetter(productQuestionList, 78L);
         Double dieselAmountPerHour = doubleValueSetter(productQuestionList, 79L);
         Double drillAmount = 1d;
         BigDecimal rentalDrillCostPerHour = decimalValueSetter(productQuestionList, 80L);
-        Double maleCostRate = 0.2d;
-        Double femaleCostRate = 0.8d;
+        Double maleCostRate = coefficientList.stream().filter(c -> c.getEnumCoefficientType().equals(EnumCoefficientType.MALE_WORKER_RATIO)).findFirst().get().getLaborValue();
+        Double femaleCostRate = coefficientList.stream().filter(c -> c.getEnumCoefficientType().equals(EnumCoefficientType.FEMALE_WORKER_RATIO)).findFirst().get().getLaborValue();
         Double workPowerCount = doubleValueSetter(productQuestionList, 89L);
         Double averageYumruAmount = doubleValueSetter(productQuestionList, 85L);
         Double yumruUsageYear = doubleValueSetter(productQuestionList, 90L);
@@ -557,16 +615,19 @@ public class CostCalculationService {
                 .add(bioConditionerCostPerDecare(bioConditionerDieselRate, cityDieselPrice, bioConditionerLaborRate, workingManLaborPrice, bioConditionerPerDecare, bioConditionerPerTon));
     }
 
-    public BigDecimal calculateFertilizerCost(List<PlantationProductQuestion> productQuestionList) {
-        Double baseFertilizerDieselRate = 0d;
+    public BigDecimal calculateFertilizerCost(List<PlantationProductQuestion> productQuestionList, Long plantationPlanId) {
+        List<PlantationCoefficient> coefficientList = coefficientRepository.findByEnumCoefficientTypeIn(EnumCoefficientType.values());
+        List<UserPlantPlanAnswer> previousAnswerList = planAnswerRepository.findByPlantationPlan_IdAndProductQuestion_PlantationQuestion_IdIn(plantationPlanId, List.of(41L));
+
+        Double baseFertilizerDieselRate = coefficientList.stream().filter(c -> c.getEnumCoefficientType().equals(EnumCoefficientType.BASE_FERTILIZER)).findFirst().get().getDieselValue();
         BigDecimal cityDieselPrice = BigDecimal.valueOf(75);
-        Double baseFertilizerLaborRate = 0.015d;
-        BigDecimal maleDailyWage = BigDecimal.valueOf(2000);
-        Double workHoursPerDay = 8d;
+        Double baseFertilizerLaborRate = coefficientList.stream().filter(c -> c.getEnumCoefficientType().equals(EnumCoefficientType.BASE_FERTILIZER)).findFirst().get().getLaborValue();
+        BigDecimal maleDailyWage = decimalAnswerSetter(previousAnswerList, 41L);
+        Double workHoursPerDay = coefficientList.stream().filter(c -> c.getEnumCoefficientType().equals(EnumCoefficientType.WORKING_HOURS)).findFirst().get().getLaborValue();
         Double composeFertilizerKgAmount = doubleValueSetter(productQuestionList, 93L);
         BigDecimal composeFertilizerCostPerKg = decimalValueSetter(productQuestionList, 94L);
-        Double topFertilizerDieselRate = 0.25d;
-        Double topFertilizerLaborRate = 0.12d;
+        Double topFertilizerDieselRate = coefficientList.stream().filter(c -> c.getEnumCoefficientType().equals(EnumCoefficientType.TOP_FERTILIZER)).findFirst().get().getDieselValue();
+        Double topFertilizerLaborRate = coefficientList.stream().filter(c -> c.getEnumCoefficientType().equals(EnumCoefficientType.TOP_FERTILIZER)).findFirst().get().getLaborValue();
         Double firstNitrogenFertilizerKgAmount = doubleValueSetter(productQuestionList, 95L);
         BigDecimal firstNitrogenFertilizerCostPerKg = decimalValueSetter(productQuestionList, 96L);
         Double secondNitrogenFertilizerKgAmount = doubleValueSetter(productQuestionList, 97L);
@@ -576,28 +637,28 @@ public class CostCalculationService {
         Double phosphorusFertilizerKgAmount = doubleValueSetter(productQuestionList, 103L);
         BigDecimal phosphorusFertilizerCostPerKg = decimalValueSetter(productQuestionList, 104L);
         Integer liquidFertilizer = integerValueSetter(productQuestionList, 106L);
-        Double liquidFertilizerDieselRate = 0.4d;
-        Double liquidFertilizerLaborRate = 0.17d;
-        BigDecimal liquidFertilizerAveragePrice = BigDecimal.valueOf(300);
-        Double animalFertilizerDieselRate = 2.5d;
+        Double liquidFertilizerDieselRate = coefficientList.stream().filter(c -> c.getEnumCoefficientType().equals(EnumCoefficientType.LIQUID_FERTILIZER)).findFirst().get().getDieselValue();
+        Double liquidFertilizerLaborRate = coefficientList.stream().filter(c -> c.getEnumCoefficientType().equals(EnumCoefficientType.LIQUID_FERTILIZER)).findFirst().get().getLaborValue();
+        BigDecimal liquidFertilizerAveragePrice = BigDecimal.valueOf(300);//todo hep ortalama değer mi alınacaK?
+        Double animalFertilizerDieselRate = coefficientList.stream().filter(c -> c.getEnumCoefficientType().equals(EnumCoefficientType.ANIMAL_FERTILIZER)).findFirst().get().getDieselValue();
         Double animalFertilizerFrequency = doubleValueSetter(productQuestionList, 109L);
-        Double animalFertilizerLaborRate = 3d;
+        Double animalFertilizerLaborRate = coefficientList.stream().filter(c -> c.getEnumCoefficientType().equals(EnumCoefficientType.ANIMAL_FERTILIZER)).findFirst().get().getLaborValue();
         Double animalFertilizerPerDecare = doubleValueSetter(productQuestionList, 107L);
         BigDecimal animalFertilizerPerTon = decimalValueSetter(productQuestionList, 108L);
         Double humicAcidAmountPerDecare = doubleValueSetter(productQuestionList, 110L);
-        Double humicAcidDieselRate = 0.01d;
-        Double humicAcidLaborRate = 0d;
+        Double humicAcidDieselRate = coefficientList.stream().filter(c -> c.getEnumCoefficientType().equals(EnumCoefficientType.HUMIC_ACID)).findFirst().get().getDieselValue();
+        Double humicAcidLaborRate = coefficientList.stream().filter(c -> c.getEnumCoefficientType().equals(EnumCoefficientType.HUMIC_ACID)).findFirst().get().getLaborValue();
         BigDecimal humicAcidAveragePrice = decimalValueSetter(productQuestionList, 111L);
-        Double leonarditeDieselRate = 2d;
-        Double leonarditeLaborRate = 0d;
+        Double leonarditeDieselRate = coefficientList.stream().filter(c -> c.getEnumCoefficientType().equals(EnumCoefficientType.LEONARDITE)).findFirst().get().getDieselValue();
+        Double leonarditeLaborRate = coefficientList.stream().filter(c -> c.getEnumCoefficientType().equals(EnumCoefficientType.LEONARDITE)).findFirst().get().getLaborValue();
         Double leonarditePerDecare = doubleValueSetter(productQuestionList, 112L);
         BigDecimal leonarditePerTon = decimalValueSetter(productQuestionList, 113L);
-        Double wormFertilizerDieselRate = 0.01d;
-        Double wormFertilizerLaborRate = 0d;
+        Double wormFertilizerDieselRate = coefficientList.stream().filter(c -> c.getEnumCoefficientType().equals(EnumCoefficientType.WORM_COMPOST)).findFirst().get().getDieselValue();
+        Double wormFertilizerLaborRate = coefficientList.stream().filter(c -> c.getEnumCoefficientType().equals(EnumCoefficientType.WORM_COMPOST)).findFirst().get().getLaborValue();
         Double wormFertilizerPerDecare = doubleValueSetter(productQuestionList, 114L);
         BigDecimal wormFertilizerPerTon = decimalValueSetter(productQuestionList, 115L);
-        Double bioConditionerDieselRate = 0.2d;
-        Double bioConditionerLaborRate = 0.25d;
+        Double bioConditionerDieselRate = coefficientList.stream().filter(c -> c.getEnumCoefficientType().equals(EnumCoefficientType.BIO_CONDITIONER)).findFirst().get().getDieselValue();
+        Double bioConditionerLaborRate = coefficientList.stream().filter(c -> c.getEnumCoefficientType().equals(EnumCoefficientType.BIO_CONDITIONER)).findFirst().get().getLaborValue();
         Double bioConditionerPerDecare = doubleValueSetter(productQuestionList, 116L);
         BigDecimal bioConditionerPerTon = decimalValueSetter(productQuestionList, 117L);
 
@@ -732,30 +793,33 @@ public class CostCalculationService {
                 .add(animalPlowCostPerDecare(animalPlowPerYear, animalPlowAmountDecarePerDay, workingManLaborPrice));
     }
 
-    public BigDecimal calculateWildGrassControlCost(List<PlantationProductQuestion> productQuestionList) {
+    public BigDecimal calculateWildGrassControlCost(List<PlantationProductQuestion> productQuestionList, Long plantationPlanId) {
+        List<PlantationCoefficient> coefficientList = coefficientRepository.findByEnumCoefficientTypeIn(EnumCoefficientType.values());
+        List<UserPlantPlanAnswer> previousAnswerList = planAnswerRepository.findByPlantationPlan_IdAndProductQuestion_PlantationQuestion_IdIn(plantationPlanId, List.of(41L, 42L));
+
         Double throatFillingLaborAmount = doubleValueSetter(productQuestionList, 119L);
-        BigDecimal femaleDailyWage = BigDecimal.valueOf(1800);
-        Double workHoursPerDay = 8d;
+        BigDecimal femaleDailyWage = decimalAnswerSetter(previousAnswerList, 42L);
+        Double workHoursPerDay = coefficientList.stream().filter(c -> c.getEnumCoefficientType().equals(EnumCoefficientType.WORKING_HOURS)).findFirst().get().getLaborValue();
         Double throatFillingEnergyAmount = doubleValueSetter(productQuestionList, 120L);
         BigDecimal cityDieselPrice = BigDecimal.valueOf(75);
-        Double throatFillingLaborRate = 0.15d;
-        BigDecimal maleDailyWage = BigDecimal.valueOf(2000);
+        Double throatFillingLaborRate = coefficientList.stream().filter(c -> c.getEnumCoefficientType().equals(EnumCoefficientType.THROAT_FILLING)).findFirst().get().getLaborValue();
+        BigDecimal maleDailyWage = decimalAnswerSetter(previousAnswerList, 41L);
         Integer handWeedingCount = integerValueSetter(productQuestionList, 130L);
         Double averageHandLaborAmount = doubleValueSetter(productQuestionList, 129L);
         Integer tractorWeedingCount = integerValueSetter(productQuestionList, 132L);
         Double averageTractorLaborAmount = doubleValueSetter(productQuestionList, 131L);
-        Double tractorWeedingLabor = 0.17d;
+        Double tractorWeedingLabor = coefficientList.stream().filter(c -> c.getEnumCoefficientType().equals(EnumCoefficientType.TRACTOR_TILLER)).findFirst().get().getLaborValue();
         Integer machineWeedingCount = integerValueSetter(productQuestionList, 135L);
         Double averageMachineLaborAmount = doubleValueSetter(productQuestionList, 133L);
         Double machineWeedingLabor = doubleValueSetter(productQuestionList, 134L);
         Integer medicineCount = integerValueSetter(productQuestionList, 136L);
-        Double medicineEnergyAmount = 0.15d;
-        Double medicineLaborAmount = 0.3d;
+        Double medicineEnergyAmount = coefficientList.stream().filter(c -> c.getEnumCoefficientType().equals(EnumCoefficientType.WEED_CONTROL)).findFirst().get().getDieselValue();
+        Double medicineLaborAmount = coefficientList.stream().filter(c -> c.getEnumCoefficientType().equals(EnumCoefficientType.WEED_CONTROL)).findFirst().get().getLaborValue();
         BigDecimal productMedicinePrice = BigDecimal.valueOf(8.115076667d);
         Integer handCountFrequency = integerValueSetter(productQuestionList, 138L);
         Double averageLaborHourAmount = doubleValueSetter(productQuestionList, 137L);
-        Double maleCostRate = 0.2d;
-        Double femaleCostRate = 0.8d;
+        Double maleCostRate = coefficientList.stream().filter(c -> c.getEnumCoefficientType().equals(EnumCoefficientType.MALE_WORKER_RATIO)).findFirst().get().getLaborValue();
+        Double femaleCostRate = coefficientList.stream().filter(c -> c.getEnumCoefficientType().equals(EnumCoefficientType.FEMALE_WORKER_RATIO)).findFirst().get().getLaborValue();
         Double totalMulchingHour = doubleValueSetter(productQuestionList, 141L);
         Double mulchUsageYear = doubleValueSetter(productQuestionList, 142L);
         Double mulchAmountPerDecare = doubleValueSetter(productQuestionList, 139L);
@@ -855,42 +919,45 @@ public class CostCalculationService {
         //TODO irrigationCountForDieselPump değerinde hata var, 4 mü 12 mi? giriş yoksa gelmeli mi? To:İbrahim Bey
     }
 
-    public BigDecimal calculateIrrigationCost(List<PlantationProductQuestion> productQuestionList) {
+    public BigDecimal calculateIrrigationCost(List<PlantationProductQuestion> productQuestionList, Long plantationPlanId) {
+        List<PlantationCoefficient> coefficientList = coefficientRepository.findByEnumCoefficientTypeIn(EnumCoefficientType.values());
+        List<UserPlantPlanAnswer> previousAnswerList = planAnswerRepository.findByPlantationPlan_IdAndProductQuestion_PlantationQuestion_IdIn(plantationPlanId, List.of(41L, 42L));
+
         Integer irrigationCountPerTonne = integerValueSetter(productQuestionList, 156L);
-        Double irrigationLaborPerTonne = 0.15d;
-        BigDecimal maleDailyWage = BigDecimal.valueOf(2000);
-        Double workHoursPerDay = 8d;
+        Double irrigationLaborPerTonne = coefficientList.stream().filter(c -> c.getEnumCoefficientType().equals(EnumCoefficientType.DRIP_IRRIGATION)).findFirst().get().getLaborValue();
+        BigDecimal maleDailyWage = decimalAnswerSetter(previousAnswerList, 41L);
+        Double workHoursPerDay = coefficientList.stream().filter(c -> c.getEnumCoefficientType().equals(EnumCoefficientType.WORKING_HOURS)).findFirst().get().getLaborValue();
         Double waterAmountPerDecarePerTonne = doubleValueSetter(productQuestionList, 155L);
         BigDecimal waterPricePerTonne = decimalValueSetter(productQuestionList, 154L);
-        BigDecimal irrigationAmortizationPerTonne = BigDecimal.valueOf(4300);
+        BigDecimal irrigationAmortizationPerTonne = BigDecimal.valueOf(4300);//TODO
         Double irrigationCountPerDecare = doubleValueSetter(productQuestionList, 159L);
-        Double pumpEfficiencyRate = 0.65d;
-        BigDecimal cityDieselPrice = BigDecimal.valueOf(75);
-        Double irrigationLaborPerDecare = 2d;
+        Double pumpEfficiencyRate = coefficientList.stream().filter(c -> c.getEnumCoefficientType().equals(EnumCoefficientType.DRIP_IRRIGATION)).findFirst().get().getDieselValue();
+        BigDecimal cityDieselPrice = BigDecimal.valueOf(75);//TODO
+        Double irrigationLaborPerDecare = coefficientList.stream().filter(c -> c.getEnumCoefficientType().equals(EnumCoefficientType.SPRINKLER_IRRIGATION)).findFirst().get().getLaborValue();
         Double waterAmountPerDecare = doubleValueSetter(productQuestionList, 158L);
         BigDecimal waterPricePerDecare = decimalValueSetter(productQuestionList, 157L);
-        BigDecimal irrigationAmortizationPerDecare = BigDecimal.valueOf(2200);
+        BigDecimal irrigationAmortizationPerDecare = BigDecimal.valueOf(2200);//TODO
         BigDecimal waterPricePerDecareAlone = decimalValueSetter(productQuestionList, 160L);
         Double irrigationCountForElectricityPump = doubleValueSetter(productQuestionList, 168L);
-        Double irrigationLaborElectricityRate = 0.15d;
+        Double irrigationLaborElectricityRate = 0.15d;//todo
         Double electricityPumpWorkingHour = doubleValueSetter(productQuestionList, 167L);
         Double electricityWaterAmountPerHour = doubleValueSetter(productQuestionList, 164L);
         Double electricityWaterPumpHeight = doubleValueSetter(productQuestionList, 165L);
-        Integer constantNumber = 367;
-        Double constantMotorEfficiency = 0.9d;
-        Double constantPumpEfficiency = 0.65d;
+        Integer constantNumber = coefficientList.stream().filter(c -> c.getEnumCoefficientType().equals(EnumCoefficientType.CONSTANT_NUMBER)).findFirst().get().getLaborValue().intValue();
+        Double constantMotorEfficiency = coefficientList.stream().filter(c -> c.getEnumCoefficientType().equals(EnumCoefficientType.MOTOR_EFFICIENCY_CONSTANT)).findFirst().get().getLaborValue();
+        Double constantPumpEfficiency = coefficientList.stream().filter(c -> c.getEnumCoefficientType().equals(EnumCoefficientType.PUMP_EFFICIENCY_CONSTANT)).findFirst().get().getLaborValue();
         Double irrigationAreaElectricity = doubleValueSetter(productQuestionList, 166L);
-        BigDecimal cityElectricityPrice = BigDecimal.valueOf(4);
-        BigDecimal irrigationAmortizationElectricity = BigDecimal.valueOf(4300);
-        Double irrigationCountForDieselPump = 4d;
-        Double specificConstantRate = 0.25d;
+        BigDecimal cityElectricityPrice = BigDecimal.valueOf(4);//TODO
+        BigDecimal irrigationAmortizationElectricity = BigDecimal.valueOf(4300);//Todo
+        Double irrigationCountForDieselPump = 4d;//Todo
+        Double specificConstantRate = coefficientList.stream().filter(c -> c.getEnumCoefficientType().equals(EnumCoefficientType.IRRIGATION_SPECIFIC_CONSUMPTION_CONSTANT)).findFirst().get().getLaborValue();
         Double pumpWorkingHour = doubleValueSetter(productQuestionList, 171L);
         Double waterAmountPerHour = doubleValueSetter(productQuestionList, 169L);
         Double waterPumpHeight = doubleValueSetter(productQuestionList, 170L);
-        Double gravity = 9.81d;
-        Double pumpMotorEfficiencyRate = 0.6d;
+        Double gravity = coefficientList.stream().filter(c -> c.getEnumCoefficientType().equals(EnumCoefficientType.GRAVITY)).findFirst().get().getLaborValue();
+        Double pumpMotorEfficiencyRate = coefficientList.stream().filter(c -> c.getEnumCoefficientType().equals(EnumCoefficientType.PUMP_MOTOR_EFFICIENCY)).findFirst().get().getLaborValue();
         Double irrigationArea = doubleValueSetter(productQuestionList, 172L);
-        Double irrigationLaborRate = 2d;
+        Double irrigationLaborRate = coefficientList.stream().filter(c -> c.getEnumCoefficientType().equals(EnumCoefficientType.SPRINKLER_IRRIGATION)).findFirst().get().getLaborValue();
 
         return irrigationTotalCost(irrigationCountPerTonne, irrigationLaborPerTonne, maleDailyWage, workHoursPerDay, waterAmountPerDecarePerTonne, waterPricePerTonne, irrigationAmortizationPerTonne,
                 irrigationCountPerDecare, pumpEfficiencyRate, cityDieselPrice, irrigationLaborPerDecare, waterAmountPerDecare, waterPricePerDecare, irrigationAmortizationPerDecare,
@@ -1012,23 +1079,26 @@ public class CostCalculationService {
                 .add(bendingRopeCostPerDecare(bendingRopeHourPerDecare, workingManLaborPrice));
     }
 
-    public BigDecimal calculateCulturalWorkCost(List<PlantationProductQuestion> productQuestionList) {
+    public BigDecimal calculateCulturalWorkCost(List<PlantationProductQuestion> productQuestionList, Long plantationPlanId) {
+        List<PlantationCoefficient> coefficientList = coefficientRepository.findByEnumCoefficientTypeIn(EnumCoefficientType.values());
+        List<UserPlantPlanAnswer> previousAnswerList = planAnswerRepository.findByPlantationPlan_IdAndProductQuestion_PlantationQuestion_IdIn(plantationPlanId, List.of(41L, 42L, 43L));
+
         Double treePruneAmountHour = doubleValueSetter(productQuestionList, 175L);
-        BigDecimal pruneDailyWage = BigDecimal.valueOf(2600);
-        Double workHoursPerDay = 8d;
+        BigDecimal pruneDailyWage = decimalAnswerSetter(previousAnswerList, 43L);
+        Double workHoursPerDay = coefficientList.stream().filter(c -> c.getEnumCoefficientType().equals(EnumCoefficientType.WORKING_HOURS)).findFirst().get().getLaborValue();
         Double vinePruneAmountHour = doubleValueSetter(productQuestionList, 176L);
         Double rejuvenationPruneAmountHour = doubleValueSetter(productQuestionList, 177L);
         Double winterPruneAmountHour = doubleValueSetter(productQuestionList, 178L);
         Double summerPruneAmountHour = doubleValueSetter(productQuestionList, 179L);
-        BigDecimal maleDailyWage = BigDecimal.valueOf(2000);
+        BigDecimal maleDailyWage = decimalAnswerSetter(previousAnswerList, 41L);
         Double basalPruneAmountHour = doubleValueSetter(productQuestionList, 180L);
         Double thinningPruneAmountHour = doubleValueSetter(productQuestionList, 181L);
-        Double maleCostRate = 0.2d;
-        BigDecimal femaleDailyWage = BigDecimal.valueOf(1800);
-        Double femaleCostRate = 0.8d;
+        Double maleCostRate = coefficientList.stream().filter(c -> c.getEnumCoefficientType().equals(EnumCoefficientType.MALE_WORKER_RATIO)).findFirst().get().getLaborValue();
+        BigDecimal femaleDailyWage = decimalAnswerSetter(previousAnswerList, 42L);
+        Double femaleCostRate = coefficientList.stream().filter(c -> c.getEnumCoefficientType().equals(EnumCoefficientType.FEMALE_WORKER_RATIO)).findFirst().get().getLaborValue();
         Double polePullLaborHour = doubleValueSetter(productQuestionList, 184L);
         Double polesAmountPerDecare = doubleValueSetter(productQuestionList, 182L);
-        Double poleLifeCycleRate = 3d;
+        Double poleLifeCycleRate = coefficientList.stream().filter(c -> c.getEnumCoefficientType().equals(EnumCoefficientType.POLE_SERVICE_LIFE)).findFirst().get().getLaborValue();
         BigDecimal polePricePerUnit = decimalValueSetter(productQuestionList, 183L);
         Double plantVineHourPerDecare = doubleValueSetter(productQuestionList, 187L);
         Double plantVineInputAmount = doubleValueSetter(productQuestionList, 185L);
@@ -1138,31 +1208,34 @@ public class CostCalculationService {
                 .add(droneMedicineCostPerDecare(droneMedicineCount, droneMedicineRentalPricePerDecare));
     }
 
-    public BigDecimal calculatePlantProtectionCost(List<PlantationProductQuestion> productQuestionList) {
+    public BigDecimal calculatePlantProtectionCost(List<PlantationProductQuestion> productQuestionList, Long plantationPlanId) {
+        List<PlantationCoefficient> coefficientList = coefficientRepository.findByEnumCoefficientTypeIn(EnumCoefficientType.values());
+        List<UserPlantPlanAnswer> previousAnswerList = planAnswerRepository.findByPlantationPlan_IdAndProductQuestion_PlantationQuestion_IdIn(plantationPlanId, List.of(41L));
+
         Integer foliarForFungalCount = integerValueSetter(productQuestionList, 195L);
-        BigDecimal productFungalMedicinePricePerUnit = BigDecimal.valueOf(5.88859433);
+        BigDecimal productFungalMedicinePricePerUnit = BigDecimal.valueOf(5.88859433);//TODO
         Integer medicineForInsectCount = integerValueSetter(productQuestionList, 197L);
-        BigDecimal productInsectMedicinePricePerUnit = BigDecimal.valueOf(3.916881333);
+        BigDecimal productInsectMedicinePricePerUnit = BigDecimal.valueOf(3.916881333);//TODO
         Integer medicineForRedSpiderCount = integerValueSetter(productQuestionList, 198L);
-        BigDecimal productRedSpiderMedicinePricePerUnit = BigDecimal.valueOf(14.33626667);
+        BigDecimal productRedSpiderMedicinePricePerUnit = BigDecimal.valueOf(14.33626667);//TODO
         Integer medicineForBordeauxCount = integerValueSetter(productQuestionList, 199L);
-        BigDecimal productBordeauxMedicinePricePerUnit = BigDecimal.ZERO;
+        BigDecimal productBordeauxMedicinePricePerUnit = BigDecimal.ZERO; //TODO
         Integer medicineForHormoneCount = integerValueSetter(productQuestionList, 200L);
-        BigDecimal productHormonePricePerUnit = BigDecimal.valueOf(139);
+        BigDecimal productHormonePricePerUnit = BigDecimal.valueOf(139);//TODO
         Integer cottonDefoliantCount = integerValueSetter(productQuestionList, 201L);
-        BigDecimal productCottonDefoliantPricePerUnit = BigDecimal.ZERO;
+        BigDecimal productCottonDefoliantPricePerUnit = BigDecimal.ZERO;//TODO
         Integer machineMedicineCount = integerValueSetter(productQuestionList, 203L);
-        Double machineMedicineDieselRate = 0.55d;
-        BigDecimal cityDieselPrice = BigDecimal.valueOf(75);
-        Double machineMedicineLaborRate = 0.15d;
-        BigDecimal maleDailyWage = BigDecimal.valueOf(2000);
-        Double workHoursPerDay = 8d;
+        Double machineMedicineDieselRate = coefficientList.stream().filter(c -> c.getEnumCoefficientType().equals(EnumCoefficientType.MACHINE_SPRAYING)).findFirst().get().getDieselValue();
+        BigDecimal cityDieselPrice = BigDecimal.valueOf(75);//TODO
+        Double machineMedicineLaborRate = coefficientList.stream().filter(c -> c.getEnumCoefficientType().equals(EnumCoefficientType.MACHINE_SPRAYING)).findFirst().get().getLaborValue();
+        BigDecimal maleDailyWage = decimalAnswerSetter(previousAnswerList, 41L);
+        Double workHoursPerDay = coefficientList.stream().filter(c -> c.getEnumCoefficientType().equals(EnumCoefficientType.WORKING_HOURS)).findFirst().get().getLaborValue();
         Integer backpackMedicineCount = integerValueSetter(productQuestionList, 204L);
-        Double backpackMedicineDieselRate = 0.9d;
-        Double backpackMedicineLaborRate = 4d;
+        Double backpackMedicineDieselRate = coefficientList.stream().filter(c -> c.getEnumCoefficientType().equals(EnumCoefficientType.BACKPACK_SPRAYING)).findFirst().get().getDieselValue();
+        Double backpackMedicineLaborRate = coefficientList.stream().filter(c -> c.getEnumCoefficientType().equals(EnumCoefficientType.BACKPACK_SPRAYING)).findFirst().get().getLaborValue();
         Integer irrigationMedicineCount = integerValueSetter(productQuestionList, 205L);
-        Double irrigationMedicineDieselRate = 0d;
-        Double irrigationMedicineLaborRate = 0.05d;
+        Double irrigationMedicineDieselRate = coefficientList.stream().filter(c -> c.getEnumCoefficientType().equals(EnumCoefficientType.IRRIGATION_SPRAYING)).findFirst().get().getDieselValue();
+        Double irrigationMedicineLaborRate = coefficientList.stream().filter(c -> c.getEnumCoefficientType().equals(EnumCoefficientType.IRRIGATION_SPRAYING)).findFirst().get().getLaborValue();
         Integer droneMedicineCount = integerValueSetter(productQuestionList, 206L);
         BigDecimal droneMedicineRentalPricePerDecare = decimalValueSetter(productQuestionList, 207L);
 
@@ -1481,27 +1554,30 @@ public class CostCalculationService {
                 .add(motorizedCuttingCostPerDecare(harvestCount, motorizedCuttingDieselAmount, cityDieselPrice, motorizedCuttingLaborAmount, workingPruneLaborPrice));
     }
 
-    public BigDecimal calculateHarvestCost(List<PlantationProductQuestion> productQuestionList) {
+    public BigDecimal calculateHarvestCost(List<PlantationProductQuestion> productQuestionList, Long plantationPlanId) {
+        List<PlantationCoefficient> coefficientList = coefficientRepository.findByEnumCoefficientTypeIn(EnumCoefficientType.values());
+        List<UserPlantPlanAnswer> previousAnswerList = planAnswerRepository.findByPlantationPlan_IdAndProductQuestion_PlantationQuestion_IdIn(plantationPlanId, List.of(12L, 13L, 15L, 16L, 24L, 41L, 42L, 43L));
+
         Integer harvestCount = integerValueSetter(productQuestionList, 209L);
-        Double averageYieldAsKgPerDecare = 1150d;
+        Double averageYieldAsKgPerDecare = doubleAnswerSetter(previousAnswerList, 12L);
         Double byHandHarvestAmountPerDay = doubleValueSetter(productQuestionList, 219L);
-        BigDecimal maleDailyWage = BigDecimal.valueOf(2000);
-        Double maleCostRate = 0.2d;
-        BigDecimal femaleDailyWage = BigDecimal.valueOf(1800);
-        Double femaleCostRate = 0.8d;
-        Double workHoursPerDay = 8d;
+        BigDecimal maleDailyWage = decimalAnswerSetter(previousAnswerList, 41L);
+        Double maleCostRate = coefficientList.stream().filter(c -> c.getEnumCoefficientType().equals(EnumCoefficientType.MALE_WORKER_RATIO)).findFirst().get().getLaborValue();
+        BigDecimal femaleDailyWage = decimalAnswerSetter(previousAnswerList, 42L);
+        Double femaleCostRate = coefficientList.stream().filter(c -> c.getEnumCoefficientType().equals(EnumCoefficientType.FEMALE_WORKER_RATIO)).findFirst().get().getLaborValue();
+        Double workHoursPerDay = coefficientList.stream().filter(c -> c.getEnumCoefficientType().equals(EnumCoefficientType.WORKING_HOURS)).findFirst().get().getLaborValue();
         Double byMachineHarvestAmountPerDay = doubleValueSetter(productQuestionList, 220L);
-        Double mainProductKgYieldAsUnitPerDecare = 5000d;
+        Double mainProductKgYieldAsUnitPerDecare = doubleAnswerSetter(previousAnswerList, 15L);
         Double shakeAndCrateInputAmount = doubleValueSetter(productQuestionList, 221L);
         Double cutAndBindInputAmount = doubleValueSetter(productQuestionList, 222L);
         Double cutAndLoadInputAmount = doubleValueSetter(productQuestionList, 223L);
         Double harvestAndLoadInputAmount = doubleValueSetter(productQuestionList, 224L);
-        Double averageExpectedYieldAsBundlePerDecare = 770d;
+        Double averageExpectedYieldAsBundlePerDecare = doubleAnswerSetter(previousAnswerList, 16L);
         Double harvestAndBindInputAmount = doubleValueSetter(productQuestionList, 225L);
         Double cutAndBindAndLoadInputAmount = doubleValueSetter(productQuestionList, 226L);
-        Double mainProductKgYieldAsGrPerDecare = 200d;
+        Double mainProductKgYieldAsGrPerDecare = doubleAnswerSetter(previousAnswerList, 13L);
         Double harvestGrInputAmount = doubleValueSetter(productQuestionList, 227L);
-        Double leafProductKgYieldAsGrPerDecare = 60d;
+        Double leafProductKgYieldAsGrPerDecare = doubleAnswerSetter(previousAnswerList, 24L);
         Double harvestLeafInputAmount = doubleValueSetter(productQuestionList, 228L);
         BigDecimal harvesterRentalPricePerDecare = decimalValueSetter(productQuestionList, 229L);
         BigDecimal demolitionRentalPricePerDecare = decimalValueSetter(productQuestionList, 230L);
@@ -1510,7 +1586,7 @@ public class CostCalculationService {
         BigDecimal harvestRentalPricePerDecare = decimalValueSetter(productQuestionList, 233L);
         BigDecimal seederRentalPricePerDecare = decimalValueSetter(productQuestionList, 234L);
         Double havestAndMachineDieselInputAmount = doubleValueSetter(productQuestionList, 236L);
-        BigDecimal cityDieselPrice = BigDecimal.valueOf(75);
+        BigDecimal cityDieselPrice = BigDecimal.valueOf(75);//TODO
         Double harvestAndMachineInputAmount = doubleValueSetter(productQuestionList, 235L);
         Double machineShakingDieselInputAmount = doubleValueSetter(productQuestionList, 238L);
         Double machineShakingInputAmount = doubleValueSetter(productQuestionList, 237L);
@@ -1522,7 +1598,7 @@ public class CostCalculationService {
         Double mowingLaborAmountPerDecare = doubleValueSetter(productQuestionList, 243L);
         Double motorizedCuttingDieselAmount = doubleValueSetter(productQuestionList, 245L);
         Double motorizedCuttingLaborAmount = doubleValueSetter(productQuestionList, 246L);
-        BigDecimal pruneDailyWage = BigDecimal.valueOf(2600);
+        BigDecimal pruneDailyWage = decimalAnswerSetter(previousAnswerList, 43L);
 
         return harvestTotalCost(harvestCount, averageYieldAsKgPerDecare, byHandHarvestAmountPerDay, maleDailyWage, maleCostRate, femaleDailyWage, femaleCostRate, workHoursPerDay,
                 byMachineHarvestAmountPerDay, mainProductKgYieldAsUnitPerDecare,
@@ -1622,19 +1698,22 @@ public class CostCalculationService {
                 .add(blendThreshingCost(averageYieldAsKgPerDecare, blendThreshingAmountPerHour, threshingCostPerHour));
     }
 
-    public BigDecimal calculateBlendCost(List<PlantationProductQuestion> productQuestionList) {
+    public BigDecimal calculateBlendCost(List<PlantationProductQuestion> productQuestionList, Long plantationPlanId) {
+        List<PlantationCoefficient> coefficientList = coefficientRepository.findByEnumCoefficientTypeIn(EnumCoefficientType.values());
+        List<UserPlantPlanAnswer> previousAnswerList = planAnswerRepository.findByPlantationPlan_IdAndProductQuestion_PlantationQuestion_IdIn(plantationPlanId, List.of(12L, 13L, 41L, 42L, 43L));
+
         Double transportKmAmount = doubleValueSetter(productQuestionList, 247L);
-        Double averageYieldAsKgPerDecare = 1150d;
-        Double tractorLoadCapacity = 4000d;
-        BigDecimal cityDieselPrice = BigDecimal.valueOf(75);
+        Double averageYieldAsKgPerDecare = doubleAnswerSetter(previousAnswerList, 12L);
+        Double tractorLoadCapacity = coefficientList.stream().filter(c -> c.getEnumCoefficientType().equals(EnumCoefficientType.TRACTOR_CARRYING_CAPACITY)).findFirst().get().getLaborValue();
+        BigDecimal cityDieselPrice = BigDecimal.valueOf(75);//todo
         Double blendAmountPerDay = doubleValueSetter(productQuestionList, 249L);
-        BigDecimal maleDailyWage = BigDecimal.valueOf(2000);
-        Double workHoursPerDay = 8d;
+        BigDecimal maleDailyWage = decimalAnswerSetter(previousAnswerList, 41L);
+        Double workHoursPerDay = coefficientList.stream().filter(c -> c.getEnumCoefficientType().equals(EnumCoefficientType.WORKING_HOURS)).findFirst().get().getLaborValue();
         Double cureAmountPerDay = doubleValueSetter(productQuestionList, 250L);
-        Double maleCostRate = 0.2d;
-        BigDecimal femaleDailyWage = BigDecimal.valueOf(1800);
-        Double femaleCostRate = 0.8d;
-        Double yieldAsGrPerDecare = 200d;
+        Double maleCostRate = coefficientList.stream().filter(c -> c.getEnumCoefficientType().equals(EnumCoefficientType.MALE_WORKER_RATIO)).findFirst().get().getLaborValue();
+        BigDecimal femaleDailyWage = decimalAnswerSetter(previousAnswerList, 42L);
+        Double femaleCostRate = coefficientList.stream().filter(c -> c.getEnumCoefficientType().equals(EnumCoefficientType.FEMALE_WORKER_RATIO)).findFirst().get().getLaborValue();
+        Double yieldAsGrPerDecare = doubleAnswerSetter(previousAnswerList, 13L);
         Double sortAmountPerDay = doubleValueSetter(productQuestionList, 251L);
         BigDecimal blendThreshingCostPerDecare = decimalValueSetter(productQuestionList, 253L);
         Double blendThreshingAmountPerHour = doubleValueSetter(productQuestionList, 254L);
@@ -1797,19 +1876,22 @@ public class CostCalculationService {
                 .add(sortSizeScoreBrineCost(averageYieldAsKgPerDecare, sortSizeScoreBrineLaborHour, workingMixedLaborPrice));
     }
 
-    public BigDecimal calculateProcessDryCost(List<PlantationProductQuestion> productQuestionList) {
-        Double averageYieldAsKgPerDecare = 1150d;
+    public BigDecimal calculateProcessDryCost(List<PlantationProductQuestion> productQuestionList, Long plantationPlanId) {
+        List<PlantationCoefficient> coefficientList = coefficientRepository.findByEnumCoefficientTypeIn(EnumCoefficientType.values());
+        List<UserPlantPlanAnswer> previousAnswerList = planAnswerRepository.findByPlantationPlan_IdAndProductQuestion_PlantationQuestion_IdIn(plantationPlanId, List.of(12L, 15L, 16L, 41L, 42L, 43L));
+
+        Double averageYieldAsKgPerDecare = doubleAnswerSetter(previousAnswerList, 12L);
         Double processSievingWashDryHourAmountPerTonne = doubleValueSetter(productQuestionList, 259L);
-        BigDecimal maleDailyWage = BigDecimal.valueOf(2000);
-        Double maleCostRate = 0.2d;
-        BigDecimal femaleDailyWage = BigDecimal.valueOf(1800);
-        Double femaleCostRate = 0.8d;
-        Double workHoursPerDay = 8d;
+        BigDecimal maleDailyWage = decimalAnswerSetter(previousAnswerList, 41L);
+        Double maleCostRate = coefficientList.stream().filter(c -> c.getEnumCoefficientType().equals(EnumCoefficientType.MALE_WORKER_RATIO)).findFirst().get().getLaborValue();
+        BigDecimal femaleDailyWage = decimalAnswerSetter(previousAnswerList, 42L);
+        Double femaleCostRate = coefficientList.stream().filter(c -> c.getEnumCoefficientType().equals(EnumCoefficientType.FEMALE_WORKER_RATIO)).findFirst().get().getLaborValue();
+        Double workHoursPerDay = coefficientList.stream().filter(c -> c.getEnumCoefficientType().equals(EnumCoefficientType.WORKING_HOURS)).findFirst().get().getLaborValue();
         Double processSievingWashDryDieselAmountPerTonne = doubleValueSetter(productQuestionList, 260L);
-        BigDecimal cityDieselPrice = BigDecimal.valueOf(75);
-        Double averageExpectedYieldAsUnitPerDecare = 5000d;
+        BigDecimal cityDieselPrice = BigDecimal.valueOf(75); //todo
+        Double averageExpectedYieldAsUnitPerDecare = doubleAnswerSetter(previousAnswerList, 15L);
         Double processSievingWashDryLaborHourAmount = doubleValueSetter(productQuestionList, 261L);
-        Double averageExpectedYieldAsBundlePerDecare = 770d;
+        Double averageExpectedYieldAsBundlePerDecare = doubleAnswerSetter(previousAnswerList, 16L);
         Double processSievingWashDryHourAmountPer1000 = doubleValueSetter(productQuestionList, 262L);
         Double processSievingWashDrySulfurizeHourPerTonne = doubleValueSetter(productQuestionList, 263L);
         Double processSievingWashDryDipHourPerTonne = doubleValueSetter(productQuestionList, 264L);
@@ -1899,16 +1981,19 @@ public class CostCalculationService {
                 .add(balingRentalCostPerBaling(averageYieldSideStrawProduct, balingAverageWeight, rentPricePerBaling));
     }
 
-    public BigDecimal calculateBalingCost(List<PlantationProductQuestion> productQuestionList) {
+    public BigDecimal calculateBalingCost(List<PlantationProductQuestion> productQuestionList, Long plantationPlanId) {
+        List<PlantationCoefficient> coefficientList = coefficientRepository.findByEnumCoefficientTypeIn(EnumCoefficientType.values());
+        List<UserPlantPlanAnswer> previousAnswerList = planAnswerRepository.findByPlantationPlan_IdAndProductQuestion_PlantationQuestion_IdIn(plantationPlanId, List.of(12L, 20L, 41L, 42L, 43L));
+
         Double balingMachineDieselAmountPerDecare = doubleValueSetter(productQuestionList, 276L);
-        BigDecimal cityDieselPrice = BigDecimal.valueOf(75);
+        BigDecimal cityDieselPrice = BigDecimal.valueOf(75); //todo
         Double balingMachineHourAmountPerDecare = doubleValueSetter(productQuestionList, 277L);
-        BigDecimal maleDailyWage = BigDecimal.valueOf(2000);
-        Double workHoursPerDay = 8d;
-        Double averageYieldAsKgPerDecare = 1150d;
+        BigDecimal maleDailyWage = decimalAnswerSetter(previousAnswerList, 41L);
+        Double workHoursPerDay = coefficientList.stream().filter(c -> c.getEnumCoefficientType().equals(EnumCoefficientType.WORKING_HOURS)).findFirst().get().getLaborValue();
+        Double averageYieldAsKgPerDecare = doubleAnswerSetter(previousAnswerList, 12L);
         Double balingMaterialAmountPerTonne = doubleValueSetter(productQuestionList, 278L);
         BigDecimal balingMaterialInputPrice = decimalValueSetter(productQuestionList, 279L);
-        Double averageYieldSideStrawProduct = 300d;
+        Double averageYieldSideStrawProduct = doubleAnswerSetter(previousAnswerList, 20L);
         Double balingAverageWeight = doubleValueSetter(productQuestionList, 280L);
         BigDecimal rentPricePerBaling = decimalValueSetter(productQuestionList, 281L);
 
@@ -1946,12 +2031,15 @@ public class CostCalculationService {
                 .add(packagingCost(averageYieldAsKgPerDecare, weightPerUnit, packagingPricePerUnit));
     }
 
-    public BigDecimal calculateTransportPackagingCost(List<PlantationProductQuestion> productQuestionList) {
-        Double averageYieldAsKgPerDecare = 1150d;
+    public BigDecimal calculateTransportPackagingCost(List<PlantationProductQuestion> productQuestionList, Long plantationPlanId) {
+        List<PlantationCoefficient> coefficientList = coefficientRepository.findByEnumCoefficientTypeIn(EnumCoefficientType.values());
+        List<UserPlantPlanAnswer> previousAnswerList = planAnswerRepository.findByPlantationPlan_IdAndProductQuestion_PlantationQuestion_IdIn(plantationPlanId, List.of(12L, 41L, 42L, 43L));
+
+        Double averageYieldAsKgPerDecare = doubleAnswerSetter(previousAnswerList, 12L);
         Double tractorCapacity = doubleValueSetter(productQuestionList, 284L);
-        Double tractorTransportCoefficient = 0.65d;
+        Double tractorTransportCoefficient = coefficientList.stream().filter(c -> c.getEnumCoefficientType().equals(EnumCoefficientType.CARRYING_CAPACITY)).findFirst().get().getLaborValue();
         Double transportationDistance = doubleValueSetter(productQuestionList, 283L);
-        BigDecimal cityDieselPrice = BigDecimal.valueOf(75);
+        BigDecimal cityDieselPrice = BigDecimal.valueOf(75); //todo
         Double weightPerUnit = doubleValueSetter(productQuestionList, 292L);
         BigDecimal packagingPricePerUnit = decimalValueSetter(productQuestionList, 293L);
         return transportPackagingTotalCost(averageYieldAsKgPerDecare, tractorCapacity, tractorTransportCoefficient, transportationDistance, cityDieselPrice,

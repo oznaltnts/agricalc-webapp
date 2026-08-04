@@ -155,7 +155,7 @@ public class ExpenseBlendProfileController extends BaseController {
 
     public void nextSaveExpense() throws IOException {
         plantationPlanService.savePlanAnswers(plantationPlan, EnumPlantationQuestionType.EXPENSE_BLEND);
-        plantationPlan.setBlendCost(costCalculationService.calculateBlendCost(plantationPlan.getProduct().getProductQuestionList()));
+        plantationPlan.setBlendCost(costCalculationService.calculateBlendCost(plantationPlan.getProduct().getProductQuestionList(), plantationPlan.getId()));
         plantationPlanService.updatePlantationPlanIncome(plantationPlan);
         super.navigationController.redirectToUrl("/secured/plantation/expense-drying-profile?parcelPlanId=" + parcelPlanId);
     }

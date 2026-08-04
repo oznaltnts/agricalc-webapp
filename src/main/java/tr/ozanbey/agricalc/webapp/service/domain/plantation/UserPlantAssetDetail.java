@@ -1,10 +1,11 @@
-package tr.ozanbey.agricalc.webapp.service.domain;
+package tr.ozanbey.agricalc.webapp.service.domain.plantation;
 
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
+import tr.ozanbey.agricalc.webapp.service.domain.AbstractEntity;
 
 import java.math.BigDecimal;
 

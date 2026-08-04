@@ -1,10 +1,10 @@
-package tr.ozanbey.agricalc.webapp.service.service;
+package tr.ozanbey.agricalc.webapp.service.service.plantation;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import tr.ozanbey.agricalc.webapp.service.domain.UserPlantParcel;
-import tr.ozanbey.agricalc.webapp.service.repository.UserPlantParcelRepository;
+import tr.ozanbey.agricalc.webapp.service.domain.plantation.UserPlantParcel;
+import tr.ozanbey.agricalc.webapp.service.repository.plantation.UserPlantParcelRepository;
 
 import java.util.List;
 import java.util.Optional;

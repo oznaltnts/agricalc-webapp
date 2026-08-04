@@ -135,7 +135,7 @@ public class ExpenseDryingProfileController extends BaseController {
     private static final List<Long> MATERIAL_QUESTIONS = List.of(270L, 271L, 272L);
     private static final List<Long> DIPPING_MATERIAL_QUESTIONS = List.of(269L);
 
-    private boolean checkPreviousQuestionAnswerAccordingly(PlantationProductQuestion question) {
+    private boolean checkPreviousQuestionAnswerAccordingly(PlantationProductQuestion question) {//TODO ilk soruya cevap vermediyse hiç birini sorma
         Optional<PlantationProductQuestion> optionalQuestion = plantationPlan.getProduct().getProductQuestionList().stream().filter(pq -> DRYING_QUESTIONS.contains(pq.getPlantationQuestion().getId())).findFirst();
         if (DRYING_PERFORM_QUESTIONS.contains(question.getPlantationQuestion().getId())) {
             return optionalQuestion.map(plantationProductQuestion -> plantationProductQuestion.getSelectedAnswerId() != null && List.of(185L).contains(plantationProductQuestion.getSelectedAnswerId())).orElse(true);
@@ -158,7 +158,7 @@ public class ExpenseDryingProfileController extends BaseController {
 
     public void nextSaveExpense() throws IOException {
         plantationPlanService.savePlanAnswers(plantationPlan, EnumPlantationQuestionType.EXPENSE_DRYING);
-        plantationPlan.setDryingCost(costCalculationService.calculateProcessDryCost(plantationPlan.getProduct().getProductQuestionList()));
+        plantationPlan.setDryingCost(costCalculationService.calculateProcessDryCost(plantationPlan.getProduct().getProductQuestionList(), plantationPlan.getId()));
         plantationPlanService.updatePlantationPlanIncome(plantationPlan);
         super.navigationController.redirectToUrl("/secured/plantation/expense-baling-profile?parcelPlanId=" + parcelPlanId);
     }

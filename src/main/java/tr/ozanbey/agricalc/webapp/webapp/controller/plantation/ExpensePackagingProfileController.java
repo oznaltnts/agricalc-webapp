@@ -155,9 +155,9 @@ public class ExpensePackagingProfileController extends BaseController {
 
     public void nextSaveExpense() throws IOException {
         plantationPlanService.savePlanAnswers(plantationPlan, EnumPlantationQuestionType.EXPENSE_PACKAGING);
-        plantationPlan.setTransportationCost(costCalculationService.calculateTransportPackagingCost(plantationPlan.getProduct().getProductQuestionList()));
+        plantationPlan.setTransportationCost(costCalculationService.calculateTransportPackagingCost(plantationPlan.getProduct().getProductQuestionList(), plantationPlan.getId()));
         plantationPlanService.updatePlantationPlanIncome(plantationPlan);
-        super.navigationController.redirectToUrl("/secured/plantation/expense-result?parcelPlanId=" + parcelPlanId);//TODO
+        super.navigationController.redirectToUrl("/secured/plantation/plan-result?parcelPlanId=" + parcelPlanId);
     }
 
     public void previousSaveExpense() throws IOException {

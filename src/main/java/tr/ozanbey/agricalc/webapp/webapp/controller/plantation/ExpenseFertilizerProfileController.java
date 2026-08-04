@@ -204,7 +204,7 @@ public class ExpenseFertilizerProfileController extends BaseController {
 
     public void nextSaveExpense() throws IOException {
         plantationPlanService.savePlanAnswers(plantationPlan, EnumPlantationQuestionType.EXPENSE_FERTILIZER);
-        plantationPlan.setFertilizerCost(costCalculationService.calculateFertilizerCost(plantationPlan.getProduct().getProductQuestionList()));
+        plantationPlan.setFertilizerCost(costCalculationService.calculateFertilizerCost(plantationPlan.getProduct().getProductQuestionList(), plantationPlan.getId()));
         plantationPlanService.updatePlantationPlanIncome(plantationPlan);
         super.navigationController.redirectToUrl("/secured/plantation/expense-weed-profile?parcelPlanId=" + parcelPlanId);
     }

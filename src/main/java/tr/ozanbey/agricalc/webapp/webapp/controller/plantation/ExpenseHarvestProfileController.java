@@ -174,7 +174,7 @@ public class ExpenseHarvestProfileController extends BaseController {
 
     public void nextSaveExpense() throws IOException {
         plantationPlanService.savePlanAnswers(plantationPlan, EnumPlantationQuestionType.EXPENSE_HARVEST);
-        plantationPlan.setHarvestCost(costCalculationService.calculateHarvestCost(plantationPlan.getProduct().getProductQuestionList()));
+        plantationPlan.setHarvestCost(costCalculationService.calculateHarvestCost(plantationPlan.getProduct().getProductQuestionList(), plantationPlan.getId()));
         plantationPlanService.updatePlantationPlanIncome(plantationPlan);
         super.navigationController.redirectToUrl("/secured/plantation/expense-blend-profile?parcelPlanId=" + parcelPlanId);
     }

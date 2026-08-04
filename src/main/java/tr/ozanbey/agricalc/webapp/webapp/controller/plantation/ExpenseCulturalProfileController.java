@@ -152,7 +152,7 @@ public class ExpenseCulturalProfileController extends BaseController {
 
     public void nextSaveExpense() throws IOException {
         plantationPlanService.savePlanAnswers(plantationPlan, EnumPlantationQuestionType.EXPENSE_CULTURAL);
-        plantationPlan.setCulturalCost(costCalculationService.calculateCulturalWorkCost(plantationPlan.getProduct().getProductQuestionList()));
+        plantationPlan.setCulturalCost(costCalculationService.calculateCulturalWorkCost(plantationPlan.getProduct().getProductQuestionList(), plantationPlan.getId()));
         plantationPlanService.updatePlantationPlanIncome(plantationPlan);
         super.navigationController.redirectToUrl("/secured/plantation/expense-protection-profile?parcelPlanId=" + parcelPlanId);
     }

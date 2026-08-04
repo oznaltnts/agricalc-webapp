@@ -202,7 +202,7 @@ public class ExpenseWeedProfileController extends BaseController {
 
     public void nextSaveExpense() throws IOException {
         plantationPlanService.savePlanAnswers(plantationPlan, EnumPlantationQuestionType.EXPENSE_WEED);
-        plantationPlan.setWeedControlCost(costCalculationService.calculateWildGrassControlCost(plantationPlan.getProduct().getProductQuestionList()));
+        plantationPlan.setWeedControlCost(costCalculationService.calculateWildGrassControlCost(plantationPlan.getProduct().getProductQuestionList(), plantationPlan.getId()));
         plantationPlanService.updatePlantationPlanIncome(plantationPlan);
         super.navigationController.redirectToUrl("/secured/plantation/expense-irrigation-profile?parcelPlanId=" + parcelPlanId);
     }

@@ -3,7 +3,6 @@ package tr.ozanbey.agricalc.webapp.service.domain.plantation;
 import jakarta.persistence.*;
 import lombok.*;
 import tr.ozanbey.agricalc.webapp.service.domain.AbstractEntity;
-import tr.ozanbey.agricalc.webapp.service.domain.UserPlantParcel;
 
 @Getter
 @Setter

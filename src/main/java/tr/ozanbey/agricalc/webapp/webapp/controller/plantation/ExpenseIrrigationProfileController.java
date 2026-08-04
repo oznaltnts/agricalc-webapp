@@ -198,7 +198,7 @@ public class ExpenseIrrigationProfileController extends BaseController {
 
     public void nextSaveExpense() throws IOException {
         plantationPlanService.savePlanAnswers(plantationPlan, EnumPlantationQuestionType.EXPENSE_IRRIGATION);
-        plantationPlan.setIrrigationCost(costCalculationService.calculateIrrigationCost(plantationPlan.getProduct().getProductQuestionList()));
+        plantationPlan.setIrrigationCost(costCalculationService.calculateIrrigationCost(plantationPlan.getProduct().getProductQuestionList(), plantationPlan.getId()));
         plantationPlanService.updatePlantationPlanIncome(plantationPlan);
         super.navigationController.redirectToUrl("/secured/plantation/expense-cultural-profile?parcelPlanId=" + parcelPlanId);
     }

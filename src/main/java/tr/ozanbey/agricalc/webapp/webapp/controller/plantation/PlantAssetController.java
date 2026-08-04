@@ -1,4 +1,4 @@
-package tr.ozanbey.agricalc.webapp.webapp.controller;
+package tr.ozanbey.agricalc.webapp.webapp.controller.plantation;
 
 
 import jakarta.annotation.PostConstruct;
@@ -11,7 +11,8 @@ import org.primefaces.event.TabChangeEvent;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import tr.ozanbey.agricalc.webapp.service.enumtype.plantation.EnumPlantAsset;
-import tr.ozanbey.agricalc.webapp.service.service.PlantAssetService;
+import tr.ozanbey.agricalc.webapp.service.service.plantation.PlantAssetService;
+import tr.ozanbey.agricalc.webapp.webapp.controller.BaseController;
 import tr.ozanbey.agricalc.webapp.webapp.view.UserPlantAssetView;
 
 import java.util.List;

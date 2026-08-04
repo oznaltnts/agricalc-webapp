@@ -1,8 +1,8 @@
-package tr.ozanbey.agricalc.webapp.service.repository;
+package tr.ozanbey.agricalc.webapp.service.repository.plantation;
 
 import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
-import tr.ozanbey.agricalc.webapp.service.domain.UserPlantAsset;
+import tr.ozanbey.agricalc.webapp.service.domain.plantation.UserPlantAsset;
 import tr.ozanbey.agricalc.webapp.service.enumtype.plantation.EnumPlantAsset;
 
 import java.util.List;

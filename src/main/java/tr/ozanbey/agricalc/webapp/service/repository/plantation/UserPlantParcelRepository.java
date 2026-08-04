@@ -1,7 +1,7 @@
-package tr.ozanbey.agricalc.webapp.service.repository;
+package tr.ozanbey.agricalc.webapp.service.repository.plantation;
 
 import org.springframework.data.jpa.repository.JpaRepository;
-import tr.ozanbey.agricalc.webapp.service.domain.UserPlantParcel;
+import tr.ozanbey.agricalc.webapp.service.domain.plantation.UserPlantParcel;
 
 import java.util.List;
 import java.util.Optional;

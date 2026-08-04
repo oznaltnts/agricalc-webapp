@@ -592,9 +592,10 @@ INSERT INTO plantation_coefficients (coef_type,diesel_value,labor_value) VALUES 
 INSERT INTO plantation_coefficients (coef_type,diesel_value,labor_value) VALUES ('LIQUID_FERTILIZER','0.4','0.17');
 INSERT INTO plantation_coefficients (coef_type,diesel_value,labor_value) VALUES ('ANIMAL_FERTILIZER','2.5','3');
 INSERT INTO plantation_coefficients (coef_type,diesel_value,labor_value) VALUES ('HUMIC_ACID','0','0.01');
-INSERT INTO plantation_coefficients (coef_type,diesel_value,labor_value) VALUES ('LEONARDIDE','0','2');
+INSERT INTO plantation_coefficients (coef_type,diesel_value,labor_value) VALUES ('LEONARDITE','0','2');
 INSERT INTO plantation_coefficients (coef_type,diesel_value,labor_value) VALUES ('WORM_COMPOST','0','0.01');
 INSERT INTO plantation_coefficients (coef_type,diesel_value,labor_value) VALUES ('BIO_CONDITIONER','0.25','0.2');
+INSERT INTO plantation_coefficients (coef_type,diesel_value,labor_value) VALUES ('',null,'0.15');
 INSERT INTO plantation_coefficients (coef_type,diesel_value,labor_value) VALUES ('TRACTOR_TILLER',null,'0.17');
 INSERT INTO plantation_coefficients (coef_type,diesel_value,labor_value) VALUES ('WEED_CONTROL','0.15','0.3');
 INSERT INTO plantation_coefficients (coef_type,diesel_value,labor_value) VALUES ('DRIP_IRRIGATION','0.65','0.15');

@@ -9,13 +9,13 @@ import org.hibernate.Hibernate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import tr.ozanbey.agricalc.webapp.service.domain.plantation.PlantationProductQuestion;
-import tr.ozanbey.agricalc.webapp.service.domain.plantation.UserPlantPlanAnswer;
-import tr.ozanbey.agricalc.webapp.service.domain.plantation.UserPlantationPlan;
+import tr.ozanbey.agricalc.webapp.service.domain.plantation.UserPlantParcelPlan;
+import tr.ozanbey.agricalc.webapp.service.domain.plantation.UserPlantParcelPlanAnswer;
 import tr.ozanbey.agricalc.webapp.service.enumtype.EnumStatus;
 import tr.ozanbey.agricalc.webapp.service.enumtype.plantation.EnumPlantationQuestionType;
 import tr.ozanbey.agricalc.webapp.service.enumtype.plantation.EnumQuestionAnswerType;
 import tr.ozanbey.agricalc.webapp.service.service.plantation.CostCalculationService;
-import tr.ozanbey.agricalc.webapp.service.service.plantation.PlantationPlanService;
+import tr.ozanbey.agricalc.webapp.service.service.plantation.PlantParcelPlanService;
 import tr.ozanbey.agricalc.webapp.service.service.plantation.PlantationProductService;
 import tr.ozanbey.agricalc.webapp.webapp.controller.BaseController;
 
@@ -33,13 +33,13 @@ import java.util.Optional;
 public class ExpensePlantingProfileController extends BaseController {
 
     @Autowired
-    private PlantationPlanService plantationPlanService;
+    private PlantParcelPlanService plantParcelPlanService;
 
     @Autowired
     private PlantationProductService productService;
 
     private Long parcelPlanId;
-    private UserPlantationPlan plantationPlan;
+    private UserPlantParcelPlan parcelPlan;
 
     @PostConstruct
     public void init() {
@@ -58,39 +58,39 @@ public class ExpensePlantingProfileController extends BaseController {
             return;
         }
 
-        if (!Hibernate.isInitialized(plantationPlan.getProduct().getProductQuestionList())) {
-            List<PlantationProductQuestion> productQuestionList = productService.getActiveQuestionByQuestionType(plantationPlan.getProduct().getId(), EnumStatus.ACTIVE, EnumPlantationQuestionType.EXPENSE_PLANTING);
-            List<UserPlantPlanAnswer> planAnswerList = plantationPlanService.fillPlanAnswerValues(parcelPlanId, EnumPlantationQuestionType.EXPENSE_PLANTING);
-            for (UserPlantPlanAnswer userPlantPlanAnswer : planAnswerList) {
+        if (!Hibernate.isInitialized(parcelPlan.getPlantParcel().getProduct().getProductQuestionList())) {
+            List<PlantationProductQuestion> productQuestionList = productService.getActiveQuestionByQuestionType(parcelPlan.getPlantParcel().getProduct().getId(), EnumStatus.ACTIVE, EnumPlantationQuestionType.EXPENSE_PLANTING);
+            List<UserPlantParcelPlanAnswer> planAnswerList = plantParcelPlanService.fillPlanAnswerValues(parcelPlanId, EnumPlantationQuestionType.EXPENSE_PLANTING);
+            for (UserPlantParcelPlanAnswer userPlantParcelPlanAnswer : planAnswerList) {
                 for (PlantationProductQuestion productQuestion : productQuestionList) {
-                    if (Objects.equals(userPlantPlanAnswer.getProductQuestion().getId(), productQuestion.getId())) {
+                    if (Objects.equals(userPlantParcelPlanAnswer.getProductQuestion().getId(), productQuestion.getId())) {
                         if (productQuestion.getPlantationQuestion().getAnswerType().equals(EnumQuestionAnswerType.SELECT_ONE_MENU)) {
-                            productQuestion.setSelectedAnswerId(Long.valueOf(userPlantPlanAnswer.getAnswerValue()));
+                            productQuestion.setSelectedAnswerId(Long.valueOf(userPlantParcelPlanAnswer.getAnswerValue()));
                         } else if (productQuestion.getPlantationQuestion().getAnswerType().equals(EnumQuestionAnswerType.SELECT_ONE_RADIO)) {
-                            productQuestion.setSelectedAnswerId(Long.valueOf(userPlantPlanAnswer.getAnswerValue()));
+                            productQuestion.setSelectedAnswerId(Long.valueOf(userPlantParcelPlanAnswer.getAnswerValue()));
                         } else if (productQuestion.getPlantationQuestion().getAnswerType().equals(EnumQuestionAnswerType.SELECT_MANY_CHECKBOX)) {
                             if (productQuestion.getSelectedAnswerIds() == null || productQuestion.getSelectedAnswerIds().isEmpty()) {
                                 productQuestion.setSelectedAnswerIds(new ArrayList<>());
                             }
-                            productQuestion.getSelectedAnswerIds().add(Long.valueOf(userPlantPlanAnswer.getAnswerValue()));
+                            productQuestion.getSelectedAnswerIds().add(Long.valueOf(userPlantParcelPlanAnswer.getAnswerValue()));
                         } else if (productQuestion.getPlantationQuestion().getAnswerType().equals(EnumQuestionAnswerType.INPUT_INTEGER)) {
-                            productQuestion.setIntegerValue(Integer.valueOf(userPlantPlanAnswer.getAnswerValue()));
+                            productQuestion.setIntegerValue(Integer.valueOf(userPlantParcelPlanAnswer.getAnswerValue()));
                         } else if (productQuestion.getPlantationQuestion().getAnswerType().equals(EnumQuestionAnswerType.INPUT_DOUBLE)) {
-                            productQuestion.setDoubleValue(Double.valueOf(userPlantPlanAnswer.getAnswerValue()));
+                            productQuestion.setDoubleValue(Double.valueOf(userPlantParcelPlanAnswer.getAnswerValue()));
                         } else if (productQuestion.getPlantationQuestion().getAnswerType().equals(EnumQuestionAnswerType.INPUT_DECIMAL)) {
-                            productQuestion.setBigDecimalValue(new BigDecimal(userPlantPlanAnswer.getAnswerValue()));
+                            productQuestion.setBigDecimalValue(new BigDecimal(userPlantParcelPlanAnswer.getAnswerValue()));
                         }
                     }
                 }
             }
-            plantationPlan.getProduct().setProductQuestionList(productQuestionList);
+            parcelPlan.getPlantParcel().getProduct().setProductQuestionList(productQuestionList);
         }
     }
 
     private boolean checkPlanIdForUser(Long parcelPlanId) {
-        Optional<UserPlantationPlan> optionalPlan = plantationPlanService.getPlantPlanByIdAndUserId(parcelPlanId, getCurrentUser().getUser().getId());
+        Optional<UserPlantParcelPlan> optionalPlan = plantParcelPlanService.getPlantPlanByIdAndUserId(parcelPlanId, getCurrentUser().getUser().getId());
         if (optionalPlan.isPresent()) {
-            plantationPlan = optionalPlan.get();
+            parcelPlan = optionalPlan.get();
             return true;
         }
         return false;
@@ -176,7 +176,7 @@ public class ExpensePlantingProfileController extends BaseController {
     private static final List<Long> LUMP_SUPPLY_QUESTIONS = List.of(86L);
 
     private boolean checkPreviousQuestionAnswerAccordingly(PlantationProductQuestion question) {
-        Optional<PlantationProductQuestion> optionalQuestion = plantationPlan.getProduct().getProductQuestionList().stream().filter(pq -> MATERIAL_QUESTIONS.contains(pq.getPlantationQuestion().getId())).findFirst();
+        Optional<PlantationProductQuestion> optionalQuestion = parcelPlan.getPlantParcel().getProduct().getProductQuestionList().stream().filter(pq -> MATERIAL_QUESTIONS.contains(pq.getPlantationQuestion().getId())).findFirst();
         if (A_MATERIAL_QUESTIONS.contains(question.getPlantationQuestion().getId())) {
             return optionalQuestion.map(plantationProductQuestion -> plantationProductQuestion.getSelectedAnswerId() != null && List.of(36L, 40L, 43L, 45L, 49L).contains(plantationProductQuestion.getSelectedAnswerId())).orElse(true);
         } else if (B_MATERIAL_QUESTIONS.contains(question.getPlantationQuestion().getId())) {
@@ -186,7 +186,7 @@ public class ExpensePlantingProfileController extends BaseController {
         } else if (D_MATERIAL_QUESTIONS.contains(question.getPlantationQuestion().getId())) {
             return optionalQuestion.map(plantationProductQuestion -> plantationProductQuestion.getSelectedAnswerId() != null && List.of(39L, 50L).contains(plantationProductQuestion.getSelectedAnswerId())).orElse(true);
         }
-        optionalQuestion = plantationPlan.getProduct().getProductQuestionList().stream().filter(pq -> SEED_USAGE_QUESTIONS.contains(pq.getPlantationQuestion().getId())).findFirst();
+        optionalQuestion = parcelPlan.getPlantParcel().getProduct().getProductQuestionList().stream().filter(pq -> SEED_USAGE_QUESTIONS.contains(pq.getPlantationQuestion().getId())).findFirst();
         if (A1_USAGE_QUESTIONS.contains(question.getPlantationQuestion().getId())) {
             return optionalQuestion.map(plantationProductQuestion -> plantationProductQuestion.getSelectedAnswerId() != null && List.of(51L).contains(plantationProductQuestion.getSelectedAnswerId())).orElse(true);
         } else if (A2_USAGE_QUESTIONS.contains(question.getPlantationQuestion().getId())) {
@@ -196,7 +196,7 @@ public class ExpensePlantingProfileController extends BaseController {
         } else if (A4_USAGE_QUESTIONS.contains(question.getPlantationQuestion().getId())) {
             return optionalQuestion.map(plantationProductQuestion -> plantationProductQuestion.getSelectedAnswerId() != null && List.of(54L).contains(plantationProductQuestion.getSelectedAnswerId())).orElse(true);
         }
-        optionalQuestion = plantationPlan.getProduct().getProductQuestionList().stream().filter(pq -> SEED_SOW_QUESTIONS.contains(pq.getPlantationQuestion().getId())).findFirst();
+        optionalQuestion = parcelPlan.getPlantParcel().getProduct().getProductQuestionList().stream().filter(pq -> SEED_SOW_QUESTIONS.contains(pq.getPlantationQuestion().getId())).findFirst();
         if (SOW_1_QUESTIONS.contains(question.getPlantationQuestion().getId())) {
             return optionalQuestion.map(plantationProductQuestion -> plantationProductQuestion.getSelectedAnswerId() != null && List.of(57L, 60L).contains(plantationProductQuestion.getSelectedAnswerId())).orElse(true);
         } else if (SOW_2_QUESTIONS.contains(question.getPlantationQuestion().getId())) {
@@ -204,13 +204,13 @@ public class ExpensePlantingProfileController extends BaseController {
         } else if (SOW_3_QUESTIONS.contains(question.getPlantationQuestion().getId())) {
             return optionalQuestion.map(plantationProductQuestion -> plantationProductQuestion.getSelectedAnswerId() != null && List.of(59L).contains(plantationProductQuestion.getSelectedAnswerId())).orElse(true);
         }
-        optionalQuestion = plantationPlan.getProduct().getProductQuestionList().stream().filter(pq -> PLANTING_QUESTIONS.contains(pq.getPlantationQuestion().getId())).findFirst();
+        optionalQuestion = parcelPlan.getPlantParcel().getProduct().getProductQuestionList().stream().filter(pq -> PLANTING_QUESTIONS.contains(pq.getPlantationQuestion().getId())).findFirst();
         if (B1_PLANTING_QUESTIONS.contains(question.getPlantationQuestion().getId())) {
             return optionalQuestion.map(plantationProductQuestion -> plantationProductQuestion.getSelectedAnswerId() != null && List.of(65L).contains(plantationProductQuestion.getSelectedAnswerId())).orElse(true);
         } else if (B2_PLANTING_QUESTIONS.contains(question.getPlantationQuestion().getId())) {
             return optionalQuestion.map(plantationProductQuestion -> plantationProductQuestion.getSelectedAnswerId() != null && List.of(66L).contains(plantationProductQuestion.getSelectedAnswerId())).orElse(true);
         }
-        optionalQuestion = plantationPlan.getProduct().getProductQuestionList().stream().filter(pq -> LUMP_SUPPLY_QUESTIONS.contains(pq.getPlantationQuestion().getId())).findFirst();
+        optionalQuestion = parcelPlan.getPlantParcel().getProduct().getProductQuestionList().stream().filter(pq -> LUMP_SUPPLY_QUESTIONS.contains(pq.getPlantationQuestion().getId())).findFirst();
         if (A_LUMP_SUPPLY_QUESTIONS.contains(question.getPlantationQuestion().getId())) {
             return optionalQuestion.map(plantationProductQuestion -> plantationProductQuestion.getSelectedAnswerId() != null && List.of(69L).contains(plantationProductQuestion.getSelectedAnswerId())).orElse(true);
         } else if (B_LUMP_SUPPLY_QUESTIONS.contains(question.getPlantationQuestion().getId())) {
@@ -223,14 +223,14 @@ public class ExpensePlantingProfileController extends BaseController {
     private CostCalculationService costCalculationService;
 
     public void nextSaveExpense() throws IOException {
-        plantationPlanService.savePlanAnswers(plantationPlan, EnumPlantationQuestionType.EXPENSE_PLANTING);
-        plantationPlan.setPlantingCost(costCalculationService.calculatePlantingCost(plantationPlan.getProduct().getProductQuestionList(), plantationPlan.getId()));
-        plantationPlanService.updatePlantationPlanIncome(plantationPlan);
+        plantParcelPlanService.savePlanAnswers(parcelPlan, EnumPlantationQuestionType.EXPENSE_PLANTING);
+        parcelPlan.setPlantingCost(costCalculationService.calculatePlantingCost(parcelPlan.getPlantParcel().getProduct().getProductQuestionList(), parcelPlan.getId()));
+        plantParcelPlanService.updatePlantParcelPlanIncome(parcelPlan);
         super.navigationController.redirectToUrl("/secured/plantation/expense-fertilizer-profile?parcelPlanId=" + parcelPlanId);
     }
 
     public void previousSaveExpense() throws IOException {
-        plantationPlanService.savePlanAnswers(plantationPlan, EnumPlantationQuestionType.EXPENSE_PLANTING);
+        plantParcelPlanService.savePlanAnswers(parcelPlan, EnumPlantationQuestionType.EXPENSE_PLANTING);
         super.navigationController.redirectToUrl("/secured/plantation/expense-soil-profile?parcelPlanId=" + parcelPlanId);
     }
 

@@ -7,11 +7,9 @@ import lombok.Getter;
 import lombok.Setter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import tr.ozanbey.agricalc.webapp.service.domain.plantation.PlantationProduct;
 import tr.ozanbey.agricalc.webapp.service.domain.plantation.UserPlantParcel;
-import tr.ozanbey.agricalc.webapp.service.domain.plantation.UserPlantationPlan;
-import tr.ozanbey.agricalc.webapp.service.enumtype.EnumStatus;
-import tr.ozanbey.agricalc.webapp.service.service.plantation.PlantationPlanService;
+import tr.ozanbey.agricalc.webapp.service.domain.plantation.UserPlantParcelPlan;
+import tr.ozanbey.agricalc.webapp.service.service.plantation.PlantParcelPlanService;
 import tr.ozanbey.agricalc.webapp.service.service.plantation.PlantationProductService;
 import tr.ozanbey.agricalc.webapp.service.service.plantation.UserParcelService;
 import tr.ozanbey.agricalc.webapp.webapp.controller.BaseController;
@@ -29,19 +27,16 @@ import java.util.Optional;
 public class ParcelPlanController extends BaseController {
 
     @Autowired
-    private PlantationPlanService plantationPlanService;
+    private PlantParcelPlanService plantParcelPlanService;
 
     @Autowired
     private UserParcelService plantParcelService;
 
     @Autowired
     private PlantationProductService productService;
-
-    private List<PlantationProduct> plantationProductList;
-    private Long selectedProductId;
     private LocalDate planStartDate;
 
-    private List<UserPlantationPlan> parcelPlanList;
+    private List<UserPlantParcelPlan> parcelPlanList;
     private Long parcelId;
     private UserPlantParcel userPlantParcel;
 
@@ -54,11 +49,7 @@ public class ParcelPlanController extends BaseController {
             super.navigationController.redirectToUrl("/secured/plantation/parcel");
             return;
         }
-        parcelPlanList = plantationPlanService.getParcelPlanList(parcelId);
-    }
-
-    public void fillProductList() {
-        plantationProductList = productService.getActiveProducts(EnumStatus.ACTIVE);
+        parcelPlanList = plantParcelPlanService.getParcelPlanList(parcelId);
     }
 
     public void setParcelId(Long parcelId) {
@@ -79,9 +70,7 @@ public class ParcelPlanController extends BaseController {
 
 
     public void addNewParcelPlan() throws IOException {
-        if (selectedProductId != null) {
-            plantationPlanService.createNewPlan(parcelId, selectedProductId, planStartDate);
-            fillParcelList();
-        }
+        plantParcelPlanService.createNewPlan(parcelId, planStartDate);
+        fillParcelList();
     }
 }

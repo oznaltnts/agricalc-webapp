@@ -16,7 +16,7 @@ import tr.ozanbey.agricalc.webapp.service.enumtype.plantation.EnumPlantationQues
 import tr.ozanbey.agricalc.webapp.service.enumtype.plantation.EnumQuestionAnswerType;
 import tr.ozanbey.agricalc.webapp.service.enumtype.plantation.EnumQuestionRecordType;
 import tr.ozanbey.agricalc.webapp.service.service.plantation.IncomeCalculationService;
-import tr.ozanbey.agricalc.webapp.service.service.plantation.PlantationPlanService;
+import tr.ozanbey.agricalc.webapp.service.service.plantation.PlantParcelPlanService;
 import tr.ozanbey.agricalc.webapp.service.service.plantation.PlantationProductService;
 import tr.ozanbey.agricalc.webapp.webapp.controller.BaseController;
 
@@ -32,13 +32,13 @@ import java.util.stream.Collectors;
 public class IncomeProfileController extends BaseController {
 
     @Autowired
-    private PlantationPlanService plantationPlanService;
+    private PlantParcelPlanService plantParcelPlanService;
 
     @Autowired
     private PlantationProductService productService;
 
     private Long parcelPlanId;
-    private UserPlantationPlan plantationPlan;
+    private UserPlantParcelPlan parcelPlan;
 
     private Map<Long, String> productionTechniqueList;
 
@@ -58,29 +58,29 @@ public class IncomeProfileController extends BaseController {
             super.navigationController.redirectToUrl("/secured/plantation/parcel");
             return;
         }
-        if (141L == plantationPlan.getProduct().getId()) {
+        if (141L == parcelPlan.getPlantParcel().getProduct().getId()) {
             productionTechniqueList = Map.of(1L, "Erken dönem", 2L, "Orta dönem", 3L, "Geç dönem");
-        } else if (208L == plantationPlan.getProduct().getId()) {
+        } else if (208L == parcelPlan.getPlantParcel().getProduct().getId()) {
             productionTechniqueList = Map.of(1L, "Yer bağ (Goble)", 2L, "Çift kollu cordon telli terbiye", 3L, "Tek kollu cordon telli terbiye", 4L, "T telli terbiye", 5L, "Pergola (Çardak sistemi)");
-        } else if (209L == plantationPlan.getProduct().getId()) {
+        } else if (209L == parcelPlan.getPlantParcel().getProduct().getId()) {
             productionTechniqueList = Map.of(1L, "Yer bağ (Goble)", 2L, "Çift kollu cordon telli terbiye", 3L, "Tek kollu cordon telli terbiye", 4L, "T telli terbiye", 5L, "Pergola (Çardak sistemi)", 6L, "Y sistemi", 7L, "V sistemi", 8L, "GDC sistemi");
-        } else if (210L == plantationPlan.getProduct().getId()) {
+        } else if (210L == parcelPlan.getPlantParcel().getProduct().getId()) {
             productionTechniqueList = Map.of(1L, "Yer bağ (Goble)", 2L, "Çift kollu cordon telli terbiye", 3L, "Tek kollu cordon telli terbiye", 4L, "T telli terbiye", 5L, "Tek guyot sistemi", 6L, "Çift guyot sistemi");
         } else {
             productionTechniqueList = null;
         }
 
-        if (!Hibernate.isInitialized(plantationPlan.getProduct().getProductQuestionList())) {
-            List<PlantationProductQuestion> productQuestionList = productService.getActiveQuestionByQuestionType(plantationPlan.getProduct().getId(), EnumStatus.ACTIVE, EnumPlantationQuestionType.INCOME);
-            List<UserPlantPlanAnswer> planAnswerList = plantationPlanService.fillPlanAnswerValues(parcelPlanId, EnumPlantationQuestionType.INCOME);
-            List<UserParcelAnswer> parcelAnswerList = plantationPlanService.fillParcelAnswerValues(plantationPlan.getPlantParcel().getId(), EnumPlantationQuestionType.INCOME);
-            for (UserPlantPlanAnswer userPlantPlanAnswer : planAnswerList) {
-                fillAnsweredQuestionValues(userPlantPlanAnswer.getProductQuestion().getId(), userPlantPlanAnswer.getAnswerValue(), productQuestionList);
+        if (!Hibernate.isInitialized(parcelPlan.getPlantParcel().getProduct().getProductQuestionList())) {
+            List<PlantationProductQuestion> productQuestionList = productService.getActiveQuestionByQuestionType(parcelPlan.getPlantParcel().getProduct().getId(), EnumStatus.ACTIVE, EnumPlantationQuestionType.INCOME);
+            List<UserPlantParcelPlanAnswer> planAnswerList = plantParcelPlanService.fillPlanAnswerValues(parcelPlanId, EnumPlantationQuestionType.INCOME);
+            List<UserPlantParcelAnswer> parcelAnswerList = plantParcelPlanService.fillParcelAnswerValues(parcelPlan.getPlantParcel().getId(), EnumPlantationQuestionType.INCOME);
+            for (UserPlantParcelPlanAnswer userPlantParcelPlanAnswer : planAnswerList) {
+                fillAnsweredQuestionValues(userPlantParcelPlanAnswer.getProductQuestion().getId(), userPlantParcelPlanAnswer.getAnswerValue(), productQuestionList);
             }
-            for (UserParcelAnswer userParcelAnswer : parcelAnswerList) {
-                fillAnsweredQuestionValues(userParcelAnswer.getProductQuestion().getId(), userParcelAnswer.getAnswerValue(), productQuestionList);
+            for (UserPlantParcelAnswer userPlantParcelAnswer : parcelAnswerList) {
+                fillAnsweredQuestionValues(userPlantParcelAnswer.getProductQuestion().getId(), userPlantParcelAnswer.getAnswerValue(), productQuestionList);
             }
-            plantationPlan.getProduct().setProductQuestionList(productQuestionList);
+            parcelPlan.getPlantParcel().getProduct().setProductQuestionList(productQuestionList);
         }
 
     }
@@ -109,9 +109,9 @@ public class IncomeProfileController extends BaseController {
     }
 
     private boolean checkPlanIdForUser(Long parcelPlanId) {
-        Optional<UserPlantationPlan> optionalPlan = plantationPlanService.getPlantPlanByIdAndUserId(parcelPlanId, getCurrentUser().getUser().getId());
+        Optional<UserPlantParcelPlan> optionalPlan = plantParcelPlanService.getPlantPlanByIdAndUserId(parcelPlanId, getCurrentUser().getUser().getId());
         if (optionalPlan.isPresent()) {
-            plantationPlan = optionalPlan.get();
+            parcelPlan = optionalPlan.get();
             return true;
         }
         return false;
@@ -129,11 +129,11 @@ public class IncomeProfileController extends BaseController {
 
     public Map<Long, String> oneMenuSelectItems(PlantationProductQuestion question) {
         if (List.of(1L, 7L).contains(question.getPlantationQuestion().getId())) {
-            if (!Hibernate.isInitialized(plantationPlan.getProduct().getProductOptionList())) {
-                List<PlantationProductOption> productOptionList = productService.getProductOption(plantationPlan.getProduct().getId());
-                plantationPlan.getProduct().setProductOptionList(productOptionList);
+            if (!Hibernate.isInitialized(parcelPlan.getPlantParcel().getProduct().getProductOptionList())) {
+                List<PlantationProductOption> productOptionList = productService.getProductOption(parcelPlan.getPlantParcel().getProduct().getId());
+                parcelPlan.getPlantParcel().getProduct().setProductOptionList(productOptionList);
             }
-            return plantationPlan.getProduct().getProductOptionList().stream().collect(Collectors.toMap(AbstractEntity::getId, PlantationProductOption::getName));
+            return parcelPlan.getPlantParcel().getProduct().getProductOptionList().stream().collect(Collectors.toMap(AbstractEntity::getId, PlantationProductOption::getName));
         } else if (List.of(3L).contains(question.getPlantationQuestion().getId())) {
             return productionTechniqueList;
         } else {
@@ -201,7 +201,7 @@ public class IncomeProfileController extends BaseController {
     private static final List<Long> SALE_QUESTIONS = List.of(8L, 9L, 10L);
 
     private boolean checkPreviousQuestionAnswerAccordingly(PlantationProductQuestion question) {
-        Optional<PlantationProductQuestion> optionalSaleQuestion = plantationPlan.getProduct().getProductQuestionList().stream().filter(pq -> SALE_QUESTIONS.contains(pq.getPlantationQuestion().getId())).findFirst();
+        Optional<PlantationProductQuestion> optionalSaleQuestion = parcelPlan.getPlantParcel().getProduct().getProductQuestionList().stream().filter(pq -> SALE_QUESTIONS.contains(pq.getPlantationQuestion().getId())).findFirst();
         if (A_DOUBLE_YIELD_QUESTIONS.contains(question.getPlantationQuestion().getId())) {
             return optionalSaleQuestion.map(plantationProductQuestion -> plantationProductQuestion.getSelectedAnswerId() != null && List.of(17L, 21L).contains(plantationProductQuestion.getSelectedAnswerId())).orElse(true);
         } else if (B_DOUBLE_YIELD_QUESTIONS.contains(question.getPlantationQuestion().getId())) {
@@ -216,14 +216,14 @@ public class IncomeProfileController extends BaseController {
     private IncomeCalculationService incomeCalculationService;
 
     public void nextSaveIncome() throws IOException {
-        plantationPlanService.savePlanAnswers(plantationPlan, EnumPlantationQuestionType.INCOME);
-        plantationPlan.setGrossIncome(incomeCalculationService.calculateIncome(plantationPlan.getProduct().getProductQuestionList()));
-        plantationPlanService.updatePlantationPlanIncome(plantationPlan);
+        plantParcelPlanService.savePlanAnswers(parcelPlan, EnumPlantationQuestionType.INCOME);
+        parcelPlan.setGrossIncome(incomeCalculationService.calculateIncome(parcelPlan.getPlantParcel().getProduct().getProductQuestionList()));
+        plantParcelPlanService.updatePlantParcelPlanIncome(parcelPlan);
         super.navigationController.redirectToUrl("/secured/plantation/expense-soil-profile?parcelPlanId=" + parcelPlanId);
     }
 
     public void previousSaveIncome() throws IOException {
-        plantationPlanService.savePlanAnswers(plantationPlan, EnumPlantationQuestionType.INCOME);
-        super.navigationController.redirectToUrl("/secured/plantation/parcel-plan?parcelId=" + plantationPlan.getPlantParcel().getId());
+        plantParcelPlanService.savePlanAnswers(parcelPlan, EnumPlantationQuestionType.INCOME);
+        super.navigationController.redirectToUrl("/secured/plantation/parcel-plan?parcelId=" + parcelPlan.getPlantParcel().getId());
     }
 }

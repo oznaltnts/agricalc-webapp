@@ -6,9 +6,9 @@ import lombok.Getter;
 import lombok.Setter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import tr.ozanbey.agricalc.webapp.service.domain.plantation.UserPlantationPlan;
+import tr.ozanbey.agricalc.webapp.service.domain.plantation.UserPlantParcelPlan;
 import tr.ozanbey.agricalc.webapp.service.enumtype.plantation.EnumPlantationQuestionType;
-import tr.ozanbey.agricalc.webapp.service.service.plantation.PlantationPlanService;
+import tr.ozanbey.agricalc.webapp.service.service.plantation.PlantParcelPlanService;
 import tr.ozanbey.agricalc.webapp.webapp.controller.BaseController;
 
 import java.io.IOException;
@@ -20,12 +20,12 @@ import java.io.IOException;
 public class ExpenseProfileController extends BaseController {
 
     @Autowired
-    private PlantationPlanService plantationPlanService;
+    private PlantParcelPlanService plantParcelPlanService;
 
-    public void saveAndNext(UserPlantationPlan plantationPlan, EnumPlantationQuestionType questionType) throws IOException {
-        plantationPlanService.savePlanAnswers(plantationPlan, questionType);
+    public void saveAndNext(UserPlantParcelPlan parcelPlan, EnumPlantationQuestionType questionType) throws IOException {
+        plantParcelPlanService.savePlanAnswers(parcelPlan, questionType);
         //TODO sonraki sayfada soru yoksa bir sonrakini kontrol et
-        super.navigationController.redirectToUrl("/secured/plantation/expense-soil-profile?parcelPlanId=" + plantationPlan.getId());
+        super.navigationController.redirectToUrl("/secured/plantation/expense-soil-profile?parcelPlanId=" + parcelPlan.getId());
     }
 
 }

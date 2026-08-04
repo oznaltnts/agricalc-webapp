@@ -22,11 +22,4 @@ public class FarmerProfileView implements Serializable {
     private String email;
     private LocalDate birthEstablishmentDate;
 
-    private Long userCityId;
-    private String cityName;
-    private String district;
-    private String village;
-    private String neighborhood;
-
-
 }

@@ -6,10 +6,12 @@ import lombok.Setter;
 import lombok.ToString;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 import tr.ozanbey.agricalc.webapp.service.domain.AbstractEntity;
+import tr.ozanbey.agricalc.webapp.service.domain.City;
 import tr.ozanbey.agricalc.webapp.service.domain.User;
 import tr.ozanbey.agricalc.webapp.service.enumtype.plantation.EnumParcelType;
 
 import java.math.BigDecimal;
+import java.util.List;
 
 @Getter
 @Setter
@@ -23,12 +25,16 @@ public class UserPlantParcel extends AbstractEntity {
     @JoinColumn(name = "user_id", referencedColumnName = "id", nullable = false)
     private User user;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "product_id", referencedColumnName = "id", nullable = false)
+    private PlantationProduct product;
+
+    // Parsel Bilgisi
     @Column(name = "parcel_type")
     @Enumerated(EnumType.STRING)
     @ToString.Include
     private EnumParcelType parcelType;
 
-    // Parsel Bilgisi
     @Column(name = "parcel_name")
     @ToString.Include
     private String parcelName;
@@ -37,14 +43,6 @@ public class UserPlantParcel extends AbstractEntity {
     @ToString.Include
     private BigDecimal parcelPrice;
 
-    @Column(name = "ada_number")
-    @ToString.Include
-    private Integer adaNumber;
-
-    @Column(name = "pafta_number")
-    @ToString.Include
-    private Integer paftaNumber;
-
     @Column(name = "area_decare")
     @ToString.Include
     private BigDecimal areaDecare;
@@ -52,6 +50,31 @@ public class UserPlantParcel extends AbstractEntity {
     @Column(name = "rent_price")
     @ToString.Include
     private BigDecimal rentPrice;
+
+    // Adres Bilgisi
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "city_id", referencedColumnName = "id", nullable = false)
+    private City city;
+
+    @Column(name = "district")
+    @ToString.Include
+    private String district;
+
+    @Column(name = "village")
+    @ToString.Include
+    private String village;
+
+    @Column(name = "neighborhood")
+    @ToString.Include
+    private String neighborhood;
+
+    @Column(name = "ada_number")
+    @ToString.Include
+    private Integer adaNumber;
+
+    @Column(name = "pafta_number")
+    @ToString.Include
+    private Integer paftaNumber;
 
     // Arazi Yapısı
     @Column(name = "status_type")
@@ -110,5 +133,8 @@ public class UserPlantParcel extends AbstractEntity {
     @Column(name = "electric_source")
     @ToString.Include
     private String electricSource;
+
+    @OneToMany(mappedBy = "plantParcel", fetch = FetchType.LAZY)
+    private List<UserPlantParcelAnswer> parcelAnswerList;
 
 }

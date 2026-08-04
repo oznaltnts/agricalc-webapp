@@ -1,0 +1,472 @@
+INSERT INTO cities (code, name, neighbors_ids, diesel_price, fuel_price, electricity)
+VALUES ('01', 'Adana', '33,80,46,38,51,31', 75, 80, 4),
+       ('02', 'Adıyaman', '27,63,21,44,46', 75, 80, 4),
+       ('03', 'Afyonkarahisar', '26,42,32,15,20,64,43', 75, 80, 4),
+       ('04', 'Ağrı', '76,36,25,49,13,65', 75, 80, 4),
+       ('05', 'Amasya', '55,60,66,19', 75, 80, 4),
+       ('06', 'Ankara', '71,18,14,26,42,68,40', 75, 80, 4),
+       ('07', 'Antalya', '33,70,42,32,15,48', 75, 80, 4),
+       ('08', 'Artvin', '53,25,75', 75, 80, 4),
+       ('09', 'Aydın', '35,45,20,48', 75, 80, 4),
+       ('10', 'Balıkesir', '17,35,45,43,16', 75, 80, 4),
+       ('11', 'Bilecik', '16,54,14,26,43', 75, 80, 4),
+       ('12', 'Bingöl', '24,25,49,21,23,62', 75, 80, 4),
+       ('13', 'Bitlis', '49,4,65,56,72', 75, 80, 4),
+       ('14', 'Bolu', '81,54,11,26,6,18,67,78', 75, 80, 4),
+       ('15', 'Burdur', '32,7,48,20,3', 75, 80, 4),
+       ('16', 'Bursa', '77,41,54,11,43,10', 75, 80, 4),
+       ('17', 'Çanakkale', '10,59', 75, 80, 4),
+       ('18', 'Çankırı', '78,37,19,71,6,14', 75, 80, 4),
+       ('19', 'Çorum', '57,55,5,66,71,18,37', 75, 80, 4),
+       ('20', 'Denizli', '45,64,3,15,48,9', 75, 80, 4),
+       ('21', 'Diyarbakır', '63,2,44,23,12,49,72,47', 75, 80, 4),
+       ('22', 'Edirne', '39,59', 75, 80, 4),
+       ('23', 'Elazığ', '44,24,62,12,21', 75, 80, 4),
+       ('24', 'Erzincan', '58,28,29,69,25,12,62,23,44', 75, 80, 4),
+       ('25', 'Erzurum', '8,75,36,4,49,12,24,69,53', 75, 80, 4),
+       ('26', 'Eskişehir', '11,14,6,42,3,43', 75, 80, 4),
+       ('27', 'Gaziantep', '79,63,2,46,80,31', 75, 80, 4),
+       ('28', 'Giresun', '61,29,24,58,52', 75, 80, 4),
+       ('29', 'Gümüşhane', '61,69,24,28', 75, 80, 4),
+       ('30', 'Hakkari', '65,73', 75, 80, 4),
+       ('31', 'Hatay', '1,80,27', 75, 80, 4),
+       ('32', 'Isparta', '3,42,7,15', 75, 80, 4),
+       ('33', 'Mersin', '7,70,42,51,1', 75, 80, 4),
+       ('34', 'İstanbul', '41,59', 75, 80, 4),
+       ('35', 'İzmir', '10,45,9', 75, 80, 4),
+       ('36', 'Kars', '75,76,4,25', 75, 80, 4),
+       ('37', 'Kastamonu', '74,78,18,19,57', 75, 80, 4),
+       ('38', 'Kayseri', '58,46,1,51,50,66', 75, 80, 4),
+       ('39', 'Kırklareli', '22,59,34', 75, 80, 4),
+       ('40', 'Kırşehir', '6,71,66,50,68', 75, 80, 4),
+       ('41', 'Kocaeli', '34,77,16,54', 75, 80, 4),
+       ('42', 'Konya', '6,26,3,32,7,70,33,51,68', 75, 80, 4),
+       ('43', 'Kütahya', '16,11,26,3,64,45,10', 75, 80, 4),
+       ('44', 'Malatya', '23,21,2,46,58,24', 75, 80, 4),
+       ('45', 'Manisa', '35,9,20,64,43,10', 75, 80, 4),
+       ('46', 'Kahramanmaraş', '58,44,2,27,80,1,38', 75, 80, 4),
+       ('47', 'Mardin', '73,56,72,21,63', 75, 80, 4),
+       ('48', 'Muğla', '7,15,20,9', 75, 80, 4),
+       ('49', 'Muş', '12,25,4,13,72,21', 75, 80, 4),
+       ('50', 'Nevşehir', '66,38,51,68,40', 75, 80, 4),
+       ('51', 'Niğde', '50,38,1,33,42,68', 75, 80, 4),
+       ('52', 'Ordu', '55,60,58,28', 75, 80, 4),
+       ('53', 'Rize', '61,69,25,8', 75, 80, 4),
+       ('54', 'Sakarya', '41,16,11,14,81', 75, 80, 4),
+       ('55', 'Samsun', '57,19,5,60,52', 75, 80, 4),
+       ('56', 'Siirt', '13,65,73,47,72', 75, 80, 4),
+       ('57', 'Sinop', '37,19,55', 75, 80, 4),
+       ('58', 'Sivas', '66,38,46,44,24,28,52,60', 75, 80, 4),
+       ('59', 'Tekirdağ', '34,39,22,17', 75, 80, 4),
+       ('60', 'Tokat', '5,55,52,58,66', 75, 80, 4),
+       ('61', 'Trabzon', '28,29,69,53', 75, 80, 4),
+       ('62', 'Tunceli', '24,12,23', 75, 80, 4),
+       ('63', 'Şanlıurfa', '27,2,21,47', 75, 80, 4),
+       ('64', 'Uşak', '45,43,3,20', 75, 80, 4),
+       ('65', 'Van', '30,73,56,13,4', 75, 80, 4),
+       ('66', 'Yozgat', '19,5,60,58,38,50,40,71', 75, 80, 4),
+       ('67', 'Zonguldak', '74,78,14,81', 75, 80, 4),
+       ('68', 'Aksaray', '42,6,40,50,51', 75, 80, 4),
+       ('69', 'Bayburt', '29,61,53,25,24', 75, 80, 4),
+       ('70', 'Karaman', '42,33,7', 75, 80, 4),
+       ('71', 'Kırıkkale', '6,18,19,66,40', 75, 80, 4),
+       ('72', 'Batman', '21,49,13,56,47', 75, 80, 4),
+       ('73', 'Şırnak', '47,56,65,30', 75, 80, 4),
+       ('74', 'Bartın', '67,78,37', 75, 80, 4),
+       ('75', 'Ardahan', '8,25,36', 75, 80, 4),
+       ('76', 'Iğdır', '36,4', 75, 80, 4),
+       ('77', 'Yalova', '34,41,16', 75, 80, 4),
+       ('78', 'Karabük', '67,74,37,18,14', 75, 80, 4),
+       ('79', 'Kilis', '27', 75, 80, 4),
+       ('80', 'Osmaniye', '1,31,27,46', 75, 80, 4),
+       ('81', 'Düzce', '54,14,67', 75, 80, 4);
+
+INSERT INTO `users` (`id`, `status`, `phone`, `password`)
+VALUES (1, 1, '+905348387707', '85d8333e6a0a459a4013ab471d8c239f5c12cc78ce046c5462ed11baa3301868'),
+       (2, 1, '+905111111111', '85d8333e6a0a459a4013ab471d8c239f5c12cc78ce046c5462ed11baa3301868');
+
+INSERT INTO `user_roles` (`id`, `user_id`, `role`)
+VALUES (1, 1, 1),
+       (2, 2, 2);
+
+INSERT INTO `dairy_cow_coefficients` (`cow_type`, `value`) VALUES ('0', '1');
+INSERT INTO `dairy_cow_coefficients` (`cow_type`, `value`) VALUES ('1', '0.85');
+INSERT INTO `dairy_cow_coefficients` (`cow_type`, `value`) VALUES ('2', '0.6');
+INSERT INTO `dairy_cow_coefficients` (`cow_type`, `value`) VALUES ('3', '0.4');
+INSERT INTO `dairy_cow_coefficients` (`cow_type`, `value`) VALUES ('4', '0.25');
+
+INSERT INTO `feeds` (`status`, `category`, `feed_type`, `name`) VALUES (1,0,0,'Yonca (Kuru)');
+INSERT INTO `feeds` (`status`, `category`, `feed_type`, `name`) VALUES (1,0,0,'Çayır Otu / Mera Otu (Kuru)');
+INSERT INTO `feeds` (`status`, `category`, `feed_type`, `name`) VALUES (1,0,0,'Saman (Arpa, Buğday, Çavdar, Çeltik)');
+INSERT INTO `feeds` (`status`, `category`, `feed_type`, `name`) VALUES (1,0,0,'Fiğ Otu (Kuru)');
+INSERT INTO `feeds` (`status`, `category`, `feed_type`, `name`) VALUES (1,0,0,'Korunga (Kuru)');
+INSERT INTO `feeds` (`status`, `category`, `feed_type`, `name`) VALUES (1,0,0,'Yulaf Otu');
+INSERT INTO `feeds` (`status`, `category`, `feed_type`, `name`) VALUES (1,0,0,'Çavdar Otu');
+INSERT INTO `feeds` (`status`, `category`, `feed_type`, `name`) VALUES (1,0,0,'Buğday Otu');
+INSERT INTO `feeds` (`status`, `category`, `feed_type`, `name`) VALUES (1,0,0,'Arpa Otu');
+INSERT INTO `feeds` (`status`, `category`, `feed_type`, `name`) VALUES (1,0,0,'Ayrık Otu');
+INSERT INTO `feeds` (`status`, `category`, `feed_type`, `name`) VALUES (1,0,1,'Mısır Silajı');
+INSERT INTO `feeds` (`status`, `category`, `feed_type`, `name`) VALUES (1,0,1,'Yonca Silajı');
+INSERT INTO `feeds` (`status`, `category`, `feed_type`, `name`) VALUES (1,0,1,'Sorgum Silajı');
+INSERT INTO `feeds` (`status`, `category`, `feed_type`, `name`) VALUES (1,0,1,'Sudan Otu Silajı');
+INSERT INTO `feeds` (`status`, `category`, `feed_type`, `name`) VALUES (1,0,1,'Fiğ Silajı');
+INSERT INTO `feeds` (`status`, `category`, `feed_type`, `name`) VALUES (1,0,1,'Buğday Silajı');
+INSERT INTO `feeds` (`status`, `category`, `feed_type`, `name`) VALUES (1,0,1,'Arpa Silajı');
+INSERT INTO `feeds` (`status`, `category`, `feed_type`, `name`) VALUES (1,0,1,'Tritikale Silajı');
+INSERT INTO `feeds` (`status`, `category`, `feed_type`, `name`) VALUES (1,0,1,'Ayçiçeği Silajı');
+INSERT INTO `feeds` (`status`, `category`, `feed_type`, `name`) VALUES (1,0,2,'Taze Yonca');
+INSERT INTO `feeds` (`status`, `category`, `feed_type`, `name`) VALUES (1,0,2,'Taze Fiğ');
+INSERT INTO `feeds` (`status`, `category`, `feed_type`, `name`) VALUES (1,0,2,'Taze Çayır Otları');
+INSERT INTO `feeds` (`status`, `category`, `feed_type`, `name`) VALUES (1,0,2,'Yeşil Mısır');
+INSERT INTO `feeds` (`status`, `category`, `feed_type`, `name`) VALUES (1,0,2,'Yeşil Arpa');
+INSERT INTO `feeds` (`status`, `category`, `feed_type`, `name`) VALUES (1,0,2,'Yeşil Buğday');
+INSERT INTO `feeds` (`status`, `category`, `feed_type`, `name`) VALUES (1,0,2,'Yeşil Sorgum');
+INSERT INTO `feeds` (`status`, `category`, `feed_type`, `name`) VALUES (1,0,2,'Yeşil Tritikale');
+INSERT INTO `feeds` (`status`, `category`, `feed_type`, `name`) VALUES (1,0,2,'Pancar Yaprağı');
+INSERT INTO `feeds` (`status`, `category`, `feed_type`, `name`) VALUES (1,0,2,'Diğer Lifli Kaba Yemler (Mısır, Ayçiçeği, Baklagil Sapları)');
+INSERT INTO `feeds` (`status`, `category`, `feed_type`, `name`) VALUES (1,0,10,'Diğer Kaba Yemler');
+INSERT INTO `feeds` (`status`, `category`, `feed_type`, `name`) VALUES (1,1,3,'Arpa (Dane)');
+INSERT INTO `feeds` (`status`, `category`, `feed_type`, `name`) VALUES (1,1,3,'Buğday (Dane)');
+INSERT INTO `feeds` (`status`, `category`, `feed_type`, `name`) VALUES (1,1,3,'Mısır (Dane)');
+INSERT INTO `feeds` (`status`, `category`, `feed_type`, `name`) VALUES (1,1,3,'Yulaf (Dane)');
+INSERT INTO `feeds` (`status`, `category`, `feed_type`, `name`) VALUES (1,1,3,'Tritikale (Dane)');
+INSERT INTO `feeds` (`status`, `category`, `feed_type`, `name`) VALUES (1,1,3,'Buğday Kepeği');
+INSERT INTO `feeds` (`status`, `category`, `feed_type`, `name`) VALUES (1,1,3,'Razmol');
+INSERT INTO `feeds` (`status`, `category`, `feed_type`, `name`) VALUES (1,1,3,'Melas');
+INSERT INTO `feeds` (`status`, `category`, `feed_type`, `name`) VALUES (1,1,3,'Mısır Gluteni');
+INSERT INTO `feeds` (`status`, `category`, `feed_type`, `name`) VALUES (1,1,3,'Hayvan Pancarı');
+INSERT INTO `feeds` (`status`, `category`, `feed_type`, `name`) VALUES (1,1,4,'Soya Küspesi');
+INSERT INTO `feeds` (`status`, `category`, `feed_type`, `name`) VALUES (1,1,4,'Ayçiçeği Küspesi');
+INSERT INTO `feeds` (`status`, `category`, `feed_type`, `name`) VALUES (1,1,4,'Kanola Küspesi');
+INSERT INTO `feeds` (`status`, `category`, `feed_type`, `name`) VALUES (1,1,4,'Pamuk Tohumu Küspesi');
+INSERT INTO `feeds` (`status`, `category`, `feed_type`, `name`) VALUES (1,1,4,'DDGS (Damıtık Kurutulmuş Tahıl ve Çözünürleri)');
+INSERT INTO `feeds` (`status`, `category`, `feed_type`, `name`) VALUES (1,1,4,'Balık Unu');
+INSERT INTO `feeds` (`status`, `category`, `feed_type`, `name`) VALUES (1,1,10,'Diğer Kesif Yemler');
+INSERT INTO `feeds` (`status`, `category`, `feed_type`, `name`) VALUES (1,2,5,'Süt Yemi (%14 Protein)');
+INSERT INTO `feeds` (`status`, `category`, `feed_type`, `name`) VALUES (1,2,5,'Süt Yemi (%16 Protein)');
+INSERT INTO `feeds` (`status`, `category`, `feed_type`, `name`) VALUES (1,2,5,'Süt Yemi (%18 Protein)');
+INSERT INTO `feeds` (`status`, `category`, `feed_type`, `name`) VALUES (1,2,5,'Süt Yemi (%19 Protein)');
+INSERT INTO `feeds` (`status`, `category`, `feed_type`, `name`) VALUES (1,2,5,'Süt Yemi (%20 Protein)');
+INSERT INTO `feeds` (`status`, `category`, `feed_type`, `name`) VALUES (1,2,5,'Süt Yemi (%21 Protein)');
+INSERT INTO `feeds` (`status`, `category`, `feed_type`, `name`) VALUES (1,2,6,'Besi Başlangıç Yemi');
+INSERT INTO `feeds` (`status`, `category`, `feed_type`, `name`) VALUES (1,2,6,'Buzağı Başlangıç yemi');
+INSERT INTO `feeds` (`status`, `category`, `feed_type`, `name`) VALUES (1,2,6,'Besi Büyütme Yemi');
+INSERT INTO `feeds` (`status`, `category`, `feed_type`, `name`) VALUES (1,2,6,'Dana büyütme yemi');
+INSERT INTO `feeds` (`status`, `category`, `feed_type`, `name`) VALUES (1,2,6,'Besi Sonu Yemi');
+INSERT INTO `feeds` (`status`, `category`, `feed_type`, `name`) VALUES (1,2,6,'Besi Yemi (%19 Protein)');
+INSERT INTO `feeds` (`status`, `category`, `feed_type`, `name`) VALUES (1,2,10,'Sanayi yemi');
+INSERT INTO `feeds` (`status`, `category`, `feed_type`, `name`) VALUES (1,2,10,'Diğer Karma Yemler');
+INSERT INTO `feeds` (`status`, `category`, `feed_type`, `name`) VALUES (1,3,7,'Yeşil Taze Otlar');
+INSERT INTO `feeds` (`status`, `category`, `feed_type`, `name`) VALUES (1,3,7,'Havuç');
+INSERT INTO `feeds` (`status`, `category`, `feed_type`, `name`) VALUES (1,3,7,'Patates');
+INSERT INTO `feeds` (`status`, `category`, `feed_type`, `name`) VALUES (1,3,7,'Mısır Hasıl');
+INSERT INTO `feeds` (`status`, `category`, `feed_type`, `name`) VALUES (1,3,7,'Pancar Posası (Yaş)');
+INSERT INTO `feeds` (`status`, `category`, `feed_type`, `name`) VALUES (1,3,10,'Diğer Sulu Yemler');
+INSERT INTO `feeds` (`status`, `category`, `feed_type`, `name`) VALUES (1,4,8,'Kireç Taşı (Kalsiyum Kaynağı)');
+INSERT INTO `feeds` (`status`, `category`, `feed_type`, `name`) VALUES (1,4,8,'DCP (Dikalsiyum Fosfat)');
+INSERT INTO `feeds` (`status`, `category`, `feed_type`, `name`) VALUES (1,4,8,'Tuz (Sodyum Klorür / NaCl)');
+INSERT INTO `feeds` (`status`, `category`, `feed_type`, `name`) VALUES (1,4,8,'Mineral Bloklar / Yalama Taşları');
+INSERT INTO `feeds` (`status`, `category`, `feed_type`, `name`) VALUES (1,4,9,'Premiks (Vitamin-Mineral Karışımı)');
+INSERT INTO `feeds` (`status`, `category`, `feed_type`, `name`) VALUES (1,4,10,'Diğer Mineral ve Vitamin');
+INSERT INTO `feeds` (`status`, `category`, `feed_type`, `name`) VALUES (1,5,7,'Probiyotikler');
+INSERT INTO `feeds` (`status`, `category`, `feed_type`, `name`) VALUES (1,5,7,'Maya (Rumen Düzenleyici)');
+INSERT INTO `feeds` (`status`, `category`, `feed_type`, `name`) VALUES (1,5,7,'Enzimler');
+INSERT INTO `feeds` (`status`, `category`, `feed_type`, `name`) VALUES (1,5,7,'Toksin Bağlayıcılar');
+INSERT INTO `feeds` (`status`, `category`, `feed_type`, `name`) VALUES (1,5,7,'Bikarbonat (Sodyum Bikarbonat - Rumen Tamponu)');
+INSERT INTO `feeds` (`status`, `category`, `feed_type`, `name`) VALUES (1,5,10,'Diğer Fonksiyonel Katkılar');
+INSERT INTO `feeds` (`status`, `category`, `feed_type`, `name`) VALUES (1,6,10,'Diğer');
+
+INSERT INTO `dairy_cow_costs` (`status`, `cost_type`, `name`) VALUES (1,0,'Çitlikte Maaşlı Çalışan Bakım Personeli');
+INSERT INTO `dairy_cow_costs` (`status`, `cost_type`, `name`) VALUES (1,1,'Maaş almadan çalışan Aile İşgücü (küçük aile  işletmeler)');
+INSERT INTO `dairy_cow_costs` (`status`, `cost_type`, `name`) VALUES (1,2,'Aylık Benzin Tüketimi (lt)');
+INSERT INTO `dairy_cow_costs` (`status`, `cost_type`, `name`) VALUES (1,2,'Aylık Mazot Tüketimi (lt)');
+INSERT INTO `dairy_cow_costs` (`status`, `cost_type`, `name`) VALUES (1,2,'Aylık Su Tüketimi (ton)');
+INSERT INTO `dairy_cow_costs` (`status`, `cost_type`, `name`) VALUES (1,2,'Aylık Eletrik Tüketimi (Kwa)');
+INSERT INTO `dairy_cow_costs` (`status`, `cost_type`, `name`) VALUES (1,3,'Aylık Veteriner gideri Ortalaması (TL) (Düzenli maaş hariç)');
+INSERT INTO `dairy_cow_costs` (`status`, `cost_type`, `name`) VALUES (1,4,'Ortalama Tohulama Sayısı');
+INSERT INTO `dairy_cow_costs` (`status`, `cost_type`, `name`) VALUES (1,5,'Sigorta Yaptırdınız mı?');
+INSERT INTO `dairy_cow_costs` (`status`, `cost_type`, `name`) VALUES (1,6,'İşletmenin Kullandığı Sübvansiyonlu Kredi');
+INSERT INTO `dairy_cow_costs` (`status`, `cost_type`, `name`) VALUES (1,7,'İşletmenin Kullandığı Sübvansiyonsuz Kredi');
+
+INSERT INTO `dairy_cow_incomes` (`status`, `name`, `unit`) VALUES ('1', 'İşletmenin hayvan başına elde ettiği süt verimi ', '(Lt/Gün/1 İnek)');
+INSERT INTO `dairy_cow_incomes` (`status`, `name`, `unit`) VALUES ('1', 'İşletmenin çiğ süt net satış fiyatı (Kalite Primi Dahil)', '(TL/Lt)');
+INSERT INTO `dairy_cow_incomes` (`status`, `name`, `unit`) VALUES ('1', 'Ortalama reforme inek fiyatı', '(TL/Adet)');
+INSERT INTO `dairy_cow_incomes` (`status`, `name`, `unit`) VALUES ('1', 'Ortalama gebe düve satış fiyatı', '(TL/Adet)');
+INSERT INTO `dairy_cow_incomes` (`status`, `name`, `unit`) VALUES ('1', 'Ortalama düve fiyatı', '(TL/Adet)');
+INSERT INTO `dairy_cow_incomes` (`status`, `name`, `unit`) VALUES ('1', 'Ortalama dana fiyatı', '(TL/Adet)');
+INSERT INTO `dairy_cow_incomes` (`status`, `name`, `unit`) VALUES ('1', 'Ortalama buzağı fiyatı', '(TL/Adet)');
+INSERT INTO `dairy_cow_incomes` (`status`, `name`, `unit`) VALUES ('1', 'Ortalama inek fiyatı', '(TL/Adet)');
+INSERT INTO `dairy_cow_incomes` (`status`, `name`, `unit`) VALUES ('1', 'Süt destek primi', '(TL/Lt)');
+INSERT INTO `dairy_cow_incomes` (`status`, `name`, `unit`) VALUES ('1', 'Buzağı desteği', '(TL/Adet)');
+INSERT INTO `dairy_cow_incomes` (`status`, `name`, `unit`) VALUES ('1', 'Soy kütüğü desteği', '(TL/Adet)');
+INSERT INTO `dairy_cow_incomes` (`status`, `name`, `unit`) VALUES ('1', 'Hastalıktan ari işletme desteği', '(TL/Adet)');
+INSERT INTO `dairy_cow_incomes` (`status`, `name`, `unit`) VALUES ('1', 'Gübre satış yada biyogaz feliriniz varsa giriniz', '(TL/Yıl)');
+INSERT INTO `dairy_cow_incomes` (`status`, `name`, `unit`) VALUES ('1', 'Varsa diğer gelir giriniz', '(TL/Yıl)');
+
+##plantation
+INSERT INTO `plantation_products` (`id`,`status`,`name`) VALUES (1,1,'Acur');
+INSERT INTO `plantation_products` (`id`,`status`,`name`) VALUES (2,1,'Adaçayı');
+INSERT INTO `plantation_products` (`id`,`status`,`name`) VALUES (3,1,'Ahududu');
+INSERT INTO `plantation_products` (`id`,`status`,`name`) VALUES (4,1,'Alabaş');
+INSERT INTO `plantation_products` (`id`,`status`,`name`) VALUES (5,1,'Altınçilek');
+INSERT INTO `plantation_products` (`id`,`status`,`name`) VALUES (6,1,'Anason');
+INSERT INTO `plantation_products` (`id`,`status`,`name`) VALUES (7,1,'Antepfıstığı');
+INSERT INTO `plantation_products` (`id`,`status`,`name`) VALUES (8,1,'Armut');
+INSERT INTO `plantation_products` (`id`,`status`,`name`) VALUES (9,1,'Arpa (Dane)');
+INSERT INTO `plantation_products` (`id`,`status`,`name`) VALUES (10,1,'Arpa (Silaj)');
+INSERT INTO `plantation_products` (`id`,`status`,`name`) VALUES (11,1,'Arpa (Tohumluk)');
+INSERT INTO `plantation_products` (`id`,`status`,`name`) VALUES (12,1,'Arpa (Yemlik)');
+INSERT INTO `plantation_products` (`id`,`status`,`name`) VALUES (13,1,'Aspir (Dane)');
+INSERT INTO `plantation_products` (`id`,`status`,`name`) VALUES (14,1,'Aspir (Tohumluk)');
+INSERT INTO `plantation_products` (`id`,`status`,`name`) VALUES (15,1,'Avakado');
+INSERT INTO `plantation_products` (`id`,`status`,`name`) VALUES (16,1,'Ayçiçeği (Çerezlik)');
+INSERT INTO `plantation_products` (`id`,`status`,`name`) VALUES (17,1,'Ayçiçeği (Tohumluk)');
+INSERT INTO `plantation_products` (`id`,`status`,`name`) VALUES (18,1,'Ayçiçeği (Yağlık)');
+INSERT INTO `plantation_products` (`id`,`status`,`name`) VALUES (19,1,'Ayva');
+INSERT INTO `plantation_products` (`id`,`status`,`name`) VALUES (20,1,'Badem');
+INSERT INTO `plantation_products` (`id`,`status`,`name`) VALUES (21,1,'Bakla (Dane)');
+INSERT INTO `plantation_products` (`id`,`status`,`name`) VALUES (22,1,'Bakla (Taze)');
+INSERT INTO `plantation_products` (`id`,`status`,`name`) VALUES (23,1,'Bakla (Tohumluk)');
+INSERT INTO `plantation_products` (`id`,`status`,`name`) VALUES (24,1,'Balkabağı');
+INSERT INTO `plantation_products` (`id`,`status`,`name`) VALUES (25,1,'Bamya');
+INSERT INTO `plantation_products` (`id`,`status`,`name`) VALUES (26,1,'Bamya (Tohumluk)');
+INSERT INTO `plantation_products` (`id`,`status`,`name`) VALUES (27,1,'Barbunya (Fasulye) (Kuru) (Yer)');
+INSERT INTO `plantation_products` (`id`,`status`,`name`) VALUES (28,1,'Barbunya (Fasulye) (Taze) (Sırık)');
+INSERT INTO `plantation_products` (`id`,`status`,`name`) VALUES (29,1,'Barbunya (Fasulye) (Taze) (Yer)');
+INSERT INTO `plantation_products` (`id`,`status`,`name`) VALUES (30,1,'Barbunya (Fasulye) (Tohumluk)');
+INSERT INTO `plantation_products` (`id`,`status`,`name`) VALUES (31,1,'Bezelye (Taze) (Sırık)');
+INSERT INTO `plantation_products` (`id`,`status`,`name`) VALUES (32,1,'Bezelye (Taze) (Yer)');
+INSERT INTO `plantation_products` (`id`,`status`,`name`) VALUES (33,1,'Bezelye (Tohumluk)');
+INSERT INTO `plantation_products` (`id`,`status`,`name`) VALUES (34,1,'Bezelye (Yer) (Dane) (Sanayilik)');
+INSERT INTO `plantation_products` (`id`,`status`,`name`) VALUES (35,1,'Biber');
+INSERT INTO `plantation_products` (`id`,`status`,`name`) VALUES (36,1,'Böğürtlen');
+INSERT INTO `plantation_products` (`id`,`status`,`name`) VALUES (37,1,'Börülce (Dane)');
+INSERT INTO `plantation_products` (`id`,`status`,`name`) VALUES (38,1,'Börülce (Taze)');
+INSERT INTO `plantation_products` (`id`,`status`,`name`) VALUES (39,1,'Brokoli');
+INSERT INTO `plantation_products` (`id`,`status`,`name`) VALUES (40,1,'Buğday (Ekmeklik)');
+INSERT INTO `plantation_products` (`id`,`status`,`name`) VALUES (41,1,'Buğday (Makarnalık)');
+INSERT INTO `plantation_products` (`id`,`status`,`name`) VALUES (42,1,'Buğday (Silaj)');
+INSERT INTO `plantation_products` (`id`,`status`,`name`) VALUES (43,1,'Buğday (Tohumluk)');
+INSERT INTO `plantation_products` (`id`,`status`,`name`) VALUES (44,1,'Burçak (Dane)');
+INSERT INTO `plantation_products` (`id`,`status`,`name`) VALUES (45,1,'Burçak (Ot)');
+INSERT INTO `plantation_products` (`id`,`status`,`name`) VALUES (46,1,'Caramba İtalyan Çimi (Ot)');
+INSERT INTO `plantation_products` (`id`,`status`,`name`) VALUES (47,1,'Caramba İtalyan Çimi (Silaj)');
+INSERT INTO `plantation_products` (`id`,`status`,`name`) VALUES (48,1,'Ceviz');
+INSERT INTO `plantation_products` (`id`,`status`,`name`) VALUES (49,1,'Çam Fıstığı (Kozalak)');
+INSERT INTO `plantation_products` (`id`,`status`,`name`) VALUES (50,1,'Çavdar (Dane)');
+INSERT INTO `plantation_products` (`id`,`status`,`name`) VALUES (51,1,'Çavdar (Ot)');
+INSERT INTO `plantation_products` (`id`,`status`,`name`) VALUES (52,1,'Çavdar (Silaj)');
+INSERT INTO `plantation_products` (`id`,`status`,`name`) VALUES (53,1,'Çay');
+INSERT INTO `plantation_products` (`id`,`status`,`name`) VALUES (54,1,'Çayırotu (Doğal Biçim)');
+INSERT INTO `plantation_products` (`id`,`status`,`name`) VALUES (55,1,'Çayırotu (Üretim)');
+INSERT INTO `plantation_products` (`id`,`status`,`name`) VALUES (56,1,'Çeltik (Dane)');
+INSERT INTO `plantation_products` (`id`,`status`,`name`) VALUES (57,1,'Çeltik (Tohumluk)');
+INSERT INTO `plantation_products` (`id`,`status`,`name`) VALUES (58,1,'Çilek');
+INSERT INTO `plantation_products` (`id`,`status`,`name`) VALUES (59,1,'Çim (Tohumluk)');
+INSERT INTO `plantation_products` (`id`,`status`,`name`) VALUES (60,1,'Çörekotu');
+INSERT INTO `plantation_products` (`id`,`status`,`name`) VALUES (61,1,'Defne');
+INSERT INTO `plantation_products` (`id`,`status`,`name`) VALUES (62,1,'Dereotu');
+INSERT INTO `plantation_products` (`id`,`status`,`name`) VALUES (63,1,'Domater (Kurutmalık)');
+INSERT INTO `plantation_products` (`id`,`status`,`name`) VALUES (64,1,'Domater (Salçalık)');
+INSERT INTO `plantation_products` (`id`,`status`,`name`) VALUES (65,1,'Domater (Sırık)');
+INSERT INTO `plantation_products` (`id`,`status`,`name`) VALUES (66,1,'Domater (Tarla)');
+INSERT INTO `plantation_products` (`id`,`status`,`name`) VALUES (67,1,'Dut (Kurutmalık)');
+INSERT INTO `plantation_products` (`id`,`status`,`name`) VALUES (68,1,'Dut (Taze)');
+INSERT INTO `plantation_products` (`id`,`status`,`name`) VALUES (69,1,'Ejder Meyvesi');
+INSERT INTO `plantation_products` (`id`,`status`,`name`) VALUES (70,1,'Elma');
+INSERT INTO `plantation_products` (`id`,`status`,`name`) VALUES (71,1,'Enginar');
+INSERT INTO `plantation_products` (`id`,`status`,`name`) VALUES (72,1,'Erik');
+INSERT INTO `plantation_products` (`id`,`status`,`name`) VALUES (73,1,'Fasülye (Kuru) (Yer)');
+INSERT INTO `plantation_products` (`id`,`status`,`name`) VALUES (74,1,'Fasülye (Taze) (Sırık)');
+INSERT INTO `plantation_products` (`id`,`status`,`name`) VALUES (75,1,'Fasülye (Taze) (Yer)');
+INSERT INTO `plantation_products` (`id`,`status`,`name`) VALUES (76,1,'Fasülye (Tohumluk)');
+INSERT INTO `plantation_products` (`id`,`status`,`name`) VALUES (77,1,'Fesleğen');
+INSERT INTO `plantation_products` (`id`,`status`,`name`) VALUES (78,1,'Fındık');
+INSERT INTO `plantation_products` (`id`,`status`,`name`) VALUES (79,1,'Fiğ');
+INSERT INTO `plantation_products` (`id`,`status`,`name`) VALUES (80,1,'Fiğ (Tohumluk)');
+INSERT INTO `plantation_products` (`id`,`status`,`name`) VALUES (81,1,'Frenk Üzümü');
+INSERT INTO `plantation_products` (`id`,`status`,`name`) VALUES (82,1,'Frezya');
+INSERT INTO `plantation_products` (`id`,`status`,`name`) VALUES (83,1,'Gerbera');
+INSERT INTO `plantation_products` (`id`,`status`,`name`) VALUES (84,1,'Goji Bery (Kurt Üzümü)');
+INSERT INTO `plantation_products` (`id`,`status`,`name`) VALUES (85,1,'Greyfurt');
+INSERT INTO `plantation_products` (`id`,`status`,`name`) VALUES (86,1,'Guava');
+INSERT INTO `plantation_products` (`id`,`status`,`name`) VALUES (87,1,'Gül (Kesme)');
+INSERT INTO `plantation_products` (`id`,`status`,`name`) VALUES (88,1,'Gül (Yağlık)');
+INSERT INTO `plantation_products` (`id`,`status`,`name`) VALUES (89,1,'Haşhaş (Kapsül)');
+INSERT INTO `plantation_products` (`id`,`status`,`name`) VALUES (90,1,'Havuç');
+INSERT INTO `plantation_products` (`id`,`status`,`name`) VALUES (91,1,'Hayvan Pancarı');
+INSERT INTO `plantation_products` (`id`,`status`,`name`) VALUES (92,1,'Hıyar');
+INSERT INTO `plantation_products` (`id`,`status`,`name`) VALUES (93,1,'Hünnap');
+INSERT INTO `plantation_products` (`id`,`status`,`name`) VALUES (94,1,'Ispanak');
+INSERT INTO `plantation_products` (`id`,`status`,`name`) VALUES (95,1,'İncir (Kuru)');
+INSERT INTO `plantation_products` (`id`,`status`,`name`) VALUES (96,1,'İncir (Taze)');
+INSERT INTO `plantation_products` (`id`,`status`,`name`) VALUES (97,1,'Kabak (Sakız)');
+INSERT INTO `plantation_products` (`id`,`status`,`name`) VALUES (98,1,'Kabak Çekirdeği');
+INSERT INTO `plantation_products` (`id`,`status`,`name`) VALUES (99,1,'Kamkat');
+INSERT INTO `plantation_products` (`id`,`status`,`name`) VALUES (100,1,'Karanfil');
+INSERT INTO `plantation_products` (`id`,`status`,`name`) VALUES (101,1,'Karnabahar');
+INSERT INTO `plantation_products` (`id`,`status`,`name`) VALUES (102,1,'Karpuz');
+INSERT INTO `plantation_products` (`id`,`status`,`name`) VALUES (103,1,'Kavun');
+INSERT INTO `plantation_products` (`id`,`status`,`name`) VALUES (104,1,'Kayısı');
+INSERT INTO `plantation_products` (`id`,`status`,`name`) VALUES (105,1,'Kayısı (Kurutmalık)');
+INSERT INTO `plantation_products` (`id`,`status`,`name`) VALUES (106,1,'Kaymak Ağacı (Fequa)');
+INSERT INTO `plantation_products` (`id`,`status`,`name`) VALUES (107,1,'Keçiboynuzu');
+INSERT INTO `plantation_products` (`id`,`status`,`name`) VALUES (108,1,'Kekik');
+INSERT INTO `plantation_products` (`id`,`status`,`name`) VALUES (109,1,'Kereviz (Kök)');
+INSERT INTO `plantation_products` (`id`,`status`,`name`) VALUES (110,1,'Kenevir (Lif)');
+INSERT INTO `plantation_products` (`id`,`status`,`name`) VALUES (111,1,'Kereviz (Sap)');
+INSERT INTO `plantation_products` (`id`,`status`,`name`) VALUES (112,1,'Kenevir (Tıbbi)');
+INSERT INTO `plantation_products` (`id`,`status`,`name`) VALUES (113,1,'Kenevir (Tohumluk)');
+INSERT INTO `plantation_products` (`id`,`status`,`name`) VALUES (114,1,'Kestane');
+INSERT INTO `plantation_products` (`id`,`status`,`name`) VALUES (115,1,'Keten (Lif)');
+INSERT INTO `plantation_products` (`id`,`status`,`name`) VALUES (116,1,'Keten (Yağlık)');
+INSERT INTO `plantation_products` (`id`,`status`,`name`) VALUES (117,1,'Kızılcık');
+INSERT INTO `plantation_products` (`id`,`status`,`name`) VALUES (118,1,'Kimyon');
+INSERT INTO `plantation_products` (`id`,`status`,`name`) VALUES (119,1,'Kinoa');
+INSERT INTO `plantation_products` (`id`,`status`,`name`) VALUES (120,1,'Kiraz');
+INSERT INTO `plantation_products` (`id`,`status`,`name`) VALUES (121,1,'Kişniş');
+INSERT INTO `plantation_products` (`id`,`status`,`name`) VALUES (122,1,'Kivi');
+INSERT INTO `plantation_products` (`id`,`status`,`name`) VALUES (123,1,'Kolza (Dane)');
+INSERT INTO `plantation_products` (`id`,`status`,`name`) VALUES (124,1,'Kolza (Tohumluk)');
+INSERT INTO `plantation_products` (`id`,`status`,`name`) VALUES (125,1,'Kornit Üzümü');
+INSERT INTO `plantation_products` (`id`,`status`,`name`) VALUES (126,1,'Korunga (Ot)');
+INSERT INTO `plantation_products` (`id`,`status`,`name`) VALUES (127,1,'Korunga (Tohumluk)');
+INSERT INTO `plantation_products` (`id`,`status`,`name`) VALUES (128,1,'Krizantem');
+INSERT INTO `plantation_products` (`id`,`status`,`name`) VALUES (129,1,'Kudret Narı');
+INSERT INTO `plantation_products` (`id`,`status`,`name`) VALUES (130,1,'Kuş Üzümü');
+INSERT INTO `plantation_products` (`id`,`status`,`name`) VALUES (131,1,'Kuş Yemi');
+INSERT INTO `plantation_products` (`id`,`status`,`name`) VALUES (132,1,'Kuşkonmaz');
+INSERT INTO `plantation_products` (`id`,`status`,`name`) VALUES (133,1,'Lahana (Beyaz)');
+INSERT INTO `plantation_products` (`id`,`status`,`name`) VALUES (134,1,'Lahana (Brüksel)');
+INSERT INTO `plantation_products` (`id`,`status`,`name`) VALUES (135,1,'Lahana (Kara)');
+INSERT INTO `plantation_products` (`id`,`status`,`name`) VALUES (136,1,'Lahana (Kırmızı)');
+INSERT INTO `plantation_products` (`id`,`status`,`name`) VALUES (137,1,'Lale (Soğan)');
+INSERT INTO `plantation_products` (`id`,`status`,`name`) VALUES (138,1,'Lavanta');
+INSERT INTO `plantation_products` (`id`,`status`,`name`) VALUES (139,1,'Lilyum');
+INSERT INTO `plantation_products` (`id`,`status`,`name`) VALUES (140,1,'Limon');
+INSERT INTO `plantation_products` (`id`,`status`,`name`) VALUES (141,1,'Mandalina');
+INSERT INTO `plantation_products` (`id`,`status`,`name`) VALUES (142,1,'Marul');
+INSERT INTO `plantation_products` (`id`,`status`,`name`) VALUES (143,1,'Maş Fasulyesi');
+INSERT INTO `plantation_products` (`id`,`status`,`name`) VALUES (144,1,'Maviyemiş (Yaban Mersini)');
+INSERT INTO `plantation_products` (`id`,`status`,`name`) VALUES (145,1,'Maydanoz');
+INSERT INTO `plantation_products` (`id`,`status`,`name`) VALUES (146,1,'Mercimek');
+INSERT INTO `plantation_products` (`id`,`status`,`name`) VALUES (147,1,'Mısır (Cin)');
+INSERT INTO `plantation_products` (`id`,`status`,`name`) VALUES (148,1,'Mısır (Çerezlik)');
+INSERT INTO `plantation_products` (`id`,`status`,`name`) VALUES (149,1,'Mısır (Dane)');
+INSERT INTO `plantation_products` (`id`,`status`,`name`) VALUES (150,1,'Mısır (Hasıl)');
+INSERT INTO `plantation_products` (`id`,`status`,`name`) VALUES (151,1,'Mısır (Silaj)');
+INSERT INTO `plantation_products` (`id`,`status`,`name`) VALUES (152,1,'Mısır (Tohumluk)');
+INSERT INTO `plantation_products` (`id`,`status`,`name`) VALUES (153,1,'Muşmula');
+INSERT INTO `plantation_products` (`id`,`status`,`name`) VALUES (154,1,'Muz');
+INSERT INTO `plantation_products` (`id`,`status`,`name`) VALUES (155,1,'Mürdümük (Dane)');
+INSERT INTO `plantation_products` (`id`,`status`,`name`) VALUES (156,1,'Mürdümük (Ot)');
+INSERT INTO `plantation_products` (`id`,`status`,`name`) VALUES (157,1,'Nane (Kurutmalık)');
+INSERT INTO `plantation_products` (`id`,`status`,`name`) VALUES (158,1,'Nane (Taze)');
+INSERT INTO `plantation_products` (`id`,`status`,`name`) VALUES (159,1,'Nar');
+INSERT INTO `plantation_products` (`id`,`status`,`name`) VALUES (160,1,'Nektarin');
+INSERT INTO `plantation_products` (`id`,`status`,`name`) VALUES (161,1,'Nohut');
+INSERT INTO `plantation_products` (`id`,`status`,`name`) VALUES (162,1,'Pamuk');
+INSERT INTO `plantation_products` (`id`,`status`,`name`) VALUES (163,1,'Patates');
+INSERT INTO `plantation_products` (`id`,`status`,`name`) VALUES (164,1,'Patates (Sözleşmeli)');
+INSERT INTO `plantation_products` (`id`,`status`,`name`) VALUES (165,1,'Patlıcan');
+INSERT INTO `plantation_products` (`id`,`status`,`name`) VALUES (166,1,'Pazı');
+INSERT INTO `plantation_products` (`id`,`status`,`name`) VALUES (167,1,'Pepino');
+INSERT INTO `plantation_products` (`id`,`status`,`name`) VALUES (168,1,'Pırasa');
+INSERT INTO `plantation_products` (`id`,`status`,`name`) VALUES (169,1,'Pikan Cevizi');
+INSERT INTO `plantation_products` (`id`,`status`,`name`) VALUES (170,1,'Pomelo (Şadok)');
+INSERT INTO `plantation_products` (`id`,`status`,`name`) VALUES (171,1,'Portakal');
+INSERT INTO `plantation_products` (`id`,`status`,`name`) VALUES (172,1,'Reygrass (Süt Otu)');
+INSERT INTO `plantation_products` (`id`,`status`,`name`) VALUES (173,1,'Reyhan');
+INSERT INTO `plantation_products` (`id`,`status`,`name`) VALUES (174,1,'Rezene');
+INSERT INTO `plantation_products` (`id`,`status`,`name`) VALUES (175,1,'Roka');
+INSERT INTO `plantation_products` (`id`,`status`,`name`) VALUES (176,1,'Rozmanin (Biberiye)');
+INSERT INTO `plantation_products` (`id`,`status`,`name`) VALUES (177,1,'Safran');
+INSERT INTO `plantation_products` (`id`,`status`,`name`) VALUES (178,1,'Sahlep');
+INSERT INTO `plantation_products` (`id`,`status`,`name`) VALUES (179,1,'Sarımsak (Kuru)');
+INSERT INTO `plantation_products` (`id`,`status`,`name`) VALUES (180,1,'Sarımsak (Taze)');
+INSERT INTO `plantation_products` (`id`,`status`,`name`) VALUES (181,1,'Semizotu');
+INSERT INTO `plantation_products` (`id`,`status`,`name`) VALUES (182,1,'Soğan (Arpacık)');
+INSERT INTO `plantation_products` (`id`,`status`,`name`) VALUES (183,1,'Soğan (Baş)');
+INSERT INTO `plantation_products` (`id`,`status`,`name`) VALUES (184,1,'Soğan (Taze)');
+INSERT INTO `plantation_products` (`id`,`status`,`name`) VALUES (185,1,'Soğan (Tohumluk)');
+INSERT INTO `plantation_products` (`id`,`status`,`name`) VALUES (186,1,'Sorgum (Sudan Otu) (Dane)');
+INSERT INTO `plantation_products` (`id`,`status`,`name`) VALUES (187,1,'Sorgum (Sudan Otu) (Silaj)');
+INSERT INTO `plantation_products` (`id`,`status`,`name`) VALUES (188,1,'Sorgum (Sudan Otu) (Tohumluk)');
+INSERT INTO `plantation_products` (`id`,`status`,`name`) VALUES (189,1,'Soya');
+INSERT INTO `plantation_products` (`id`,`status`,`name`) VALUES (190,1,'Soya (Tohumluk)');
+INSERT INTO `plantation_products` (`id`,`status`,`name`) VALUES (191,1,'Stevia (Şekerotu)');
+INSERT INTO `plantation_products` (`id`,`status`,`name`) VALUES (192,1,'Sumak');
+INSERT INTO `plantation_products` (`id`,`status`,`name`) VALUES (193,1,'Susam');
+INSERT INTO `plantation_products` (`id`,`status`,`name`) VALUES (194,1,'Susam (Tohumluk)');
+INSERT INTO `plantation_products` (`id`,`status`,`name`) VALUES (195,1,'Süpürge Otu');
+INSERT INTO `plantation_products` (`id`,`status`,`name`) VALUES (196,1,'Şalgam');
+INSERT INTO `plantation_products` (`id`,`status`,`name`) VALUES (197,1,'Şeftali');
+INSERT INTO `plantation_products` (`id`,`status`,`name`) VALUES (198,1,'Şekerpancarı');
+INSERT INTO `plantation_products` (`id`,`status`,`name`) VALUES (199,1,'Şekerpancarı (Tohumluk)');
+INSERT INTO `plantation_products` (`id`,`status`,`name`) VALUES (200,1,'Şerbetçiotu');
+INSERT INTO `plantation_products` (`id`,`status`,`name`) VALUES (201,1,'Şevketi Bostan');
+INSERT INTO `plantation_products` (`id`,`status`,`name`) VALUES (202,1,'Tere');
+INSERT INTO `plantation_products` (`id`,`status`,`name`) VALUES (203,1,'Trabzon Hurması');
+INSERT INTO `plantation_products` (`id`,`status`,`name`) VALUES (204,1,'Tritikale (Dane)');
+INSERT INTO `plantation_products` (`id`,`status`,`name`) VALUES (205,1,'Tritikale (Silaj)');
+INSERT INTO `plantation_products` (`id`,`status`,`name`) VALUES (206,1,'Turp');
+INSERT INTO `plantation_products` (`id`,`status`,`name`) VALUES (207,1,'Tütün');
+INSERT INTO `plantation_products` (`id`,`status`,`name`) VALUES (208,1,'Üzüm (Kurutmalık)');
+INSERT INTO `plantation_products` (`id`,`status`,`name`) VALUES (209,1,'Üzüm (Sofralık)');
+INSERT INTO `plantation_products` (`id`,`status`,`name`) VALUES (210,1,'Üzüm (Şaraplık)');
+INSERT INTO `plantation_products` (`id`,`status`,`name`) VALUES (211,1,'Vişne');
+INSERT INTO `plantation_products` (`id`,`status`,`name`) VALUES (212,1,'Yem Bezelyesi');
+INSERT INTO `plantation_products` (`id`,`status`,`name`) VALUES (213,1,'Yem Şalgamı');
+INSERT INTO `plantation_products` (`id`,`status`,`name`) VALUES (214,1,'Yenidünya');
+INSERT INTO `plantation_products` (`id`,`status`,`name`) VALUES (215,1,'Yer Elması');
+INSERT INTO `plantation_products` (`id`,`status`,`name`) VALUES (216,1,'Yerfıstığı');
+INSERT INTO `plantation_products` (`id`,`status`,`name`) VALUES (217,1,'Yonca');
+INSERT INTO `plantation_products` (`id`,`status`,`name`) VALUES (218,1,'Yonca (Tohumluk)');
+INSERT INTO `plantation_products` (`id`,`status`,`name`) VALUES (219,1,'Yulaf (Dane)');
+INSERT INTO `plantation_products` (`id`,`status`,`name`) VALUES (220,1,'Yulaf (Ot)');
+INSERT INTO `plantation_products` (`id`,`status`,`name`) VALUES (221,1,'Yulaf (Tohumluk)');
+INSERT INTO `plantation_products` (`id`,`status`,`name`) VALUES (222,1,'Zeytin (Sofralık)');
+INSERT INTO `plantation_products` (`id`,`status`,`name`) VALUES (223,1,'Zeytin (Yağlık)');
+
+INSERT INTO plantation_coefficients (coef_type,diesel_value,labor_value) VALUES ('SOIL_BLASTING','5','2');
+INSERT INTO plantation_coefficients (coef_type,diesel_value,labor_value) VALUES ('DEEP_PLOW','2.8','0.16');
+INSERT INTO plantation_coefficients (coef_type,diesel_value,labor_value) VALUES ('SECONDARY_OPERATION','0.95','0.09');
+INSERT INTO plantation_coefficients (coef_type,diesel_value,labor_value) VALUES ('DRILL_PLANTING','0.7','0.1');
+INSERT INTO plantation_coefficients (coef_type,diesel_value,labor_value) VALUES ('BASE_FERTILIZER','0','0.015');
+INSERT INTO plantation_coefficients (coef_type,diesel_value,labor_value) VALUES ('TOP_FERTILIZER','0.25','0.12');
+INSERT INTO plantation_coefficients (coef_type,diesel_value,labor_value) VALUES ('LIQUID_FERTILIZER','0.4','0.17');
+INSERT INTO plantation_coefficients (coef_type,diesel_value,labor_value) VALUES ('ANIMAL_FERTILIZER','2.5','3');
+INSERT INTO plantation_coefficients (coef_type,diesel_value,labor_value) VALUES ('HUMIC_ACID','0','0.01');
+INSERT INTO plantation_coefficients (coef_type,diesel_value,labor_value) VALUES ('LEONARDITE','0','2');
+INSERT INTO plantation_coefficients (coef_type,diesel_value,labor_value) VALUES ('WORM_COMPOST','0','0.01');
+INSERT INTO plantation_coefficients (coef_type,diesel_value,labor_value) VALUES ('BIO_CONDITIONER','0.25','0.2');
+INSERT INTO plantation_coefficients (coef_type,diesel_value,labor_value) VALUES ('THROAT_FILLING',null,'0.15');
+INSERT INTO plantation_coefficients (coef_type,diesel_value,labor_value) VALUES ('TRACTOR_TILLER',null,'0.17');
+INSERT INTO plantation_coefficients (coef_type,diesel_value,labor_value) VALUES ('WEED_CONTROL','0.15','0.3');
+INSERT INTO plantation_coefficients (coef_type,diesel_value,labor_value) VALUES ('DRIP_IRRIGATION','0.65','0.15');
+INSERT INTO plantation_coefficients (coef_type,diesel_value,labor_value) VALUES ('SPRINKLER_IRRIGATION','1.4','2');
+INSERT INTO plantation_coefficients (coef_type,diesel_value,labor_value) VALUES ('SPRAY_IRRIGATION','1.2','0.3');
+INSERT INTO plantation_coefficients (coef_type,diesel_value,labor_value) VALUES ('FURROW_IRRIGATION','0','1.5');
+INSERT INTO plantation_coefficients (coef_type,diesel_value,labor_value) VALUES ('SURFACE_IRRIGATION','0','2');
+INSERT INTO plantation_coefficients (coef_type,diesel_value,labor_value) VALUES ('PIVOT_IRRIGATION','0.3','0.25');
+INSERT INTO plantation_coefficients (coef_type,diesel_value,labor_value) VALUES ('DRUM_IRRIGATION','0.7','0.8');
+INSERT INTO plantation_coefficients (coef_type,diesel_value,labor_value) VALUES ('MACHINE_SPRAYING','0.55','0.15');
+INSERT INTO plantation_coefficients (coef_type,diesel_value,labor_value) VALUES ('BACKPACK_SPRAYING','0.9','4');
+INSERT INTO plantation_coefficients (coef_type,diesel_value,labor_value) VALUES ('IRRIGATION_SPRAYING','0','0.05');
+INSERT INTO plantation_coefficients (coef_type,diesel_value,labor_value) VALUES ('LOADED_TRANSPORT','0.5','0');
+
+INSERT INTO plantation_coefficients (coef_type,diesel_value,labor_value) VALUES ('WORKING_HOURS',null,'8');
+INSERT INTO plantation_coefficients (coef_type,diesel_value,labor_value) VALUES ('MALE_WORKER_RATIO',null,'0.2');
+INSERT INTO plantation_coefficients (coef_type,diesel_value,labor_value) VALUES ('FEMALE_WORKER_RATIO',null,'0.8');
+INSERT INTO plantation_coefficients (coef_type,diesel_value,labor_value) VALUES ('IRRIGATION_SPECIFIC_CONSUMPTION_CONSTANT',null,'0.25');
+INSERT INTO plantation_coefficients (coef_type,diesel_value,labor_value) VALUES ('PUMP_EFFICIENCY_CONSTANT',null,'0.65');
+INSERT INTO plantation_coefficients (coef_type,diesel_value,labor_value) VALUES ('MOTOR_EFFICIENCY_CONSTANT',null,'0.9');
+INSERT INTO plantation_coefficients (coef_type,diesel_value,labor_value) VALUES ('CONSTANT_NUMBER',null,'367');
+INSERT INTO plantation_coefficients (coef_type,diesel_value,labor_value) VALUES ('PUMP_MOTOR_EFFICIENCY',null,'0.6');
+INSERT INTO plantation_coefficients (coef_type,diesel_value,labor_value) VALUES ('GRAVITY',null,'9.81');
+INSERT INTO plantation_coefficients (coef_type,diesel_value,labor_value) VALUES ('POLE_SERVICE_LIFE',null,'3');
+INSERT INTO plantation_coefficients (coef_type,diesel_value,labor_value) VALUES ('TRACTOR_CARRYING_CAPACITY',null,'4000');
+INSERT INTO plantation_coefficients (coef_type,diesel_value,labor_value) VALUES ('CARRYING_CAPACITY',null,'0.65');
+
+
+

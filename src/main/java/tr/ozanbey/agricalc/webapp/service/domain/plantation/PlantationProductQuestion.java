@@ -33,7 +33,7 @@ public class PlantationProductQuestion extends AbstractEntity {
     private BigDecimal maximumValue;
 
     @OneToMany(mappedBy = "productQuestion", fetch = FetchType.LAZY)
-    private List<UserPlantPlanAnswer> questionAnswerList;
+    private List<UserPlantParcelPlanAnswer> questionAnswerList;
 
     @Transient
     private String selectedAnswer;

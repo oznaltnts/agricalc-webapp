@@ -11,9 +11,9 @@ import software.xdev.chartjs.model.charts.PolarChart;
 import software.xdev.chartjs.model.color.RGBAColor;
 import software.xdev.chartjs.model.data.PolarData;
 import software.xdev.chartjs.model.dataset.PolarDataset;
-import tr.ozanbey.agricalc.webapp.service.domain.plantation.UserPlantationPlan;
+import tr.ozanbey.agricalc.webapp.service.domain.plantation.UserPlantParcelPlan;
 import tr.ozanbey.agricalc.webapp.service.enumtype.plantation.EnumPlantationQuestionType;
-import tr.ozanbey.agricalc.webapp.service.service.plantation.PlantationPlanService;
+import tr.ozanbey.agricalc.webapp.service.service.plantation.PlantParcelPlanService;
 import tr.ozanbey.agricalc.webapp.webapp.controller.BaseController;
 
 import java.io.IOException;
@@ -28,10 +28,10 @@ import java.util.Optional;
 public class PlanResultController extends BaseController {
 
     @Autowired
-    private PlantationPlanService plantationPlanService;
+    private PlantParcelPlanService plantParcelPlanService;
 
     private Long parcelPlanId;
-    private UserPlantationPlan plantationPlan;
+    private UserPlantParcelPlan parcelPlan;
 
     private String polarAreaModel;
 
@@ -55,23 +55,23 @@ public class PlanResultController extends BaseController {
     }
 
     private void createPolarAreaModel() {
-        BigDecimal soilExpense = plantationPlan.getSoilExpense();
-        BigDecimal plantingCost = plantationPlan.getPlantingCost();
-        BigDecimal fertilizerCost = plantationPlan.getFertilizerCost();
-        BigDecimal weedControlCost = plantationPlan.getWeedControlCost();
-        BigDecimal irrigationCost = plantationPlan.getIrrigationCost();
-        BigDecimal culturalCost = plantationPlan.getCulturalCost();
-        BigDecimal protectionPost = plantationPlan.getProtectionCost();
-        BigDecimal harvestCost = plantationPlan.getHarvestCost();
-        BigDecimal blendCost = plantationPlan.getBlendCost();
-        BigDecimal dryingCost = plantationPlan.getDryingCost();
-        BigDecimal balingCost = plantationPlan.getBalingCost();
-        BigDecimal transportationCost = plantationPlan.getTransportationCost();
+        BigDecimal soilPrepCost = parcelPlan.getSoilPrepCost();
+        BigDecimal plantingCost = parcelPlan.getPlantingCost();
+        BigDecimal fertilizerCost = parcelPlan.getFertilizerCost();
+        BigDecimal weedControlCost = parcelPlan.getWeedControlCost();
+        BigDecimal irrigationCost = parcelPlan.getIrrigationCost();
+        BigDecimal culturalCost = parcelPlan.getCulturalCost();
+        BigDecimal protectionPost = parcelPlan.getProtectionCost();
+        BigDecimal harvestCost = parcelPlan.getHarvestCost();
+        BigDecimal blendCost = parcelPlan.getBlendCost();
+        BigDecimal dryingCost = parcelPlan.getDryingCost();
+        BigDecimal balingCost = parcelPlan.getBalingCost();
+        BigDecimal transportationCost = parcelPlan.getTransportationCost();
 
         polarAreaModel = new PolarChart()
                 .setData(new PolarData()
                         .addDataset(new PolarDataset()
-                                .setData(soilExpense, plantingCost, fertilizerCost, weedControlCost,
+                                .setData(soilPrepCost, plantingCost, fertilizerCost, weedControlCost,
                                         irrigationCost, culturalCost, protectionPost, harvestCost,
                                         blendCost, dryingCost, balingCost, transportationCost)
                                 .setLabel("Gider haritası")
@@ -87,16 +87,16 @@ public class PlanResultController extends BaseController {
     }
 
     private boolean checkPlanIdForUser(Long parcelPlanId) {
-        Optional<UserPlantationPlan> optionalPlan = plantationPlanService.getPlantPlanByIdAndUserId(parcelPlanId, getCurrentUser().getUser().getId());
+        Optional<UserPlantParcelPlan> optionalPlan = plantParcelPlanService.getPlantPlanByIdAndUserId(parcelPlanId, getCurrentUser().getUser().getId());
         if (optionalPlan.isPresent()) {
-            plantationPlan = optionalPlan.get();
+            parcelPlan = optionalPlan.get();
             return true;
         }
         return false;
     }
 
     public void previousSaveExpense() throws IOException {
-        plantationPlanService.savePlanAnswers(plantationPlan, EnumPlantationQuestionType.EXPENSE_PACKAGING);
+        plantParcelPlanService.savePlanAnswers(parcelPlan, EnumPlantationQuestionType.EXPENSE_PACKAGING);
         super.navigationController.redirectToUrl("/secured/plantation/expense-packaging-profile?parcelPlanId=" + parcelPlanId);
     }
 

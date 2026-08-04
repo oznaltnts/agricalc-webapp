@@ -15,17 +15,13 @@ import java.util.List;
 @Setter
 @Entity
 @EntityListeners(AuditingEntityListener.class)
-@Table(name = "user_plantation_plans")
+@Table(name = "user_plant_parcel_plans")
 @ToString(onlyExplicitlyIncluded = true)
-public class UserPlantationPlan extends AbstractStatusEntity {
+public class UserPlantParcelPlan extends AbstractStatusEntity {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "parcel_id", referencedColumnName = "id", nullable = false)
     private UserPlantParcel plantParcel;
-
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "product_id", referencedColumnName = "id", nullable = false)
-    private PlantationProduct product;
 
     @Column(name = "start_date")
     @ToString.Include
@@ -35,9 +31,9 @@ public class UserPlantationPlan extends AbstractStatusEntity {
     @ToString.Include
     private BigDecimal grossIncome;
 
-    @Column(name = "soil_expense")
+    @Column(name = "soil_prep_cost")
     @ToString.Include
-    private BigDecimal soilExpense;
+    private BigDecimal soilPrepCost;
 
     @Column(name = "planting_cost")
     @ToString.Include
@@ -83,7 +79,7 @@ public class UserPlantationPlan extends AbstractStatusEntity {
     @ToString.Include
     private BigDecimal transportationCost;
 
-    @OneToMany(mappedBy = "plantationPlan", fetch = FetchType.LAZY)
-    private List<UserPlantPlanAnswer> questionAnswerList;
+    @OneToMany(mappedBy = "plantParcelPlan", fetch = FetchType.LAZY)
+    private List<UserPlantParcelPlanAnswer> planAnswerList;
 
 }

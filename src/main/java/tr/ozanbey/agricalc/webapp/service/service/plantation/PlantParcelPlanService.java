@@ -18,10 +18,10 @@ import java.util.Optional;
 
 @Service
 @Slf4j
-public class PlantationPlanService {
+public class PlantParcelPlanService {
 
     @Autowired
-    private UserPlantationPlanRepository plantationPlanRepository;
+    private UserPlantParcelPlanRepository parcelPlanRepository;
 
     @Autowired
     private UserPlantParcelRepository plantParcelRepository;
@@ -30,45 +30,44 @@ public class PlantationPlanService {
     private PlantationProductRepository plantationProductRepository;
 
     @Autowired
-    private UserPlantPlanAnswerRepository planAnswerRepository;
+    private UserPlantParcelPlanAnswerRepository planAnswerRepository;
 
     @Autowired
-    private UserParcelAnswerRepository parcelAnswerRepository;
+    private UserPlantParcelAnswerRepository parcelAnswerRepository;
 
-    public List<UserPlantationPlan> getParcelPlanList(Long parcelId) {
-        return plantationPlanRepository.findByPlantParcel_IdOrderByInsertDateDesc(parcelId);
+    public List<UserPlantParcelPlan> getParcelPlanList(Long parcelId) {
+        return parcelPlanRepository.findByPlantParcel_IdOrderByInsertDateDesc(parcelId);
     }
 
     @Transactional
-    public void createNewPlan(Long parcelId, Long selectedProductId, LocalDate planStartDate) {
-        UserPlantationPlan plan = new UserPlantationPlan();
+    public void createNewPlan(Long parcelId, LocalDate planStartDate) {
+        UserPlantParcelPlan plan = new UserPlantParcelPlan();
         plan.setStatus(EnumStatus.ACTIVE);
         plan.setPlantParcel(plantParcelRepository.getReferenceById(parcelId));
-        plan.setProduct(plantationProductRepository.getReferenceById(selectedProductId));
         plan.setPlanStartDate(planStartDate);
-        plantationPlanRepository.save(plan);
+        parcelPlanRepository.save(plan);
     }
 
-    public Optional<UserPlantationPlan> getPlantPlanByIdAndUserId(Long parcelPlanId, Long userId) {
-        return plantationPlanRepository.findByIdAndPlantParcel_User_Id(parcelPlanId, userId);
+    public Optional<UserPlantParcelPlan> getPlantPlanByIdAndUserId(Long parcelPlanId, Long userId) {
+        return parcelPlanRepository.findByIdAndPlantParcel_User_Id(parcelPlanId, userId);
     }
 
     @Transactional
-    public void savePlanAnswers(UserPlantationPlan plantationPlan, EnumPlantationQuestionType questionType) {
-        planAnswerRepository.deleteByPlantationPlan_IdAndProductQuestion_PlantationQuestion_QuestionType(plantationPlan.getId(), questionType);
-        parcelAnswerRepository.deleteByPlantParcel_IdAndProductQuestion_PlantationQuestion_QuestionType(plantationPlan.getPlantParcel().getId(), questionType);
-        List<UserPlantPlanAnswer> planAnswerList = new ArrayList<>();
-        List<UserParcelAnswer> parcelAnswerList = new ArrayList<>();
-        for (PlantationProductQuestion productQuestion : plantationPlan.getProduct().getProductQuestionList()) {
+    public void savePlanAnswers(UserPlantParcelPlan parcelPlan, EnumPlantationQuestionType questionType) {
+        planAnswerRepository.deleteByPlantParcelPlan_IdAndProductQuestion_PlantationQuestion_QuestionType(parcelPlan.getId(), questionType);
+        parcelAnswerRepository.deleteByPlantParcel_IdAndProductQuestion_PlantationQuestion_QuestionType(parcelPlan.getPlantParcel().getId(), questionType);
+        List<UserPlantParcelPlanAnswer> planAnswerList = new ArrayList<>();
+        List<UserPlantParcelAnswer> parcelAnswerList = new ArrayList<>();
+        for (PlantationProductQuestion productQuestion : parcelPlan.getPlantParcel().getProduct().getProductQuestionList()) {
             if (productQuestion.getPlantationQuestion().getRecordType().equals(EnumQuestionRecordType.EVERY_TIME)) {
-                addAnswerToPlanList(plantationPlan, productQuestion, planAnswerList);
+                addAnswerToPlanList(parcelPlan, productQuestion, planAnswerList);
             } else if (productQuestion.getPlantationQuestion().getRecordType().equals(EnumQuestionRecordType.FOR_ONCE)) {
-                addAnswerToParcelList(plantationPlan.getPlantParcel(), productQuestion, parcelAnswerList);
+                addAnswerToParcelList(parcelPlan.getPlantParcel(), productQuestion, parcelAnswerList);
             } else if (productQuestion.getPlantationQuestion().getRecordType().equals(EnumQuestionRecordType.ASK_USER)) {
                 if (productQuestion.isDontAskAgain()) {
-                    addAnswerToParcelList(plantationPlan.getPlantParcel(), productQuestion, parcelAnswerList);
+                    addAnswerToParcelList(parcelPlan.getPlantParcel(), productQuestion, parcelAnswerList);
                 } else {
-                    addAnswerToPlanList(plantationPlan, productQuestion, planAnswerList);
+                    addAnswerToPlanList(parcelPlan, productQuestion, planAnswerList);
                 }
             }
         }
@@ -76,17 +75,17 @@ public class PlantationPlanService {
         parcelAnswerRepository.saveAll(parcelAnswerList);
     }
 
-    private void addAnswerToParcelList(UserPlantParcel plantParcel, PlantationProductQuestion productQuestion, List<UserParcelAnswer> parcelAnswerList) {
+    private void addAnswerToParcelList(UserPlantParcel plantParcel, PlantationProductQuestion productQuestion, List<UserPlantParcelAnswer> parcelAnswerList) {
         if (productQuestion.getPlantationQuestion().getAnswerType().equals(EnumQuestionAnswerType.SELECT_ONE_MENU)
                 && productQuestion.getSelectedAnswerId() != null) {
-            UserParcelAnswer parcelAnswer = new UserParcelAnswer();
+            UserPlantParcelAnswer parcelAnswer = new UserPlantParcelAnswer();
             parcelAnswer.setPlantParcel(plantParcel);
             parcelAnswer.setProductQuestion(productQuestion);
             parcelAnswer.setAnswerValue(productQuestion.getSelectedAnswerId().toString());
             parcelAnswerList.add(parcelAnswer);
         } else if (productQuestion.getPlantationQuestion().getAnswerType().equals(EnumQuestionAnswerType.SELECT_ONE_RADIO)
                 && productQuestion.getSelectedAnswerId() != null) {
-            UserParcelAnswer parcelAnswer = new UserParcelAnswer();
+            UserPlantParcelAnswer parcelAnswer = new UserPlantParcelAnswer();
             parcelAnswer.setPlantParcel(plantParcel);
             parcelAnswer.setProductQuestion(productQuestion);
             parcelAnswer.setAnswerValue(productQuestion.getSelectedAnswerId().toString());
@@ -95,7 +94,7 @@ public class PlantationPlanService {
                 && productQuestion.getSelectedAnswerIds() != null
                 && !productQuestion.getSelectedAnswerIds().isEmpty()) {
             for (Long productId : productQuestion.getSelectedAnswerIds()) {
-                UserParcelAnswer parcelAnswer = new UserParcelAnswer();
+                UserPlantParcelAnswer parcelAnswer = new UserPlantParcelAnswer();
                 parcelAnswer.setPlantParcel(plantParcel);
                 parcelAnswer.setProductQuestion(productQuestion);
                 parcelAnswer.setAnswerValue(productId.toString());
@@ -103,21 +102,21 @@ public class PlantationPlanService {
             }
         } else if (productQuestion.getPlantationQuestion().getAnswerType().equals(EnumQuestionAnswerType.INPUT_INTEGER)
                 && productQuestion.getIntegerValue() != null) {
-            UserParcelAnswer parcelAnswer = new UserParcelAnswer();
+            UserPlantParcelAnswer parcelAnswer = new UserPlantParcelAnswer();
             parcelAnswer.setPlantParcel(plantParcel);
             parcelAnswer.setProductQuestion(productQuestion);
             parcelAnswer.setAnswerValue(productQuestion.getIntegerValue().toString());
             parcelAnswerList.add(parcelAnswer);
         } else if (productQuestion.getPlantationQuestion().getAnswerType().equals(EnumQuestionAnswerType.INPUT_DOUBLE)
                 && productQuestion.getDoubleValue() != null) {
-            UserParcelAnswer parcelAnswer = new UserParcelAnswer();
+            UserPlantParcelAnswer parcelAnswer = new UserPlantParcelAnswer();
             parcelAnswer.setPlantParcel(plantParcel);
             parcelAnswer.setProductQuestion(productQuestion);
             parcelAnswer.setAnswerValue(productQuestion.getDoubleValue().toString());
             parcelAnswerList.add(parcelAnswer);
         } else if (productQuestion.getPlantationQuestion().getAnswerType().equals(EnumQuestionAnswerType.INPUT_DECIMAL)
                 && productQuestion.getBigDecimalValue() != null) {
-            UserParcelAnswer parcelAnswer = new UserParcelAnswer();
+            UserPlantParcelAnswer parcelAnswer = new UserPlantParcelAnswer();
             parcelAnswer.setPlantParcel(plantParcel);
             parcelAnswer.setProductQuestion(productQuestion);
             parcelAnswer.setAnswerValue(productQuestion.getBigDecimalValue().toString());
@@ -125,18 +124,18 @@ public class PlantationPlanService {
         }
     }
 
-    private void addAnswerToPlanList(UserPlantationPlan plantationPlan, PlantationProductQuestion productQuestion, List<UserPlantPlanAnswer> planAnswerList) {
+    private void addAnswerToPlanList(UserPlantParcelPlan parcelPlan, PlantationProductQuestion productQuestion, List<UserPlantParcelPlanAnswer> planAnswerList) {
         if (productQuestion.getPlantationQuestion().getAnswerType().equals(EnumQuestionAnswerType.SELECT_ONE_MENU)
                 && productQuestion.getSelectedAnswerId() != null) {
-            UserPlantPlanAnswer planAnswer = new UserPlantPlanAnswer();
-            planAnswer.setPlantationPlan(plantationPlan);
+            UserPlantParcelPlanAnswer planAnswer = new UserPlantParcelPlanAnswer();
+            planAnswer.setPlantParcelPlan(parcelPlan);
             planAnswer.setProductQuestion(productQuestion);
             planAnswer.setAnswerValue(productQuestion.getSelectedAnswerId().toString());
             planAnswerList.add(planAnswer);
         } else if (productQuestion.getPlantationQuestion().getAnswerType().equals(EnumQuestionAnswerType.SELECT_ONE_RADIO)
                 && productQuestion.getSelectedAnswerId() != null) {
-            UserPlantPlanAnswer planAnswer = new UserPlantPlanAnswer();
-            planAnswer.setPlantationPlan(plantationPlan);
+            UserPlantParcelPlanAnswer planAnswer = new UserPlantParcelPlanAnswer();
+            planAnswer.setPlantParcelPlan(parcelPlan);
             planAnswer.setProductQuestion(productQuestion);
             planAnswer.setAnswerValue(productQuestion.getSelectedAnswerId().toString());
             planAnswerList.add(planAnswer);
@@ -144,46 +143,46 @@ public class PlantationPlanService {
                 && productQuestion.getSelectedAnswerIds() != null
                 && !productQuestion.getSelectedAnswerIds().isEmpty()) {
             for (Long productId : productQuestion.getSelectedAnswerIds()) {
-                UserPlantPlanAnswer planAnswer = new UserPlantPlanAnswer();
-                planAnswer.setPlantationPlan(plantationPlan);
+                UserPlantParcelPlanAnswer planAnswer = new UserPlantParcelPlanAnswer();
+                planAnswer.setPlantParcelPlan(parcelPlan);
                 planAnswer.setProductQuestion(productQuestion);
                 planAnswer.setAnswerValue(productId.toString());
                 planAnswerList.add(planAnswer);
             }
         } else if (productQuestion.getPlantationQuestion().getAnswerType().equals(EnumQuestionAnswerType.INPUT_INTEGER)
                 && productQuestion.getIntegerValue() != null) {
-            UserPlantPlanAnswer planAnswer = new UserPlantPlanAnswer();
-            planAnswer.setPlantationPlan(plantationPlan);
+            UserPlantParcelPlanAnswer planAnswer = new UserPlantParcelPlanAnswer();
+            planAnswer.setPlantParcelPlan(parcelPlan);
             planAnswer.setProductQuestion(productQuestion);
             planAnswer.setAnswerValue(productQuestion.getIntegerValue().toString());
             planAnswerList.add(planAnswer);
         } else if (productQuestion.getPlantationQuestion().getAnswerType().equals(EnumQuestionAnswerType.INPUT_DOUBLE)
                 && productQuestion.getDoubleValue() != null) {
-            UserPlantPlanAnswer planAnswer = new UserPlantPlanAnswer();
-            planAnswer.setPlantationPlan(plantationPlan);
+            UserPlantParcelPlanAnswer planAnswer = new UserPlantParcelPlanAnswer();
+            planAnswer.setPlantParcelPlan(parcelPlan);
             planAnswer.setProductQuestion(productQuestion);
             planAnswer.setAnswerValue(productQuestion.getDoubleValue().toString());
             planAnswerList.add(planAnswer);
         } else if (productQuestion.getPlantationQuestion().getAnswerType().equals(EnumQuestionAnswerType.INPUT_DECIMAL)
                 && productQuestion.getBigDecimalValue() != null) {
-            UserPlantPlanAnswer planAnswer = new UserPlantPlanAnswer();
-            planAnswer.setPlantationPlan(plantationPlan);
+            UserPlantParcelPlanAnswer planAnswer = new UserPlantParcelPlanAnswer();
+            planAnswer.setPlantParcelPlan(parcelPlan);
             planAnswer.setProductQuestion(productQuestion);
             planAnswer.setAnswerValue(productQuestion.getBigDecimalValue().toString());
             planAnswerList.add(planAnswer);
         }
     }
 
-    public List<UserPlantPlanAnswer> fillPlanAnswerValues(Long planId, EnumPlantationQuestionType questionType) {
-        return planAnswerRepository.findByPlantationPlan_IdAndProductQuestion_PlantationQuestion_QuestionType(planId, questionType);
+    public List<UserPlantParcelPlanAnswer> fillPlanAnswerValues(Long planId, EnumPlantationQuestionType questionType) {
+        return planAnswerRepository.findByPlantParcelPlan_IdAndProductQuestion_PlantationQuestion_QuestionType(planId, questionType);
     }
 
-    public List<UserParcelAnswer> fillParcelAnswerValues(Long parcelId, EnumPlantationQuestionType questionType) {
+    public List<UserPlantParcelAnswer> fillParcelAnswerValues(Long parcelId, EnumPlantationQuestionType questionType) {
         return parcelAnswerRepository.findByPlantParcel_IdAndProductQuestion_PlantationQuestion_QuestionType(parcelId, questionType);
     }
 
     @Transactional
-    public void updatePlantationPlanIncome(UserPlantationPlan plantationPlan) {
-        plantationPlanRepository.save(plantationPlan);
+    public void updatePlantParcelPlanIncome(UserPlantParcelPlan parcelPlan) {
+        parcelPlanRepository.save(parcelPlan);
     }
 }

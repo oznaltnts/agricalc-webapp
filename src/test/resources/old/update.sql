@@ -1,14 +1,12 @@
-
-
 ALTER TABLE cities
     ADD COLUMN diesel_price DECIMAL(15,3) NOT NULL DEFAULT 75 AFTER neighbors_ids,
     ADD COLUMN fuel_price DECIMAL(15,3) NOT NULL DEFAULT 80 AFTER diesel_price,
     ADD COLUMN electricity DOUBLE NOT NULL DEFAULT 4 AFTER fuel_price;
 
 ALTER TABLE user_plantation_plans
-    ADD COLUMN soil_expense DECIMAL(15,3) NULL DEFAULT NULL AFTER gross_income;
+    ADD COLUMN soil_prep_cost DECIMAL(15,3) NULL DEFAULT NULL AFTER gross_income;
 ALTER TABLE user_plantation_plans
-    ADD COLUMN planting_cost DECIMAL(15,3) NULL DEFAULT NULL AFTER soil_expense,
+    ADD COLUMN planting_cost DECIMAL(15,3) NULL DEFAULT NULL AFTER soil_prep_cost,
     ADD COLUMN fertilizer_cost DECIMAL(15,3) NULL DEFAULT NULL AFTER planting_cost,
     ADD COLUMN weed_control_cost DECIMAL(15,3) NULL DEFAULT NULL AFTER fertilizer_cost,
     ADD COLUMN irrigation_cost DECIMAL(15,3) NULL DEFAULT NULL AFTER weed_control_cost,
@@ -23,7 +21,6 @@ ALTER TABLE user_plantation_plans
 
 ALTER TABLE plantation_questions
     ADD COLUMN r_type VARCHAR(45) NOT NULL DEFAULT 'EVERY_TIME' AFTER a_type;
-
 
 UPDATE tektarim.plantation_questions SET r_type = 'FOR_ONCE' WHERE id =1;
 UPDATE tektarim.plantation_questions SET r_type = 'FOR_ONCE' WHERE id =2;
@@ -110,8 +107,6 @@ UPDATE tektarim.plantation_questions SET r_type = 'ASK_USER' WHERE id =77;
 UPDATE tektarim.plantation_questions SET r_type = 'ASK_USER' WHERE id =78;
 UPDATE tektarim.plantation_questions SET r_type = 'ASK_USER' WHERE id =79;
 UPDATE tektarim.plantation_questions SET r_type = 'EVERY_TIME' WHERE id =80;
-
-
 
 UPDATE tektarim.plantation_questions SET r_type = 'FOR_ONCE' WHERE id =84;
 UPDATE tektarim.plantation_questions SET r_type = 'ASK_USER' WHERE id =85;

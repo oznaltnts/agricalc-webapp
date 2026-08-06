@@ -13,7 +13,7 @@ import software.xdev.chartjs.model.data.PolarData;
 import software.xdev.chartjs.model.dataset.PolarDataset;
 import tr.ozanbey.agricalc.webapp.service.domain.plantation.UserPlantParcelPlan;
 import tr.ozanbey.agricalc.webapp.service.enumtype.plantation.EnumPlantationQuestionType;
-import tr.ozanbey.agricalc.webapp.service.service.plantation.PlantParcelPlanService;
+import tr.ozanbey.agricalc.webapp.service.service.plantation.UserPlantParcelPlanService;
 import tr.ozanbey.agricalc.webapp.webapp.controller.BaseController;
 
 import java.io.IOException;
@@ -28,7 +28,7 @@ import java.util.Optional;
 public class PlanResultController extends BaseController {
 
     @Autowired
-    private PlantParcelPlanService plantParcelPlanService;
+    private UserPlantParcelPlanService userPlantParcelPlanService;
 
     private Long parcelPlanId;
     private UserPlantParcelPlan parcelPlan;
@@ -87,7 +87,7 @@ public class PlanResultController extends BaseController {
     }
 
     private boolean checkPlanIdForUser(Long parcelPlanId) {
-        Optional<UserPlantParcelPlan> optionalPlan = plantParcelPlanService.getPlantPlanByIdAndUserId(parcelPlanId, getCurrentUser().getUser().getId());
+        Optional<UserPlantParcelPlan> optionalPlan = userPlantParcelPlanService.getPlantPlanByIdAndUserId(parcelPlanId, getCurrentUser().getUser().getId());
         if (optionalPlan.isPresent()) {
             parcelPlan = optionalPlan.get();
             return true;
@@ -96,7 +96,7 @@ public class PlanResultController extends BaseController {
     }
 
     public void previousSaveExpense() throws IOException {
-        plantParcelPlanService.savePlanAnswers(parcelPlan, EnumPlantationQuestionType.EXPENSE_PACKAGING);
+        userPlantParcelPlanService.savePlanAnswers(parcelPlan, EnumPlantationQuestionType.EXPENSE_PACKAGING);
         super.navigationController.redirectToUrl("/secured/plantation/expense-packaging-profile?parcelPlanId=" + parcelPlanId);
     }
 

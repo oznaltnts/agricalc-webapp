@@ -7,15 +7,14 @@ import lombok.Getter;
 import lombok.Setter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import tr.ozanbey.agricalc.webapp.service.domain.City;
 import tr.ozanbey.agricalc.webapp.service.domain.plantation.UserPlantParcel;
-import tr.ozanbey.agricalc.webapp.service.domain.plantation.UserPlantParcelPlan;
-import tr.ozanbey.agricalc.webapp.service.service.plantation.PlantationProductService;
-import tr.ozanbey.agricalc.webapp.service.service.plantation.UserPlantParcelPlanService;
+import tr.ozanbey.agricalc.webapp.service.enumtype.plantation.EnumParcelType;
+import tr.ozanbey.agricalc.webapp.service.service.CityService;
 import tr.ozanbey.agricalc.webapp.service.service.plantation.UserPlantParcelService;
 import tr.ozanbey.agricalc.webapp.webapp.controller.BaseController;
 
 import java.io.IOException;
-import java.time.LocalDate;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -24,24 +23,23 @@ import java.util.Optional;
 @ViewScoped
 @Getter
 @Setter
-public class ParcelPlanController extends BaseController {
+public class ParcelDetailController extends BaseController {
 
     @Autowired
-    private UserPlantParcelPlanService userPlantParcelPlanService;
-
+    private UserPlantParcelService userPlantParcelService;
     @Autowired
-    private UserPlantParcelService plantParcelService;
+    private CityService cityService;
 
-    @Autowired
-    private PlantationProductService productService;
-    private LocalDate planStartDate;
-
-    private List<UserPlantParcelPlan> parcelPlanList;
     private Long parcelId;
     private UserPlantParcel userPlantParcel;
 
+    private List<City> cityList;
+    private EnumParcelType[] parcelTypes = EnumParcelType.values();
+    private boolean isParcelRental;
+
     @PostConstruct
     public void init() {
+        cityList = cityService.getAllCities();
     }
 
     public void fillParcelList() throws IOException {
@@ -49,7 +47,6 @@ public class ParcelPlanController extends BaseController {
             super.navigationController.redirectToUrl("/secured/plantation/parcel");
             return;
         }
-        parcelPlanList = userPlantParcelPlanService.getParcelPlanList(parcelId);
     }
 
     public void setParcelId(Long parcelId) {
@@ -60,17 +57,24 @@ public class ParcelPlanController extends BaseController {
     }
 
     private boolean checkParcelIdForUser(Long parcelId) {
-        Optional<UserPlantParcel> optionalUserPlantParcel = plantParcelService.getUserParcelByIdAndUserId(parcelId, getCurrentUser().getUser().getId());
+        Optional<UserPlantParcel> optionalUserPlantParcel = userPlantParcelService.getUserParcelByIdAndUserId(parcelId, getCurrentUser().getUser().getId());
         if (optionalUserPlantParcel.isPresent()) {
             userPlantParcel = optionalUserPlantParcel.get();
+            if (userPlantParcel.getRentPrice() == null) {
+                isParcelRental = true;
+            }
             return true;
         }
         return false;
     }
 
-
-    public void addNewParcelPlan() throws IOException {
-        userPlantParcelPlanService.createNewPlan(parcelId, planStartDate);
-        fillParcelList();
+    public void saveAndPlanList() throws IOException {
+        if (isParcelRental) {
+            userPlantParcel.setRentPrice(null);
+        } else {
+            userPlantParcel.setParcelPrice(null);
+        }
+        userPlantParcelService.saveParcelDetail(userPlantParcel);
+        super.navigationController.redirectToUrl("/secured/plantation/parcel");
     }
 }

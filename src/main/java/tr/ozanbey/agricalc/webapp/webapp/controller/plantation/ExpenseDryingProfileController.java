@@ -9,91 +9,53 @@ import org.hibernate.Hibernate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import tr.ozanbey.agricalc.webapp.service.domain.plantation.PlantationProductQuestion;
-import tr.ozanbey.agricalc.webapp.service.domain.plantation.UserPlantParcelPlan;
+import tr.ozanbey.agricalc.webapp.service.domain.plantation.UserPlantParcelAnswer;
 import tr.ozanbey.agricalc.webapp.service.domain.plantation.UserPlantParcelPlanAnswer;
 import tr.ozanbey.agricalc.webapp.service.enumtype.EnumStatus;
 import tr.ozanbey.agricalc.webapp.service.enumtype.plantation.EnumPlantationQuestionType;
 import tr.ozanbey.agricalc.webapp.service.enumtype.plantation.EnumQuestionAnswerType;
 import tr.ozanbey.agricalc.webapp.service.service.plantation.CostCalculationService;
-import tr.ozanbey.agricalc.webapp.service.service.plantation.PlantParcelPlanService;
 import tr.ozanbey.agricalc.webapp.service.service.plantation.PlantationProductService;
-import tr.ozanbey.agricalc.webapp.webapp.controller.BaseController;
+import tr.ozanbey.agricalc.webapp.service.service.plantation.UserPlantParcelPlanService;
 
 import java.io.IOException;
-import java.math.BigDecimal;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 import java.util.Optional;
 
 @Component
 @ViewScoped
 @Getter
 @Setter
-public class ExpenseDryingProfileController extends BaseController {
+public class ExpenseDryingProfileController extends PlanProfileController {
 
     @Autowired
-    private PlantParcelPlanService plantParcelPlanService;
+    private UserPlantParcelPlanService userPlantParcelPlanService;
 
     @Autowired
     private PlantationProductService productService;
-
-    private Long parcelPlanId;
-    private UserPlantParcelPlan parcelPlan;
 
     @PostConstruct
     public void init() {
     }
 
-    public void setParcelPlanId(Long parcelPlanId) {
-        if (Objects.equals(this.parcelPlanId, parcelPlanId)) {
-            return;
-        }
-        this.parcelPlanId = parcelPlanId;
-    }
-
     public void fillExpenseDryingQuestionList() throws IOException {
-        if (parcelPlanId == null || !checkPlanIdForUser(parcelPlanId)) {
+        if (super.getParcelPlanId() == null || !checkPlanIdForUser(super.getParcelPlanId())) {
             super.navigationController.redirectToUrl("/secured/plantation/parcel");
             return;
         }
 
-        if (!Hibernate.isInitialized(parcelPlan.getPlantParcel().getProduct().getProductQuestionList())) {
-            List<PlantationProductQuestion> productQuestionList = productService.getActiveQuestionByQuestionType(parcelPlan.getPlantParcel().getProduct().getId(), EnumStatus.ACTIVE, EnumPlantationQuestionType.EXPENSE_DRYING);
-            List<UserPlantParcelPlanAnswer> planAnswerList = plantParcelPlanService.fillPlanAnswerValues(parcelPlanId, EnumPlantationQuestionType.EXPENSE_DRYING);
+        if (!Hibernate.isInitialized(super.getParcelPlan().getPlantParcel().getProduct().getProductQuestionList())) {
+            List<PlantationProductQuestion> productQuestionList = productService.getActiveQuestionByQuestionType(super.getParcelPlan().getPlantParcel().getProduct().getId(), EnumStatus.ACTIVE, EnumPlantationQuestionType.EXPENSE_DRYING);
+            List<UserPlantParcelPlanAnswer> planAnswerList = userPlantParcelPlanService.fillPlanAnswerValues(super.getParcelPlanId(), EnumPlantationQuestionType.EXPENSE_DRYING);
+            List<UserPlantParcelAnswer> parcelAnswerList = userPlantParcelPlanService.fillParcelAnswerValues(super.getParcelPlan().getPlantParcel().getId(), EnumPlantationQuestionType.EXPENSE_DRYING);
             for (UserPlantParcelPlanAnswer userPlantParcelPlanAnswer : planAnswerList) {
-                for (PlantationProductQuestion productQuestion : productQuestionList) {
-                    if (Objects.equals(userPlantParcelPlanAnswer.getProductQuestion().getId(), productQuestion.getId())) {
-                        if (productQuestion.getPlantationQuestion().getAnswerType().equals(EnumQuestionAnswerType.SELECT_ONE_MENU)) {
-                            productQuestion.setSelectedAnswerId(Long.valueOf(userPlantParcelPlanAnswer.getAnswerValue()));
-                        } else if (productQuestion.getPlantationQuestion().getAnswerType().equals(EnumQuestionAnswerType.SELECT_ONE_RADIO)) {
-                            productQuestion.setSelectedAnswerId(Long.valueOf(userPlantParcelPlanAnswer.getAnswerValue()));
-                        } else if (productQuestion.getPlantationQuestion().getAnswerType().equals(EnumQuestionAnswerType.SELECT_MANY_CHECKBOX)) {
-                            if (productQuestion.getSelectedAnswerIds() == null || productQuestion.getSelectedAnswerIds().isEmpty()) {
-                                productQuestion.setSelectedAnswerIds(new ArrayList<>());
-                            }
-                            productQuestion.getSelectedAnswerIds().add(Long.valueOf(userPlantParcelPlanAnswer.getAnswerValue()));
-                        } else if (productQuestion.getPlantationQuestion().getAnswerType().equals(EnumQuestionAnswerType.INPUT_INTEGER)) {
-                            productQuestion.setIntegerValue(Integer.valueOf(userPlantParcelPlanAnswer.getAnswerValue()));
-                        } else if (productQuestion.getPlantationQuestion().getAnswerType().equals(EnumQuestionAnswerType.INPUT_DOUBLE)) {
-                            productQuestion.setDoubleValue(Double.valueOf(userPlantParcelPlanAnswer.getAnswerValue()));
-                        } else if (productQuestion.getPlantationQuestion().getAnswerType().equals(EnumQuestionAnswerType.INPUT_DECIMAL)) {
-                            productQuestion.setBigDecimalValue(new BigDecimal(userPlantParcelPlanAnswer.getAnswerValue()));
-                        }
-                    }
-                }
+                fillAnsweredQuestionValues(userPlantParcelPlanAnswer.getProductQuestion().getId(), userPlantParcelPlanAnswer.getAnswerValue(), productQuestionList, false);
             }
-            parcelPlan.getPlantParcel().getProduct().setProductQuestionList(productQuestionList);
+            for (UserPlantParcelAnswer userPlantParcelAnswer : parcelAnswerList) {
+                fillAnsweredQuestionValues(userPlantParcelAnswer.getProductQuestion().getId(), userPlantParcelAnswer.getAnswerValue(), productQuestionList, true);
+            }
+            super.getParcelPlan().getPlantParcel().getProduct().setProductQuestionList(productQuestionList);
         }
-    }
-
-    private boolean checkPlanIdForUser(Long parcelPlanId) {
-        Optional<UserPlantParcelPlan> optionalPlan = plantParcelPlanService.getPlantPlanByIdAndUserId(parcelPlanId, getCurrentUser().getUser().getId());
-        if (optionalPlan.isPresent()) {
-            parcelPlan = optionalPlan.get();
-            return true;
-        }
-        return false;
     }
 
     public boolean oneRadioRenderer(PlantationProductQuestion question) {
@@ -136,17 +98,17 @@ public class ExpenseDryingProfileController extends BaseController {
     private static final List<Long> DIPPING_MATERIAL_QUESTIONS = List.of(269L);
 
     private boolean checkPreviousQuestionAnswerAccordingly(PlantationProductQuestion question) {//TODO ilk soruya cevap vermediyse hiç birini sorma
-        Optional<PlantationProductQuestion> optionalQuestion = parcelPlan.getPlantParcel().getProduct().getProductQuestionList().stream().filter(pq -> DRYING_QUESTIONS.contains(pq.getPlantationQuestion().getId())).findFirst();
+        Optional<PlantationProductQuestion> optionalQuestion = super.getParcelPlan().getPlantParcel().getProduct().getProductQuestionList().stream().filter(pq -> DRYING_QUESTIONS.contains(pq.getPlantationQuestion().getId())).findFirst();
         if (DRYING_PERFORM_QUESTIONS.contains(question.getPlantationQuestion().getId())) {
             return optionalQuestion.map(plantationProductQuestion -> plantationProductQuestion.getSelectedAnswerId() != null && List.of(185L).contains(plantationProductQuestion.getSelectedAnswerId())).orElse(true);
         }
-        optionalQuestion = parcelPlan.getPlantParcel().getProduct().getProductQuestionList().stream().filter(pq -> DRYING_PERFORM_QUESTIONS.contains(pq.getPlantationQuestion().getId())).findFirst();
+        optionalQuestion = super.getParcelPlan().getPlantParcel().getProduct().getProductQuestionList().stream().filter(pq -> DRYING_PERFORM_QUESTIONS.contains(pq.getPlantationQuestion().getId())).findFirst();
         if (ONE_DRYING_QUESTIONS.contains(question.getPlantationQuestion().getId())) {
             return optionalQuestion.map(plantationProductQuestion -> plantationProductQuestion.getSelectedAnswerId() != null && List.of(187L, 189L).contains(plantationProductQuestion.getSelectedAnswerId())).orElse(true);
         } else if (TWO_DRYING_QUESTIONS.contains(question.getPlantationQuestion().getId())) {
             return optionalQuestion.map(plantationProductQuestion -> plantationProductQuestion.getSelectedAnswerId() != null && List.of(188L, 190L).contains(plantationProductQuestion.getSelectedAnswerId())).orElse(true);
         }
-        optionalQuestion = parcelPlan.getPlantParcel().getProduct().getProductQuestionList().stream().filter(pq -> DIPPING_MATERIAL_QUESTIONS.contains(pq.getPlantationQuestion().getId())).findFirst();
+        optionalQuestion = super.getParcelPlan().getPlantParcel().getProduct().getProductQuestionList().stream().filter(pq -> DIPPING_MATERIAL_QUESTIONS.contains(pq.getPlantationQuestion().getId())).findFirst();
         if (MATERIAL_QUESTIONS.contains(question.getPlantationQuestion().getId())) {
             return optionalQuestion.map(plantationProductQuestion -> plantationProductQuestion.getSelectedAnswerId() != null && List.of(191L).contains(plantationProductQuestion.getSelectedAnswerId())).orElse(true);
         }
@@ -157,15 +119,12 @@ public class ExpenseDryingProfileController extends BaseController {
     private CostCalculationService costCalculationService;
 
     public void nextSaveExpense() throws IOException {
-        plantParcelPlanService.savePlanAnswers(parcelPlan, EnumPlantationQuestionType.EXPENSE_DRYING);
-        parcelPlan.setDryingCost(costCalculationService.calculateProcessDryCost(parcelPlan.getPlantParcel().getProduct().getProductQuestionList(), parcelPlan.getId()));
-        plantParcelPlanService.updatePlantParcelPlanIncome(parcelPlan);
-        super.navigationController.redirectToUrl("/secured/plantation/expense-baling-profile?parcelPlanId=" + parcelPlanId);
+        super.getParcelPlan().setDryingCost(costCalculationService.calculateProcessDryCost(super.getParcelPlan().getPlantParcel().getProduct().getProductQuestionList(), super.getParcelPlan().getId()));
+        goToNextPage(EnumPlantationQuestionType.EXPENSE_DRYING);
     }
 
     public void previousSaveExpense() throws IOException {
-        plantParcelPlanService.savePlanAnswers(parcelPlan, EnumPlantationQuestionType.EXPENSE_DRYING);
-        super.navigationController.redirectToUrl("/secured/plantation/expense-blend-profile?parcelPlanId=" + parcelPlanId);
+        goToPreviousPage(EnumPlantationQuestionType.EXPENSE_DRYING);
     }
 
 }

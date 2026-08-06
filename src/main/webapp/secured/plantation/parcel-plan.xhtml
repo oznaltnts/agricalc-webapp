@@ -50,24 +50,11 @@
                                 collapsed="true"
                                 toggleable="true"
                                 toggleSpeed="500">
-                        <p:ajax event="toggle" listener="#{parcelPlanController.fillProductList}" update="@this"/>
                         <p:panelGrid layout="flex"
                                      contentStyle="align-items: center;"
                                      contentStyleClass="ui-fluid"
                                      columnClasses="col-12 md:col-3 xl:col-3, col-12 md:col-9 xl:col-9"
                                      columns="2">
-                            <p:outputLabel for="@next" value="Ürün"/>
-                            <p:selectOneMenu id="productSelect"
-                                             value="#{parcelPlanController.selectedProductId}"
-                                             required="true"
-                                             requiredMessage="Ürün seçiniz.">
-                                <f:selectItem itemLabel="Ürün seçiniz" itemValue=""/>
-                                <f:selectItems value="#{parcelPlanController.plantationProductList}"
-                                               var="product"
-                                               itemLabel="#{product.name}"
-                                               itemValue="#{product.id}"/>
-                            </p:selectOneMenu>
-
                             <p:outputLabel for="@next" value="Başlangıç tarihi"/>
                             <p:datePicker view="month"
                                           value="#{parcelPlanController.planStartDate}"
@@ -91,7 +78,7 @@
                             <h:outputText value="#{parcelPlan.insertDate}"/>
                         </p:column>
                         <p:column headerText="Plan ürünü">
-                            <h:outputText value="#{parcelPlan.product.name}"/>
+                            <h:outputText value="#{parcelPlan.plantParcel.product.name}"/>
                         </p:column>
                         <p:column headerText="Başlangıç tarihi">
                             <h:outputText value="#{parcelPlan.planStartDate}"/>
@@ -99,7 +86,8 @@
                         <p:column headerText="Brüt gelir">
                             <h:outputText value="#{parcelPlan.grossIncome eq null ? 'süreci tamamlayın.' : parcelPlan.grossIncome}"/>
                         </p:column>
-                        <p:column headerText="Gelirini planla" style="width: 88px;text-align: right">
+                        <p:column headerText="Üretimini planla"
+                                  style="width: 88px;text-align: right">
                             <p:button href="/secured/plantation/income-profile"
                                       styleClass="rounded-button ui-button-flat"
                                       icon="fa-solid fa-right-long">

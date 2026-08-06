@@ -18,7 +18,7 @@ import java.util.Optional;
 
 @Service
 @Slf4j
-public class PlantParcelPlanService {
+public class UserPlantParcelPlanService {
 
     @Autowired
     private UserPlantParcelPlanRepository parcelPlanRepository;

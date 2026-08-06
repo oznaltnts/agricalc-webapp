@@ -9,91 +9,53 @@ import org.hibernate.Hibernate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import tr.ozanbey.agricalc.webapp.service.domain.plantation.PlantationProductQuestion;
-import tr.ozanbey.agricalc.webapp.service.domain.plantation.UserPlantParcelPlan;
+import tr.ozanbey.agricalc.webapp.service.domain.plantation.UserPlantParcelAnswer;
 import tr.ozanbey.agricalc.webapp.service.domain.plantation.UserPlantParcelPlanAnswer;
 import tr.ozanbey.agricalc.webapp.service.enumtype.EnumStatus;
 import tr.ozanbey.agricalc.webapp.service.enumtype.plantation.EnumPlantationQuestionType;
 import tr.ozanbey.agricalc.webapp.service.enumtype.plantation.EnumQuestionAnswerType;
 import tr.ozanbey.agricalc.webapp.service.service.plantation.CostCalculationService;
-import tr.ozanbey.agricalc.webapp.service.service.plantation.PlantParcelPlanService;
 import tr.ozanbey.agricalc.webapp.service.service.plantation.PlantationProductService;
-import tr.ozanbey.agricalc.webapp.webapp.controller.BaseController;
+import tr.ozanbey.agricalc.webapp.service.service.plantation.UserPlantParcelPlanService;
 
 import java.io.IOException;
-import java.math.BigDecimal;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 import java.util.Optional;
 
 @Component
 @ViewScoped
 @Getter
 @Setter
-public class ExpenseHarvestProfileController extends BaseController {
+public class ExpenseHarvestProfileController extends PlanProfileController {
 
     @Autowired
-    private PlantParcelPlanService plantParcelPlanService;
+    private UserPlantParcelPlanService userPlantParcelPlanService;
 
     @Autowired
     private PlantationProductService productService;
-
-    private Long parcelPlanId;
-    private UserPlantParcelPlan parcelPlan;
 
     @PostConstruct
     public void init() {
     }
 
-    public void setParcelPlanId(Long parcelPlanId) {
-        if (Objects.equals(this.parcelPlanId, parcelPlanId)) {
-            return;
-        }
-        this.parcelPlanId = parcelPlanId;
-    }
-
     public void fillExpenseHarvestQuestionList() throws IOException {
-        if (parcelPlanId == null || !checkPlanIdForUser(parcelPlanId)) {
+        if (super.getParcelPlanId() == null || !checkPlanIdForUser(super.getParcelPlanId())) {
             super.navigationController.redirectToUrl("/secured/plantation/parcel");
             return;
         }
 
-        if (!Hibernate.isInitialized(parcelPlan.getPlantParcel().getProduct().getProductQuestionList())) {
-            List<PlantationProductQuestion> productQuestionList = productService.getActiveQuestionByQuestionType(parcelPlan.getPlantParcel().getProduct().getId(), EnumStatus.ACTIVE, EnumPlantationQuestionType.EXPENSE_HARVEST);
-            List<UserPlantParcelPlanAnswer> planAnswerList = plantParcelPlanService.fillPlanAnswerValues(parcelPlanId, EnumPlantationQuestionType.EXPENSE_HARVEST);
+        if (!Hibernate.isInitialized(super.getParcelPlan().getPlantParcel().getProduct().getProductQuestionList())) {
+            List<PlantationProductQuestion> productQuestionList = productService.getActiveQuestionByQuestionType(super.getParcelPlan().getPlantParcel().getProduct().getId(), EnumStatus.ACTIVE, EnumPlantationQuestionType.EXPENSE_HARVEST);
+            List<UserPlantParcelPlanAnswer> planAnswerList = userPlantParcelPlanService.fillPlanAnswerValues(super.getParcelPlanId(), EnumPlantationQuestionType.EXPENSE_HARVEST);
+            List<UserPlantParcelAnswer> parcelAnswerList = userPlantParcelPlanService.fillParcelAnswerValues(super.getParcelPlan().getPlantParcel().getId(), EnumPlantationQuestionType.EXPENSE_HARVEST);
             for (UserPlantParcelPlanAnswer userPlantParcelPlanAnswer : planAnswerList) {
-                for (PlantationProductQuestion productQuestion : productQuestionList) {
-                    if (Objects.equals(userPlantParcelPlanAnswer.getProductQuestion().getId(), productQuestion.getId())) {
-                        if (productQuestion.getPlantationQuestion().getAnswerType().equals(EnumQuestionAnswerType.SELECT_ONE_MENU)) {
-                            productQuestion.setSelectedAnswerId(Long.valueOf(userPlantParcelPlanAnswer.getAnswerValue()));
-                        } else if (productQuestion.getPlantationQuestion().getAnswerType().equals(EnumQuestionAnswerType.SELECT_ONE_RADIO)) {
-                            productQuestion.setSelectedAnswerId(Long.valueOf(userPlantParcelPlanAnswer.getAnswerValue()));
-                        } else if (productQuestion.getPlantationQuestion().getAnswerType().equals(EnumQuestionAnswerType.SELECT_MANY_CHECKBOX)) {
-                            if (productQuestion.getSelectedAnswerIds() == null || productQuestion.getSelectedAnswerIds().isEmpty()) {
-                                productQuestion.setSelectedAnswerIds(new ArrayList<>());
-                            }
-                            productQuestion.getSelectedAnswerIds().add(Long.valueOf(userPlantParcelPlanAnswer.getAnswerValue()));
-                        } else if (productQuestion.getPlantationQuestion().getAnswerType().equals(EnumQuestionAnswerType.INPUT_INTEGER)) {
-                            productQuestion.setIntegerValue(Integer.valueOf(userPlantParcelPlanAnswer.getAnswerValue()));
-                        } else if (productQuestion.getPlantationQuestion().getAnswerType().equals(EnumQuestionAnswerType.INPUT_DOUBLE)) {
-                            productQuestion.setDoubleValue(Double.valueOf(userPlantParcelPlanAnswer.getAnswerValue()));
-                        } else if (productQuestion.getPlantationQuestion().getAnswerType().equals(EnumQuestionAnswerType.INPUT_DECIMAL)) {
-                            productQuestion.setBigDecimalValue(new BigDecimal(userPlantParcelPlanAnswer.getAnswerValue()));
-                        }
-                    }
-                }
+                fillAnsweredQuestionValues(userPlantParcelPlanAnswer.getProductQuestion().getId(), userPlantParcelPlanAnswer.getAnswerValue(), productQuestionList, false);
             }
-            parcelPlan.getPlantParcel().getProduct().setProductQuestionList(productQuestionList);
+            for (UserPlantParcelAnswer userPlantParcelAnswer : parcelAnswerList) {
+                fillAnsweredQuestionValues(userPlantParcelAnswer.getProductQuestion().getId(), userPlantParcelAnswer.getAnswerValue(), productQuestionList, true);
+            }
+            super.getParcelPlan().getPlantParcel().getProduct().setProductQuestionList(productQuestionList);
         }
-    }
-
-    private boolean checkPlanIdForUser(Long parcelPlanId) {
-        Optional<UserPlantParcelPlan> optionalPlan = plantParcelPlanService.getPlantPlanByIdAndUserId(parcelPlanId, getCurrentUser().getUser().getId());
-        if (optionalPlan.isPresent()) {
-            parcelPlan = optionalPlan.get();
-            return true;
-        }
-        return false;
     }
 
     public boolean oneRadioRenderer(PlantationProductQuestion question) {
@@ -148,11 +110,11 @@ public class ExpenseHarvestProfileController extends BaseController {
     private static final List<Long> HARVEST_QUESTIONS = List.of(211L, 212L, 213L, 214L, 215L, 216L, 217L, 218L);
 
     private boolean checkPreviousQuestionAnswerAccordingly(PlantationProductQuestion question) {
-        Optional<PlantationProductQuestion> optionalQuestion = parcelPlan.getPlantParcel().getProduct().getProductQuestionList().stream().filter(pq -> COLLECT_QUESTIONS.contains(pq.getPlantationQuestion().getId())).findFirst();
+        Optional<PlantationProductQuestion> optionalQuestion = super.getParcelPlan().getPlantParcel().getProduct().getProductQuestionList().stream().filter(pq -> COLLECT_QUESTIONS.contains(pq.getPlantationQuestion().getId())).findFirst();
         if (HARVEST_QUESTIONS.contains(question.getPlantationQuestion().getId())) {
             return optionalQuestion.map(plantationProductQuestion -> plantationProductQuestion.getSelectedAnswerId() != null && List.of(155L).contains(plantationProductQuestion.getSelectedAnswerId())).orElse(true);
         }
-        optionalQuestion = parcelPlan.getPlantParcel().getProduct().getProductQuestionList().stream().filter(pq -> HARVEST_QUESTIONS.contains(pq.getPlantationQuestion().getId())).findFirst();
+        optionalQuestion = super.getParcelPlan().getPlantParcel().getProduct().getProductQuestionList().stream().filter(pq -> HARVEST_QUESTIONS.contains(pq.getPlantationQuestion().getId())).findFirst();
         if (A_HARVEST_QUESTIONS.contains(question.getPlantationQuestion().getId())) {
             return optionalQuestion.map(plantationProductQuestion -> plantationProductQuestion.getSelectedAnswerId() != null && List.of(157L, 162L, 166L, 169L, 172L, 174L, 176L).contains(plantationProductQuestion.getSelectedAnswerId())).orElse(true);
         } else if (B_HARVEST_QUESTIONS.contains(question.getPlantationQuestion().getId())) {
@@ -173,15 +135,12 @@ public class ExpenseHarvestProfileController extends BaseController {
     private CostCalculationService costCalculationService;
 
     public void nextSaveExpense() throws IOException {
-        plantParcelPlanService.savePlanAnswers(parcelPlan, EnumPlantationQuestionType.EXPENSE_HARVEST);
-        parcelPlan.setHarvestCost(costCalculationService.calculateHarvestCost(parcelPlan.getPlantParcel().getProduct().getProductQuestionList(), parcelPlan.getId()));
-        plantParcelPlanService.updatePlantParcelPlanIncome(parcelPlan);
-        super.navigationController.redirectToUrl("/secured/plantation/expense-blend-profile?parcelPlanId=" + parcelPlanId);
+        super.getParcelPlan().setHarvestCost(costCalculationService.calculateHarvestCost(super.getParcelPlan().getPlantParcel().getProduct().getProductQuestionList(), super.getParcelPlan().getId()));
+        goToNextPage(EnumPlantationQuestionType.EXPENSE_HARVEST);
     }
 
     public void previousSaveExpense() throws IOException {
-        plantParcelPlanService.savePlanAnswers(parcelPlan, EnumPlantationQuestionType.EXPENSE_HARVEST);
-        super.navigationController.redirectToUrl("/secured/plantation/expense-protection-profile?parcelPlanId=" + parcelPlanId);
+        goToPreviousPage(EnumPlantationQuestionType.EXPENSE_HARVEST);
     }
 
 }

@@ -43,9 +43,9 @@ public class UserPlantParcel extends AbstractEntity {
     @ToString.Include
     private BigDecimal parcelPrice;
 
-    @Column(name = "area_decare")
+    @Column(name = "area_decare", nullable = false)
     @ToString.Include
-    private BigDecimal areaDecare;
+    private Double areaDecare;
 
     @Column(name = "rent_price")
     @ToString.Include

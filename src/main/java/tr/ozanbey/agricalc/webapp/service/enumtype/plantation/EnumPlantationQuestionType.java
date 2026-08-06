@@ -37,20 +37,4 @@ public enum EnumPlantationQuestionType {
         }
         throw new IllegalArgumentException("Unknown PlantationQuestionType value: " + value);
     }
-
-    public static EnumPlantationQuestionType[] expenseValues() {
-        return new EnumPlantationQuestionType[]{EnumPlantationQuestionType.EXPENSE_SOIL,
-                EnumPlantationQuestionType.EXPENSE_PLANTING,
-                EnumPlantationQuestionType.EXPENSE_FERTILIZER,
-                EnumPlantationQuestionType.EXPENSE_WEED,
-                EnumPlantationQuestionType.EXPENSE_IRRIGATION,
-                EnumPlantationQuestionType.EXPENSE_CULTURAL,
-                EnumPlantationQuestionType.EXPENSE_PROTECTION,
-                EnumPlantationQuestionType.EXPENSE_HARVEST,
-                EnumPlantationQuestionType.EXPENSE_BLEND,
-                EnumPlantationQuestionType.EXPENSE_DRYING,
-                EnumPlantationQuestionType.EXPENSE_BALING,
-                EnumPlantationQuestionType.EXPENSE_PACKAGING};
-    }
-
 }

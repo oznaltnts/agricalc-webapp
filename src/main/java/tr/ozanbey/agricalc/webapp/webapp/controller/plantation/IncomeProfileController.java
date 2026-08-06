@@ -9,36 +9,36 @@ import org.hibernate.Hibernate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import tr.ozanbey.agricalc.webapp.service.domain.AbstractEntity;
-import tr.ozanbey.agricalc.webapp.service.domain.plantation.*;
+import tr.ozanbey.agricalc.webapp.service.domain.plantation.PlantationProductOption;
+import tr.ozanbey.agricalc.webapp.service.domain.plantation.PlantationProductQuestion;
+import tr.ozanbey.agricalc.webapp.service.domain.plantation.UserPlantParcelAnswer;
+import tr.ozanbey.agricalc.webapp.service.domain.plantation.UserPlantParcelPlanAnswer;
 import tr.ozanbey.agricalc.webapp.service.enumtype.EnumMonth;
 import tr.ozanbey.agricalc.webapp.service.enumtype.EnumStatus;
 import tr.ozanbey.agricalc.webapp.service.enumtype.plantation.EnumPlantationQuestionType;
 import tr.ozanbey.agricalc.webapp.service.enumtype.plantation.EnumQuestionAnswerType;
-import tr.ozanbey.agricalc.webapp.service.enumtype.plantation.EnumQuestionRecordType;
 import tr.ozanbey.agricalc.webapp.service.service.plantation.IncomeCalculationService;
-import tr.ozanbey.agricalc.webapp.service.service.plantation.PlantParcelPlanService;
 import tr.ozanbey.agricalc.webapp.service.service.plantation.PlantationProductService;
-import tr.ozanbey.agricalc.webapp.webapp.controller.BaseController;
+import tr.ozanbey.agricalc.webapp.service.service.plantation.UserPlantParcelPlanService;
 
 import java.io.IOException;
-import java.math.BigDecimal;
-import java.util.*;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Component
 @ViewScoped
 @Getter
 @Setter
-public class IncomeProfileController extends BaseController {
+public class IncomeProfileController extends PlanProfileController {
 
     @Autowired
-    private PlantParcelPlanService plantParcelPlanService;
+    private UserPlantParcelPlanService userPlantParcelPlanService;
 
     @Autowired
     private PlantationProductService productService;
-
-    private Long parcelPlanId;
-    private UserPlantParcelPlan parcelPlan;
 
     private Map<Long, String> productionTechniqueList;
 
@@ -46,75 +46,35 @@ public class IncomeProfileController extends BaseController {
     public void init() {
     }
 
-    public void setParcelPlanId(Long parcelPlanId) {
-        if (Objects.equals(this.parcelPlanId, parcelPlanId)) {
-            return;
-        }
-        this.parcelPlanId = parcelPlanId;
-    }
-
     public void fillIncomeQuestionList() throws IOException {
-        if (parcelPlanId == null || !checkPlanIdForUser(parcelPlanId)) {
+        if (super.getParcelPlanId() == null || !checkPlanIdForUser(super.getParcelPlanId())) {
             super.navigationController.redirectToUrl("/secured/plantation/parcel");
             return;
         }
-        if (141L == parcelPlan.getPlantParcel().getProduct().getId()) {
+        if (141L == super.getParcelPlan().getPlantParcel().getProduct().getId()) {
             productionTechniqueList = Map.of(1L, "Erken dönem", 2L, "Orta dönem", 3L, "Geç dönem");
-        } else if (208L == parcelPlan.getPlantParcel().getProduct().getId()) {
+        } else if (208L == super.getParcelPlan().getPlantParcel().getProduct().getId()) {
             productionTechniqueList = Map.of(1L, "Yer bağ (Goble)", 2L, "Çift kollu cordon telli terbiye", 3L, "Tek kollu cordon telli terbiye", 4L, "T telli terbiye", 5L, "Pergola (Çardak sistemi)");
-        } else if (209L == parcelPlan.getPlantParcel().getProduct().getId()) {
+        } else if (209L == super.getParcelPlan().getPlantParcel().getProduct().getId()) {
             productionTechniqueList = Map.of(1L, "Yer bağ (Goble)", 2L, "Çift kollu cordon telli terbiye", 3L, "Tek kollu cordon telli terbiye", 4L, "T telli terbiye", 5L, "Pergola (Çardak sistemi)", 6L, "Y sistemi", 7L, "V sistemi", 8L, "GDC sistemi");
-        } else if (210L == parcelPlan.getPlantParcel().getProduct().getId()) {
+        } else if (210L == super.getParcelPlan().getPlantParcel().getProduct().getId()) {
             productionTechniqueList = Map.of(1L, "Yer bağ (Goble)", 2L, "Çift kollu cordon telli terbiye", 3L, "Tek kollu cordon telli terbiye", 4L, "T telli terbiye", 5L, "Tek guyot sistemi", 6L, "Çift guyot sistemi");
         } else {
             productionTechniqueList = null;
         }
 
-        if (!Hibernate.isInitialized(parcelPlan.getPlantParcel().getProduct().getProductQuestionList())) {
-            List<PlantationProductQuestion> productQuestionList = productService.getActiveQuestionByQuestionType(parcelPlan.getPlantParcel().getProduct().getId(), EnumStatus.ACTIVE, EnumPlantationQuestionType.INCOME);
-            List<UserPlantParcelPlanAnswer> planAnswerList = plantParcelPlanService.fillPlanAnswerValues(parcelPlanId, EnumPlantationQuestionType.INCOME);
-            List<UserPlantParcelAnswer> parcelAnswerList = plantParcelPlanService.fillParcelAnswerValues(parcelPlan.getPlantParcel().getId(), EnumPlantationQuestionType.INCOME);
+        if (!Hibernate.isInitialized(super.getParcelPlan().getPlantParcel().getProduct().getProductQuestionList())) {
+            List<PlantationProductQuestion> productQuestionList = productService.getActiveQuestionByQuestionType(super.getParcelPlan().getPlantParcel().getProduct().getId(), EnumStatus.ACTIVE, EnumPlantationQuestionType.INCOME);
+            List<UserPlantParcelPlanAnswer> planAnswerList = userPlantParcelPlanService.fillPlanAnswerValues(super.getParcelPlanId(), EnumPlantationQuestionType.INCOME);
+            List<UserPlantParcelAnswer> parcelAnswerList = userPlantParcelPlanService.fillParcelAnswerValues(super.getParcelPlan().getPlantParcel().getId(), EnumPlantationQuestionType.INCOME);
             for (UserPlantParcelPlanAnswer userPlantParcelPlanAnswer : planAnswerList) {
-                fillAnsweredQuestionValues(userPlantParcelPlanAnswer.getProductQuestion().getId(), userPlantParcelPlanAnswer.getAnswerValue(), productQuestionList);
+                fillAnsweredQuestionValues(userPlantParcelPlanAnswer.getProductQuestion().getId(), userPlantParcelPlanAnswer.getAnswerValue(), productQuestionList, false);
             }
             for (UserPlantParcelAnswer userPlantParcelAnswer : parcelAnswerList) {
-                fillAnsweredQuestionValues(userPlantParcelAnswer.getProductQuestion().getId(), userPlantParcelAnswer.getAnswerValue(), productQuestionList);
+                fillAnsweredQuestionValues(userPlantParcelAnswer.getProductQuestion().getId(), userPlantParcelAnswer.getAnswerValue(), productQuestionList, true);
             }
-            parcelPlan.getPlantParcel().getProduct().setProductQuestionList(productQuestionList);
+            super.getParcelPlan().getPlantParcel().getProduct().setProductQuestionList(productQuestionList);
         }
-
-    }
-
-    private void fillAnsweredQuestionValues(Long questionId, String answerValue, List<PlantationProductQuestion> productQuestionList) {
-        for (PlantationProductQuestion productQuestion : productQuestionList) {
-            if (Objects.equals(questionId, productQuestion.getId())) {
-                if (productQuestion.getPlantationQuestion().getAnswerType().equals(EnumQuestionAnswerType.SELECT_ONE_MENU)) {
-                    productQuestion.setSelectedAnswerId(Long.valueOf(answerValue));
-                } else if (productQuestion.getPlantationQuestion().getAnswerType().equals(EnumQuestionAnswerType.SELECT_ONE_RADIO)) {
-                    productQuestion.setSelectedAnswerId(Long.valueOf(answerValue));
-                } else if (productQuestion.getPlantationQuestion().getAnswerType().equals(EnumQuestionAnswerType.SELECT_MANY_CHECKBOX)) {
-                    if (productQuestion.getSelectedAnswerIds() == null || productQuestion.getSelectedAnswerIds().isEmpty()) {
-                        productQuestion.setSelectedAnswerIds(new ArrayList<>());
-                    }
-                    productQuestion.getSelectedAnswerIds().add(Long.valueOf(answerValue));
-                } else if (productQuestion.getPlantationQuestion().getAnswerType().equals(EnumQuestionAnswerType.INPUT_INTEGER)) {
-                    productQuestion.setIntegerValue(Integer.valueOf(answerValue));
-                } else if (productQuestion.getPlantationQuestion().getAnswerType().equals(EnumQuestionAnswerType.INPUT_DOUBLE)) {
-                    productQuestion.setDoubleValue(Double.valueOf(answerValue));
-                } else if (productQuestion.getPlantationQuestion().getAnswerType().equals(EnumQuestionAnswerType.INPUT_DECIMAL)) {
-                    productQuestion.setBigDecimalValue(new BigDecimal(answerValue));
-                }
-            }
-        }
-    }
-
-    private boolean checkPlanIdForUser(Long parcelPlanId) {
-        Optional<UserPlantParcelPlan> optionalPlan = plantParcelPlanService.getPlantPlanByIdAndUserId(parcelPlanId, getCurrentUser().getUser().getId());
-        if (optionalPlan.isPresent()) {
-            parcelPlan = optionalPlan.get();
-            return true;
-        }
-        return false;
     }
 
     public boolean oneMenuRenderer(PlantationProductQuestion question) {
@@ -129,11 +89,11 @@ public class IncomeProfileController extends BaseController {
 
     public Map<Long, String> oneMenuSelectItems(PlantationProductQuestion question) {
         if (List.of(1L, 7L).contains(question.getPlantationQuestion().getId())) {
-            if (!Hibernate.isInitialized(parcelPlan.getPlantParcel().getProduct().getProductOptionList())) {
-                List<PlantationProductOption> productOptionList = productService.getProductOption(parcelPlan.getPlantParcel().getProduct().getId());
-                parcelPlan.getPlantParcel().getProduct().setProductOptionList(productOptionList);
+            if (!Hibernate.isInitialized(super.getParcelPlan().getPlantParcel().getProduct().getProductOptionList())) {
+                List<PlantationProductOption> productOptionList = productService.getProductOption(super.getParcelPlan().getPlantParcel().getProduct().getId());
+                super.getParcelPlan().getPlantParcel().getProduct().setProductOptionList(productOptionList);
             }
-            return parcelPlan.getPlantParcel().getProduct().getProductOptionList().stream().collect(Collectors.toMap(AbstractEntity::getId, PlantationProductOption::getName));
+            return super.getParcelPlan().getPlantParcel().getProduct().getProductOptionList().stream().collect(Collectors.toMap(AbstractEntity::getId, PlantationProductOption::getName));
         } else if (List.of(3L).contains(question.getPlantationQuestion().getId())) {
             return productionTechniqueList;
         } else {
@@ -191,17 +151,13 @@ public class IncomeProfileController extends BaseController {
         return false;
     }
 
-    public boolean booleanCheckboxRenderer(PlantationProductQuestion question) {
-        return question.getPlantationQuestion().getRecordType().equals(EnumQuestionRecordType.ASK_USER);
-    }
-
     private static final List<Long> A_DOUBLE_YIELD_QUESTIONS = List.of(11L, 12L, 13L, 14L, 17L, 27L, 30L);
     private static final List<Long> B_DOUBLE_YIELD_QUESTIONS = List.of(15L, 28L, 31L);
     private static final List<Long> C_DOUBLE_YIELD_QUESTIONS = List.of(16L, 29L, 32L);
     private static final List<Long> SALE_QUESTIONS = List.of(8L, 9L, 10L);
 
     private boolean checkPreviousQuestionAnswerAccordingly(PlantationProductQuestion question) {
-        Optional<PlantationProductQuestion> optionalSaleQuestion = parcelPlan.getPlantParcel().getProduct().getProductQuestionList().stream().filter(pq -> SALE_QUESTIONS.contains(pq.getPlantationQuestion().getId())).findFirst();
+        Optional<PlantationProductQuestion> optionalSaleQuestion = super.getParcelPlan().getPlantParcel().getProduct().getProductQuestionList().stream().filter(pq -> SALE_QUESTIONS.contains(pq.getPlantationQuestion().getId())).findFirst();
         if (A_DOUBLE_YIELD_QUESTIONS.contains(question.getPlantationQuestion().getId())) {
             return optionalSaleQuestion.map(plantationProductQuestion -> plantationProductQuestion.getSelectedAnswerId() != null && List.of(17L, 21L).contains(plantationProductQuestion.getSelectedAnswerId())).orElse(true);
         } else if (B_DOUBLE_YIELD_QUESTIONS.contains(question.getPlantationQuestion().getId())) {
@@ -216,14 +172,11 @@ public class IncomeProfileController extends BaseController {
     private IncomeCalculationService incomeCalculationService;
 
     public void nextSaveIncome() throws IOException {
-        plantParcelPlanService.savePlanAnswers(parcelPlan, EnumPlantationQuestionType.INCOME);
-        parcelPlan.setGrossIncome(incomeCalculationService.calculateIncome(parcelPlan.getPlantParcel().getProduct().getProductQuestionList()));
-        plantParcelPlanService.updatePlantParcelPlanIncome(parcelPlan);
-        super.navigationController.redirectToUrl("/secured/plantation/expense-soil-profile?parcelPlanId=" + parcelPlanId);
+        super.getParcelPlan().setGrossIncome(incomeCalculationService.calculateIncome(super.getParcelPlan().getPlantParcel().getProduct().getProductQuestionList()));
+        goToNextPage(EnumPlantationQuestionType.INCOME);
     }
 
     public void previousSaveIncome() throws IOException {
-        plantParcelPlanService.savePlanAnswers(parcelPlan, EnumPlantationQuestionType.INCOME);
-        super.navigationController.redirectToUrl("/secured/plantation/parcel-plan?parcelId=" + parcelPlan.getPlantParcel().getId());
+        goToPreviousPage(EnumPlantationQuestionType.INCOME);
     }
 }

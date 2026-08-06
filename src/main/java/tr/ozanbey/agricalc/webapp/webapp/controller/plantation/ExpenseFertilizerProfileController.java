@@ -9,91 +9,54 @@ import org.hibernate.Hibernate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import tr.ozanbey.agricalc.webapp.service.domain.plantation.PlantationProductQuestion;
-import tr.ozanbey.agricalc.webapp.service.domain.plantation.UserPlantParcelPlan;
+import tr.ozanbey.agricalc.webapp.service.domain.plantation.UserPlantParcelAnswer;
 import tr.ozanbey.agricalc.webapp.service.domain.plantation.UserPlantParcelPlanAnswer;
 import tr.ozanbey.agricalc.webapp.service.enumtype.EnumStatus;
 import tr.ozanbey.agricalc.webapp.service.enumtype.plantation.EnumPlantationQuestionType;
 import tr.ozanbey.agricalc.webapp.service.enumtype.plantation.EnumQuestionAnswerType;
 import tr.ozanbey.agricalc.webapp.service.service.plantation.CostCalculationService;
-import tr.ozanbey.agricalc.webapp.service.service.plantation.PlantParcelPlanService;
 import tr.ozanbey.agricalc.webapp.service.service.plantation.PlantationProductService;
-import tr.ozanbey.agricalc.webapp.webapp.controller.BaseController;
+import tr.ozanbey.agricalc.webapp.service.service.plantation.UserPlantParcelPlanService;
 
 import java.io.IOException;
-import java.math.BigDecimal;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 import java.util.Optional;
 
 @Component
 @ViewScoped
 @Getter
 @Setter
-public class ExpenseFertilizerProfileController extends BaseController {
+public class ExpenseFertilizerProfileController extends PlanProfileController {
 
     @Autowired
-    private PlantParcelPlanService plantParcelPlanService;
+    private UserPlantParcelPlanService userPlantParcelPlanService;
 
     @Autowired
     private PlantationProductService productService;
 
-    private Long parcelPlanId;
-    private UserPlantParcelPlan parcelPlan;
 
     @PostConstruct
     public void init() {
     }
 
-    public void setParcelPlanId(Long parcelPlanId) {
-        if (Objects.equals(this.parcelPlanId, parcelPlanId)) {
-            return;
-        }
-        this.parcelPlanId = parcelPlanId;
-    }
-
     public void fillExpenseFertilizerQuestionList() throws IOException {
-        if (parcelPlanId == null || !checkPlanIdForUser(parcelPlanId)) {
+        if (super.getParcelPlanId() == null || !checkPlanIdForUser(super.getParcelPlanId())) {
             super.navigationController.redirectToUrl("/secured/plantation/parcel");
             return;
         }
 
-        if (!Hibernate.isInitialized(parcelPlan.getPlantParcel().getProduct().getProductQuestionList())) {
-            List<PlantationProductQuestion> productQuestionList = productService.getActiveQuestionByQuestionType(parcelPlan.getPlantParcel().getProduct().getId(), EnumStatus.ACTIVE, EnumPlantationQuestionType.EXPENSE_FERTILIZER);
-            List<UserPlantParcelPlanAnswer> planAnswerList = plantParcelPlanService.fillPlanAnswerValues(parcelPlanId, EnumPlantationQuestionType.EXPENSE_FERTILIZER);
+        if (!Hibernate.isInitialized(super.getParcelPlan().getPlantParcel().getProduct().getProductQuestionList())) {
+            List<PlantationProductQuestion> productQuestionList = productService.getActiveQuestionByQuestionType(super.getParcelPlan().getPlantParcel().getProduct().getId(), EnumStatus.ACTIVE, EnumPlantationQuestionType.EXPENSE_FERTILIZER);
+            List<UserPlantParcelPlanAnswer> planAnswerList = userPlantParcelPlanService.fillPlanAnswerValues(super.getParcelPlanId(), EnumPlantationQuestionType.EXPENSE_FERTILIZER);
+            List<UserPlantParcelAnswer> parcelAnswerList = userPlantParcelPlanService.fillParcelAnswerValues(super.getParcelPlan().getPlantParcel().getId(), EnumPlantationQuestionType.EXPENSE_FERTILIZER);
             for (UserPlantParcelPlanAnswer userPlantParcelPlanAnswer : planAnswerList) {
-                for (PlantationProductQuestion productQuestion : productQuestionList) {
-                    if (Objects.equals(userPlantParcelPlanAnswer.getProductQuestion().getId(), productQuestion.getId())) {
-                        if (productQuestion.getPlantationQuestion().getAnswerType().equals(EnumQuestionAnswerType.SELECT_ONE_MENU)) {
-                            productQuestion.setSelectedAnswerId(Long.valueOf(userPlantParcelPlanAnswer.getAnswerValue()));
-                        } else if (productQuestion.getPlantationQuestion().getAnswerType().equals(EnumQuestionAnswerType.SELECT_ONE_RADIO)) {
-                            productQuestion.setSelectedAnswerId(Long.valueOf(userPlantParcelPlanAnswer.getAnswerValue()));
-                        } else if (productQuestion.getPlantationQuestion().getAnswerType().equals(EnumQuestionAnswerType.SELECT_MANY_CHECKBOX)) {
-                            if (productQuestion.getSelectedAnswerIds() == null || productQuestion.getSelectedAnswerIds().isEmpty()) {
-                                productQuestion.setSelectedAnswerIds(new ArrayList<>());
-                            }
-                            productQuestion.getSelectedAnswerIds().add(Long.valueOf(userPlantParcelPlanAnswer.getAnswerValue()));
-                        } else if (productQuestion.getPlantationQuestion().getAnswerType().equals(EnumQuestionAnswerType.INPUT_INTEGER)) {
-                            productQuestion.setIntegerValue(Integer.valueOf(userPlantParcelPlanAnswer.getAnswerValue()));
-                        } else if (productQuestion.getPlantationQuestion().getAnswerType().equals(EnumQuestionAnswerType.INPUT_DOUBLE)) {
-                            productQuestion.setDoubleValue(Double.valueOf(userPlantParcelPlanAnswer.getAnswerValue()));
-                        } else if (productQuestion.getPlantationQuestion().getAnswerType().equals(EnumQuestionAnswerType.INPUT_DECIMAL)) {
-                            productQuestion.setBigDecimalValue(new BigDecimal(userPlantParcelPlanAnswer.getAnswerValue()));
-                        }
-                    }
-                }
+                fillAnsweredQuestionValues(userPlantParcelPlanAnswer.getProductQuestion().getId(), userPlantParcelPlanAnswer.getAnswerValue(), productQuestionList, false);
             }
-            parcelPlan.getPlantParcel().getProduct().setProductQuestionList(productQuestionList);
+            for (UserPlantParcelAnswer userPlantParcelAnswer : parcelAnswerList) {
+                fillAnsweredQuestionValues(userPlantParcelAnswer.getProductQuestion().getId(), userPlantParcelAnswer.getAnswerValue(), productQuestionList, true);
+            }
+            super.getParcelPlan().getPlantParcel().getProduct().setProductQuestionList(productQuestionList);
         }
-    }
-
-    private boolean checkPlanIdForUser(Long parcelPlanId) {
-        Optional<UserPlantParcelPlan> optionalPlan = plantParcelPlanService.getPlantPlanByIdAndUserId(parcelPlanId, getCurrentUser().getUser().getId());
-        if (optionalPlan.isPresent()) {
-            parcelPlan = optionalPlan.get();
-            return true;
-        }
-        return false;
     }
 
     public boolean oneMenuRenderer(PlantationProductQuestion question) {
@@ -156,45 +119,40 @@ public class ExpenseFertilizerProfileController extends BaseController {
         return false;
     }
 
-
     private static final List<Long> A_FERTILIZER_QUESTIONS = List.of(93L, 94L);
     private static final List<Long> B_FERTILIZER_QUESTIONS = List.of(95L, 96L, 97L, 98L, 99L, 100L);
     private static final List<Long> C_FERTILIZER_QUESTIONS = List.of(100L, 101L, 102L);
     private static final List<Long> D_FERTILIZER_QUESTIONS = List.of(103L, 104L);
-    private static final List<Long> FERTILIZER_QUESTIONS = List.of(92L);
-
     private static final List<Long> E_FERTILIZER_QUESTIONS = List.of(106L);
     private static final List<Long> F_FERTILIZER_QUESTIONS = List.of(107L, 108L, 109L);
     private static final List<Long> H_FERTILIZER_QUESTIONS = List.of(110L, 111L);
     private static final List<Long> I_FERTILIZER_QUESTIONS = List.of(112L, 113L);
     private static final List<Long> K_FERTILIZER_QUESTIONS = List.of(114L, 115L);
     private static final List<Long> L_FERTILIZER_QUESTIONS = List.of(116L, 117L);
-    private static final List<Long> OTHER_FERTILIZER_QUESTIONS = List.of(105L);
+    private static final List<Long> FERTILIZER_QUESTIONS = List.of(91L);
 
     private boolean checkPreviousQuestionAnswerAccordingly(PlantationProductQuestion question) {
-        Optional<PlantationProductQuestion> optionalQuestion = parcelPlan.getPlantParcel().getProduct().getProductQuestionList().stream().filter(pq -> FERTILIZER_QUESTIONS.contains(pq.getPlantationQuestion().getId())).findFirst();
+        Optional<PlantationProductQuestion> optionalQuestion = super.getParcelPlan().getPlantParcel().getProduct().getProductQuestionList().stream().filter(pq -> FERTILIZER_QUESTIONS.contains(pq.getPlantationQuestion().getId())).findFirst();
         if (A_FERTILIZER_QUESTIONS.contains(question.getPlantationQuestion().getId())) {
-            return optionalQuestion.map(plantationProductQuestion -> plantationProductQuestion.getSelectedAnswerId() != null && List.of(82L).contains(plantationProductQuestion.getSelectedAnswerId())).orElse(true);
+            return optionalQuestion.map(plantationProductQuestion -> plantationProductQuestion.getSelectedAnswerId() != null && List.of(71L).contains(plantationProductQuestion.getSelectedAnswerId())).orElse(true);
         } else if (B_FERTILIZER_QUESTIONS.contains(question.getPlantationQuestion().getId())) {
-            return optionalQuestion.map(plantationProductQuestion -> plantationProductQuestion.getSelectedAnswerId() != null && List.of(83L).contains(plantationProductQuestion.getSelectedAnswerId())).orElse(true);
+            return optionalQuestion.map(plantationProductQuestion -> plantationProductQuestion.getSelectedAnswerId() != null && List.of(72L).contains(plantationProductQuestion.getSelectedAnswerId())).orElse(true);
         } else if (C_FERTILIZER_QUESTIONS.contains(question.getPlantationQuestion().getId())) {
-            return optionalQuestion.map(plantationProductQuestion -> plantationProductQuestion.getSelectedAnswerId() != null && List.of(84L).contains(plantationProductQuestion.getSelectedAnswerId())).orElse(true);
+            return optionalQuestion.map(plantationProductQuestion -> plantationProductQuestion.getSelectedAnswerId() != null && List.of(74L).contains(plantationProductQuestion.getSelectedAnswerId())).orElse(true);
         } else if (D_FERTILIZER_QUESTIONS.contains(question.getPlantationQuestion().getId())) {
-            return optionalQuestion.map(plantationProductQuestion -> plantationProductQuestion.getSelectedAnswerId() != null && List.of(85L).contains(plantationProductQuestion.getSelectedAnswerId())).orElse(true);
-        }
-        optionalQuestion = parcelPlan.getPlantParcel().getProduct().getProductQuestionList().stream().filter(pq -> OTHER_FERTILIZER_QUESTIONS.contains(pq.getPlantationQuestion().getId())).findFirst();
-        if (E_FERTILIZER_QUESTIONS.contains(question.getPlantationQuestion().getId())) {
-            return optionalQuestion.map(plantationProductQuestion -> plantationProductQuestion.getSelectedAnswerId() != null && List.of(88L).contains(plantationProductQuestion.getSelectedAnswerId())).orElse(true);
+            return optionalQuestion.map(plantationProductQuestion -> plantationProductQuestion.getSelectedAnswerId() != null && List.of(73L).contains(plantationProductQuestion.getSelectedAnswerId())).orElse(true);
+        } else if (E_FERTILIZER_QUESTIONS.contains(question.getPlantationQuestion().getId())) {
+            return optionalQuestion.map(plantationProductQuestion -> plantationProductQuestion.getSelectedAnswerId() != null && List.of(75L).contains(plantationProductQuestion.getSelectedAnswerId())).orElse(true);
         } else if (F_FERTILIZER_QUESTIONS.contains(question.getPlantationQuestion().getId())) {
-            return optionalQuestion.map(plantationProductQuestion -> plantationProductQuestion.getSelectedAnswerId() != null && List.of(89L).contains(plantationProductQuestion.getSelectedAnswerId())).orElse(true);
+            return optionalQuestion.map(plantationProductQuestion -> plantationProductQuestion.getSelectedAnswerId() != null && List.of(76L).contains(plantationProductQuestion.getSelectedAnswerId())).orElse(true);
         } else if (H_FERTILIZER_QUESTIONS.contains(question.getPlantationQuestion().getId())) {
-            return optionalQuestion.map(plantationProductQuestion -> plantationProductQuestion.getSelectedAnswerId() != null && List.of(90L).contains(plantationProductQuestion.getSelectedAnswerId())).orElse(true);
+            return optionalQuestion.map(plantationProductQuestion -> plantationProductQuestion.getSelectedAnswerId() != null && List.of(77L).contains(plantationProductQuestion.getSelectedAnswerId())).orElse(true);
         } else if (I_FERTILIZER_QUESTIONS.contains(question.getPlantationQuestion().getId())) {
-            return optionalQuestion.map(plantationProductQuestion -> plantationProductQuestion.getSelectedAnswerId() != null && List.of(91L).contains(plantationProductQuestion.getSelectedAnswerId())).orElse(true);
+            return optionalQuestion.map(plantationProductQuestion -> plantationProductQuestion.getSelectedAnswerId() != null && List.of(78L).contains(plantationProductQuestion.getSelectedAnswerId())).orElse(true);
         } else if (K_FERTILIZER_QUESTIONS.contains(question.getPlantationQuestion().getId())) {
-            return optionalQuestion.map(plantationProductQuestion -> plantationProductQuestion.getSelectedAnswerId() != null && List.of(92L).contains(plantationProductQuestion.getSelectedAnswerId())).orElse(true);
+            return optionalQuestion.map(plantationProductQuestion -> plantationProductQuestion.getSelectedAnswerId() != null && List.of(79L).contains(plantationProductQuestion.getSelectedAnswerId())).orElse(true);
         } else if (L_FERTILIZER_QUESTIONS.contains(question.getPlantationQuestion().getId())) {
-            return optionalQuestion.map(plantationProductQuestion -> plantationProductQuestion.getSelectedAnswerId() != null && List.of(93L).contains(plantationProductQuestion.getSelectedAnswerId())).orElse(true);
+            return optionalQuestion.map(plantationProductQuestion -> plantationProductQuestion.getSelectedAnswerId() != null && List.of(80L).contains(plantationProductQuestion.getSelectedAnswerId())).orElse(true);
         }
         return true;
     }
@@ -203,15 +161,12 @@ public class ExpenseFertilizerProfileController extends BaseController {
     private CostCalculationService costCalculationService;
 
     public void nextSaveExpense() throws IOException {
-        plantParcelPlanService.savePlanAnswers(parcelPlan, EnumPlantationQuestionType.EXPENSE_FERTILIZER);
-        parcelPlan.setFertilizerCost(costCalculationService.calculateFertilizerCost(parcelPlan.getPlantParcel().getProduct().getProductQuestionList(), parcelPlan.getId()));
-        plantParcelPlanService.updatePlantParcelPlanIncome(parcelPlan);
-        super.navigationController.redirectToUrl("/secured/plantation/expense-weed-profile?parcelPlanId=" + parcelPlanId);
+        super.getParcelPlan().setFertilizerCost(costCalculationService.calculateFertilizerCost(super.getParcelPlan().getPlantParcel().getProduct().getProductQuestionList(), super.getParcelPlan().getId()));
+        goToNextPage(EnumPlantationQuestionType.EXPENSE_FERTILIZER);
     }
 
     public void previousSaveExpense() throws IOException {
-        plantParcelPlanService.savePlanAnswers(parcelPlan, EnumPlantationQuestionType.EXPENSE_FERTILIZER);
-        super.navigationController.redirectToUrl("/secured/plantation/expense-planting-profile?parcelPlanId=" + parcelPlanId);
+        goToPreviousPage(EnumPlantationQuestionType.EXPENSE_FERTILIZER);
     }
 
 }

@@ -1,0 +1,141 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="jakarta.faces.html"
+                xmlns:f="jakarta.faces.core"
+                xmlns:ui="jakarta.faces.facelets"
+                xmlns:p="http://primefaces.org/ui"
+                template="/templates/template.xhtml">
+
+    <ui:define name="title">Arazi Bilgilerim</ui:define>
+
+    <ui:define name="head">
+        <style type="text/css">
+        </style>
+    </ui:define>
+
+    <ui:define name="content">
+        <div class="grid">
+            <div class="col">
+                <div class="card">
+                    <p:steps activeIndex="0">
+                        <p:menuitem value="Arazi bilgileri"/>
+                        <p:menuitem value="Planlama bilgileri"/>
+                        <p:menuitem value="Gelir bilgileri"/>
+                        <p:menuitem value="Gider bilgileri"/>
+                        <p:menuitem value="Sonuçlar" containerStyleClass="steps-desktop"/>
+                    </p:steps>
+                </div>
+            </div>
+        </div>
+
+        <div class="grid">
+            <div class="col">
+                <h:form class="card">
+                    <p:growl id="growl"
+                             showDetail="true"
+                             severity="info warn error">
+                        <p:autoUpdate/>
+                    </p:growl>
+
+                    <h5 class="mt-0" style="font-weight: bold">Araziler</h5>
+
+                    <p:fieldset legend="Yeni arazi ekle"
+                                collapsed="true"
+                                toggleable="true"
+                                toggleSpeed="500">
+                        <p:ajax event="toggle" listener="#{parcelProfileController.fillProductCityList}" update="@this"/>
+                        <p:panelGrid layout="flex"
+                                     contentStyle="align-items: center;"
+                                     contentStyleClass="ui-fluid"
+                                     columnClasses="col-12 md:col-3 xl:col-3, col-12 md:col-9 xl:col-9"
+                                     columns="2">
+                            <p:outputLabel for="@next" value="Ürün"/>
+                            <p:selectOneMenu filter="true"
+                                             filterMatchMode="contains"
+                                             filterNormalize="true"
+                                             value="#{parcelProfileController.selectedProductId}"
+                                             required="true"
+                                             requiredMessage="Ürün seçiniz.">
+                                <f:selectItem itemLabel="Ürün seçiniz" itemValue=""/>
+                                <f:selectItems value="#{parcelProfileController.plantationProductList}"
+                                               var="product"
+                                               itemLabel="#{product.name}"
+                                               itemValue="#{product.id}"/>
+                            </p:selectOneMenu>
+
+                            <p:outputLabel for="@next" value="Ad"/>
+                            <p:inputText value="#{parcelProfileController.parcelName}"
+                                         required="true"
+                                         requiredMessage="Parsele bir isim verin."/>
+
+                            <p:outputLabel for="@next" value="Boyut(Dekar)"/>
+                            <p:inputNumber value="#{parcelProfileController.areaDecare}"
+                                           required="true"
+                                           requiredMessage="Parsel boyutunu girin."/>
+
+                            <p:outputLabel for="@next" value="Şehir"/>
+                            <p:selectOneMenu filter="true"
+                                             filterMatchMode="contains"
+                                             filterNormalize="true"
+                                             value="#{parcelProfileController.selectedCityId}"
+                                             required="true"
+                                             requiredMessage="Şehir seçiniz.">
+                                <f:selectItem itemLabel="Şehir seçiniz" itemValue=""/>
+                                <f:selectItems value="#{parcelProfileController.cityList}"
+                                               var="city"
+                                               itemLabel="#{city.name}"
+                                               itemValue="#{city.id}"/>
+                            </p:selectOneMenu>
+                        </p:panelGrid>
+
+                        <p:commandButton value="Parseli kaydet"
+                                         process="@parent"
+                                         update="@parent parcelTableList"
+                                         oncomplete=""
+                                         action="#{parcelProfileController.saveNewParcel}"/>
+                    </p:fieldset>
+
+                    <p:dataTable id="parcelTableList"
+                                 stripedRows="true"
+                                 emptyMessage="Henüz arazi eklemediniz"
+                                 var="parcel"
+                                 reflow="true"
+                                 value="#{parcelProfileController.plantParcelList}">
+                        <p:column headerText="Adı">
+                            <h:outputText value="#{parcel.parcelName}"/>
+                        </p:column>
+                        <p:column headerText="Tipi">
+                            <h:outputText value="#{msg[parcel.parcelType]}"/>
+                        </p:column>
+                        <p:column headerText="Ürün">
+                            <h:outputText value="#{parcel.product.name}"/>
+                        </p:column>
+                        <p:column headerText="Şehir">
+                            <h:outputText value="#{parcel.city.name}"/>
+                        </p:column>
+                        <p:column headerText="Boyut (Dekar)">
+                            <h:outputText value="#{parcel.areaDecare}"/>
+                        </p:column>
+                        <p:column headerText="Detayları düzenle" style="width: 111px;text-align: right">
+                            <p:button href="/secured/plantation/parcel-detail"
+                                      styleClass="rounded-button ui-button-flat"
+                                      icon="fa-regular fa-pen-to-square">
+                                <f:param name="parcelId"
+                                         value="#{parcel.id}"/>
+                            </p:button>
+                        </p:column>
+                        <p:column headerText="Üretim Planla" style="width: 86px;text-align: right">
+                            <p:button href="/secured/plantation/parcel-plan"
+                                      styleClass="rounded-button ui-button-flat"
+                                      icon="fa-solid fa-right-long">
+                                <f:param name="parcelId"
+                                         value="#{parcel.id}"/>
+                            </p:button>
+                        </p:column>
+                    </p:dataTable>
+                </h:form>
+                <br/>
+                <p>Sorunuz mu var? <a href="#">Buraya</a> basın ve bize bildirin.</p>
+            </div>
+        </div>
+    </ui:define>
+</ui:composition>

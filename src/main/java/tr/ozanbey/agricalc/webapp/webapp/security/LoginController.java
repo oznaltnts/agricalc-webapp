@@ -5,12 +5,9 @@ import lombok.Setter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import tr.ozanbey.agricalc.webapp.service.domain.User;
-import tr.ozanbey.agricalc.webapp.service.domain.UserPreference;
 import tr.ozanbey.agricalc.webapp.service.enumtype.EnumStatus;
 import tr.ozanbey.agricalc.webapp.service.service.UserLoginService;
 import tr.ozanbey.agricalc.webapp.service.service.UserService;
-import tr.ozanbey.agricalc.webapp.webapp.util.context.SpringContextAccessor;
-import tr.ozanbey.agricalc.webapp.webapp.view.GuestPreferences;
 
 import java.util.Optional;
 
@@ -27,19 +24,6 @@ public class LoginController {
 
     public long isAccountBlocked(Long userId) {
         return userLoginService.isAccountBlocked(userId);
-    }
-
-    public void assignUserPreference(Long userId) {
-        UserPreference userPreference = userService.getPreferenceByUserId(userId);
-        GuestPreferences guestPreferences = SpringContextAccessor.getBean(GuestPreferences.class);
-        guestPreferences.setMenuMode(userPreference.getMenuMode());
-        guestPreferences.setDarkMode(userPreference.getDarkMode());
-        guestPreferences.setComponentTheme(userPreference.getComponentTheme());
-        guestPreferences.setTopbarTheme(userPreference.getTopbarTheme());
-        guestPreferences.setMenuTheme(userPreference.getMenuTheme());
-        guestPreferences.setInputStyle(userPreference.getInputStyle());
-        guestPreferences.setLightLogo(userPreference.isLightLogo());
-        guestPreferences.setAfterLogin(true);
     }
 
     public void clearLoginFailures(Long userId) {

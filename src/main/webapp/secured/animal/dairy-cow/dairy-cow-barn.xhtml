@@ -1,0 +1,233 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="jakarta.faces.html"
+                xmlns:f="jakarta.faces.core"
+                xmlns:ui="jakarta.faces.facelets"
+                xmlns:p="http://primefaces.org/ui"
+                template="/templates/template.xhtml">
+
+    <ui:define name="title">Büyükbaş Süt Üretimi</ui:define>
+
+    <ui:define name="head">
+        <style type="text/css">
+            .inputMaxWidthClass {
+                width: 100%;
+            }
+            @media (max-width: 640px) {
+                .ui-datatable-reflow .ui-datatable-data td[role="gridcell"] .ui-column-title {
+                    max-width: unset;
+                    width: 100%;
+                }
+                .steps-desktop {
+                    display: none;
+                }
+            }
+        </style>
+    </ui:define>
+
+    <ui:define name="content">
+        <div class="grid">
+            <div class="col">
+                <div class="card">
+                    <p:steps activeIndex="0">
+                        <p:menuitem value="Ahırlar"/>
+                        <p:menuitem value="Hayvanlar"/>
+                        <p:menuitem value="Yemler"/>
+                        <p:menuitem value="Yem rasyonu"/>
+                        <p:menuitem value="Giderler"/>
+                        <p:menuitem value="Gelirler" containerStyleClass="steps-desktop"/>
+                        <p:menuitem value="Sonuçlar" containerStyleClass="steps-desktop"/>
+                    </p:steps>
+                </div>
+            </div>
+        </div>
+        
+        <div class="grid">
+            <div class="col">
+                <h:form id="barnListForm"
+                        class="card">
+                    <h5 class="mt-0" style="font-weight: bold">Büyükbaş süt ahırları</h5>
+
+                    <p:growl id="growl"
+                             showDetail="true"
+                             severity="info warn error">
+                        <p:autoUpdate/>
+                    </p:growl>
+
+                    <p:dataTable id="dairyCowTable"
+                                 var="dairyCowBarn"
+                                 stripedRows="true"
+                                 size="small"
+                                 widgetVar="dairyCowTableWidget"
+                                 reflow="true"
+                                 editable="true"
+                                 value="#{dairyCowBarnController.dairyCowBarnViews}">
+
+                        <p:ajax event="rowEditInit" listener="#{dairyCowBarnController.onRowEditInit}"/>
+                        <p:ajax event="rowEdit" listener="#{dairyCowBarnController.onRowEdit}"/>
+                        <p:ajax event="rowEditCancel" listener="#{dairyCowBarnController.onRowCancel}"/>
+
+                        <p:column headerText="Irk">
+                            <p:cellEditor>
+                                <f:facet name="output">
+                                    <h:outputText value="#{dairyCowBarn.dairyCowName}"/>
+                                </f:facet>
+                                <f:facet name="input">
+                                    <p:selectOneMenu value="#{dairyCowBarn.selectedDairyCowId}"
+                                                     required="true"
+                                                     requiredMessage="Hayvan ırkı seçiniz"
+                                                     styleClass="inputMaxWidthClass">
+                                        <f:selectItem itemLabel="seçiniz"
+                                                      itemValue=""/>
+                                        <f:selectItems value="#{dairyCowBarnController.dairyCowList}"
+                                                       itemValue="#{dairyCow.id}"
+                                                       itemLabel="#{dairyCow.name}"
+                                                       var="dairyCow"/>
+                                    </p:selectOneMenu>
+                                </f:facet>
+                            </p:cellEditor>
+                        </p:column>
+
+                        <p:column headerText="Ahır kapasite">
+                            <p:cellEditor>
+                                <f:facet name="output">
+                                    <h:outputText value="#{dairyCowBarn.barnCapacity}"/>
+                                </f:facet>
+                                <f:facet name="input">
+                                    <p:inputNumber value="#{dairyCowBarn.barnCapacity}"
+                                                   required="true"
+                                                   requiredMessage="Sağmal kapasite giriniz"
+                                                   inputStyleClass="inputMaxWidthClass">
+                                        <p:ajax listener="#{dairyCowBarnController.validateMilkingCapacity(dairyCowBarn)}" update="milkingCapacityInput"/>
+                                    </p:inputNumber>
+                                </f:facet>
+                            </p:cellEditor>
+                        </p:column>
+
+                        <p:column headerText="Sağmal kapasite">
+                            <p:cellEditor>
+                                <f:facet name="output">
+                                    <h:outputText value="#{dairyCowBarn.milkingCapacity}"/>
+                                </f:facet>
+                                <f:facet name="input">
+                                    <p:inputNumber id="milkingCapacityInput"
+                                                   required="true"
+                                                   requiredMessage="Sağmal kapasite giriniz"
+                                                   value="#{dairyCowBarn.milkingCapacity}"
+                                                   inputStyleClass="inputMaxWidthClass">
+                                        <p:ajax listener="#{dairyCowBarnController.validateMilkingCapacity(dairyCowBarn)}" update="@this"/>
+                                    </p:inputNumber>
+                                </f:facet>
+                            </p:cellEditor>
+                        </p:column>
+
+                        <p:column headerText="Tesis Fiyatı">
+                            <p:cellEditor>
+                                <f:facet name="output">
+                                    <h:outputText value="#{dairyCowBarn.barnPrice}"/>
+                                </f:facet>
+                                <f:facet name="input">
+                                    <p:inputNumber value="#{dairyCowBarn.barnPrice}"
+                                                   inputStyleClass="inputMaxWidthClass"/>
+                                </f:facet>
+                            </p:cellEditor>
+                        </p:column>
+
+                        <p:column headerText="Doğum oranı">
+                            <p:cellEditor>
+                                <f:facet name="output">
+                                    <h:outputText value="#{dairyCowBarn.birthRate}"/>
+                                </f:facet>
+                                <f:facet name="input">
+                                    <p:inputNumber value="#{dairyCowBarn.birthRate}"
+                                                   inputStyleClass="inputMaxWidthClass"/>
+                                </f:facet>
+                            </p:cellEditor>
+                        </p:column>
+
+                        <p:column headerText="Ölüm oranı">
+                            <p:cellEditor>
+                                <f:facet name="output">
+                                    <h:outputText value="#{dairyCowBarn.deathRate}"/>
+                                </f:facet>
+                                <f:facet name="input">
+                                    <p:inputNumber value="#{dairyCowBarn.deathRate}"
+                                                   inputStyleClass="inputMaxWidthClass"/>
+                                </f:facet>
+                            </p:cellEditor>
+                        </p:column>
+
+                        <p:column headerText="Suni tohumlama">
+                            <p:cellEditor>
+                                <f:facet name="output">
+                                    <h:outputText value="#{dairyCowBarn.inseminationRate}"/>
+                                </f:facet>
+                                <f:facet name="input">
+                                    <p:inputNumber value="#{dairyCowBarn.inseminationRate}"
+                                                   inputStyleClass="inputMaxWidthClass"/>
+                                </f:facet>
+                            </p:cellEditor>
+                        </p:column>
+
+                        <p:column headerText="Süt verimi">
+                            <p:cellEditor>
+                                <f:facet name="output">
+                                    <h:outputText value="#{dairyCowBarn.milkYield}"/>
+                                </f:facet>
+                                <f:facet name="input">
+                                    <p:inputNumber value="#{dairyCowBarn.milkYield}"
+                                                   inputStyleClass="inputMaxWidthClass"/>
+                                </f:facet>
+                            </p:cellEditor>
+                        </p:column>
+
+                        <p:column headerText="Laktasyon süresi">
+                            <p:cellEditor>
+                                <f:facet name="output">
+                                    <h:outputText value="#{dairyCowBarn.lactationPeriod}"/>
+                                </f:facet>
+                                <f:facet name="input">
+                                    <p:inputNumber value="#{dairyCowBarn.lactationPeriod}"
+                                                   required="true"
+                                                   requiredMessage="Laktasyon süresi giriniz"
+                                                   symbol=" gün / yıl"
+                                                   symbolPosition="s"
+                                                   inputStyleClass="inputMaxWidthClass"/>
+                                </f:facet>
+                            </p:cellEditor>
+                        </p:column>
+
+                        <p:column headerText="Düzenle" style="width: calc(56px + 0.5rem)" >
+                            <p:rowEditor editTitle="Edit Row"
+                                         cancelTitle="Cancel Edit"
+                                         saveTitle="Save Row"/>
+                        </p:column>
+
+                        <p:column headerText="Hayvanlar" style="width: 78px;text-align: right">
+                            <p:button href="/secured/animal/dairy-cow/count"
+                                      styleClass="rounded-button ui-button-flat"
+                                      icon="fa-solid fa-right-long">
+                                <f:param name="barnId"
+                                         value="#{dairyCowBarn.barnId}"/>
+                            </p:button>
+                        </p:column>
+                    </p:dataTable>
+
+                    <p:outputPanel style="display: flex;">
+                        <p:commandButton value="Yeni ahır ekle"
+                                         process="@this"
+                                         styleClass="m-1"
+                                         update="dairyCowTable"
+                                         action="#{dairyCowBarnController.onAddNew}"
+                                         oncomplete="PF('dairyCowTableWidget').showRowEditors(PF('dairyCowTableWidget').tbody.children().last());"/>
+                    </p:outputPanel>
+                </h:form>
+            </div>
+        </div>
+        <div class="grid">
+            <div class="col">
+                <br/>
+                <p>Sorunuz mu var? <a href="#">Buraya</a> basın ve bize bildirin.</p>
+            </div>
+        </div>
+    </ui:define>
+</ui:composition>

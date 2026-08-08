@@ -16,75 +16,91 @@
         <div class="grid">
             <div class="col">
                 <h:form class="card">
-                    <h2>Sisteme kayıt olun</h2>
+                    <p:growl id="growl"
+                             showDetail="true"
+                             severity="info warn error">
+                        <p:autoUpdate/>
+                    </p:growl>
+
+                    <p:focus context="@next"/>
+                    <h5 class="mt-0" style="font-weight: bold">Sisteme kayıt olun</h5>
+
                     <p>Hesabınız var mı?
                         <a href="/login">
                             Giriş yapın
                         </a>
                     </p>
 
-                    <p:growl showDetail="true"
-                             severity="info warn">
-                        <p:autoUpdate/>
-                    </p:growl>
-
-                    <p:focus context="@next"/>
-
+                    <p:divider align="center" type="dashed">
+                        <b>Zorunlu</b>
+                    </p:divider>
                     <p:panelGrid layout="flex"
-                                 columns="1">
-                        <p:outputPanel styleClass="ui-float-label">
-                            <p:inputMask id="phone"
-                                         placeholder="Telefon numaranız"
-                                         mask="(599) 999 99 99"
-                                         required="true"
-                                         requiredMessage="Telefon numaranızı uygun olarak olarak giriniz"
-                                         style="width: 200px"
-                                         validateMask="true"
-                                         validatorMessage="Telefon numaranızı uygun olarak olarak giriniz"
-                                         value="#{registerController.phone}"/>
-                            <p:outputLabel for="@previous" value="Telefon numaranız" style="margin-left: 0.3rem"/>
-                            <p:message for="phone"/>
-                        </p:outputPanel>
-                        <p:outputPanel styleClass="ui-float-label">
-                            <p:password id="pwd1"
-                                        placeholder="Şifreniz"
-                                        required="true"
-                                        requiredMessage="Şifreniz uygun olarak olarak giriniz"
-                                        match="pwd2"
-                                        feedback="true"
-                                        toggleMask="true"
-                                        label="Password 1"
-                                        promptLabel="Lütfen şifre giriniz"
-                                        weakLabel="Zayıf"
-                                        goodLabel="Orta"
-                                        strongLabel="Güçlü"
-                                        value="#{registerController.password}">
-                                <f:validateRegex pattern="#{registerController.regexPattern}" />
-                            </p:password>
-                            <p:outputLabel for="@previous" value="Şifreniz" style="margin-left: 0.3rem"/>
-                            <p:message for="pwd1"/>
-                        </p:outputPanel>
-                        <p:outputPanel styleClass="ui-float-label">
-                            <p:password id="pwd2"
-                                        placeholder="Şifre tekrar"
-                                        required="true"
-                                        requiredMessage="Şifre tekrarını uygun olarak olarak giriniz"
-                                        toggleMask="true"
-                                        label="Password 2"
-                                        value="#{registerController.password}"/>
-                            <p:outputLabel for="@previous" value="Şifre tekrar" style="margin-left: 0.3rem"/>
-                            <p:message for="pwd2"/>
-                        </p:outputPanel>
+                                 contentStyle="align-items: center;"
+                                 contentStyleClass="ui-fluid"
+                                 columnClasses="col-12 md:col-3, col-12 md:col-9"
+                                 columns="2">
+                        <p:outputLabel for="@next"
+                                       value="Telefon numaranız"/>
+                        <p:inputMask mask="(599) 999 99 99"
+                                     required="true"
+                                     requiredMessage="Telefon numaranızı uygun olarak olarak giriniz"
+                                     validateMask="true"
+                                     validatorMessage="Telefon numaranızı uygun olarak olarak giriniz"
+                                     value="#{registerController.phone}"/>
+
+                        <p:outputLabel for="@next"
+                                       value="Şifreniz"/>
+                        <p:password id="pwd1"
+                                    required="true"
+                                    requiredMessage="Şifreniz uygun olarak olarak giriniz"
+                                    match="pwd2"
+                                    feedback="true"
+                                    toggleMask="true"
+                                    label="Password 1"
+                                    promptLabel="Lütfen şifre giriniz"
+                                    weakLabel="Zayıf"
+                                    goodLabel="Orta"
+                                    strongLabel="Güçlü"
+                                    value="#{registerController.password}">
+                            <f:validateRegex pattern="#{registerController.regexPattern}" />
+                        </p:password>
+
+                        <p:outputLabel for="@next"
+                                       value="Şifre tekrar"/>
+                        <p:password id="pwd2"
+                                    required="true"
+                                    requiredMessage="Şifre tekrarını uygun olarak olarak giriniz"
+                                    toggleMask="true"
+                                    label="Password 2"
+                                    value="#{registerController.password}"/>
                     </p:panelGrid>
-                    <p:commandButton value="Kayıt ol"
-                                     icon="pi pi-check"
-                                     style="width: 200px"
-                                     process="@form"
-                                     update="@form"
-                                     action="#{registerController.register}"
-                                     validateClient="true"
-                                     styleClass="m-2" />
+
+                    <p:divider align="center" type="dashed">
+                        <b>İsteğe bağlı</b>
+                    </p:divider>
+                    <p:panelGrid layout="flex"
+                                 contentStyle="align-items: center;"
+                                 contentStyleClass="ui-fluid"
+                                 columnClasses="col-12 md:col-3, col-12 md:col-9"
+                                 columns="2">
+
+                    </p:panelGrid>
+
+                    <p:outputPanel style="display: flex; justify-content: space-between;">
+                        <p:outputLabel/>
+                        <p:commandButton value="Kayıt ol"
+                                         icon="pi pi-check"
+                                         process="@form"
+                                         update="@form"
+                                         action="#{registerController.register}"
+                                         validateClient="true"
+                                         styleClass="m-2" />
+                    </p:outputPanel>
                 </h:form>
+            </div>
+        </div>
+        <div class="grid">
+            <div class="col">
                 <br/>
                 <p>Sorunuz mu var? <a href="#">Buraya</a> basın ve bize bildirin.</p>
             </div>

@@ -1,0 +1,328 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="jakarta.faces.html"
+                xmlns:f="jakarta.faces.core"
+                xmlns:ui="jakarta.faces.facelets"
+                xmlns:p="http://primefaces.org/ui"
+                template="/templates/template.xhtml">
+
+    <ui:define name="title">Büyükbaş Süt Üretimi</ui:define>
+
+    <ui:define name="metadata">
+        <f:metadata>
+            <f:viewParam name="barnId"
+                         value="#{dairyCowResultController.barnId}"/>
+            <f:viewAction action="#{dairyCowResultController.fillDataTableValues}"/>
+        </f:metadata>
+    </ui:define>
+
+    <ui:define name="content">
+        <div class="grid">
+            <div class="col">
+                <div class="card">
+                    <p:steps activeIndex="6">
+                        <p:menuitem value="Ahırlar"/>
+                        <p:menuitem value="Hayvanlar"/>
+                        <p:menuitem value="Yemler"/>
+                        <p:menuitem value="Yem rasyonu"/>
+                        <p:menuitem value="Giderler"/>
+                        <p:menuitem value="Gelirler"/>
+                        <p:menuitem value="Sonuçlar"/>
+                    </p:steps>
+                </div>
+            </div>
+        </div>
+        <div class="grid">
+            <div class="col">
+                <h:form class="card">
+                    <h5 class="mt-0" style="font-weight: bold">Büyükbaş süt hayvan hesaplamaları</h5>
+
+                    <p:growl id="growl"
+                             showDetail="true"
+                             severity="info warn error">
+                        <p:autoUpdate/>
+                    </p:growl>
+
+                    <p:dataTable var="countCalc"
+                                 stripedRows="true"
+                                 size="small"
+                                 reflow="true"
+                                 value="#{dairyCowResultController.countYearCalculationList}">
+                        <p:column headerText="İşletmede Mevcut Hayvan varlığı">
+                            <h:outputText value="#{msg[countCalc.cowType]}"/>
+                        </p:column>
+                        <p:column headerText="Yıl Sonu Hayvan Varlığı">
+                            <h:outputText value="#{countCalc.endYearCount}"/>
+                        </p:column>
+                        <p:column headerText="Yıl İçinde Ortalama Beslenecek Hayvan">
+                            <h:outputText value="#{countCalc.averageFeedCount}"/>
+                        </p:column>
+                        <p:column headerText="Başlangıç Ahır Kapasite Kullanım Oran (%)">
+                            <h:outputText value="#{countCalc.barnUsageRate}"/>
+                        </p:column>
+                        <p:column headerText="Yıl sonu Ahır Kapasite Kullanım Oran (%)">
+                            <h:outputText value="#{countCalc.endYearBarnUsageRate}"/>
+                        </p:column>
+                    </p:dataTable>
+                </h:form>
+            </div>
+        </div>
+        <div class="grid">
+            <div class="col-12 md:col-6 xl:col-6">
+                <div class="card ">
+                    <span style="font-weight: bold">
+                        Yıl Sonu Toplam Büyükbaş Hayvan Sayısı:<br/>
+                    </span>#{dairyCowResultController.getUserDairyCowBarn().endYearTotalCount}
+                </div>
+            </div>
+            <div class="col-12 md:col-6 xl:col-6">
+                <div class="card">
+                    <span style="font-weight: bold">
+                        Yıl İçinde Ortalama Beslenecek Büyükbaş Hayvan Sayısı:<br/>
+                    </span>#{dairyCowResultController.getUserDairyCowBarn().averageFeedTotalCount}
+                </div>
+            </div>
+        </div>
+
+        <div class="grid">
+            <div class="col-12 md:col-6 xl:col-3">
+                <div class="card">
+                    <span style="font-weight: bold">
+                        Başlangıç Ahır Kapasite Kullanım Oran (%):<br/>
+                    </span>#{dairyCowResultController.getUserDairyCowBarn().totalCount / dairyCowResultController.getUserDairyCowBarn().barnCapacity * 100}
+                </div>
+            </div>
+            <div class="col-12 md:col-6 xl:col-3">
+                <div class="card">
+                    <span style="font-weight: bold">
+                        Yıl sonu Ahır Kapasite Kullanım Oran (%):<br/>
+                    </span>#{dairyCowResultController.getUserDairyCowBarn().endYearTotalCount / dairyCowResultController.getUserDairyCowBarn().barnCapacity * 100}
+                </div>
+            </div>
+            <div class="col-12 md:col-6 xl:col-3">
+                <div class="card ">
+                    <span style="font-weight: bold">
+                        Başlangıç  Sağmal İnek  Kapasite Kullanım Oran (%):<br/>
+                    </span>#{dairyCowResultController.countYearCalculationList.get(0).milkingUsageRate}
+                </div>
+            </div>
+            <div class="col-12 md:col-6 xl:col-3">
+                <div class="card">
+                    <span style="font-weight: bold">
+                        Yıl Sonu Sağmal İnek  Kapasite Kullanım Oran (%):<br/>
+                    </span>#{dairyCowResultController.countYearCalculationList.get(0).endYearMilkingUsageRate}
+                </div>
+            </div>
+        </div>
+
+        <div class="grid">
+            <div class="col">
+                <h:form class="card">
+                    <h5 class="mt-0" style="font-weight: bold">Büyükbaş süt yem hesaplamaları</h5>
+
+                    <p:dataTable var="feedCalc"
+                                 stripedRows="true"
+                                 size="small"
+                                 reflow="true"
+                                 value="#{dairyCowResultController.feedStockCalculationList}">
+                        <p:column headerText="İşletmenin Kullandığı Yemler">
+                            <h:outputText value="#{feedCalc.feedName}"/>
+                        </p:column>
+                        <p:column headerText="Ürün Fiyatları (TL)">
+                            <h:outputText value="#{feedCalc.feedPrice}"/>
+                        </p:column>
+                        <p:column headerText="Ürün Maliyeti (TL/Gün)">
+                            <h:outputText value="#{feedCalc.feedCostDaily}"/>
+                        </p:column>
+                        <p:column headerText="Laktasyon Süresince Yem maliyet (TL/Lakts)">
+                            <h:outputText value="#{feedCalc.lactationCost}"/>
+                        </p:column>
+                        <p:column headerText="Kuru Dönem Süresince Yem maliyet (TL/Kuru)">
+                            <h:outputText value="#{feedCalc.roughageCost}"/>
+                        </p:column>
+                        <p:column headerText="Alış Miktarı">
+                            <h:outputText value="#{feedCalc.feedPurchaseAmount}"/>
+                        </p:column>
+                        <p:column headerText="Alış Tarihi">
+                            <h:outputText value="#{feedCalc.feedPurchaseDate}"/>
+                        </p:column>
+                        <p:column headerText="Yıllık Yem İhtiyacı">
+                            <h:outputText value="#{feedCalc.feedNeedYearly}"/>
+                        </p:column>
+                        <p:column headerText="Günlük Kullanım (Kg)">
+                            <h:outputText value="#{feedCalc.feedNeedDaily}"/>
+                        </p:column>
+                        <p:column headerText="Toplam Kullanm Süresi (Gün)">
+                            <h:outputText value="#{feedCalc.feedUsageDays}"/>
+                        </p:column>
+                        <p:column headerText="Bitiş Tarihi ">
+                            <h:outputText value="#{feedCalc.feedStockEndDate}"/>
+                        </p:column>
+                        <p:column headerText="Kalan Miktar">
+                            <h:outputText value="#{feedCalc.leftAmount}"/>
+                        </p:column>
+                    </p:dataTable>
+                </h:form>
+            </div>
+        </div>
+
+        <div class="grid">
+            <div class="col-12 md:col-6 xl:col-3">
+                <div class="card ">
+                    <span style="font-weight: bold">
+                        Bir İnek Laktaston Toplam Yem Maliyeti (TL/Laktaston):<br/>
+                    </span>#{dairyCowResultController.feedTotalView.totalLactationCost}
+                </div>
+            </div>
+            <div class="col-12 md:col-6 xl:col-3">
+                <div class="card">
+                    <span style="font-weight: bold">
+                        Bir İnek Kuru Dönem Toplam Yem Maliyeti (TL/Kuru):<br/>
+                    </span>#{dairyCowResultController.feedTotalView.totalRoughageCost}
+                </div>
+            </div>
+            <div class="col-12 md:col-6 xl:col-3">
+                <div class="card">
+                    <span style="font-weight: bold">
+                        Yıllık 1 Hayvan Yem Maliyeti:<br/>
+                    </span>#{dairyCowResultController.feedTotalView.totalCostPerAnimal}
+                </div>
+            </div>
+            <div class="col-12 md:col-6 xl:col-3">
+                <div class="card">
+                    <span style="font-weight: bold">
+                        İşlemenin Yıllık Yem Maliyeti (TL/Yıl):<br/>
+                    </span>#{dairyCowResultController.feedTotalView.totalCostPerBarn}
+                </div>
+            </div>
+        </div>
+
+        <div class="grid">
+            <div class="col">
+                <h:form id="depreciationListForm"
+                        class="card">
+                    <h5 class="mt-0" style="font-weight: bold">Büyükbaş süt işletme giderleri</h5>
+
+                    <p:dataTable var="depreciation"
+                                 value="#{dairyCowResultController.depreciationView}">
+                        <p:column headerText="Besleme Gideri (yıllık)">
+                            <h:outputText value="#{depreciation.yearlyFeedCost}"/>
+                        </p:column>
+                        <p:column headerText="Bakım İşçiliği Gideri (yıllık)">
+                            <h:outputText value="#{depreciation.yearlyMaintenanceCost}"/>
+                        </p:column>
+                        <p:column headerText="Enerji Su Gideri (Yıllık)">
+                            <h:outputText value="#{depreciation.yearlyEnergyCost}"/>
+                        </p:column>
+                        <p:column headerText="Veterner Hizmetleri Gideri (Yıllık)">
+                            <h:outputText value="#{depreciation.yearlyVeterinaryCost}"/>
+                        </p:column>
+                        <p:column headerText="Suni Tohumlama Gideri (yıllık)">
+                            <h:outputText value="#{depreciation.yearlyInseminationCost}"/>
+                        </p:column>
+                        <p:column headerText="Diğer Giderler (%1)">
+                            <h:outputText value="#{depreciation.yearlyOtherCost}"/>
+                        </p:column>
+                        <p:column headerText="Hayvan Sigorta Giderleri">
+                            <h:outputText value="#{depreciation.yearlyInsuranceCost}"/>
+                        </p:column>
+                        <p:column headerText="İşletme Sermayesi Faizi Gideri (Yıllık)">
+                            <h:outputText value="#{depreciation.yearlyInterestCost}"/>
+                        </p:column>
+
+                    </p:dataTable>
+                </h:form>
+            </div>
+        </div>
+
+        <div class="grid">
+            <div class="col-12 md:col-6 xl:col-4">
+                <div class="card ">
+                    <span style="font-weight: bold">
+                        Hayvan amortisman Gideri (ortalama yıllık):<br/>
+                    </span>#{dairyCowResultController.depreciationView.animalAmortisationPrice}
+                </div>
+            </div>
+            <div class="col-12 md:col-6 xl:col-4">
+                <div class="card">
+                    <span style="font-weight: bold">
+                        Ahır Amortisman Gideri (yıllık):<br/>
+                    </span>#{dairyCowResultController.depreciationView.barnAmortisationPrice}
+                </div>
+            </div>
+            <div class="col-12 md:col-12 xl:col-4">
+                <div class="card">
+                    <span style="font-weight: bold">
+                        Toplam Gider (Yıl):<br/>
+                    </span>#{dairyCowResultController.depreciationView.yearlyTotalCost}
+                </div>
+            </div>
+        </div>
+
+        <div class="grid">
+            <div class="col">
+                <h:form styleClass="card">
+                    <h5 class="mt-0" style="font-weight: bold">Büyükbaş süt işletme gelirleri</h5>
+
+                    <p:dataTable var="incomeValue"
+                                 value="#{dairyCowResultController.incomeCalculationTableList}">
+                        <p:column headerText="Gelir Kalemleri">
+                            <h:outputText rendered="#{incomeValue.groupLabel ne null}"
+                                          value="#{incomeValue.groupLabel} - "/>
+                            <h:outputText value="#{incomeValue.incomeLabel}"/>
+                        </p:column>
+                        <p:column headerText="Değer (TL)">
+                            <h:outputText value="#{incomeValue.incomeValue}"/>
+                        </p:column>
+
+                    </p:dataTable>
+
+                </h:form>
+            </div>
+        </div>
+
+        <div class="grid">
+            <div class="col-12 md:col-6 xl:col-4">
+                <div class="card ">
+                    <span style="font-weight: bold">
+                        Toplam Brüt  Gelir:<br/>
+                    </span>#{dairyCowResultController.incomeCalculationCardList.get(0).incomeValue}
+                </div>
+            </div>
+            <div class="col-12 md:col-6 xl:col-4">
+                <div class="card">
+                    <span style="font-weight: bold">
+                        Toplam Gider:<br/>
+                    </span>#{dairyCowResultController.incomeCalculationCardList.get(1).incomeValue}
+                </div>
+            </div>
+            <div class="col-12 md:col-12 xl:col-4">
+                <div class="card">
+                    <span style="font-weight: bold">
+                        Net Gelir (TL):<br/>
+                    </span>#{dairyCowResultController.incomeCalculationCardList.get(2).incomeValue}
+                </div>
+            </div>
+            <div class="col-12">
+                <p:outputPanel style="display: flex; justify-content: space-between;">
+                    <p:button value="Büyükbaş süt gelirleri"
+                              styleClass="m-1"
+                              iconPos="left"
+                              href="/secured/animal/dairy-cow/income"
+                              icon="fa-solid fa-angles-left">
+                        <f:param name="barnId"
+                                 value="#{dairyCowResultController.barnId}"/>
+                    </p:button>
+                    <p:button value="Başa dön"
+                              styleClass="m-1"
+                              iconPos="right"
+                              href="/secured/animal/dairy-cow/barn"
+                              icon="fa-solid fa-angles-right"/>
+                </p:outputPanel>
+            </div>
+            <div class="col-12">
+                <br/>
+                <p>Sorunuz mu var? <a href="#">Buraya</a> basın ve bize bildirin.</p>
+            </div>
+        </div>
+    </ui:define>
+</ui:composition>

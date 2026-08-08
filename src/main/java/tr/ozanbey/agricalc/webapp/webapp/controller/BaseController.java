@@ -1,6 +1,7 @@
 package tr.ozanbey.agricalc.webapp.webapp.controller;
 
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -9,6 +10,9 @@ import tr.ozanbey.agricalc.webapp.webapp.security.CurrentUser;
 import java.io.Serializable;
 
 public abstract class BaseController implements Serializable {
+
+    @Autowired
+    public NavigationController navigationController;
 
     public static CurrentUser getCurrentUser() {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();

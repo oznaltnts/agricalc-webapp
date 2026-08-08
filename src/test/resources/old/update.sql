@@ -1,10 +1,11 @@
 ALTER TABLE cities
     ADD COLUMN diesel_price DECIMAL(15,3) NOT NULL DEFAULT 75 AFTER neighbors_ids,
     ADD COLUMN fuel_price DECIMAL(15,3) NOT NULL DEFAULT 80 AFTER diesel_price,
-    ADD COLUMN electricity DOUBLE NOT NULL DEFAULT 4 AFTER fuel_price;
+    ADD COLUMN electricity DECIMAL(15,3) NOT NULL DEFAULT 4 AFTER fuel_price;
 
 ALTER TABLE user_plantation_plans
-    ADD COLUMN soil_prep_cost DECIMAL(15,3) NULL DEFAULT NULL AFTER gross_income;
+    ADD COLUMN total_expense DECIMAL(15,3) NULL DEFAULT NULL AFTER gross_income,
+    ADD COLUMN soil_prep_cost DECIMAL(15,3) NULL DEFAULT NULL AFTER total_expense;
 ALTER TABLE user_plantation_plans
     ADD COLUMN planting_cost DECIMAL(15,3) NULL DEFAULT NULL AFTER soil_prep_cost,
     ADD COLUMN fertilizer_cost DECIMAL(15,3) NULL DEFAULT NULL AFTER planting_cost,

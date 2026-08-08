@@ -559,7 +559,6 @@ CREATE TABLE `user_plant_parcels`
     `electric_source` VARCHAR(255)   NULL     DEFAULT NULL,
     PRIMARY KEY (`id`),
     UNIQUE (`user_id`, `parcel_name`),
-    ##TODO  UNIQUE (`ada_number`,`pafta_number`),
     CONSTRAINT `FK_user_plant_parcels_users` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`),
     INDEX idx_user_plant_parcels (`user_id`)
 )

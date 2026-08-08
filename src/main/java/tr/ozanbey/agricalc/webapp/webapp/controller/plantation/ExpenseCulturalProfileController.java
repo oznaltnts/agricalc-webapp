@@ -102,7 +102,8 @@ public class ExpenseCulturalProfileController extends PlanProfileController {
     private static final List<Long> MESH_COVER_QUESTIONS = List.of(188L);
 
     private boolean checkPreviousQuestionAnswerAccordingly(PlantationProductQuestion question) {
-        Optional<PlantationProductQuestion> optionalQuestion = super.getParcelPlan().getPlantParcel().getProduct().getProductQuestionList().stream().filter(pq -> MESH_COVER_QUESTIONS.contains(pq.getPlantationQuestion().getId())).findFirst();
+        Optional<PlantationProductQuestion> optionalQuestion = super.getParcelPlan().getPlantParcel().getProduct().getProductQuestionList().stream()
+                .filter(pq -> MESH_COVER_QUESTIONS.contains(pq.getPlantationQuestion().getId())).findFirst();
         if (A_MESH_QUESTIONS.contains(question.getPlantationQuestion().getId())) {
             return optionalQuestion.map(plantationProductQuestion -> plantationProductQuestion.getSelectedAnswerId() != null && List.of(146L).contains(plantationProductQuestion.getSelectedAnswerId())).orElse(true);
         }
@@ -113,7 +114,7 @@ public class ExpenseCulturalProfileController extends PlanProfileController {
     private CostCalculationService costCalculationService;
 
     public void nextSaveExpense() throws IOException {
-        super.getParcelPlan().setCulturalCost(costCalculationService.calculateCulturalWorkCost(super.getParcelPlan().getPlantParcel().getProduct().getProductQuestionList(), super.getParcelPlan().getId()));
+        super.getParcelPlan().setCulturalCost(costCalculationService.calculateCulturalWorkCost(super.getParcelPlan().getPlantParcel().getProduct().getProductQuestionList(), super.getParcelPlan().getId(), super.getParcelPlan().getPlantParcel().getCity()));
         goToNextPage(EnumPlantationQuestionType.EXPENSE_CULTURAL);
     }
 

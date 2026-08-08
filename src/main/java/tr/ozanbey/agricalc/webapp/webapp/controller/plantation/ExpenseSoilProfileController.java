@@ -103,7 +103,7 @@ public class ExpenseSoilProfileController extends PlanProfileController {
     private CostCalculationService costCalculationService;
 
     public void nextSaveExpense() throws IOException {
-        super.getParcelPlan().setSoilPrepCost(costCalculationService.calculateSoilPrep(super.getParcelPlan().getPlantParcel().getProduct().getProductQuestionList(), super.getParcelPlan().getId()));
+        super.getParcelPlan().setSoilPrepCost(costCalculationService.calculateSoilPrep(super.getParcelPlan().getPlantParcel().getProduct().getProductQuestionList(), super.getParcelPlan().getId(), super.getParcelPlan().getPlantParcel().getCity()));
         goToNextPage(EnumPlantationQuestionType.EXPENSE_SOIL);
     }
 

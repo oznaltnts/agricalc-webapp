@@ -26,5 +26,17 @@ public interface PlantationProductQuestionRepository extends JpaRepository<Plant
                                                                                                            @Param("status") EnumStatus status,
                                                                                                            @Param("questionType") EnumPlantationQuestionType questionType);
 
-
+    @Query("""
+                SELECT DISTINCT ppq
+                FROM PlantationProductQuestion ppq
+                LEFT JOIN UserPlantParcelAnswer uppa ON uppa.productQuestion.id = ppq.id AND uppa.plantParcel.id = :plantParcelId
+                WHERE ppq.plantationProduct.id = :productId
+                AND ppq.plantationQuestion.status = :status
+                AND ppq.plantationQuestion.questionType = :questionType
+                AND uppa.answerValue IS NULL
+            """)
+    List<PlantationProductQuestion> nextQuestionQuery(@Param("plantParcelId") Long plantParcelId,
+                                                      @Param("productId") Long productId,
+                                                      @Param("status") EnumStatus status,
+                                                      @Param("questionType") EnumPlantationQuestionType questionType);
 }

@@ -9,8 +9,12 @@ import tr.ozanbey.agricalc.webapp.service.enumtype.EnumStatus;
 import tr.ozanbey.agricalc.webapp.service.enumtype.plantation.EnumPlantationQuestionType;
 import tr.ozanbey.agricalc.webapp.service.enumtype.plantation.EnumQuestionAnswerType;
 import tr.ozanbey.agricalc.webapp.service.enumtype.plantation.EnumQuestionRecordType;
-import tr.ozanbey.agricalc.webapp.service.repository.plantation.*;
+import tr.ozanbey.agricalc.webapp.service.repository.plantation.UserPlantParcelAnswerRepository;
+import tr.ozanbey.agricalc.webapp.service.repository.plantation.UserPlantParcelPlanAnswerRepository;
+import tr.ozanbey.agricalc.webapp.service.repository.plantation.UserPlantParcelPlanRepository;
+import tr.ozanbey.agricalc.webapp.service.repository.plantation.UserPlantParcelRepository;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
@@ -27,9 +31,6 @@ public class UserPlantParcelPlanService {
     private UserPlantParcelRepository plantParcelRepository;
 
     @Autowired
-    private PlantationProductRepository plantationProductRepository;
-
-    @Autowired
     private UserPlantParcelPlanAnswerRepository planAnswerRepository;
 
     @Autowired
@@ -43,6 +44,7 @@ public class UserPlantParcelPlanService {
     public void createNewPlan(Long parcelId, LocalDate planStartDate) {
         UserPlantParcelPlan plan = new UserPlantParcelPlan();
         plan.setStatus(EnumStatus.ACTIVE);
+        plan.setTotalExpense(BigDecimal.ZERO);
         plan.setPlantParcel(plantParcelRepository.getReferenceById(parcelId));
         plan.setPlanStartDate(planStartDate);
         parcelPlanRepository.save(plan);
@@ -182,7 +184,34 @@ public class UserPlantParcelPlanService {
     }
 
     @Transactional
-    public void updatePlantParcelPlanIncome(UserPlantParcelPlan parcelPlan) {
+    public void updatePlantParcelPlan(UserPlantParcelPlan parcelPlan) {
+        BigDecimal totalCost = BigDecimal.ZERO;
+        if (parcelPlan.getSoilPrepCost() != null)
+            totalCost = totalCost.add(parcelPlan.getSoilPrepCost());
+        if (parcelPlan.getPlantingCost() != null)
+            totalCost = totalCost.add(parcelPlan.getPlantingCost());
+        if (parcelPlan.getFertilizerCost() != null)
+            totalCost = totalCost.add(parcelPlan.getFertilizerCost());
+        if (parcelPlan.getWeedControlCost() != null)
+            totalCost = totalCost.add(parcelPlan.getWeedControlCost());
+        if (parcelPlan.getIrrigationCost() != null)
+            totalCost = totalCost.add(parcelPlan.getIrrigationCost());
+        if (parcelPlan.getCulturalCost() != null)
+            totalCost = totalCost.add(parcelPlan.getCulturalCost());
+        if (parcelPlan.getProtectionCost() != null)
+            totalCost = totalCost.add(parcelPlan.getProtectionCost());
+        if (parcelPlan.getHarvestCost() != null)
+            totalCost = totalCost.add(parcelPlan.getHarvestCost());
+        if (parcelPlan.getBlendCost() != null)
+            totalCost = totalCost.add(parcelPlan.getBlendCost());
+        if (parcelPlan.getDryingCost() != null)
+            totalCost = totalCost.add(parcelPlan.getDryingCost());
+        if (parcelPlan.getBalingCost() != null)
+            totalCost = totalCost.add(parcelPlan.getBalingCost());
+        if (parcelPlan.getTransportationCost() != null)
+            totalCost = totalCost.add(parcelPlan.getTransportationCost());
+
+        parcelPlan.setTotalExpense(totalCost);
         parcelPlanRepository.save(parcelPlan);
     }
 }

@@ -116,7 +116,7 @@ public class ExpensePackagingProfileController extends PlanProfileController {
     private CostCalculationService costCalculationService;
 
     public void nextSaveExpense() throws IOException {
-        super.getParcelPlan().setTransportationCost(costCalculationService.calculateTransportPackagingCost(super.getParcelPlan().getPlantParcel().getProduct().getProductQuestionList(), super.getParcelPlan().getId()));
+        super.getParcelPlan().setTransportationCost(costCalculationService.calculateTransportPackagingCost(super.getParcelPlan().getPlantParcel().getProduct().getProductQuestionList(), super.getParcelPlan().getId(), super.getParcelPlan().getPlantParcel().getCity()));
         goToNextPage(EnumPlantationQuestionType.EXPENSE_PACKAGING);
     }
 

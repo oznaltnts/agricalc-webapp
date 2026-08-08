@@ -20,7 +20,6 @@ import tr.ozanbey.agricalc.webapp.service.service.plantation.UserPlantParcelPlan
 
 import java.io.IOException;
 import java.util.List;
-import java.util.Optional;
 
 @Component
 @ViewScoped
@@ -88,29 +87,125 @@ public class ExpenseDryingProfileController extends PlanProfileController {
         return false;
     }
 
-    private static final List<Long> DRYING_QUESTIONS = List.of(256L);
-
-    private static final List<Long> ONE_DRYING_QUESTIONS = List.of(259L, 260L, 261L, 262L, 263L, 264L, 265L, 266L, 269L);
+    private static final List<Long> A_DRYING_QUESTIONS = List.of(257L, 258L, 259L, 260L, 261L, 262L, 263L, 264L, 265L, 266L, 267L, 268L, 269L, 270L, 271L, 272L);
+    private static final List<Long> ONE_DRYING_QUESTIONS = List.of(259L, 260L, 261L, 262L, 263L, 264L, 265L, 266L, 269L, 270L, 271L, 272L);
     private static final List<Long> TWO_DRYING_QUESTIONS = List.of(267L, 268L);
-    private static final List<Long> DRYING_PERFORM_QUESTIONS = List.of(257L, 258L);
+    private static final List<Long> ONE_A_DRYING_QUESTIONS = List.of(270L, 271L, 272L);
 
-    private static final List<Long> MATERIAL_QUESTIONS = List.of(270L, 271L, 272L);
-    private static final List<Long> DIPPING_MATERIAL_QUESTIONS = List.of(269L);
+    private boolean checkPreviousQuestionAnswerAccordingly(PlantationProductQuestion question) {
 
-    private boolean checkPreviousQuestionAnswerAccordingly(PlantationProductQuestion question) {//TODO ilk soruya cevap vermediyse hiç birini sorma
-        Optional<PlantationProductQuestion> optionalQuestion = super.getParcelPlan().getPlantParcel().getProduct().getProductQuestionList().stream().filter(pq -> DRYING_QUESTIONS.contains(pq.getPlantationQuestion().getId())).findFirst();
-        if (DRYING_PERFORM_QUESTIONS.contains(question.getPlantationQuestion().getId())) {
-            return optionalQuestion.map(plantationProductQuestion -> plantationProductQuestion.getSelectedAnswerId() != null && List.of(185L).contains(plantationProductQuestion.getSelectedAnswerId())).orElse(true);
-        }
-        optionalQuestion = super.getParcelPlan().getPlantParcel().getProduct().getProductQuestionList().stream().filter(pq -> DRYING_PERFORM_QUESTIONS.contains(pq.getPlantationQuestion().getId())).findFirst();
-        if (ONE_DRYING_QUESTIONS.contains(question.getPlantationQuestion().getId())) {
-            return optionalQuestion.map(plantationProductQuestion -> plantationProductQuestion.getSelectedAnswerId() != null && List.of(187L, 189L).contains(plantationProductQuestion.getSelectedAnswerId())).orElse(true);
-        } else if (TWO_DRYING_QUESTIONS.contains(question.getPlantationQuestion().getId())) {
-            return optionalQuestion.map(plantationProductQuestion -> plantationProductQuestion.getSelectedAnswerId() != null && List.of(188L, 190L).contains(plantationProductQuestion.getSelectedAnswerId())).orElse(true);
-        }
-        optionalQuestion = super.getParcelPlan().getPlantParcel().getProduct().getProductQuestionList().stream().filter(pq -> DIPPING_MATERIAL_QUESTIONS.contains(pq.getPlantationQuestion().getId())).findFirst();
-        if (MATERIAL_QUESTIONS.contains(question.getPlantationQuestion().getId())) {
-            return optionalQuestion.map(plantationProductQuestion -> plantationProductQuestion.getSelectedAnswerId() != null && List.of(191L).contains(plantationProductQuestion.getSelectedAnswerId())).orElse(true);
+        List<PlantationProductQuestion> questionList = super.getParcelPlan().getPlantParcel().getProduct().getProductQuestionList().stream()
+                .filter(pq -> List.of(256L).contains(pq.getPlantationQuestion().getId())).toList();
+        if (A_DRYING_QUESTIONS.contains(question.getPlantationQuestion().getId())) {
+            if (questionList.isEmpty()) {
+                List<PlantationProductQuestion> subQuestionList = super.getParcelPlan().getPlantParcel().getProduct().getProductQuestionList().stream()
+                        .filter(spq -> List.of(257L, 258L).contains(spq.getPlantationQuestion().getId())).toList();
+                if (ONE_DRYING_QUESTIONS.contains(question.getPlantationQuestion().getId())) {
+                    if (subQuestionList.isEmpty()) {
+                        List<PlantationProductQuestion> subSubQuestionList = super.getParcelPlan().getPlantParcel().getProduct().getProductQuestionList().stream()
+                                .filter(sspq -> List.of(269L).contains(sspq.getPlantationQuestion().getId())).toList();
+                        if (ONE_A_DRYING_QUESTIONS.contains(question.getPlantationQuestion().getId())) {
+                            if (subSubQuestionList.isEmpty()) {
+                                return true;
+                            }
+                            for (PlantationProductQuestion sspq : subSubQuestionList) {
+                                if (sspq.getSelectedAnswerId() != null && List.of(191L).contains(sspq.getSelectedAnswerId())) {
+                                    return true;
+                                }
+                            }
+                            return false;
+                        }
+                        return true;
+                    }
+                    for (PlantationProductQuestion spq : subQuestionList) {
+                        if (spq.getSelectedAnswerId() != null && List.of(187L, 189L).contains(spq.getSelectedAnswerId())) {
+                            List<PlantationProductQuestion> subSubQuestionList = super.getParcelPlan().getPlantParcel().getProduct().getProductQuestionList().stream()
+                                    .filter(sspq -> List.of(269L).contains(sspq.getPlantationQuestion().getId())).toList();
+                            if (ONE_A_DRYING_QUESTIONS.contains(question.getPlantationQuestion().getId())) {
+                                if (subSubQuestionList.isEmpty()) {
+                                    return true;
+                                }
+                                for (PlantationProductQuestion sspq : subSubQuestionList) {
+                                    if (sspq.getSelectedAnswerId() != null && List.of(191L).contains(sspq.getSelectedAnswerId())) {
+                                        return true;
+                                    }
+                                }
+                                return false;
+                            }
+                            return true;
+                        }
+                    }
+                    return false;
+                }
+                if (TWO_DRYING_QUESTIONS.contains(question.getPlantationQuestion().getId())) {
+                    if (subQuestionList.isEmpty()) {
+                        return true;
+                    }
+                    for (PlantationProductQuestion spq : subQuestionList) {
+                        if (spq.getSelectedAnswerId() != null && List.of(188L, 190L).contains(spq.getSelectedAnswerId())) {
+                            return true;
+                        }
+                    }
+                    return false;
+                }
+                return true;
+            }
+            for (PlantationProductQuestion pq : questionList) {
+                if (pq.getSelectedAnswerId() != null && List.of(185L).contains(pq.getSelectedAnswerId())) {
+                    List<PlantationProductQuestion> subQuestionList = super.getParcelPlan().getPlantParcel().getProduct().getProductQuestionList().stream()
+                            .filter(spq -> List.of(257L, 258L).contains(spq.getPlantationQuestion().getId())).toList();
+                    if (ONE_DRYING_QUESTIONS.contains(question.getPlantationQuestion().getId())) {
+                        if (subQuestionList.isEmpty()) {
+                            List<PlantationProductQuestion> subSubQuestionList = super.getParcelPlan().getPlantParcel().getProduct().getProductQuestionList().stream()
+                                    .filter(sspq -> List.of(269L).contains(sspq.getPlantationQuestion().getId())).toList();
+                            if (ONE_A_DRYING_QUESTIONS.contains(question.getPlantationQuestion().getId())) {
+                                if (subSubQuestionList.isEmpty()) {
+                                    return true;
+                                }
+                                for (PlantationProductQuestion sspq : subSubQuestionList) {
+                                    if (sspq.getSelectedAnswerId() != null && List.of(191L).contains(sspq.getSelectedAnswerId())) {
+                                        return true;
+                                    }
+                                }
+                                return false;
+                            }
+                            return true;
+                        }
+                        for (PlantationProductQuestion spq : subQuestionList) {
+                            if (spq.getSelectedAnswerId() != null && List.of(187L, 189L).contains(spq.getSelectedAnswerId())) {
+                                List<PlantationProductQuestion> subSubQuestionList = super.getParcelPlan().getPlantParcel().getProduct().getProductQuestionList().stream()
+                                        .filter(sspq -> List.of(269L).contains(sspq.getPlantationQuestion().getId())).toList();
+                                if (ONE_A_DRYING_QUESTIONS.contains(question.getPlantationQuestion().getId())) {
+                                    if (subSubQuestionList.isEmpty()) {
+                                        return true;
+                                    }
+                                    for (PlantationProductQuestion sspq : subSubQuestionList) {
+                                        if (sspq.getSelectedAnswerId() != null && List.of(191L).contains(sspq.getSelectedAnswerId())) {
+                                            return true;
+                                        }
+                                    }
+                                    return false;
+                                }
+                                return true;
+                            }
+                        }
+                        return false;
+                    }
+                    if (TWO_DRYING_QUESTIONS.contains(question.getPlantationQuestion().getId())) {
+                        if (subQuestionList.isEmpty()) {
+                            return true;
+                        }
+                        for (PlantationProductQuestion spq : subQuestionList) {
+                            if (spq.getSelectedAnswerId() != null && List.of(188L, 190L).contains(spq.getSelectedAnswerId())) {
+                                return true;
+                            }
+                        }
+                        return false;
+                    }
+                    return true;
+                }
+            }
+            return false;
         }
         return true;
     }
@@ -119,7 +214,7 @@ public class ExpenseDryingProfileController extends PlanProfileController {
     private CostCalculationService costCalculationService;
 
     public void nextSaveExpense() throws IOException {
-        super.getParcelPlan().setDryingCost(costCalculationService.calculateProcessDryCost(super.getParcelPlan().getPlantParcel().getProduct().getProductQuestionList(), super.getParcelPlan().getId()));
+        super.getParcelPlan().setDryingCost(costCalculationService.calculateProcessDryCost(super.getParcelPlan().getPlantParcel().getProduct().getProductQuestionList(), super.getParcelPlan().getId(), super.getParcelPlan().getPlantParcel().getCity()));
         goToNextPage(EnumPlantationQuestionType.EXPENSE_DRYING);
     }
 

@@ -13,7 +13,7 @@ public interface UserPlantParcelPlanRepository extends JpaRepository<UserPlantPa
     @EntityGraph(attributePaths = {"plantParcel.product"})
     List<UserPlantParcelPlan> findByPlantParcel_IdOrderByInsertDateDesc(Long parcelId);
 
-    @EntityGraph(attributePaths = {"plantParcel.product"})
+    @EntityGraph(attributePaths = {"plantParcel.product", "plantParcel.city"})
     Optional<UserPlantParcelPlan> findByIdAndPlantParcel_User_Id(Long id, Long userId);
 
 }

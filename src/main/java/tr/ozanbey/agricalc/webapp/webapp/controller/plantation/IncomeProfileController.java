@@ -20,6 +20,7 @@ import tr.ozanbey.agricalc.webapp.service.enumtype.plantation.EnumQuestionAnswer
 import tr.ozanbey.agricalc.webapp.service.service.plantation.IncomeCalculationService;
 import tr.ozanbey.agricalc.webapp.service.service.plantation.PlantationProductService;
 import tr.ozanbey.agricalc.webapp.service.service.plantation.UserPlantParcelPlanService;
+import tr.ozanbey.agricalc.webapp.webapp.util.JSFUtils;
 
 import java.io.IOException;
 import java.util.Arrays;
@@ -97,7 +98,7 @@ public class IncomeProfileController extends PlanProfileController {
         } else if (List.of(3L).contains(question.getPlantationQuestion().getId())) {
             return productionTechniqueList;
         } else {
-            return Arrays.stream(EnumMonth.values()).collect(Collectors.toMap(e -> Long.valueOf(e.getValue()), e -> e.name())); //TODO JSFUtils.getLocaleMessage()
+            return Arrays.stream(EnumMonth.values()).collect(Collectors.toMap(e -> Long.valueOf(e.getValue()), e -> JSFUtils.getLocaleMessage(e.name())));
         }
     }
 

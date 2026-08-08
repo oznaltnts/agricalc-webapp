@@ -84,8 +84,8 @@ public class PlanProfileController extends BaseController {
 
     protected void goToNextPage(EnumPlantationQuestionType referenceType) throws IOException {
         userPlantParcelPlanService.savePlanAnswers(parcelPlan, referenceType);
-        userPlantParcelPlanService.updatePlantParcelPlanIncome(parcelPlan);
-        for (int i = 1; i < 12 - referenceType.getValue(); i++) {
+        userPlantParcelPlanService.updatePlantParcelPlan(parcelPlan);
+        for (int i = 1; i < 13 - referenceType.getValue(); i++) {
             int checkTypeValue = referenceType.getValue() + i;
             if (navigateNewPage(checkTypeValue)) return;
         }
@@ -94,15 +94,23 @@ public class PlanProfileController extends BaseController {
 
     protected void goToPreviousPage(EnumPlantationQuestionType referenceType) throws IOException {
         userPlantParcelPlanService.savePlanAnswers(parcelPlan, referenceType);
-        for (int i = 0; i < referenceType.getValue(); i++) {
+        for (int i = 1; i < referenceType.getValue() + 1; i++) {
             int checkTypeValue = referenceType.getValue() - i;
             if (navigateNewPage(checkTypeValue)) return;
         }
         super.navigationController.redirectToUrl("/secured/plantation/parcel-plan?parcelId=" + parcelPlan.getPlantParcel().getId());
     }
 
+    protected void goToPreviousPageFromResult() throws IOException {
+        for (int i = 1; i < 14; i++) {
+            int checkTypeValue = 13 - i;
+            if (navigateNewPage(checkTypeValue)) return;
+        }
+        super.navigationController.redirectToUrl("/secured/plantation/parcel-plan?parcelId=" + parcelPlan.getPlantParcel().getId());
+    }
+
     private boolean navigateNewPage(int checkTypeValue) throws IOException {
-        List<PlantationProductQuestion> productQuestionList = productService.getActiveQuestionByQuestionType(
+        List<PlantationProductQuestion> productQuestionList = productService.checkIsThereQuestionToAsk(parcelPlan.getPlantParcel().getId(),
                 parcelPlan.getPlantParcel().getProduct().getId(), EnumStatus.ACTIVE, EnumPlantationQuestionType.fromValue(checkTypeValue));
         if (!productQuestionList.isEmpty()) {
             if (checkTypeValue == 0) {

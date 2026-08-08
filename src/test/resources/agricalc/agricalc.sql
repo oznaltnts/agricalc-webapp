@@ -540,6 +540,21 @@ CREATE TABLE `plantation_coefficients`
     ENGINE = InnoDB
     AUTO_INCREMENT = 1;
 
+CREATE TABLE `plantation_irrigation_values`
+(
+    `id`           BIGINT         NOT NULL AUTO_INCREMENT,
+    `idate`        DATETIME       NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    `price_type`   VARCHAR(255)   NOT NULL,
+    `price_value`  DECIMAL(15, 3) NOT NULL,
+    `labor_value`  DOUBLE         NOT NULL,
+    `diesel_value` DOUBLE         NOT NULL,
+    PRIMARY KEY (`id`),
+    UNIQUE (`price_type`),
+    INDEX idx_plantation_irrigation_values (`price_type`)
+)
+    ENGINE = InnoDB
+    AUTO_INCREMENT = 1;
+
 CREATE TABLE `user_plant_parcel_plans`
 (
     `id`                  BIGINT         NOT NULL AUTO_INCREMENT,
@@ -549,6 +564,7 @@ CREATE TABLE `user_plant_parcel_plans`
     `parcel_id`           BIGINT         NOT NULL,
     `start_date`          DATE           NULL     DEFAULT NULL,
     `gross_income`        DECIMAL(15, 3) NULL     DEFAULT NULL,
+    `total_expense`       DECIMAL(15, 3) NULL     DEFAULT NULL,
     `soil_prep_cost`      DECIMAL(15, 3) NULL     DEFAULT NULL,
     `planting_cost`       DECIMAL(15, 3) NULL     DEFAULT NULL,
     `fertilizer_cost`     DECIMAL(15, 3) NULL     DEFAULT NULL,

@@ -39,7 +39,7 @@ public class City extends AbstractEntity {
     private BigDecimal fuelPrice;
 
     @Column(name = "electricity")
-    private Double electricity;
+    private BigDecimal electricity;
 
     public City(Long selectedCityId) {
         super.setId(selectedCityId);

@@ -443,13 +443,13 @@ INSERT INTO plantation_coefficients (coef_type,diesel_value,labor_value) VALUES 
 INSERT INTO plantation_coefficients (coef_type,diesel_value,labor_value) VALUES ('THROAT_FILLING',null,'0.15');
 INSERT INTO plantation_coefficients (coef_type,diesel_value,labor_value) VALUES ('TRACTOR_TILLER',null,'0.17');
 INSERT INTO plantation_coefficients (coef_type,diesel_value,labor_value) VALUES ('WEED_CONTROL','0.15','0.3');
-INSERT INTO plantation_coefficients (coef_type,diesel_value,labor_value) VALUES ('DRIP_IRRIGATION','0.65','0.15');
-INSERT INTO plantation_coefficients (coef_type,diesel_value,labor_value) VALUES ('SPRINKLER_IRRIGATION','1.4','2');
-INSERT INTO plantation_coefficients (coef_type,diesel_value,labor_value) VALUES ('SPRAY_IRRIGATION','1.2','0.3');
-INSERT INTO plantation_coefficients (coef_type,diesel_value,labor_value) VALUES ('FURROW_IRRIGATION','0','1.5');
-INSERT INTO plantation_coefficients (coef_type,diesel_value,labor_value) VALUES ('SURFACE_IRRIGATION','0','2');
-INSERT INTO plantation_coefficients (coef_type,diesel_value,labor_value) VALUES ('PIVOT_IRRIGATION','0.3','0.25');
-INSERT INTO plantation_coefficients (coef_type,diesel_value,labor_value) VALUES ('DRUM_IRRIGATION','0.7','0.8');
+# INSERT INTO plantation_coefficients (coef_type,diesel_value,labor_value) VALUES ('DRIP_IRRIGATION','0.65','0.15');
+# INSERT INTO plantation_coefficients (coef_type,diesel_value,labor_value) VALUES ('SPRINKLER_IRRIGATION','1.4','2');
+# INSERT INTO plantation_coefficients (coef_type,diesel_value,labor_value) VALUES ('SPRAY_IRRIGATION','1.2','0.3');
+# INSERT INTO plantation_coefficients (coef_type,diesel_value,labor_value) VALUES ('FURROW_IRRIGATION','0','1.5');
+# INSERT INTO plantation_coefficients (coef_type,diesel_value,labor_value) VALUES ('SURFACE_IRRIGATION','0','2');
+# INSERT INTO plantation_coefficients (coef_type,diesel_value,labor_value) VALUES ('PIVOT_IRRIGATION','0.3','0.25');
+# INSERT INTO plantation_coefficients (coef_type,diesel_value,labor_value) VALUES ('DRUM_IRRIGATION','0.7','0.8');
 INSERT INTO plantation_coefficients (coef_type,diesel_value,labor_value) VALUES ('MACHINE_SPRAYING','0.55','0.15');
 INSERT INTO plantation_coefficients (coef_type,diesel_value,labor_value) VALUES ('BACKPACK_SPRAYING','0.9','4');
 INSERT INTO plantation_coefficients (coef_type,diesel_value,labor_value) VALUES ('IRRIGATION_SPRAYING','0','0.05');
@@ -469,4 +469,10 @@ INSERT INTO plantation_coefficients (coef_type,diesel_value,labor_value) VALUES 
 INSERT INTO plantation_coefficients (coef_type,diesel_value,labor_value) VALUES ('CARRYING_CAPACITY',null,'0.65');
 
 
-
+INSERT INTO plantation_irrigation_values (price_type,price_value,labor_value,diesel_value) VALUES ('YAGMUR_IRRIGATION_PRICE',2200,2,1.4);
+INSERT INTO plantation_irrigation_values (price_type,price_value,labor_value,diesel_value) VALUES ('SALMA_IRRIGATION_PRICE',1111,2,0);
+INSERT INTO plantation_irrigation_values (price_type,price_value,labor_value,diesel_value) VALUES ('KARIK_IRRIGATION_PRICE',1234,1.5,0);
+INSERT INTO plantation_irrigation_values (price_type,price_value,labor_value,diesel_value) VALUES ('PIVOT_IRRIGATION_PRICE',1800,0.25,0.3);
+INSERT INTO plantation_irrigation_values (price_type,price_value,labor_value,diesel_value) VALUES ('TAMBURLU_IRRIGATION_PRICE',1200,0.8,0.7);
+INSERT INTO plantation_irrigation_values (price_type,price_value,labor_value,diesel_value) VALUES ('DAMLA_IRRIGATION_PRICE',4300,0.15,0.65);
+INSERT INTO plantation_irrigation_values (price_type,price_value,labor_value,diesel_value) VALUES ('MINI_SPREY_IRRIGATION_PRICE',6500,0.3,1.4);

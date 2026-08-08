@@ -31,6 +31,10 @@ public class UserPlantParcelPlan extends AbstractStatusEntity {
     @ToString.Include
     private BigDecimal grossIncome;
 
+    @Column(name = "total_expense", nullable = false)
+    @ToString.Include
+    private BigDecimal totalExpense;
+
     @Column(name = "soil_prep_cost")
     @ToString.Include
     private BigDecimal soilPrepCost;

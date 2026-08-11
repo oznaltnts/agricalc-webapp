@@ -37,14 +37,14 @@
         </div>
 
         <div class="grid">
-            <div class="col-12 md:col-6 xl:col-6">
+            <div class="col-12 md:col-3 xl:col-3">
                 <div class="card">
                     <h5 class="mt-0" style="font-weight: bold">Üretim detayları</h5>
                     <p:panelGrid layout="flex"
                                  contentStyle="align-items: center;"
                                  contentStyleClass="ui-fluid"
-                                 columnClasses="col-12 md:col-3 xl:col-2, col-12 md:col-9 xl:col-4, col-12 md:col-3 xl:col-2, col-12 md:col-9 xl:col-4"
-                                 columns="4">
+                                 columnClasses="col-12 md:col-5 xl:col-5, col-12 md:col-7 xl:col-7"
+                                 columns="2">
                         <p:outputLabel for="@next" value="Ürün:" style="font-weight: bold"/>
                         <p:outputLabel for="@previous" value="#{planResultController.parcelPlan.plantParcel.product.name}"/>
 
@@ -55,12 +55,25 @@
                         <p:outputLabel for="@previous" value="#{planResultController.parcelPlan.plantParcel.areaDecare} (Dekar)"/>
                     </p:panelGrid>
                 </div>
+            </div>
+            <div class="col-12 md:col-3 xl:col-3">
                 <div class="card">
-                    <h5 class="mt-0" style="font-weight: bold">Gider grafiği</h5>
-                    <div style="display: flex; justify-content: center;">
-                        <p:chart value="#{planResultController.pieModel}"
-                                 style="width: 100%; height: 100%; max-width: 666px;"/>
-                    </div>
+                    <h5 class="mt-0" style="font-weight: bold">Mazot Benzin El İhtiyacı Hesabı</h5>
+                    <p:panelGrid layout="flex"
+                                 contentStyle="align-items: center;"
+                                 contentStyleClass="ui-fluid"
+                                 columnClasses="col-12 md:col-5 xl:col-5, col-12 md:col-7 xl:col-7"
+                                 columns="2">
+                        <p:outputLabel for="@next" value="Mazot İhtiyacı (Lt/Da):" style="font-weight: bold"/>
+                        <p:outputLabel for="@previous" value="#{planResultController.getPlanAllocation('DIESEL_COST').calculatedValue}"/>
+
+                        <p:outputLabel for="@next" value="Benzin İhtiyacı (Lt/Da):" style="font-weight: bold"/>
+                        <p:outputLabel for="@previous" value=""/>
+
+                        <p:outputLabel for="@next" value="Eletrik (Kwa/Da):" style="font-weight: bold"/>
+                        <p:outputLabel for="@previous" value=""/>
+
+                    </p:panelGrid>
                 </div>
             </div>
             <div class="col-12 md:col-6 xl:col-6">
@@ -69,7 +82,7 @@
                     <p:panelGrid layout="flex"
                                  contentStyle="align-items: center;"
                                  contentStyleClass="ui-fluid"
-                                 columnClasses="col-12 md:col-3 xl:col-2, col-12 md:col-9 xl:col-4, col-12 md:col-3 xl:col-2, col-12 md:col-9 xl:col-4"
+                                 columnClasses="col-12 md:col-5 xl:col-3, col-12 md:col-7 xl:col-3, col-12 md:col-5 xl:col-3, col-12 md:col-7 xl:col-3"
                                  columns="4">
                         <p:outputLabel for="@next" value="Dekar başına brüt gelir:" style="font-weight: bold"/>
                         <p:outputLabel for="@previous" value="#{planResultController.parcelPlan.grossIncome} TL"/>
@@ -89,11 +102,13 @@
                         <p:outputLabel for="@next" value="Toplam net gelir:" style="font-weight: bold"/>
                         <p:outputLabel for="@previous" value="#{planResultController.parcelPlan.plantParcel.areaDecare * (planResultController.parcelPlan.grossIncome - planResultController.parcelPlan.totalExpense)} TL"/>
 
-
                     </p:panelGrid>
                 </h:form>
+            </div>
+
+            <div class="col-12 md:col-6 xl:col-6">
                 <h:form class="card">
-                    <h5 class="mt-0" style="font-weight: bold">Gider tablosu</h5>
+                    <h5 class="mt-0" style="font-weight: bold">Gider başlıkları</h5>
                     <p:dataTable value="#{planResultController.resultShowViewList}"
                                  size="small"
                                  var="result">
@@ -105,6 +120,81 @@
                         </p:column>
                         <p:column headerText="Miktarı">
                             <h:outputText value="#{result.costValueCost}"/>
+                        </p:column>
+                    </p:dataTable>
+                </h:form>
+            </div>
+            <div class="col-12 md:col-6 xl:col-6">
+                <div class="card">
+                    <div style="display: flex; justify-content: center;">
+                        <p:chart value="#{planResultController.pieModelForExpense}"
+                                 style="width: 100%; height: 100%; max-width: 666px;"/>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-4">
+                <div class="card">
+                    <p:panelGrid layout="flex"
+                                 contentStyle="align-items: center;"
+                                 contentStyleClass="ui-fluid"
+                                 columnClasses="col-12 md:col-5 xl:col-5, col-12 md:col-7 xl:col-7"
+                                 columns="2">
+                        <p:outputLabel for="@next" value="İşçilik ihtiyacı (Saat/Da):" style="font-weight: bold"/>
+                        <p:outputLabel for="@previous" value="#{planResultController.getPlanAllocation('LABOR_AMOUNT').calculatedValue}"/>
+
+                    </p:panelGrid>
+                </div>
+            </div>
+            <div class="col-4">
+                <div class="card">
+                    <p:panelGrid layout="flex"
+                                 contentStyle="align-items: center;"
+                                 contentStyleClass="ui-fluid"
+                                 columnClasses="col-12 md:col-5 xl:col-5, col-12 md:col-7 xl:col-7"
+                                 columns="2">
+                        <p:outputLabel for="@next" value="İşlem sayısı (Adet/Da):" style="font-weight: bold"/>
+                        <p:outputLabel for="@previous" value="#{planResultController.getPlanAllocation('TRANSACTION_COUNT').calculatedValue}"/>
+
+                    </p:panelGrid>
+                </div>
+            </div>
+            <div class="col-4">
+                <div class="card">
+                    <p:panelGrid layout="flex"
+                                 contentStyle="align-items: center;"
+                                 contentStyleClass="ui-fluid"
+                                 columnClasses="col-12 md:col-5 xl:col-5, col-12 md:col-7 xl:col-7"
+                                 columns="2">
+                        <p:outputLabel for="@next" value="Mavi Su Ayak İzi:" style="font-weight: bold"/>
+                        <p:outputLabel for="@previous" value="#{planResultController.getPlanAllocation('TRANSACTION_COUNT').calculatedValue}"/>
+
+                    </p:panelGrid>
+                </div>
+            </div>
+
+            <div class="col-12 md:col-6 xl:col-6">
+                <div class="card">
+                    <div style="display: flex; justify-content: center;">
+                        <p:chart value="#{planResultController.pieModelForAllocation}"
+                                 style="width: 100%; height: 100%; max-width: 666px;"/>
+                    </div>
+                </div>
+            </div>
+            <div class="col-12 md:col-6 xl:col-6">
+                <h:form class="card">
+                    <h5 class="mt-0" style="font-weight: bold">Gider dağılımları</h5>
+                    <p:dataTable value="#{planResultController.planAllocationList}"
+                                 size="small"
+                                 var="allocation">
+                        <p:column headerText="İşlemler" style="background: #{planResultController.convertRGBAColorToHex(allocation.allocationType.color)}; color: #000000">
+                            <h:outputText value="#{allocation.allocationType}"/>
+                        </p:column>
+                        <p:column headerText="Oranı">
+                            <h:outputText value="#{allocation.calculatedValue * 100 / planResultController.parcelPlan.totalExpense}"/>
+                        </p:column>
+                        <p:column headerText="Miktarı">
+                            <h:outputText value="#{allocation.calculatedValue}"/>
                         </p:column>
                     </p:dataTable>
                 </h:form>

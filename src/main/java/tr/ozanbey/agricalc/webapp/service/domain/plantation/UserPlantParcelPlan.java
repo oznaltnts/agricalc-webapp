@@ -86,4 +86,7 @@ public class UserPlantParcelPlan extends AbstractStatusEntity {
     @OneToMany(mappedBy = "plantParcelPlan", fetch = FetchType.LAZY)
     private List<UserPlantParcelPlanAnswer> planAnswerList;
 
+    @OneToMany(mappedBy = "plantParcelPlan", fetch = FetchType.LAZY)
+    private List<UserPlantParcelPlanAllocation> planAllocationList;
+
 }

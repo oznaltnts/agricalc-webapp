@@ -14,6 +14,7 @@ import tr.ozanbey.agricalc.webapp.service.domain.plantation.UserPlantParcelPlanA
 import tr.ozanbey.agricalc.webapp.service.enumtype.EnumStatus;
 import tr.ozanbey.agricalc.webapp.service.enumtype.plantation.EnumPlantationQuestionType;
 import tr.ozanbey.agricalc.webapp.service.enumtype.plantation.EnumQuestionAnswerType;
+import tr.ozanbey.agricalc.webapp.service.service.plantation.CostAllocationService;
 import tr.ozanbey.agricalc.webapp.service.service.plantation.CostCalculationService;
 import tr.ozanbey.agricalc.webapp.service.service.plantation.PlantationProductService;
 import tr.ozanbey.agricalc.webapp.service.service.plantation.UserPlantParcelPlanService;
@@ -164,8 +165,12 @@ public class ExpenseFertilizerProfileController extends PlanProfileController {
     @Autowired
     private CostCalculationService costCalculationService;
 
+    @Autowired
+    private CostAllocationService costAllocationService;
+
     public void nextSaveExpense() throws IOException {
         super.getParcelPlan().setFertilizerCost(costCalculationService.calculateFertilizerCost(super.getParcelPlan().getPlantParcel().getProduct().getProductQuestionList(), super.getParcelPlan().getId(), super.getParcelPlan().getPlantParcel().getCity()));
+        costAllocationService.fertilizerAllocation(super.getParcelPlan().getPlantParcel().getProduct().getProductQuestionList(), super.getParcelPlan(), super.getParcelPlan().getPlantParcel().getCity());
         goToNextPage(EnumPlantationQuestionType.EXPENSE_FERTILIZER);
     }
 

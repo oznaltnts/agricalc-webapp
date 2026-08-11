@@ -1,0 +1,145 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="jakarta.faces.html"
+                xmlns:f="jakarta.faces.core"
+                xmlns:ui="jakarta.faces.facelets"
+                xmlns:p="http://primefaces.org/ui"
+                template="/templates/template.xhtml">
+
+    <ui:define name="title">Gelir Bilgilerim</ui:define>
+
+    <ui:define name="metadata">
+        <f:metadata>
+            <f:viewParam name="parcelPlanId"
+                         value="#{expensePlantingProfileController.parcelPlanId}"/>
+            <f:viewAction action="#{expensePlantingProfileController.fillExpensePlantingQuestionList}"/>
+        </f:metadata>
+    </ui:define>
+
+    <ui:define name="head">
+        <style type="text/css">
+        </style>
+    </ui:define>
+
+    <ui:define name="content">
+        <div class="grid">
+            <div class="col">
+                <div class="card">
+                    <p:steps activeIndex="3">
+                        <p:menuitem value="Üretim planları"/>
+                        <p:menuitem value="Demirbaş bilgileri"/>
+                        <p:menuitem value="Arazi bilgileri"/>
+                        <p:menuitem value="Gelir bilgileri"/>
+                        <p:menuitem value="Gider bilgileri"/>
+                        <p:menuitem value="Sonuçlar" containerStyleClass="steps-desktop"/>
+                    </p:steps>
+                </div>
+            </div>
+        </div>
+
+        <div class="grid">
+            <h:form id="updateForm" class="col">
+                <p:outputPanel class="card">
+                    <p:growl id="growl" showDetail="false" severity="info warn error">
+                        <p:autoUpdate/>
+                    </p:growl>
+
+                    <h5 class="mt-0" style="font-weight: bold">Gelir profili</h5>
+
+                    <p:focus context="@next"/>
+
+                    <ui:repeat value="#{expensePlantingProfileController.parcelPlan.plantParcel.product.productQuestionList}"
+                               var="question">
+                        <ui:fragment rendered="#{!question.dontAskAgain}">
+                            <p:panelGrid layout="flex"
+                                         contentStyle="align-items: center;"
+                                         rendered="#{expensePlantingProfileController.oneRadioRenderer(question) or expensePlantingProfileController.manyCheckboxRenderer(question) or expensePlantingProfileController.integerRenderer(question) or expensePlantingProfileController.doubleRenderer(question) or expensePlantingProfileController.decimalRenderer(question)}"
+                                         contentStyleClass="ui-fluid"
+                                         columnClasses="col-12 md:col-3 xl:col-3, col-12 md:col-9 xl:col-9"
+                                         columns="2">
+                                <p:outputLabel for="@next"
+                                               value="#{question.plantationQuestion.value}"/>
+                                <p:outputPanel styleClass="ui-inputgroup" style="justify-content: space-between;">
+
+                                    <p:selectOneRadio required="#{question.plantationQuestion.isRequired}"
+                                                      requiredMessage="#{question.plantationQuestion.value} seçiniz."
+                                                      rendered="#{expensePlantingProfileController.oneRadioRenderer(question)}"
+                                                      value="#{question.selectedAnswerId}">
+                                        <p:ajax process="@this" update="updateForm"/>
+                                        <f:selectItems var="onebutton"
+                                                       itemLabel="#{onebutton.value}"
+                                                       itemValue="#{onebutton.id}"
+                                                       value="#{question.plantationQuestion.questionOptionList}"/>
+                                    </p:selectOneRadio>
+
+                                    <p:selectManyCheckbox required="#{question.plantationQuestion.isRequired}"
+                                                          requiredMessage="#{question.plantationQuestion.value} seçiniz."
+                                                          rendered="#{expensePlantingProfileController.manyCheckboxRenderer(question)}"
+                                                          value="#{question.selectedAnswerIds}">
+                                        <p:ajax process="@this" update="updateForm"/>
+                                        <f:selectItems var="checkbox"
+                                                       itemLabel="#{checkbox.value}"
+                                                       itemValue="#{checkbox.id}"
+                                                       value="#{question.plantationQuestion.questionOptionList}"/>
+                                    </p:selectManyCheckbox>
+
+                                    <p:inputNumber required="#{question.plantationQuestion.isRequired}"
+                                                   requiredMessage="#{question.plantationQuestion.value} giriniz."
+                                                   rendered="#{expensePlantingProfileController.integerRenderer(question)}"
+                                                   minValue="0"
+                                                   decimalPlaces="0"
+                                                   value="#{question.integerValue}">
+                                        <p:ajax process="@this"/>
+                                    </p:inputNumber>
+
+                                    <p:inputNumber required="#{question.plantationQuestion.isRequired}"
+                                                   requiredMessage="#{question.plantationQuestion.value} giriniz."
+                                                   rendered="#{expensePlantingProfileController.doubleRenderer(question)}"
+                                                   minValue="0"
+                                                   decimalPlaces="2"
+                                                   value="#{question.doubleValue}">
+                                        <p:ajax process="@this"/>
+                                    </p:inputNumber>
+
+                                    <p:inputNumber required="#{question.plantationQuestion.isRequired}"
+                                                   requiredMessage="#{question.plantationQuestion.value} giriniz."
+                                                   rendered="#{expensePlantingProfileController.decimalRenderer(question)}"
+                                                   minValue="0"
+                                                   decimalPlaces="2"
+                                                   value="#{question.bigDecimalValue}">
+                                        <p:ajax process="@this"/>
+                                    </p:inputNumber>
+
+                                    <ui:fragment rendered="#{expensePlantingProfileController.booleanCheckboxRenderer(question)}">
+                                        <div class="ui-inputgroup-addon" style="white-space: nowrap;max-height: 35px;min-width: 140px">
+                                            <p:selectBooleanCheckbox value="#{question.dontAskAgain}"
+                                                                     itemLabel="Tekrar sorma"/>
+                                        </div>
+                                    </ui:fragment>
+                                </p:outputPanel>
+                            </p:panelGrid>
+                        </ui:fragment>
+                    </ui:repeat>
+                </p:outputPanel>
+
+                <p:outputPanel style="display: flex; justify-content: space-between; flex-direction: row-reverse;">
+                    <p:commandButton value="Sonraki"
+                                     process="updateForm"
+                                     update="updateForm"
+                                     styleClass="m-1"
+                                     validateClient="true"
+                                     iconPos="right"
+                                     action="#{expensePlantingProfileController.nextSaveExpense}"
+                                     icon="fa-solid fa-angles-right"/>
+                    <p:commandButton value="Önceki"
+                                     process="@this"
+                                     styleClass="m-1"
+                                     iconPos="left"
+                                     action="#{expensePlantingProfileController.previousSaveExpense}"
+                                     icon="fa-solid fa-angles-left"/>
+                </p:outputPanel>
+                <p>Sorunuz mu var? <a href="#">Buraya</a> basın ve bize bildirin.</p>
+            </h:form>
+        </div>
+
+    </ui:define>
+</ui:composition>

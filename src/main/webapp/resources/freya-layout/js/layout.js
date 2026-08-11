@@ -455,10 +455,10 @@ PrimeFaces.widget.Freya = PrimeFaces.widget.BaseWidget.extend({
 
 PrimeFaces.FreyaConfigurator = {
 
-    changeLayout: function( componentTheme, darkMode ) {
+    changeLayout: function( darkMode ) {
         this.changeLayoutsTheme(darkMode);
         this.changeDemo(darkMode);
-        this.changeComponentsTheme(componentTheme, darkMode);
+        this.changeComponentsTheme(darkMode);
         this.changeSectionTheme( darkMode, 'layout-menu');
         this.changeSectionTheme( darkMode , 'layout-topbar');
     },
@@ -484,8 +484,8 @@ PrimeFaces.FreyaConfigurator = {
         this.replaceLink(linkElement, href.replace(currentColor, newLayout));
     },
 
-    changeComponentsTheme: function(themeColor, darkMode) {
-        theme = this.getColor(themeColor, darkMode);
+    changeComponentsTheme: function(darkMode) {
+        theme = this.getColor(darkMode);
         var library = 'primefaces-freya';
         var linkElement = $('link[href*="theme.css"]');
         var href = linkElement.attr('href');
@@ -511,30 +511,6 @@ PrimeFaces.FreyaConfigurator = {
         wrapperElement.attr('class', styleClass.replace(sectionClass, section + '-' + theme));
     },
 
-    changeMenuMode: function(menuMode) {
-        var wrapper = $(document.body).children('.layout-wrapper');
-        switch (menuMode) {
-            case 'layout-sidebar':
-                wrapper.addClass('layout-sidebar').removeClass('layout-slim layout-horizontal ');
-                this.clearLayoutState();
-            break;
-
-            case 'layout-horizontal':
-                wrapper.addClass('layout-horizontal').removeClass('layout-static  layout-slim  layout-sidebar');
-                this.clearLayoutState();
-            break;
-
-            case 'layout-slim':
-                wrapper.addClass('layout-slim').removeClass('layout-static layout-horizontal  layout-sidebar');
-                this.clearLayoutState();
-            break;
-
-            default:
-                wrapper.addClass('layout-sidebar').removeClass('layout-slim layout-horizontal  ');
-                this.clearLayoutState();
-            break;
-        }
-    },
 
     beforeResourceChange: function() {
         PrimeFaces.ajax.RESOURCE = null;    //prevent resource append
@@ -567,8 +543,8 @@ PrimeFaces.FreyaConfigurator = {
         }
     },
     
-    getColor: function(name, darkMode) {
-        return name + '-' + darkMode;
+    getColor: function(darkMode) {
+        return 'agricalc-' + darkMode;
     },
     
     isIE: function() {
@@ -582,13 +558,6 @@ PrimeFaces.FreyaConfigurator = {
             menu.clearLayoutState();
         }
     },
-
-    updateInputStyle: function(value) {
-        if (value === 'filled')
-            $(document.body).addClass('ui-input-filled');
-        else
-            $(document.body).removeClass('ui-input-filled');
-    }
 };
 
 /*!

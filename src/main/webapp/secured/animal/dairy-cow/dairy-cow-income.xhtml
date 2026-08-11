@@ -1,0 +1,126 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="jakarta.faces.html"
+                xmlns:f="jakarta.faces.core"
+                xmlns:ui="jakarta.faces.facelets"
+                xmlns:p="http://primefaces.org/ui"
+                template="/templates/template.xhtml">
+
+    <ui:define name="title">Büyükbaş Süt İşletme Gideri</ui:define>
+
+    <ui:define name="metadata">
+        <f:metadata>
+            <f:viewParam name="barnId"
+                         value="#{dairyCowIncomeController.barnId}"/>
+            <f:viewAction action="#{dairyCowIncomeController.fillDataTableValues}"/>
+        </f:metadata>
+    </ui:define>
+
+    <ui:define name="head">
+        <style type="text/css">
+            .inputMaxWidthClass {
+                width: 100%;
+                min-width: unset!important;
+            }
+            @media (max-width: 640px) {
+                .ui-datatable-reflow .ui-datatable-data td[role="gridcell"] .ui-column-title {
+                    max-width: unset;
+                    width: 100%;
+                }
+                .steps-desktop {
+                    display: none;
+                }
+            }
+        </style>
+    </ui:define>
+
+    <ui:define name="content">
+        <div class="grid">
+            <div class="col">
+                <div class="card">
+                    <p:steps activeIndex="5">
+                        <p:menuitem value="Ahırlar" containerStyleClass="steps-desktop"/>
+                        <p:menuitem value="Hayvanlar" containerStyleClass="steps-desktop"/>
+                        <p:menuitem value="Yemler"/>
+                        <p:menuitem value="Yem rasyonu"/>
+                        <p:menuitem value="Giderler"/>
+                        <p:menuitem value="Gelirler"/>
+                        <p:menuitem value="Sonuçlar"/>
+                    </p:steps>
+                </div>
+            </div>
+        </div>
+        <div class="grid">
+            <div class="col">
+                <h:form id="incomeListForm"
+                        class="card">
+                    <h5 class="mt-0" style="font-weight: bold">Büyükbaş süt gelirleri</h5>
+
+                    <p:growl id="growl"
+                             showDetail="true"
+                             severity="info warn error">
+                        <p:autoUpdate/>
+                    </p:growl>
+
+                    <p:focus context="@next"/>
+
+                    <p:dataTable var="incomeTable"
+                                 reflow="true"
+                                 stripedRows="true"
+                                 size="small"
+                                 editable="true"
+                                 value="#{dairyCowIncomeController.incomeViewList}">
+
+                        <p:ajax event="rowEditInit" listener="#{dairyCowIncomeController.onRowEditInit}"/>
+                        <p:ajax event="rowEdit" listener="#{dairyCowIncomeController.onRowEdit}"/>
+
+                        <p:column headerText="Gelir soruları">
+                            <h:outputText value="#{incomeTable.incomeName}"/>
+                        </p:column>
+
+                        <p:column headerText="Değer / Miktar">
+                            <p:cellEditor>
+                                <f:facet name="output">
+                                    <h:outputText value="#{incomeTable.incomeValue}"/>
+                                </f:facet>
+                                <f:facet name="input">
+                                    <p:inputNumber value="#{incomeTable.incomeValue}"
+                                                   inputStyleClass="inputMaxWidthClass"/>
+                                </f:facet>
+                            </p:cellEditor>
+                        </p:column>
+
+                        <p:column style="width: calc(56px + 0.5rem)" headerText="Düzenle">
+                            <p:rowEditor editTitle="Edit Row"
+                                         cancelTitle="Cancel Edit"
+                                         saveTitle="Save Row"/>
+                        </p:column>
+                    </p:dataTable>
+                </h:form>
+            </div>
+        </div>
+        <div class="grid">
+            <div class="col">
+                <p:outputPanel style="display: flex; justify-content: space-between;">
+                    <p:button value="Büyükbaş süt giderler"
+                              styleClass="m-1"
+                              iconPos="left"
+                              href="/secured/animal/dairy-cow/cost"
+                              icon="fa-solid fa-angles-left">
+                        <f:param name="barnId"
+                                 value="#{dairyCowIncomeController.barnId}"/>
+                    </p:button>
+                    <p:button value="Büyükbaş süt sonuçları"
+                              styleClass="m-1"
+                              iconPos="right"
+                              href="/secured/animal/dairy-cow/result"
+                              icon="fa-solid fa-angles-right">
+                        <f:param name="barnId"
+                                 value="#{dairyCowIncomeController.barnId}"/>
+                    </p:button>
+                </p:outputPanel>
+                <br/>
+                <p>Sorunuz mu var? <a href="#">Buraya</a> basın ve bize bildirin.</p>
+            </div>
+        </div>
+    </ui:define>
+</ui:composition>

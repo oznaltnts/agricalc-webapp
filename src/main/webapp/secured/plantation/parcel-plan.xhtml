@@ -1,0 +1,105 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="jakarta.faces.html"
+                xmlns:f="jakarta.faces.core"
+                xmlns:ui="jakarta.faces.facelets"
+                xmlns:p="http://primefaces.org/ui"
+                template="/templates/template.xhtml">
+
+    <ui:define name="title">Arazi Bilgilerim</ui:define>
+
+    <ui:define name="metadata">
+        <f:metadata>
+            <f:viewParam name="parcelId"
+                         value="#{parcelPlanController.parcelId}"/>
+            <f:viewAction action="#{parcelPlanController.fillParcelList}"/>
+        </f:metadata>
+    </ui:define>
+
+    <ui:define name="head">
+        <style type="text/css">
+        </style>
+    </ui:define>
+
+    <ui:define name="content">
+        <div class="grid">
+            <div class="col">
+                <div class="card">
+                    <p:steps activeIndex="1">
+                        <p:menuitem value="Arazi bilgileri"/>
+                        <p:menuitem value="Planlama bilgileri"/>
+                        <p:menuitem value="Gelir bilgileri"/>
+                        <p:menuitem value="Gider bilgileri"/>
+                        <p:menuitem value="Sonuçlar" containerStyleClass="steps-desktop"/>
+                    </p:steps>
+                </div>
+            </div>
+        </div>
+
+        <div class="grid">
+            <div class="col">
+                <h:form class="card">
+                    <p:growl id="growl"
+                             showDetail="true"
+                             severity="info warn error">
+                        <p:autoUpdate/>
+                    </p:growl>
+
+                    <h5 class="mt-0" style="font-weight: bold">Üretim planları</h5>
+
+                    <p:fieldset legend="Yeni plan başlat"
+                                collapsed="true"
+                                toggleable="true"
+                                toggleSpeed="500">
+                        <p:panelGrid layout="flex"
+                                     contentStyle="align-items: center;"
+                                     contentStyleClass="ui-fluid"
+                                     columnClasses="col-12 md:col-3 xl:col-3, col-12 md:col-9 xl:col-9"
+                                     columns="2">
+                            <p:outputLabel for="@next" value="Başlangıç tarihi"/>
+                            <p:datePicker view="month"
+                                          value="#{parcelPlanController.planStartDate}"
+                                          pattern="MM/yyyy"
+                                          showLongMonthNames="true" />
+                        </p:panelGrid>
+                        <p:commandButton value="Yeni plan başlat"
+                                         action="#{parcelPlanController.addNewParcelPlan}"
+                                         update="@previous planTable"
+                                         process="@previous"/>
+
+                    </p:fieldset>
+
+                    <p:dataTable id="planTable"
+                                 stripedRows="true"
+                                 emptyMessage="Henüz plan eklemediniz"
+                                 var="parcelPlan"
+                                 reflow="true"
+                                 value="#{parcelPlanController.parcelPlanList}">
+                        <p:column headerText="Plan oluşturma tarihi">
+                            <h:outputText value="#{parcelPlan.insertDate}"/>
+                        </p:column>
+                        <p:column headerText="Plan ürünü">
+                            <h:outputText value="#{parcelPlan.plantParcel.product.name}"/>
+                        </p:column>
+                        <p:column headerText="Başlangıç tarihi">
+                            <h:outputText value="#{parcelPlan.planStartDate}"/>
+                        </p:column>
+                        <p:column headerText="Brüt gelir">
+                            <h:outputText value="#{parcelPlan.grossIncome eq null ? 'süreci tamamlayın.' : parcelPlan.grossIncome}"/>
+                        </p:column>
+                        <p:column headerText="Üretimini planla"
+                                  style="width: 88px;text-align: right">
+                            <p:button href="/secured/plantation/income-profile"
+                                      styleClass="rounded-button ui-button-flat"
+                                      icon="fa-solid fa-right-long">
+                                <f:param name="parcelPlanId"
+                                         value="#{parcelPlan.id}"/>
+                            </p:button>
+                        </p:column>
+                    </p:dataTable>
+                </h:form>
+                <br/>
+                <p>Sorunuz mu var? <a href="#">Buraya</a> basın ve bize bildirin.</p>
+            </div>
+        </div>
+    </ui:define>
+</ui:composition>

@@ -27,8 +27,8 @@
         </sec:authorize>
     </h:head>
 
-    <h:body styleClass="#{guestPreferences.inputStyleClass}">
-        <div class="layout-wrapper layout-topbar-#{guestPreferences.topbarTheme} layout-menu-#{guestPreferences.menuTheme} #{guestPreferences.menuMode}" >
+    <h:body>
+        <div class="layout-wrapper layout-topbar-#{guestPreferences.topbarTheme} layout-menu-#{guestPreferences.menuTheme} layout-horizontal" >
             <ui:include src="./topbar.xhtml"/>
            
             <!--ui:include src="./rightpanel.xhtml"/-->

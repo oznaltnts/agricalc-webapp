@@ -1,0 +1,26 @@
+package tr.ozanbey.agricalc.webapp.service.domain.animal.dairycow;
+
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Table;
+import lombok.*;
+import tr.ozanbey.agricalc.webapp.service.domain.AbstractStatusEntity;
+
+@Getter
+@Setter
+@Entity
+@Table(name = "dairy_cow_incomes")
+@NoArgsConstructor
+@AllArgsConstructor
+@ToString(onlyExplicitlyIncluded = true)
+public class DairyCowIncome extends AbstractStatusEntity {
+
+    @Column(name = "name", nullable = false)
+    @ToString.Include
+    private String name;
+
+    @Column(name = "unit", nullable = false)
+    @ToString.Include
+    private String unit;
+
+}

@@ -1,0 +1,298 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="jakarta.faces.html"
+                xmlns:f="jakarta.faces.core"
+                xmlns:ui="jakarta.faces.facelets"
+                xmlns:p="http://primefaces.org/ui"
+                template="/templates/template.xhtml">
+
+    <ui:define name="title">Arazi Bilgilerim</ui:define>
+
+    <ui:define name="metadata">
+        <f:metadata>
+            <f:viewParam name="parcelId"
+                         value="#{parcelDetailController.parcelId}"/>
+            <f:viewAction action="#{parcelDetailController.fillParcelList}"/>
+        </f:metadata>
+    </ui:define>
+
+    <ui:define name="head">
+        <style type="text/css">
+            .ui-selectoneradio.layout-line-direction > div {
+                display: inline-flex;
+            }
+        </style>
+    </ui:define>
+
+    <ui:define name="content">
+        <div class="grid">
+            <div class="col">
+                <div class="card">
+                    <p:steps activeIndex="0">
+                        <p:menuitem value="Arazi bilgileri"/>
+                        <p:menuitem value="Planlama bilgileri"/>
+                        <p:menuitem value="Gelir bilgileri"/>
+                        <p:menuitem value="Gider bilgileri"/>
+                        <p:menuitem value="Sonuçlar" containerStyleClass="steps-desktop"/>
+                    </p:steps>
+                </div>
+            </div>
+        </div>
+
+        <div class="grid">
+            <h:form id="updateForm" class="col">
+                <p:outputPanel class="card">
+                    <p:growl id="growl"
+                             showDetail="true"
+                             severity="info warn error">
+                        <p:autoUpdate/>
+                    </p:growl>
+                    <h5 class="mt-0" style="font-weight: bold">Arazi detayları</h5>
+                    <p>Elde edeceğiniz sonuçlar yaptığınız beyanlara göre değişecektir.</p>
+
+                    <h6 class="mt-5">Arazi bilgileri</h6>
+                    <p:panelGrid layout="flex"
+                                 contentStyle="align-items: center;"
+                                 contentStyleClass="ui-fluid"
+                                 columnClasses="col-12 md:col-3 xl:col-3, col-12 md:col-9 xl:col-9"
+                                 columns="2">
+                        <p:outputLabel for="@next"
+                                       value="Arazi tipi"/>
+                        <p:selectOneRadio value="#{parcelDetailController.userPlantParcel.parcelType}"
+                                          readonly="true" disabled="true">
+                            <f:selectItems value="#{parcelDetailController.parcelTypes}"
+                                           var="parcelType"
+                                           itemLabel="#{msg[parcelType.name()]}"
+                                           itemValue="#{parcelType}"/>
+                        </p:selectOneRadio>
+
+                        <p:outputLabel for="@next"
+                                       value="Arazi adı"/>
+                        <p:inputText value="#{parcelDetailController.userPlantParcel.parcelName}"
+                                     disabled="true" readonly="true"/>
+
+                        <p:outputLabel for="@next"
+                                       value="Arazi boyutu (Dekar)"/>
+                        <p:inputNumber value="#{parcelDetailController.userPlantParcel.areaDecare}"
+                                       disabled="true" readonly="true"/>
+                    </p:panelGrid>
+                    <p:panelGrid layout="flex"
+                                 contentStyle="align-items: center;"
+                                 contentStyleClass="ui-fluid"
+                                 columnClasses="col-12 md:col-3 xl:col-3, col-12 md:col-9 xl:col-9"
+                                 columns="2">
+                        <p:outputLabel for="@next"
+                                       value="Arazi kiralık mı?"/>
+                        <p:selectOneRadio value="#{parcelDetailController.parcelRental}"
+                                          required="true"
+                                          requiredMessage="Arazi kiralık durumu seçiniz."
+                                          unselectable="false">
+                            <p:ajax update="@parent"/>
+                            <f:selectItem itemLabel="Kiralık" itemValue="false"/>
+                            <f:selectItem itemLabel="Sahipli" itemValue="true"/>
+                        </p:selectOneRadio>
+
+                        <p:outputLabel for="@next"
+                                       rendered="#{parcelDetailController.parcelRental}"
+                                       value="Tahmini fiyatı"/>
+                        <p:inputNumber value="#{parcelDetailController.userPlantParcel.parcelPrice}"
+                                       rendered="#{parcelDetailController.parcelRental}"/>
+
+                        <p:outputLabel for="@next"
+                                       rendered="#{!parcelDetailController.parcelRental}"
+                                       value="Arazi kira ücreti"/>
+                        <p:inputNumber value="#{parcelDetailController.userPlantParcel.rentPrice}"
+                                       rendered="#{!parcelDetailController.parcelRental}"/>
+                    </p:panelGrid>
+
+                    <h6 class="mt-5">Adres bilgileri</h6>
+                    <p:panelGrid layout="flex"
+                                 contentStyle="align-items: center;"
+                                 contentStyleClass="ui-fluid"
+                                 columnClasses="col-12 md:col-3 xl:col-3, col-12 md:col-9 xl:col-9"
+                                 columns="2">
+                        <p:outputLabel for="@next"
+                                       value="Şehir"/>
+                        <p:selectOneMenu value="#{parcelDetailController.userPlantParcel.city.id}"
+                                         readonly="true"
+                                         disabled="true">
+                            <f:selectItems value="#{parcelDetailController.cityList}"
+                                           var="city" itemValue="#{city.id}" itemLabel="#{city.name}"/>
+                        </p:selectOneMenu>
+
+                        <p:outputLabel for="@next"
+                                       value="İlçe"/>
+                        <p:inputText value="#{parcelDetailController.userPlantParcel.district}"/>
+                        <p:outputLabel for="@next"
+                                       value="Bölge"/>
+                        <p:inputText value="#{parcelDetailController.userPlantParcel.village}"/>
+                        <p:outputLabel for="@next"
+                                       value="Mahalle"/>
+                        <p:inputText value="#{parcelDetailController.userPlantParcel.neighborhood}"/>
+                        <p:outputLabel for="@next"
+                                       value="Ada numarası"/>
+                        <p:inputNumber value="#{parcelDetailController.userPlantParcel.adaNumber}"/>
+                        <p:outputLabel for="@next"
+                                       value="Pafta numarası"/>
+                        <p:inputNumber value="#{parcelDetailController.userPlantParcel.paftaNumber}"/>
+                    </p:panelGrid>
+
+                    <h6 class="mt-5">Arazi yapısı</h6>
+                    <p:panelGrid layout="flex"
+                                 contentStyle="align-items: center;"
+                                 contentStyleClass="ui-fluid"
+                                 columnClasses="col-12 md:col-3 xl:col-3, col-12 md:col-9 xl:col-9"
+                                 columns="2">
+                        <p:outputLabel for="@next"
+                                       value="Arazi tipi"/>
+                        <p:selectOneRadio value="#{parcelDetailController.userPlantParcel.statusType}"
+                                          unselectable="false">
+                            <f:selectItem itemLabel="Kuru" itemValue="Kuru"/>
+                            <f:selectItem itemLabel="Sulu" itemValue="Sulu"/>
+                            <f:selectItem itemLabel="Dikili" itemValue="Dikili"/>
+                        </p:selectOneRadio>
+                        <p:outputLabel for="@next"
+                                       value="Nadas durumu"/>
+                        <p:selectOneRadio value="#{parcelDetailController.userPlantParcel.nadas}"
+                                          unselectable="false">
+                            <f:selectItem itemLabel="Evet" itemValue="true"/>
+                            <f:selectItem itemLabel="Hayır" itemValue="false"/>
+                        </p:selectOneRadio>
+                        <p:outputLabel for="@next"
+                                       value="Eğimi"/>
+                        <p:selectOneRadio value="#{parcelDetailController.userPlantParcel.slope}"
+                                          unselectable="false">
+                            <f:selectItem itemLabel="Düz" itemValue="Düz"/>
+                            <f:selectItem itemLabel="Az eğimli" itemValue="Az eğimli"/>
+                            <f:selectItem itemLabel="Eğimli" itemValue="Eğimli"/>
+                            <f:selectItem itemLabel="Bazı yerler düz" itemValue="Bazı yerler düz"/>
+                            <f:selectItem itemLabel="Dik" itemValue="Dik"/>
+                            <f:selectItem itemLabel="Çok dik" itemValue="Çok dik"/>
+                            <f:selectItem itemLabel="Setlenmiş dik" itemValue="Setlenmiş dik"/>
+                        </p:selectOneRadio>
+                        <p:outputLabel for="@next"
+                                       value="Yönü"/>
+                        <p:selectOneRadio value="#{parcelDetailController.userPlantParcel.orientation}"
+                                          unselectable="false">
+                            <f:selectItem itemLabel="Kuzey" itemValue="Kuzey"/>
+                            <f:selectItem itemLabel="Kuzeydoğu" itemValue="Kuzeydoğu"/>
+                            <f:selectItem itemLabel="Doğu" itemValue="Doğu"/>
+                            <f:selectItem itemLabel="Güneydoğu" itemValue="Güneydoğu"/>
+                            <f:selectItem itemLabel="Güney" itemValue="Güney"/>
+                            <f:selectItem itemLabel="Güneybatı" itemValue="Güneybatı"/>
+                            <f:selectItem itemLabel="Batı" itemValue="Batı"/>
+                            <f:selectItem itemLabel="Kuzeybatı" itemValue="Kuzeybatı"/>
+                        </p:selectOneRadio>
+                    </p:panelGrid>
+
+                    <h6 class="mt-5">Toprak özellikleri</h6>
+                    <p:panelGrid layout="flex"
+                                 contentStyle="align-items: center;"
+                                 contentStyleClass="ui-fluid"
+                                 columnClasses="col-12 md:col-3 xl:col-3, col-12 md:col-9 xl:col-9"
+                                 columns="2">
+                        <p:outputLabel for="@next"
+                                       value="Toprak bünyesi"/>
+                        <p:selectOneRadio value="#{parcelDetailController.userPlantParcel.soilTexture}"
+                                          unselectable="false">
+                            <f:selectItem itemLabel="Tınlı" itemValue="Tınlı"/>
+                            <f:selectItem itemLabel="Kumlu" itemValue="Kumlu"/>
+                            <f:selectItem itemLabel="Killi" itemValue="Killi"/>
+                            <f:selectItem itemLabel="Kumlu - tınlı" itemValue="Kumlu - tınlı"/>
+                            <f:selectItem itemLabel="Milli tın" itemValue="Milli tın"/>
+                            <f:selectItem itemLabel="Bilmiyorum" itemValue="Bilmiyorum"/>
+                        </p:selectOneRadio>
+
+                        <p:outputLabel for="@next"
+                                       value="Aktif derinlik"/>
+                        <p:selectOneRadio value="#{parcelDetailController.userPlantParcel.soilDepth}"
+                                          unselectable="false">
+                            <f:selectItem itemLabel="Sığ (0-30 cm)" itemValue="Sığ"/>
+                            <f:selectItem itemLabel="Orta sığ (31-60 cm)" itemValue="Orta sığ"/>
+                            <f:selectItem itemLabel="Orta (61-90 cm)" itemValue="Orta"/>
+                            <f:selectItem itemLabel="Derin (91+ cm)" itemValue="Derin"/>
+                            <f:selectItem itemLabel="Bilmiyorum" itemValue="Bilmiyorum"/>
+                        </p:selectOneRadio>
+
+                        <p:outputLabel for="@next"
+                                       value="Organik madde oranı"/>
+                        <p:selectOneRadio value="#{parcelDetailController.userPlantParcel.organicMatter}"
+                                           unselectable="false">
+                            <f:selectItem itemLabel="Çok az (% 0-1)" itemValue="Çok az"/>
+                            <f:selectItem itemLabel="Az (% 1-1,5)" itemValue="Az"/>
+                            <f:selectItem itemLabel="Orta (% 1,5-2)" itemValue="Orta"/>
+                            <f:selectItem itemLabel="Yeterli (% 2-3)" itemValue="Yeterli"/>
+                            <f:selectItem itemLabel="Çok iyi (% 3+)" itemValue="Çok iyi"/>
+                            <f:selectItem itemLabel="Bilmiyorum" itemValue="Bilmiyorum"/>
+                        </p:selectOneRadio>
+
+                        <p:outputLabel for="@next"
+                                       value="Tuzluluk"/>
+                        <p:selectOneRadio value="#{parcelDetailController.userPlantParcel.soilSalinity}"
+                                          unselectable="false">
+                            <f:selectItem itemLabel="Tuzsus" itemValue="Tuzsus"/>
+                            <f:selectItem itemLabel="Çok az" itemValue="Çok az"/>
+                            <f:selectItem itemLabel="Az tuzlu" itemValue="Az tuzlu"/>
+                            <f:selectItem itemLabel="Tuzlu" itemValue="Tuzlu"/>
+                            <f:selectItem itemLabel="Çok tuzlu" itemValue="Çok tuzlu"/>
+                            <f:selectItem itemLabel="Bilmiyorum" itemValue="Bilmiyorum"/>
+                        </p:selectOneRadio>
+
+                        <p:outputLabel for="@next"
+                                       value="Kireçlilik"/>
+                        <p:selectOneRadio value="#{parcelDetailController.userPlantParcel.lime}"
+                                          unselectable="false">
+                            <f:selectItem itemLabel="Kireçsiz" itemValue="Kireçsiz"/>
+                            <f:selectItem itemLabel="Az kireçli" itemValue="Az kireçli"/>
+                            <f:selectItem itemLabel="Orta kireçli" itemValue="Orta kireçli"/>
+                            <f:selectItem itemLabel="Kireçli" itemValue="Kireçli"/>
+                            <f:selectItem itemLabel="Çok kireçli" itemValue="Çok kireçli"/>
+                            <f:selectItem itemLabel="Bilmiyorum" itemValue="Bilmiyorum"/>
+                        </p:selectOneRadio>
+
+                        <p:outputLabel for="@next"
+                                       value="Fosfor"/>
+                        <p:selectOneRadio value="#{parcelDetailController.userPlantParcel.phosphorus}"
+                                          unselectable="false">
+                            <f:selectItem itemLabel="Çok az" itemValue="Çok az"/>
+                            <f:selectItem itemLabel="Az" itemValue="Az"/>
+                            <f:selectItem itemLabel="Orta" itemValue="Orta"/>
+                            <f:selectItem itemLabel="Yüksek" itemValue="Yüksek"/>
+                            <f:selectItem itemLabel="Çok yüksek" itemValue="Çok yüksek"/>
+                            <f:selectItem itemLabel="Bilmiyorum" itemValue="Bilmiyorum"/>
+                        </p:selectOneRadio>
+
+                        <p:outputLabel for="@next"
+                                       value="Potasyum"/>
+                        <p:selectOneRadio value="#{parcelDetailController.userPlantParcel.potassium}"
+                                           unselectable="false">
+                            <f:selectItem itemLabel="Çok az" itemValue="Çok az"/>
+                            <f:selectItem itemLabel="Az" itemValue="Az"/>
+                            <f:selectItem itemLabel="Orta" itemValue="Orta"/>
+                            <f:selectItem itemLabel="Yüksek" itemValue="Yüksek"/>
+                            <f:selectItem itemLabel="Çok yüksek" itemValue="Çok yüksek"/>
+                            <f:selectItem itemLabel="Bilmiyorum" itemValue="Bilmiyorum"/>
+                        </p:selectOneRadio>
+                    </p:panelGrid>
+                </p:outputPanel>
+
+                <p:outputPanel style="display: flex; justify-content: space-between; flex-direction: row-reverse;">
+                    <p:commandButton value="Kaydet ve dön"
+                                     process="updateForm"
+                                     styleClass="m-1"
+                                     validateClient="true"
+                                     iconPos="right"
+                                     action="#{parcelDetailController.saveAndPlanList}"
+                                     icon="fa-solid fa-angles-right"/>
+                    <p:button value="Vazgeç"
+                              styleClass="m-1"
+                              iconPos="left"
+                              href="/secured/plantation/parcel"
+                              icon="fa-solid fa-angles-left"/>
+                </p:outputPanel>
+                <br/>
+                <p>Sorunuz mu var? <a href="#">Buraya</a> basın ve bize bildirin.</p>
+
+            </h:form>
+        </div>
+    </ui:define>
+</ui:composition>

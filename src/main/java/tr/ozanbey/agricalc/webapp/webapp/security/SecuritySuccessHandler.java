@@ -28,11 +28,10 @@ public class SecuritySuccessHandler implements AuthenticationSuccessHandler {
             loginController.clearLoginFailures(currentUser.getUser().getId());
             loginController.createLoginSuccess(currentUser.getUser().getId());
             loginController.updateLastLoginInfo(currentUser.getUser());
-            loginController.assignUserPreference(currentUser.getUser().getId());
             if (currentUser.getUser().getUserRole().equals(EnumRole.ADMIN))
                 response.sendRedirect("/secured/admin/user-management");
             else
-                response.sendRedirect("/secured/animal/dairy-cow-barn");
+                response.sendRedirect("/secured/animal/dairy-cow/barn");
         }
     }
 

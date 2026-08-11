@@ -1,0 +1,121 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="jakarta.faces.html"
+                xmlns:f="jakarta.faces.core"
+                xmlns:ui="jakarta.faces.facelets"
+                xmlns:p="http://primefaces.org/ui"
+                template="/templates/template.xhtml">
+
+    <ui:define name="title">Üretici Bilgilerim</ui:define>
+
+    <ui:define name="head">
+        <style type="text/css">
+        </style>
+    </ui:define>
+
+    <ui:define name="content">
+        <div class="grid">
+            <div class="col">
+                <div class="card">
+                    <p:steps activeIndex="0">
+                        <p:menuitem value="Çiftçiliğim"/>
+                        <p:menuitem value="Çiftliğim"/>
+                        <p:menuitem value="Parselim"/>
+                        <p:menuitem value="Ürünüm"/>
+                        <p:menuitem value="Gelirim"/>
+                        <p:menuitem value="Sonuçlar" containerStyleClass="steps-desktop"/>
+                    </p:steps>
+                </div>
+            </div>
+        </div>
+
+        <div class="grid">
+            <div class="col">
+                <h:form class="card">
+                    <p:growl id="growl"
+                             showDetail="true"
+                             severity="info warn error">
+                        <p:autoUpdate/>
+                    </p:growl>
+
+                    <p:focus context="@next"/>
+
+                    <h5 class="mt-0" style="font-weight: bold">Üretim profili</h5>
+
+                    <p:panelGrid layout="flex"
+                                 contentStyle="align-items: center;"
+                                 contentStyleClass="ui-fluid"
+                                 columnClasses="col-12 md:col-3 xl:col-2, col-12 md:col-9 xl:col-4, col-12 md:col-3 xl:col-2, col-12 md:col-9 xl:col-4"
+                                 columns="4">
+
+                        <p:outputLabel for="@next"
+                                       value="Çiftçi Tipi"/>
+                        <p:selectOneButton value="#{farmerProfileController.farmerView.farmerType}"
+                                           unselectable="false">
+                            <f:selectItems value="#{farmerProfileController.farmerTypes}"
+                                           var="fType"
+                                           itemLabel="#{fType}"
+                                           itemValue="#{fType}"/>
+                        </p:selectOneButton>
+
+                        <p:outputLabel for="@next"
+                                       value="TCKN/VKN:"/>
+                        <p:inputNumber value="#{farmerProfileController.farmerView.tcknVkn}"
+                                       maxlength="11"/>
+
+                        <p:outputLabel for="@next"
+                                       value="Ad Soyad/İşletme adı:"/>
+                        <p:inputText value="#{farmerProfileController.farmerView.name}"/>
+
+                        <p:outputLabel for="@next"
+                                       value="Telefon numarası:"/>
+                        <p:inputText value="#{farmerProfileController.farmerView.phone}"/>
+
+                        <p:outputLabel for="@next"
+                                       value="E-mail:"/>
+                        <p:inputText value="#{farmerProfileController.farmerView.email}"/>
+
+                        <p:outputLabel for="@next"
+                                       value="Doğum/kuruluş tarihi:"/>
+                        <p:datePicker monthNavigator="true"
+                                      yearNavigator="true"
+                                      value="#{farmerProfileController.farmerView.birthEstablishmentDate}"/>
+                    </p:panelGrid>
+
+                    <h5 style="font-weight: bold">Üretim adresi</h5>
+
+                    <p:panelGrid layout="flex"
+                                 contentStyle="align-items: center;"
+                                 contentStyleClass="ui-fluid"
+                                 columnClasses="col-12 md:col-3 xl:col-2, col-12 md:col-9 xl:col-4, col-12 md:col-3 xl:col-2, col-12 md:col-9 xl:col-4"
+                                 columns="4">
+
+                        <p:outputLabel for="@next"
+                                       value="Üretim şehri:"/>
+                        <p:selectOneMenu value="#{farmerProfileController.farmerView.userCityId}">
+                            <f:selectItem itemLabel="Şehir"
+                                          itemValue=""/>
+                            <f:selectItems value="#{farmerProfileController.cityList}"
+                                           var="city"
+                                           itemLabel="#{city.name}"
+                                           itemValue="#{city.id}"/>
+                        </p:selectOneMenu>
+
+                        <p:outputLabel for="@next"
+                                       value="Üretim ilçesi:"/>
+                        <p:inputText value="#{farmerProfileController.farmerView.district}"/>
+
+                        <p:outputLabel for="@next"
+                                       value="Üretim köyü:"/>
+                        <p:inputText value="#{farmerProfileController.farmerView.village}"/>
+
+                        <p:outputLabel for="@next"
+                                       value="Üretim mahallesi:"/>
+                        <p:inputText value="#{farmerProfileController.farmerView.neighborhood}"/>
+                    </p:panelGrid>
+                </h:form>
+                <br/>
+                <p>Sorunuz mu var? <a href="#">Buraya</a> basın ve bize bildirin.</p>
+            </div>
+        </div>
+    </ui:define>
+</ui:composition>

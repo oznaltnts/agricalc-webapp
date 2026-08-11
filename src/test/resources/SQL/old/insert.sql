@@ -81,19 +81,174 @@ VALUES ('01', 'Adana', '33,80,46,38,51,31', 75, 80, 4),
        ('80', 'Osmaniye', '1,31,27,46', 75, 80, 4),
        ('81', 'Düzce', '54,14,67', 75, 80, 4);
 
-INSERT INTO `users` (`id`, `status`, `phone`, `password`)
-VALUES (1, 1, '+905348387707', '85d8333e6a0a459a4013ab471d8c239f5c12cc78ce046c5462ed11baa3301868'),
-       (2, 1, '+905111111111', '85d8333e6a0a459a4013ab471d8c239f5c12cc78ce046c5462ed11baa3301868');
+insert into city_crops (`status`, `city_id`, `crop_id`)
+select 1,tci.id, tcr.id
+from tektarim.cities tci
+cross join tektarim.crops tcr
+order by tci.id, tcr.id
+;
 
-INSERT INTO `user_roles` (`id`, `user_id`, `role`)
-VALUES (1, 1, 1),
-       (2, 2, 2);
+insert into city_crop_questions (`status`, `city_crop_id`, `question_id`)
+select 1, cc.id, q.id
+from city_crops cc
+cross join questions q
+order by cc.id, q.id
+;
 
-INSERT INTO `dairy_cow_coefficients` (`cow_type`, `value`) VALUES ('0', '1');
-INSERT INTO `dairy_cow_coefficients` (`cow_type`, `value`) VALUES ('1', '0.85');
-INSERT INTO `dairy_cow_coefficients` (`cow_type`, `value`) VALUES ('2', '0.6');
-INSERT INTO `dairy_cow_coefficients` (`cow_type`, `value`) VALUES ('3', '0.4');
-INSERT INTO `dairy_cow_coefficients` (`cow_type`, `value`) VALUES ('4', '0.25');
+INSERT INTO tektarim.coefficients (status, type, value_tr, value) values (1, 'NEEDED_DIESEL','Bir sürümde sıra arası gerekli mazot / derin sürüm ort. ("L/da")','NEEDED_DIESEL_DEEP');
+INSERT INTO tektarim.coefficients (status, type, value_tr, value) values (1, 'NEEDED_DIESEL','Bir sürümde sıra üzeri gerekli mazot / ikincil işlemler ort. ("L/da")','NEEDED_DIESEL_SECOND');
+INSERT INTO tektarim.coefficients (status, type, value_tr, value) values (1, 'WATERING','Damla – insan','WATERING_DROP_HUMAN');
+INSERT INTO tektarim.coefficients (status, type, value_tr, value) values (1, 'WATERING','Damla - makine','WATERING_DROP_MACHINE');
+INSERT INTO tektarim.coefficients (status, type, value_tr, value) values (1, 'WATERING','Yağmur - insan','WATERING_RAIN_HUMAN');
+INSERT INTO tektarim.coefficients (status, type, value_tr, value) values (1, 'WATERING','Yağmur - makine','WATERING_RAIN_MACHINE');
+INSERT INTO tektarim.coefficients (status, type, value_tr, value) values (1, 'WATERING','Vahşi - insan','WATERING_WILD_HUMAN');
+INSERT INTO tektarim.coefficients (status, type, value_tr, value) values (1, 'WATERING','Vahşi - makine','WATERING_WILD_MACHINE');
+INSERT INTO tektarim.coefficients (status, type, value_tr, value) values (1, 'FERTILIZER','Ekim dikim – insan','FERTILIZER_PLANTING_HUMAN');
+INSERT INTO tektarim.coefficients (status, type, value_tr, value) values (1, 'FERTILIZER','Ekim dikim – makine','FERTILIZER_PLANTING_MACHINE');
+INSERT INTO tektarim.coefficients (status, type, value_tr, value) values (1, 'FERTILIZER','Makine ile – insan','FERTILIZER_MACHINE_HUMAN');
+INSERT INTO tektarim.coefficients (status, type, value_tr, value) values (1, 'FERTILIZER','Makine ile – makine','FERTILIZER_MACHINE_MACHINE');
+INSERT INTO tektarim.coefficients (status, type, value_tr, value) values (1, 'FERTILIZER','El ile – insan','FERTILIZER_HAND_HUMAN');
+INSERT INTO tektarim.coefficients (status, type, value_tr, value) values (1, 'FERTILIZER','El ile – makine','FERTILIZER_HAND_MACHINE');
+INSERT INTO tektarim.coefficients (status, type, value_tr, value) values (1, 'FERTILIZER','Sulama sistemi ile – insan','FERTILIZER_WATERING_HUMAN');
+INSERT INTO tektarim.coefficients (status, type, value_tr, value) values (1, 'FERTILIZER','Sulama sistemi ile – makine','FERTILIZER_WATERING_MACHINE');
+INSERT INTO tektarim.coefficients (status, type, value_tr, value) values (1, 'PEST_CONTROL','Sırt makinesi – insan','PEST_CONTROL_BACK_HUMAN');
+INSERT INTO tektarim.coefficients (status, type, value_tr, value) values (1, 'PEST_CONTROL','Sırt makinesi – makine','PEST_CONTROL_BACK_MACHINE');
+INSERT INTO tektarim.coefficients (status, type, value_tr, value) values (1, 'PEST_CONTROL','Traktör – insan','PEST_CONTROL_TRACTOR_HUMAN');
+INSERT INTO tektarim.coefficients (status, type, value_tr, value) values (1, 'PEST_CONTROL','Traktör – makine','PEST_CONTROL_TRACTOR_MACHINE');
+INSERT INTO tektarim.coefficients (status, type, value_tr, value) values (1, 'PEST_CONTROL','El ile – insan','FERTILIZER_HAND_HUMAN');
+INSERT INTO tektarim.coefficients (status, type, value_tr, value) values (1, 'PEST_CONTROL','El ile – makine','FERTILIZER_HAND_MACHINE');
+INSERT INTO tektarim.coefficients (status, type, value_tr, value) values (1, 'PEST_CONTROL','Sulama sistemi ile – insan','FERTILIZER_WATERING_HUMAN');
+INSERT INTO tektarim.coefficients (status, type, value_tr, value) values (1, 'PEST_CONTROL','Sulama sistemi ile – makine','FERTILIZER_WATERING_MACHINE');
+INSERT INTO tektarim.coefficients (status, type, value_tr, value) values (1, 'WEEDING','El ile çapa ("sıra üzeri") – insan','WEEDING_HAND_HUMAN');
+INSERT INTO tektarim.coefficients (status, type, value_tr, value) values (1, 'WEEDING','El ile çapa ("sıra üzeri") – makine','WEEDING_HAND_MACHINE');
+INSERT INTO tektarim.coefficients (status, type, value_tr, value) values (1, 'WEEDING','El çapa makinesi ("sıra üzeri") – insan','WEEDING_MACHINE_HUMAN');
+INSERT INTO tektarim.coefficients (status, type, value_tr, value) values (1, 'WEEDING','El çapa makinesi ("sıra üzeri") – makine','WEEDING_MACHINE_MACHINE');
+INSERT INTO tektarim.coefficients (status, type, value_tr, value) values (1, 'DURATION','Bir kişinin 1 dekar budama süresi – insan','DURATION_PRUNING_HUMAN');
+INSERT INTO tektarim.coefficients (status, type, value_tr, value) values (1, 'DURATION','Bir kişinin 1 dekar budama süresi – makine','DURATION_PRUNING_MACHINE');
+INSERT INTO tektarim.coefficients (status, type, value_tr, value) values (1, 'DURATION','Bir kişinin 1 dekar meyve seyreltme süresi – insan','DURATION_THINNING_HUMAN');
+INSERT INTO tektarim.coefficients (status, type, value_tr, value) values (1, 'DURATION','Bir kişinin 1 dekar meyve seyreltme süresi – makine','DURATION_THINNING_MACHINE');
+INSERT INTO tektarim.coefficients (status, type, value_tr, value) values (1, 'DURATION','Bir kişinin yazlık yaprak alma, uç alma veya yazlık budama süresi – insan','DURATION_SUMMER_PRUNING_HUMAN');
+INSERT INTO tektarim.coefficients (status, type, value_tr, value) values (1, 'DURATION','Bir kişinin yazlık yaprak alma, uç alma veya yazlık budama süresi – makine','DURATION_SUMMER_PRUNING_MACHINE');
+INSERT INTO tektarim.coefficients (status, type, value_tr, value) values (1, 'OTHER_COEFFICIENT','İşçilik','OTHER_LABOR');
+INSERT INTO tektarim.coefficients (status, type, value_tr, value) values (1, 'OTHER_COEFFICIENT','Mazot','OTHER_DIESEL');
+INSERT INTO tektarim.coefficients (status, type, value_tr, value) values (1, 'OTHER_COEFFICIENT','Malzeme','OTHER_MATERIAL');
+INSERT INTO tektarim.coefficients (status, type, value_tr, value) values (1, 'HOW_MUCH_SEEDLING','El ("adet")','HOW_MUCH_SEEDLING_HAND');
+INSERT INTO tektarim.coefficients (status, type, value_tr, value) values (1, 'HOW_MUCH_SEEDLING','Makine ("lt")','HOW_MUCH_SEEDLING_MACHINE');
+INSERT INTO tektarim.coefficients (status, type, value_tr, value) values (1, 'HOW_MUCH_SEEDLING','El ve makine – El','HOW_MUCH_SEEDLING_HAND_AND_MACHINE_HAND');
+INSERT INTO tektarim.coefficients (status, type, value_tr, value) values (1, 'HOW_MUCH_SEEDLING','El ve makine – Makine','HOW_MUCH_SEEDLING_HAND_AND_MACHINE_MACHINE');
+INSERT INTO tektarim.coefficients (status, type, value_tr, value) values (1, 'HOW_MUCH_SEED','El ("adet")','HOW_MUCH_SEEDLING_HAND');
+INSERT INTO tektarim.coefficients (status, type, value_tr, value) values (1, 'HOW_MUCH_SEED','Makine ("lt")','HOW_MUCH_SEEDLING_MACHINE');
+INSERT INTO tektarim.coefficients (status, type, value_tr, value) values (1, 'HOW_MUCH_SEED','El ve makine – El','HOW_MUCH_SEEDLING_HAND_AND_MACHINE_HAND');
+INSERT INTO tektarim.coefficients (status, type, value_tr, value) values (1, 'HOW_MUCH_SEED','El ve makine – Makine','HOW_MUCH_SEEDLING_HAND_AND_MACHINE_MACHINE');
+INSERT INTO tektarim.coefficients (status, type, value_tr, value) values (1, 'HOW_MUCH_COLLECT','Makine ("lt")','HOW_MUCH_SEEDLING_MACHINE');
+INSERT INTO tektarim.coefficients (status, type, value_tr, value) values (1, 'HOW_MUCH_COLLECT','El ve makine – El','HOW_MUCH_SEEDLING_HAND_AND_MACHINE_HAND');
+INSERT INTO tektarim.coefficients (status, type, value_tr, value) values (1, 'HOW_MUCH_COLLECT','El ve makine – Makine','HOW_MUCH_SEEDLING_HAND_AND_MACHINE_MACHINE');
+INSERT INTO tektarim.coefficients (status, type, value_tr, value) values (1, 'CANAL','İşçilik','OTHER_LABOR');
+INSERT INTO tektarim.coefficients (status, type, value_tr, value) values (1, 'CANAL','Mazot','OTHER_DIESEL');
+INSERT INTO tektarim.coefficients (status, type, value_tr, value) values (1, 'SEEDLING_PREPARATION','İşçilik','OTHER_LABOR');
+INSERT INTO tektarim.coefficients (status, type, value_tr, value) values (1, 'SEEDLING_PREPARATION','Mazot','OTHER_DIESEL');
+INSERT INTO tektarim.coefficients (status, type, value_tr, value) values (1, 'MULCH','İşçilik','OTHER_LABOR');
+INSERT INTO tektarim.coefficients (status, type, value_tr, value) values (1, 'MULCH','Mazot','OTHER_DIESEL');
+INSERT INTO tektarim.coefficients (status, type, value_tr, value) values (1, 'MULCH','Miktar','MULCH_AMOUNT');
+INSERT INTO tektarim.coefficients (status, type, value_tr, value) values (1, 'BLEND','El','BLEND_HAND');
+INSERT INTO tektarim.coefficients (status, type, value_tr, value) values (1, 'BLEND','Makine','BLEND_MACHINE');
+INSERT INTO tektarim.coefficients (status, type, value_tr, value) values (1, 'BLEND','El ve makine – El','HOW_MUCH_SEEDLING_HAND_AND_MACHINE_HAND');
+INSERT INTO tektarim.coefficients (status, type, value_tr, value) values (1, 'BLEND','El ve makine – Makine','HOW_MUCH_SEEDLING_HAND_AND_MACHINE_MACHINE');
+INSERT INTO tektarim.coefficients (status, type, value_tr, value) values (1, 'HAYMAKER','İşçilik','OTHER_LABOR');
+INSERT INTO tektarim.coefficients (status, type, value_tr, value) values (1, 'HAYMAKER','Makine','BLEND_MACHINE');
+INSERT INTO tektarim.coefficients (status, type, value_tr, value) values (1, 'HAYMAKER','Makinenin saatlik işleme kapasitesi ("kg")','HAYMAKER_MACHINE_CAPACITY');
+INSERT INTO tektarim.coefficients (status, type, value_tr, value) values (1, 'BALE','İşçilik','OTHER_LABOR');
+INSERT INTO tektarim.coefficients (status, type, value_tr, value) values (1, 'BALE','Mazot','OTHER_DIESEL');
+INSERT INTO tektarim.coefficients (status, type, value_tr, value) values (1, 'BALE','Balya kapasitesi','BALE_CAPACITY');
+INSERT INTO tektarim.coefficients (status, type, value_tr, value) values (1, 'OTHER_CONSTANTS','Traktör römorkunun taşıma kapasitesi','OTHER_CONSTANTS_TRACTOR_TRAILER');
+INSERT INTO tektarim.coefficients (status, type, value_tr, value) values (1, 'OTHER_CONSTANTS','Araç taşıma kapasitesi','OTHER_CONSTANTS_VEHICLE_CAPACITY');
+INSERT INTO tektarim.coefficients (status, type, value_tr, value) values (1, 'OTHER_CONSTANTS','Bir kişi ne kadar ürün işler, kurutur','OTHER_CONSTANTS_ONE_PERSON_HANDLE');
+INSERT INTO tektarim.coefficients (status, type, value_tr, value) values (1, 'OTHER_CONSTANTS','Bir birim işleme malzemesinin işleyebildiği miktar','OTHER_CONSTANTS_HANDLE_MATERIAL');
+INSERT INTO tektarim.coefficients (status, type, value_tr, value) values (1, 'OTHER_CONSTANTS','Bir kişi ne kadar ürün ambalajlar','OTHER_CONSTANTS_ONE_PERSON_PACKAGING');
+
+INSERT INTO tektarim.crop_coefficients (status, crop_id, coefficient_id)
+select 1, crops.id, coefficients.id
+from tektarim.coefficients
+cross join tektarim.crops
+;
+
+insert into tektarim.city_diesel_distances (status, city_id, type)
+SELECT 1, city_id, type
+FROM city_diesel_distances
+;
+
+insert into tektarim.city_crop_seed_and_seedling_numbers (status, city_crop_id, type)
+select 1, id, 'LOCAL_SEED_KG' from tektarim.city_crops
+union all
+select 1, id, 'HYBRID_SEED_KG' from tektarim.city_crops
+union all
+select 1, id, 'HYBRID_SEEDLING' from tektarim.city_crops
+union all
+select 1, id, 'HYBRID_SEEDLING_ONE_GRAFT' from tektarim.city_crops
+union all
+select 1, id, 'HYBRID_SEEDLING_TWO_GRAFT' from tektarim.city_crops
+order by id
+;
+
+insert into tektarim.city_crop_seed_and_seedling_prices (status, city_crop_id, type)
+select 1, id, 'LOCAL_SEED_KG' from tektarim.city_crops
+union all
+select 1, id, 'HYBRID_SEED_KG' from tektarim.city_crops
+union all
+select 1, id, 'HYBRID_SEEDLING' from tektarim.city_crops
+union all
+select 1, id, 'HYBRID_SEEDLING_ONE_GRAFT' from tektarim.city_crops
+union all
+select 1, id, 'HYBRID_SEEDLING_TWO_GRAFT' from tektarim.city_crops
+order by id
+;
+
+INSERT INTO tektarim.fertilizers (`id`,`idate`,`udate`,`status`,`type`,`name`,`nitrogen_percent`,`phosphor_percent`,`potassium_percent`,`old_fertilizer_id`) VALUES (1,'2026-04-20 10:44:59','2026-05-04 13:38:26',1,'COMPOUND_FERTILIZERS','10-15-20 20SO3 Zn',10.000,15.000,20.000,18);
+INSERT INTO tektarim.fertilizers (`id`,`idate`,`udate`,`status`,`type`,`name`,`nitrogen_percent`,`phosphor_percent`,`potassium_percent`,`old_fertilizer_id`) VALUES (2,'2026-04-20 10:44:59','2026-05-04 13:38:57',1,'COMPOUND_FERTILIZERS','10-25-5 5CaO',10.000,25.000,5.000,19);
+INSERT INTO tektarim.fertilizers (`id`,`idate`,`udate`,`status`,`type`,`name`,`nitrogen_percent`,`phosphor_percent`,`potassium_percent`,`old_fertilizer_id`) VALUES (3,'2026-04-20 10:44:59','2026-05-04 13:39:27',1,'COMPOUND_FERTILIZERS','12-12-17 (+2MgO+2OSO3+ME) (Akıllı)',12.000,12.000,17.000,28);
+INSERT INTO tektarim.fertilizers (`id`,`idate`,`udate`,`status`,`type`,`name`,`nitrogen_percent`,`phosphor_percent`,`potassium_percent`,`old_fertilizer_id`) VALUES (4,'2026-04-20 10:44:59','2026-05-04 13:39:40',1,'COMPOUND_FERTILIZERS','13-24-12+10(SO3)+Zn+Fe (Mısır Gübresi)',13.000,24.000,12.000,27);
+INSERT INTO tektarim.fertilizers (`id`,`idate`,`udate`,`status`,`type`,`name`,`nitrogen_percent`,`phosphor_percent`,`potassium_percent`,`old_fertilizer_id`) VALUES (5,'2026-04-20 10:44:59','2026-05-04 13:43:38',1,'COMPOUND_FERTILIZERS','13-24-12 4S FE (Mısır Gübresi)',13.000,24.000,12.000,20);
+INSERT INTO tektarim.fertilizers (`id`,`idate`,`udate`,`status`,`type`,`name`,`nitrogen_percent`,`phosphor_percent`,`potassium_percent`,`old_fertilizer_id`) VALUES (6,'2026-04-20 10:44:59','2026-05-04 13:43:38',1,'COMPOUND_FERTILIZERS','14-7-17 (+2MgO+2OSO3+ME) (Akıllı)',14.000,7.000,17.000,29);
+INSERT INTO tektarim.fertilizers (`id`,`idate`,`udate`,`status`,`type`,`name`,`nitrogen_percent`,`phosphor_percent`,`potassium_percent`,`old_fertilizer_id`) VALUES (7,'2026-04-20 10:44:59','2026-05-04 13:43:38',1,'COMPOUND_FERTILIZERS','15-15-15',15.000,15.000,15.000,12);
+INSERT INTO tektarim.fertilizers (`id`,`idate`,`udate`,`status`,`type`,`name`,`nitrogen_percent`,`phosphor_percent`,`potassium_percent`,`old_fertilizer_id`) VALUES (8,'2026-04-20 10:44:59','2026-05-04 13:43:38',1,'COMPOUND_FERTILIZERS','15-15-15 Zn',15.000,15.000,15.000,13);
+INSERT INTO tektarim.fertilizers (`id`,`idate`,`udate`,`status`,`type`,`name`,`nitrogen_percent`,`phosphor_percent`,`potassium_percent`,`old_fertilizer_id`) VALUES (9,'2026-04-20 10:44:59','2026-05-04 13:43:38',1,'COMPOUND_FERTILIZERS','15-15-15 Zn2OS',15.000,15.000,15.000,14);
+INSERT INTO tektarim.fertilizers (`id`,`idate`,`udate`,`status`,`type`,`name`,`nitrogen_percent`,`phosphor_percent`,`potassium_percent`,`old_fertilizer_id`) VALUES (10,'2026-04-20 10:44:59','2026-05-04 13:43:38',1,'COMPOUND_FERTILIZERS','20-20-0',20.000,20.000,0.000,16);
+INSERT INTO tektarim.fertilizers (`id`,`idate`,`udate`,`status`,`type`,`name`,`nitrogen_percent`,`phosphor_percent`,`potassium_percent`,`old_fertilizer_id`) VALUES (11,'2026-04-20 10:44:59','2026-05-04 13:43:38',1,'COMPOUND_FERTILIZERS','20-20-0 Zn',20.000,20.000,0.000,17);
+INSERT INTO tektarim.fertilizers (`id`,`idate`,`udate`,`status`,`type`,`name`,`nitrogen_percent`,`phosphor_percent`,`potassium_percent`,`old_fertilizer_id`) VALUES (12,'2026-04-20 10:44:59','2026-05-04 13:43:38',1,'COMPOUND_FERTILIZERS','20-20-20',20.000,20.000,20.000,15);
+INSERT INTO tektarim.fertilizers (`id`,`idate`,`udate`,`status`,`type`,`name`,`nitrogen_percent`,`phosphor_percent`,`potassium_percent`,`old_fertilizer_id`) VALUES (13,'2026-04-20 10:44:59','2026-05-04 13:43:38',1,'COMPOUND_FERTILIZERS','20-20-30+30(SO3)+Zn (Buğday Gübresi)',20.000,20.000,30.000,32);
+INSERT INTO tektarim.fertilizers (`id`,`idate`,`udate`,`status`,`type`,`name`,`nitrogen_percent`,`phosphor_percent`,`potassium_percent`,`old_fertilizer_id`) VALUES (14,'2026-04-20 10:44:59','2026-05-04 13:43:38',1,'COMPOUND_FERTILIZERS','23-12-9 Zn',23.000,12.000,9.000,21);
+INSERT INTO tektarim.fertilizers (`id`,`idate`,`udate`,`status`,`type`,`name`,`nitrogen_percent`,`phosphor_percent`,`potassium_percent`,`old_fertilizer_id`) VALUES (15,'2026-04-20 10:44:59','2026-05-04 13:43:38',1,'COMPOUND_FERTILIZERS','25-5-0',25.000,5.000,0.000,22);
+INSERT INTO tektarim.fertilizers (`id`,`idate`,`udate`,`status`,`type`,`name`,`nitrogen_percent`,`phosphor_percent`,`potassium_percent`,`old_fertilizer_id`) VALUES (16,'2026-04-20 10:44:59','2026-05-04 13:43:38',1,'COMPOUND_FERTILIZERS','25-5-10-25 (Çay Gübresi)',25.000,5.000,10.000,23);
+INSERT INTO tektarim.fertilizers (`id`,`idate`,`udate`,`status`,`type`,`name`,`nitrogen_percent`,`phosphor_percent`,`potassium_percent`,`old_fertilizer_id`) VALUES (17,'2026-04-20 10:44:59','2026-05-04 13:43:38',1,'COMPOUND_FERTILIZERS','Di Amonyum Fosfat (DAP)',18.000,46.000,0.000,11);
+INSERT INTO tektarim.fertilizers (`id`,`idate`,`udate`,`status`,`type`,`name`,`nitrogen_percent`,`phosphor_percent`,`potassium_percent`,`old_fertilizer_id`) VALUES (18,'2026-04-20 10:44:59','2026-05-04 13:43:38',1,'COMPOUND_FERTILIZERS','Potasyum Nitrat',13.000,0.000,45.500,9);
+INSERT INTO tektarim.fertilizers (`id`,`idate`,`udate`,`status`,`type`,`name`,`nitrogen_percent`,`phosphor_percent`,`potassium_percent`,`old_fertilizer_id`) VALUES (19,'2026-04-20 10:44:59','2026-05-04 13:43:38',1,'COMPOUND_FERTILIZERS','Süper Çotanak (Fındık Gübresi)',18.000,14.000,15.000,25);
+INSERT INTO tektarim.fertilizers (`id`,`idate`,`udate`,`status`,`type`,`name`,`nitrogen_percent`,`phosphor_percent`,`potassium_percent`,`old_fertilizer_id`) VALUES (20,'2026-04-20 10:44:59','2026-05-04 13:43:38',1,'COMPOUND_FERTILIZERS','Süper Pancar-S (Şekerpancarı Gübresi)',13.000,16.000,15.000,24);
+INSERT INTO tektarim.fertilizers (`id`,`idate`,`udate`,`status`,`type`,`name`,`nitrogen_percent`,`phosphor_percent`,`potassium_percent`,`old_fertilizer_id`) VALUES (21,'2026-04-20 10:44:59','2026-05-04 13:43:38',1,'NITROGEN_FERTILIZERS','Amonyum Nitrat',33.000,0.000,0.000,1);
+INSERT INTO tektarim.fertilizers (`id`,`idate`,`udate`,`status`,`type`,`name`,`nitrogen_percent`,`phosphor_percent`,`potassium_percent`,`old_fertilizer_id`) VALUES (22,'2026-04-20 10:44:59','2026-05-04 13:43:38',1,'NITROGEN_FERTILIZERS','Amonyum Sülfat (Şeker Gübresi)',21.000,0.000,0.000,5);
+INSERT INTO tektarim.fertilizers (`id`,`idate`,`udate`,`status`,`type`,`name`,`nitrogen_percent`,`phosphor_percent`,`potassium_percent`,`old_fertilizer_id`) VALUES (23,'2026-04-20 10:44:59','2026-05-04 13:43:38',1,'NITROGEN_FERTILIZERS','Kalsiyum Amonyum Nitrat (CAN)',13.000,0.000,0.000,2);
+INSERT INTO tektarim.fertilizers (`id`,`idate`,`udate`,`status`,`type`,`name`,`nitrogen_percent`,`phosphor_percent`,`potassium_percent`,`old_fertilizer_id`) VALUES (24,'2026-04-20 10:44:59','2026-05-04 13:43:38',1,'NITROGEN_FERTILIZERS','Kalsiyum Nitrat',15.500,0.000,0.000,3);
+INSERT INTO tektarim.fertilizers (`id`,`idate`,`udate`,`status`,`type`,`name`,`nitrogen_percent`,`phosphor_percent`,`potassium_percent`,`old_fertilizer_id`) VALUES (25,'2026-04-20 10:44:59','2026-05-04 13:43:38',1,'NITROGEN_FERTILIZERS','ÜRE',46.000,0.000,0.000,4);
+INSERT INTO tektarim.fertilizers (`id`,`idate`,`udate`,`status`,`type`,`name`,`nitrogen_percent`,`phosphor_percent`,`potassium_percent`,`old_fertilizer_id`) VALUES (26,'2026-04-20 10:44:59','2026-05-04 13:43:38',1,'PHOSPHOR_FERTILIZERS','Mono Amonyum Fosfat (MAP)',11.000,52.000,0.000,10);
+INSERT INTO tektarim.fertilizers (`id`,`idate`,`udate`,`status`,`type`,`name`,`nitrogen_percent`,`phosphor_percent`,`potassium_percent`,`old_fertilizer_id`) VALUES (27,'2026-04-20 10:44:59','2026-05-04 13:43:38',1,'PHOSPHOR_FERTILIZERS','Normal Süper Fosfat',0.000,16.500,0.000,6);
+INSERT INTO tektarim.fertilizers (`id`,`idate`,`udate`,`status`,`type`,`name`,`nitrogen_percent`,`phosphor_percent`,`potassium_percent`,`old_fertilizer_id`) VALUES (28,'2026-04-20 10:44:59','2026-05-04 13:43:38',1,'PHOSPHOR_FERTILIZERS','Triple Süper Fosfat (TSP)',0.000,42.000,0.000,7);
+INSERT INTO tektarim.fertilizers (`id`,`idate`,`udate`,`status`,`type`,`name`,`nitrogen_percent`,`phosphor_percent`,`potassium_percent`,`old_fertilizer_id`) VALUES (29,'2026-04-20 10:44:59','2026-05-04 13:43:38',1,'POTASSIUM_FERTILIZERS','Potasyum Nitrat',13.000,0.000,46.000,30);
+INSERT INTO tektarim.fertilizers (`id`,`idate`,`udate`,`status`,`type`,`name`,`nitrogen_percent`,`phosphor_percent`,`potassium_percent`,`old_fertilizer_id`) VALUES (30,'2026-04-20 10:44:59','2026-05-04 13:43:38',1,'POTASSIUM_FERTILIZERS','Potasyum Sülfat',0.000,0.000,51.000,8);
+INSERT INTO tektarim.fertilizers (`id`,`idate`,`udate`,`status`,`type`,`name`,`nitrogen_percent`,`phosphor_percent`,`potassium_percent`,`old_fertilizer_id`) VALUES (31,'2026-04-29 11:13:43',NULL,1,'FOLIAR_FERTILIZERS','Yaprak gübresi orta',NULL,NULL,NULL,NULL);
+INSERT INTO tektarim.fertilizers (`id`,`idate`,`udate`,`status`,`type`,`name`,`nitrogen_percent`,`phosphor_percent`,`potassium_percent`,`old_fertilizer_id`) VALUES (32,'2026-04-29 11:13:43',NULL,1,'FOLIAR_FERTILIZERS','Yaprak gübresi pahalı',NULL,NULL,NULL,NULL);
+INSERT INTO tektarim.fertilizers (`id`,`idate`,`udate`,`status`,`type`,`name`,`nitrogen_percent`,`phosphor_percent`,`potassium_percent`,`old_fertilizer_id`) VALUES (33,'2026-04-29 11:13:43',NULL,1,'FOLIAR_FERTILIZERS','Yaprak gübresi ucuz',NULL,NULL,NULL,NULL);
+INSERT INTO tektarim.fertilizers (`id`,`idate`,`udate`,`status`,`type`,`name`,`nitrogen_percent`,`phosphor_percent`,`potassium_percent`,`old_fertilizer_id`) VALUES (34,'2026-04-29 11:13:43',NULL,1,'SOIL_CONDITIONERS','Humik asit, leonadid orta',NULL,NULL,NULL,NULL);
+INSERT INTO tektarim.fertilizers (`id`,`idate`,`udate`,`status`,`type`,`name`,`nitrogen_percent`,`phosphor_percent`,`potassium_percent`,`old_fertilizer_id`) VALUES (35,'2026-04-29 11:13:43',NULL,1,'SOIL_CONDITIONERS','Humik asit, leonadid pahalı',NULL,NULL,NULL,NULL);
+INSERT INTO tektarim.fertilizers (`id`,`idate`,`udate`,`status`,`type`,`name`,`nitrogen_percent`,`phosphor_percent`,`potassium_percent`,`old_fertilizer_id`) VALUES (36,'2026-04-29 11:13:43',NULL,1,'SOIL_CONDITIONERS','Humik asit, leonadid ucuz',NULL,NULL,NULL,NULL);
+
+INSERT INTO `tektarim`.`users` (`status`, `phone`, `password`) VALUES (1, '+905348387707', '85d8333e6a0a459a4013ab471d8c239f5c12cc78ce046c5462ed11baa3301868');
+
+INSERT INTO `tektarim`.`user_roles` (`user_id`, `role`) VALUES (1, 1);
+
+INSERT INTO `tektarim`.`dairy_cow_coefficients` (`cow_type`, `value`) VALUES ('0', '1');
+INSERT INTO `tektarim`.`dairy_cow_coefficients` (`cow_type`, `value`) VALUES ('1', '0.85');
+INSERT INTO `tektarim`.`dairy_cow_coefficients` (`cow_type`, `value`) VALUES ('2', '0.6');
+INSERT INTO `tektarim`.`dairy_cow_coefficients` (`cow_type`, `value`) VALUES ('3', '0.4');
+INSERT INTO `tektarim`.`dairy_cow_coefficients` (`cow_type`, `value`) VALUES ('4', '0.25');
 
 INSERT INTO `feeds` (`status`, `category`, `feed_type`, `name`) VALUES (1,0,0,'Yonca (Kuru)');
 INSERT INTO `feeds` (`status`, `category`, `feed_type`, `name`) VALUES (1,0,0,'Çayır Otu / Mera Otu (Kuru)');
@@ -440,7 +595,7 @@ INSERT INTO plantation_coefficients (coef_type,diesel_value,labor_value) VALUES 
 INSERT INTO plantation_coefficients (coef_type,diesel_value,labor_value) VALUES ('LEONARDITE','0','2');
 INSERT INTO plantation_coefficients (coef_type,diesel_value,labor_value) VALUES ('WORM_COMPOST','0','0.01');
 INSERT INTO plantation_coefficients (coef_type,diesel_value,labor_value) VALUES ('BIO_CONDITIONER','0.25','0.2');
-INSERT INTO plantation_coefficients (coef_type,diesel_value,labor_value) VALUES ('THROAT_FILLING',null,'0.15');
+INSERT INTO plantation_coefficients (coef_type,diesel_value,labor_value) VALUES ('',null,'0.15');
 INSERT INTO plantation_coefficients (coef_type,diesel_value,labor_value) VALUES ('TRACTOR_TILLER',null,'0.17');
 INSERT INTO plantation_coefficients (coef_type,diesel_value,labor_value) VALUES ('WEED_CONTROL','0.15','0.3');
 # INSERT INTO plantation_coefficients (coef_type,diesel_value,labor_value) VALUES ('DRIP_IRRIGATION','0.65','0.15');
@@ -469,10 +624,4 @@ INSERT INTO plantation_coefficients (coef_type,diesel_value,labor_value) VALUES 
 INSERT INTO plantation_coefficients (coef_type,diesel_value,labor_value) VALUES ('CARRYING_CAPACITY',null,'0.65');
 
 
-INSERT INTO plantation_irrigation_values (price_type,price_value,labor_value,diesel_value) VALUES ('YAGMUR_IRRIGATION_PRICE',2200,2,1.4);
-INSERT INTO plantation_irrigation_values (price_type,price_value,labor_value,diesel_value) VALUES ('SALMA_IRRIGATION_PRICE',1111,2,0);
-INSERT INTO plantation_irrigation_values (price_type,price_value,labor_value,diesel_value) VALUES ('KARIK_IRRIGATION_PRICE',1234,1.5,0);
-INSERT INTO plantation_irrigation_values (price_type,price_value,labor_value,diesel_value) VALUES ('PIVOT_IRRIGATION_PRICE',1800,0.25,0.3);
-INSERT INTO plantation_irrigation_values (price_type,price_value,labor_value,diesel_value) VALUES ('TAMBURLU_IRRIGATION_PRICE',1200,0.8,0.7);
-INSERT INTO plantation_irrigation_values (price_type,price_value,labor_value,diesel_value) VALUES ('DAMLA_IRRIGATION_PRICE',4300,0.15,0.65);
-INSERT INTO plantation_irrigation_values (price_type,price_value,labor_value,diesel_value) VALUES ('MINI_SPREY_IRRIGATION_PRICE',6500,0.3,1.4);
+

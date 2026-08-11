@@ -15,13 +15,11 @@ import tr.ozanbey.agricalc.webapp.service.repository.plantation.PlantationIrriga
 import tr.ozanbey.agricalc.webapp.service.repository.plantation.UserPlantParcelPlanAnswerRepository;
 
 import java.math.BigDecimal;
-import java.math.RoundingMode;
 import java.util.List;
-import java.util.Optional;
 
 @Service
 @Slf4j
-public class CostCalculationService {
+public class CostCalculationService extends CostCommonService {
 
     @Autowired
     private PlantationCoefficientRepository coefficientRepository;
@@ -32,95 +30,7 @@ public class CostCalculationService {
     @Autowired
     private UserPlantParcelPlanAnswerRepository planAnswerRepository;
 
-    /*todo aşağıdaki ValueSetter methodları için?
-    soru cevaplanmadıysa 0 mı kabul edilmeli? minimum değer mi alınmalı, 2 durum da farklı sonuç yaratacak
-    */
-
-    private BigDecimal decimalAnswerSetter(List<UserPlantParcelPlanAnswer> answerList, Long questionId) {
-        Optional<UserPlantParcelPlanAnswer> optional = answerList.stream()
-                .filter(a -> a.getProductQuestion().getPlantationQuestion().getId().equals(questionId))
-                .findAny();
-        if (optional.isPresent()) {
-            if (optional.get().getProductQuestion().getMaximumValue() != null && new BigDecimal(optional.get().getAnswerValue()).compareTo(optional.get().getProductQuestion().getMaximumValue()) > 0) {
-                return optional.get().getProductQuestion().getMaximumValue();
-            } else if (optional.get().getProductQuestion().getMinimumValue() != null && optional.get().getProductQuestion().getMinimumValue().compareTo(new BigDecimal(optional.get().getAnswerValue())) > 0) {
-                return optional.get().getProductQuestion().getMinimumValue();
-            } else {
-                return new BigDecimal(optional.get().getAnswerValue());
-            }
-        }
-        return BigDecimal.ZERO;
-    }
-
-    private Double doubleAnswerSetter(List<UserPlantParcelPlanAnswer> answerList, Long questionId) {
-        Optional<UserPlantParcelPlanAnswer> optional = answerList.stream()
-                .filter(a -> a.getProductQuestion().getPlantationQuestion().getId().equals(questionId))
-                .findAny();
-        if (optional.isPresent()) {
-            if (optional.get().getProductQuestion().getMaximumValue() != null && Double.parseDouble(optional.get().getAnswerValue()) > optional.get().getProductQuestion().getMaximumValue().doubleValue()) {
-                return optional.get().getProductQuestion().getMaximumValue().doubleValue();
-            } else if (optional.get().getProductQuestion().getMinimumValue() != null && optional.get().getProductQuestion().getMinimumValue().doubleValue() > Double.parseDouble(optional.get().getAnswerValue())) {
-                return optional.get().getProductQuestion().getMinimumValue().doubleValue();
-            } else {
-                return Double.parseDouble(optional.get().getAnswerValue());
-            }
-        }
-        return 0d;
-    }
-
-    private BigDecimal decimalValueSetter(List<PlantationProductQuestion> questionList, Long questionId) {
-        Optional<PlantationProductQuestion> optional = questionList.stream()
-                .filter(q -> q.getPlantationQuestion().getId().equals(questionId))
-                .findAny();
-        if (optional.isPresent() && optional.get().getBigDecimalValue() != null) {
-            if (optional.get().getMaximumValue() != null && optional.get().getBigDecimalValue().compareTo(optional.get().getMaximumValue()) > 0) {
-                return optional.get().getMaximumValue();
-            } else if (optional.get().getMinimumValue() != null && optional.get().getMinimumValue().compareTo(optional.get().getBigDecimalValue()) > 0) {
-                return optional.get().getMinimumValue();
-            } else {
-                return optional.get().getBigDecimalValue();
-            }
-        }
-        return BigDecimal.ZERO;
-    }
-
-    private Double doubleValueSetter(List<PlantationProductQuestion> questionList, Long questionId) {
-        Optional<PlantationProductQuestion> optional = questionList.stream()
-                .filter(q -> q.getPlantationQuestion().getId().equals(questionId))
-                .findAny();
-        if (optional.isPresent() && optional.get().getDoubleValue() != null) {
-            if (optional.get().getMaximumValue() != null && optional.get().getDoubleValue() > optional.get().getMaximumValue().doubleValue()) {
-                return optional.get().getMaximumValue().doubleValue();
-            } else if (optional.get().getMinimumValue() != null && optional.get().getMinimumValue().doubleValue() > optional.get().getDoubleValue()) {
-                return optional.get().getMinimumValue().doubleValue();
-            } else {
-                return optional.get().getDoubleValue();
-            }
-        }
-        return 0d;
-    }
-
-    private Integer integerValueSetter(List<PlantationProductQuestion> questionList, Long questionId) {
-        Optional<PlantationProductQuestion> optional = questionList.stream()
-                .filter(q -> q.getPlantationQuestion().getId().equals(questionId))
-                .findAny();
-        if (optional.isPresent() && optional.get().getIntegerValue() != null) {
-            if (optional.get().getMaximumValue() != null && optional.get().getIntegerValue().doubleValue() > optional.get().getMaximumValue().doubleValue()) {
-                return optional.get().getMaximumValue().intValue();
-            } else if (optional.get().getMinimumValue() != null && optional.get().getMinimumValue().doubleValue() > optional.get().getIntegerValue().doubleValue()) {
-                return optional.get().getMinimumValue().intValue();
-            } else {
-                return optional.get().getIntegerValue();
-            }
-        }
-        return 0;
-    }
-
     //Gider- Toprak Hazırlığı
-    //250
-    private BigDecimal workingManLaborPrice(BigDecimal maleDailyWage, Double workHoursPerDay) {
-        return maleDailyWage.divide(BigDecimal.valueOf(workHoursPerDay), 10, RoundingMode.HALF_UP);
-    }
     //300
     private BigDecimal soilPrepLumpSumCost(Integer soilPrepLumpSumAmount, BigDecimal soilPrepLumpSumPrice) {
         return BigDecimal.valueOf(soilPrepLumpSumAmount).multiply(soilPrepLumpSumPrice);
@@ -128,14 +38,6 @@ public class CostCalculationService {
     //300
     private BigDecimal soilPrepLaserCostPerDecare(Integer soilPrepLaserOperationCount, Integer soilPrepLumpSumAmount, BigDecimal soilPrepLumpSumPrice) {
         return BigDecimal.valueOf(soilPrepLaserOperationCount).multiply(soilPrepLumpSumCost(soilPrepLumpSumAmount, soilPrepLumpSumPrice));
-    }
-    //0,6
-    private Double soilPrepBlastingEnergyAmount(Double soilPrepBlastingFrequency, Double soilPrepBlastingDieselRate) {
-        return soilPrepBlastingFrequency / soilPrepBlastingDieselRate;
-    }
-    //0,67
-    private Double soilPrepBlastingLaborAmount(Double soilPrepBlastingLaborRate, Double soilPrepBlastingFrequency) {
-        return soilPrepBlastingLaborRate / soilPrepBlastingFrequency;
     }
     //211,667
     private BigDecimal soilPrepBlastingCostPerDecare(Integer soilPrepBlastingOperationCount,
@@ -202,38 +104,6 @@ public class CostCalculationService {
     }
 
     //Gider- Ekim Dikim
-    //750
-    private BigDecimal plantingCostPerDecareKg(Double seedKgPerDecare, BigDecimal seedPricePerKg) {
-        return BigDecimal.valueOf(seedKgPerDecare).multiply(seedPricePerKg);
-    }
-    //0,2
-    private Double plantingMaterialAmountGr(Double seedGrPerDecare) {
-        return seedGrPerDecare / 1000;
-    }
-    //10
-    private BigDecimal plantingCostPerDecareGr(Double seedGrPerDecare, BigDecimal seedPricePerKg) {
-        return BigDecimal.valueOf(plantingMaterialAmountGr(seedGrPerDecare)).multiply(seedPricePerKg);
-    }
-    //0,9
-    private Double plantingMaterialAmountUnit(Double seedUnitPerDecare) {
-        return seedUnitPerDecare / 1000;
-    }
-    //180
-    private BigDecimal plantingCostPerDecareUnit(Double seedUnitPerDecare, BigDecimal seedPricePer1000) {
-        return BigDecimal.valueOf(plantingMaterialAmountUnit(seedUnitPerDecare)).multiply(seedPricePer1000);
-    }
-    //20000
-    private BigDecimal plantingCostPerDecareBag(Double decarePerBag, BigDecimal seedBagPrice) {
-        return BigDecimal.valueOf(decarePerBag).multiply(seedBagPrice);
-    }
-    //0,35
-    private Double plantingYearEnergyAmount(Double seederEnergyPerDecare, Double seedUsageYear) {
-        return seederEnergyPerDecare / seedUsageYear;
-    }
-    //0,05
-    private Double plantingYearLaborAmount(Double seederLaborPerDecare, Double seedUsageYear) {
-        return seederLaborPerDecare / seedUsageYear;
-    }
     //38,8
     private BigDecimal plantingCostSeederPerDecare(Double seedUsageYear, Double seederEnergyPerDecare, BigDecimal cityDieselPrice,
                                                    Double seederLaborPerDecare, BigDecimal workingManLaborPrice) {
@@ -244,10 +114,6 @@ public class CostCalculationService {
     private BigDecimal plantingSeederRentalCostPerDecare(Integer plantingSeederLumpSumAmount, BigDecimal plantingLumpSumPrice) {
         return BigDecimal.valueOf(plantingSeederLumpSumAmount).multiply(plantingLumpSumPrice);
     }
-    //2
-    private Double plantingHandLaborAmount(Double seedHandHourPerDecare, Double seedUsageYear) {
-        return seedHandHourPerDecare / seedUsageYear;
-    }
     //500
     private BigDecimal plantingSeedCostPerDecare(Double seedHandHourPerDecare, Double seedUsageYear, BigDecimal workingManLaborPrice) {
         if (seedUsageYear == 0) return BigDecimal.ZERO;
@@ -257,32 +123,6 @@ public class CostCalculationService {
     private BigDecimal plantingDroneCostPerDecare(Integer plantingDroneLumpSumAmount, BigDecimal plantingDroneLumpSumPrice) {
         return BigDecimal.valueOf(plantingDroneLumpSumAmount).multiply(plantingDroneLumpSumPrice);
     }
-    //666,6667
-    private Double plantingSeedlingMaterialAmountUnit(Double plantingSeedlingPerDecare, Integer seedlingUsageYear) {
-        return plantingSeedlingPerDecare / seedlingUsageYear;
-    }
-    //1333,3
-    private BigDecimal seedlingUnitCostPerDecare(Double plantingSeedlingPerDecare, Integer seedlingUsageYear, BigDecimal seedlingUnitPrice) {
-        if (seedlingUsageYear == 0) return BigDecimal.ZERO;
-        return BigDecimal.valueOf(plantingSeedlingMaterialAmountUnit(plantingSeedlingPerDecare, seedlingUsageYear)).multiply(seedlingUnitPrice);
-    }
-    //400
-    private Double plantingSteelingMaterialAmountUnit(Integer plantingSteelingPerDecare, Integer seedlingUsageYear) {
-        return plantingSteelingPerDecare / (double) seedlingUsageYear;
-    }
-    //600
-    private BigDecimal steelingUnitCostPerDecare(Integer plantingSteelingPerDecare, Integer seedlingUsageYear, BigDecimal steelingUnitPrice) {
-        if (seedlingUsageYear == 0) return BigDecimal.ZERO;
-        return BigDecimal.valueOf(plantingSteelingMaterialAmountUnit(plantingSteelingPerDecare, seedlingUsageYear)).multiply(steelingUnitPrice);
-    }
-    //0,4444
-    private Double plantingSeedlingHandLaborAmount(Double plantingSeedlingPerDecare, Double averagePlantingHandPerPerson, Integer seedlingUsageYear) {
-        return plantingSeedlingPerDecare / averagePlantingHandPerPerson / seedlingUsageYear;
-    }
-    //225
-    private BigDecimal workingWomanLaborPrice(BigDecimal womanDailyWage, Double workHoursPerDay) {
-        return womanDailyWage.divide(BigDecimal.valueOf(workHoursPerDay), 10, RoundingMode.HALF_UP);
-    }
     //100
     private BigDecimal plantByHandCostPerDecare(Double plantingSeedlingPerDecare, Double averagePlantingHandPerPerson, Integer seedlingUsageYear,
                                                 BigDecimal workingWomanLaborPrice) {
@@ -290,20 +130,11 @@ public class CostCalculationService {
         return BigDecimal.valueOf(plantingSeedlingHandLaborAmount(plantingSeedlingPerDecare, averagePlantingHandPerPerson, seedlingUsageYear))
                 .multiply(workingWomanLaborPrice);
     }
-    //2,222
-    private Double plantingDrillEnergyAmountPerHour(Double plantingSeedlingPerDecare, Double drillPlantingPerHour) {
-        return plantingSeedlingPerDecare / drillPlantingPerHour;
-    }
 
     //166,7
     private BigDecimal plantByDrillCostPerDecare(Double plantingSeedlingPerDecare, Double drillPlantingPerHour, BigDecimal cityDieselPrice) {
         if (drillPlantingPerHour == 0) return BigDecimal.ZERO;
         return BigDecimal.valueOf(plantingDrillEnergyAmountPerHour(plantingSeedlingPerDecare, drillPlantingPerHour)).multiply(cityDieselPrice);
-    }
-
-    //0,519
-    private Double plantingDrillDieselAmountPerHour(Double plantingSeedlingPerDecare, Double drillPlantingPerHour, Double dieselAmountPerHour, Integer seedlingUsageYear) {
-        return plantingDrillEnergyAmountPerHour(plantingSeedlingPerDecare, drillPlantingPerHour) * dieselAmountPerHour / seedlingUsageYear;
     }
 
     //38,9
@@ -315,21 +146,6 @@ public class CostCalculationService {
     //275
     private BigDecimal rentalDrillCostPerHour(Double drillAmount, BigDecimal rentalDrillCostPerHour) {
         return BigDecimal.valueOf(drillAmount).multiply(rentalDrillCostPerHour);
-    }
-
-    //1,47
-    private Double seedToFideLaborAmountPerDecare(Double seedToFideAmountPerDecare, Double seedToFideWorkAmount) {
-        return seedToFideAmountPerDecare / seedToFideWorkAmount;
-    }
-
-    //1840
-    private BigDecimal mixedDailyWage(BigDecimal maleDailyWage, Double maleCostRate, BigDecimal femaleDailyWage, Double femaleCostRate) {
-        return (maleDailyWage.multiply(BigDecimal.valueOf(maleCostRate))).add(femaleDailyWage.multiply(BigDecimal.valueOf(femaleCostRate)));
-    }
-
-    //230
-    private BigDecimal workingMixedLaborPrice(BigDecimal maleDailyWage, Double maleCostRate, BigDecimal femaleDailyWage, Double femaleCostRate, Double workHoursPerDay) {
-        return mixedDailyWage(maleDailyWage, maleCostRate, femaleDailyWage, femaleCostRate).divide(BigDecimal.valueOf(workHoursPerDay), 10, RoundingMode.HALF_UP);
     }
 
     //2,222
@@ -348,22 +164,12 @@ public class CostCalculationService {
                         .multiply(seedToFidePrice));
     }
 
-    //1260
-    private Double plantingMaterialAmountYumru(Double averageYumruAmount, Double yumruUsageYear) {
-        return averageYumruAmount / yumruUsageYear;
-    }
-
     //5910,0
     private BigDecimal plantingYumruCostPerDecare(Double workPowerCount, BigDecimal workingMixedLaborPrice,
                                                   Double averageYumruAmount, Double yumruUsageYear, BigDecimal yumruKgPrice) {
         if (yumruUsageYear == 0) return BigDecimal.ZERO;
         return BigDecimal.valueOf(workPowerCount).multiply(workingMixedLaborPrice)
                 .add(BigDecimal.valueOf(plantingMaterialAmountYumru(averageYumruAmount, yumruUsageYear)).multiply(yumruKgPrice));
-    }
-
-    //36
-    private Double plantingLaborAmountYumru(Double workPowerHour, Double workPowerCount) {
-        return workPowerHour + workPowerCount;
     }
 
     //8100
@@ -532,21 +338,6 @@ public class CostCalculationService {
                 BigDecimal.valueOf(liquidFertilizerDieselRate).multiply(cityDieselPrice)
                         .add(BigDecimal.valueOf(liquidFertilizerLaborRate).multiply(workingManLaborPrice))
                         .add(BigDecimal.ONE.multiply(liquidFertilizerAveragePrice)));
-    }
-
-    //2,5
-    private Double animalFertilizerDieselAmount(Double animalFertilizerDieselRate, Double animalFertilizerFrequency) {
-        return animalFertilizerDieselRate / animalFertilizerFrequency;
-    }
-
-    //3
-    private Double animalFertilizerLaborAmount(Double animalFertilizerLaborRate, Double animalFertilizerFrequency) {
-        return animalFertilizerLaborRate / animalFertilizerFrequency;
-    }
-
-    //3
-    private Double animalFertilizerKgAmount(Double animalFertilizerPerDecare, Double animalFertilizerFrequency) {
-        return animalFertilizerPerDecare / animalFertilizerFrequency;
     }
 
     //12937,5
@@ -745,16 +536,6 @@ public class CostCalculationService {
                 BigDecimal.valueOf(averageLaborHourAmount).multiply(workingMixedLaborPrice));
     }
 
-    //18
-    private Double mulchingLaborAmount(Double totalMulchingHour, Double mulchUsageYear) {
-        return totalMulchingHour / mulchUsageYear;
-    }
-
-    //80
-    private Double mulchingCostAmount(Double mulchAmountPerDecare, Double mulchUsageYear) {
-        return mulchAmountPerDecare / mulchUsageYear;
-    }
-
     //5740
     private BigDecimal mulchingCostPerDecare(Double totalMulchingHour, Double mulchUsageYear,
                                              BigDecimal workingMixedLaborPrice,
@@ -885,29 +666,17 @@ public class CostCalculationService {
     }
 
     //1200
-    //6,707189268
-    private Double inputAmountForElectricityPump(Double electricityPumpWorkingHour, Double electricityWaterAmountPerHour, Double electricityWaterPumpHeight,
-                                                 Integer constantNumber, Double constantMotorEfficiency, Double constantPumpEfficiency,
-                                                 Double irrigationAreaElectricity) {
-        return ((electricityPumpWorkingHour * electricityWaterAmountPerHour * electricityWaterPumpHeight) / (constantNumber * constantMotorEfficiency * constantPumpEfficiency)) / irrigationAreaElectricity;
-    }
 
     //5586,575141
     private BigDecimal irrigationCostForElectricityPump(Double irrigationCountForElectricityPump, Double irrigationLaborRateForSelectedIrrigation, BigDecimal workingManLaborPrice,
                                                         Double electricityPumpWorkingHour, Double electricityWaterAmountPerHour, Double electricityWaterPumpHeight,
-                                                        Integer constantNumber, Double constantMotorEfficiency, Double constantPumpEfficiency,
+                                                        Integer constantNumber, Double constantMotorEfficiency, Double pumpEfficiencyRate,
                                                         Double irrigationAreaElectricity, BigDecimal cityElectricityPrice, BigDecimal amortizationForSelectedIrrigation) {
         if (irrigationCountForElectricityPump == 0d) return BigDecimal.ZERO;
         return BigDecimal.valueOf(irrigationCountForElectricityPump).multiply(
                         BigDecimal.valueOf(irrigationLaborRateForSelectedIrrigation).multiply(workingManLaborPrice)
-                                .add(BigDecimal.valueOf(inputAmountForElectricityPump(electricityPumpWorkingHour, electricityWaterAmountPerHour, electricityWaterPumpHeight, constantNumber, constantMotorEfficiency, constantPumpEfficiency, irrigationAreaElectricity)).multiply(cityElectricityPrice)))
+                                .add(BigDecimal.valueOf(inputAmountForElectricityPump(electricityPumpWorkingHour, electricityWaterAmountPerHour, electricityWaterPumpHeight, constantNumber, constantMotorEfficiency, pumpEfficiencyRate, irrigationAreaElectricity)).multiply(cityElectricityPrice)))
                 .add(amortizationForSelectedIrrigation);
-    }
-
-    //5,45
-    private Double dieselInputAmountForDieselPump(Double specificConstantRate, Double pumpWorkingHour, Double waterAmountPerHour, Double waterPumpHeight, Double gravity,
-                                                  Double pumpMotorEfficiencyRate, Double irrigationArea) {
-        return ((specificConstantRate * pumpWorkingHour * (waterAmountPerHour / 3600) * waterPumpHeight * gravity) / pumpMotorEfficiencyRate) / irrigationArea;
     }
 
     //5835
@@ -926,14 +695,14 @@ public class CostCalculationService {
     private BigDecimal irrigationTotalCost(Integer irrigationCountPerTonne, Double irrigationDieselRateForSelectedIrrigation, Double irrigationLaborRateForSelectedIrrigation, BigDecimal maleDailyWage, Double workHoursPerDay, Double waterAmountPerDecarePerTonne, BigDecimal waterPricePerTonne, BigDecimal amortizationForSelectedIrrigation,
                                            Double irrigationCountPerDecare, Double pumpEfficiencyRate, BigDecimal cityDieselPrice, Double waterAmountPerDecare, BigDecimal waterPricePerDecare,
                                            BigDecimal waterPricePerDecareAlone,
-                                           Double irrigationCountForElectricityPump, Double electricityPumpWorkingHour, Double electricityWaterAmountPerHour, Double electricityWaterPumpHeight, Integer constantNumber, Double constantMotorEfficiency, Double constantPumpEfficiency, Double irrigationAreaElectricity, BigDecimal cityElectricityPrice,
+                                           Double irrigationCountForElectricityPump, Double electricityPumpWorkingHour, Double electricityWaterAmountPerHour, Double electricityWaterPumpHeight, Integer constantNumber, Double constantMotorEfficiency, Double irrigationAreaElectricity, BigDecimal cityElectricityPrice,
                                            Double irrigationCountForDieselPump, Double specificConstantRate, Double pumpWorkingHour, Double waterAmountPerHour, Double waterPumpHeight, Double gravity, Double pumpMotorEfficiencyRate, Double irrigationArea) {
         BigDecimal workingManLaborPrice = workingManLaborPrice(maleDailyWage, workHoursPerDay);
 
         return irrigationCostPaidPerTonne(irrigationCountPerTonne, irrigationDieselRateForSelectedIrrigation, cityDieselPrice, irrigationLaborRateForSelectedIrrigation, workingManLaborPrice, waterAmountPerDecarePerTonne, waterPricePerTonne, amortizationForSelectedIrrigation)
                 .add(irrigationCostPaidPerDecare(irrigationCountPerDecare, pumpEfficiencyRate, cityDieselPrice, irrigationLaborRateForSelectedIrrigation, workingManLaborPrice, waterAmountPerDecare, waterPricePerDecare, amortizationForSelectedIrrigation))
                 .add(waterPricePerDecareAlone == null ? BigDecimal.ZERO : waterPricePerDecareAlone)
-                .add(irrigationCostForElectricityPump(irrigationCountForElectricityPump, irrigationLaborRateForSelectedIrrigation, workingManLaborPrice, electricityPumpWorkingHour, electricityWaterAmountPerHour, electricityWaterPumpHeight, constantNumber, constantMotorEfficiency, constantPumpEfficiency, irrigationAreaElectricity, cityElectricityPrice, amortizationForSelectedIrrigation))
+                .add(irrigationCostForElectricityPump(irrigationCountForElectricityPump, irrigationLaborRateForSelectedIrrigation, workingManLaborPrice, electricityPumpWorkingHour, electricityWaterAmountPerHour, electricityWaterPumpHeight, constantNumber, constantMotorEfficiency, pumpEfficiencyRate, irrigationAreaElectricity, cityElectricityPrice, amortizationForSelectedIrrigation))
                 .add(irrigationCostForDieselPump(irrigationCountForDieselPump, specificConstantRate, pumpWorkingHour, waterAmountPerHour, waterPumpHeight, gravity, pumpMotorEfficiencyRate, irrigationArea, cityDieselPrice, irrigationLaborRateForSelectedIrrigation, workingManLaborPrice, amortizationForSelectedIrrigation));
         //TODO irrigationCountForDieselPump değerinde hata var, 4 mü 12 mi? giriş yoksa gelmeli mi? To:İbrahim Bey
     }
@@ -996,7 +765,7 @@ public class CostCalculationService {
         Double waterAmountPerDecarePerTonne = doubleValueSetter(productQuestionList, 155L);
         BigDecimal waterPricePerTonne = decimalValueSetter(productQuestionList, 154L);
         Double irrigationCountPerDecare = doubleValueSetter(productQuestionList, 159L);
-        Double pumpEfficiencyRate = 0.15d;//Todo
+        Double pumpEfficiencyRate = coefficientList.stream().filter(c -> c.getEnumCoefficientType().equals(EnumCoefficientType.PUMP_EFFICIENCY_CONSTANT)).findFirst().get().getLaborValue();
         BigDecimal cityDieselPrice = city.getDieselPrice();
         Double waterAmountPerDecare = doubleValueSetter(productQuestionList, 158L);
         BigDecimal waterPricePerDecare = decimalValueSetter(productQuestionList, 157L);
@@ -1007,7 +776,6 @@ public class CostCalculationService {
         Double electricityWaterPumpHeight = doubleValueSetter(productQuestionList, 165L);
         Integer constantNumber = coefficientList.stream().filter(c -> c.getEnumCoefficientType().equals(EnumCoefficientType.CONSTANT_NUMBER)).findFirst().get().getLaborValue().intValue();
         Double constantMotorEfficiency = coefficientList.stream().filter(c -> c.getEnumCoefficientType().equals(EnumCoefficientType.MOTOR_EFFICIENCY_CONSTANT)).findFirst().get().getLaborValue();
-        Double constantPumpEfficiency = coefficientList.stream().filter(c -> c.getEnumCoefficientType().equals(EnumCoefficientType.PUMP_EFFICIENCY_CONSTANT)).findFirst().get().getLaborValue();
         Double irrigationAreaElectricity = doubleValueSetter(productQuestionList, 166L);
         BigDecimal cityElectricityPrice = city.getElectricity();
         Double irrigationCountForDieselPump = 4d;//Todo
@@ -1022,16 +790,11 @@ public class CostCalculationService {
         return irrigationTotalCost(irrigationCountPerTonne, irrigationDieselRateForSelectedIrrigation, irrigationLaborRateForSelectedIrrigation, maleDailyWage, workHoursPerDay, waterAmountPerDecarePerTonne, waterPricePerTonne, amortizationForSelectedIrrigation,
                 irrigationCountPerDecare, pumpEfficiencyRate, cityDieselPrice, waterAmountPerDecare, waterPricePerDecare,
                 waterPricePerDecareAlone,
-                irrigationCountForElectricityPump, electricityPumpWorkingHour, electricityWaterAmountPerHour, electricityWaterPumpHeight, constantNumber, constantMotorEfficiency, constantPumpEfficiency, irrigationAreaElectricity, cityElectricityPrice,
+                irrigationCountForElectricityPump, electricityPumpWorkingHour, electricityWaterAmountPerHour, electricityWaterPumpHeight, constantNumber, constantMotorEfficiency, irrigationAreaElectricity, cityElectricityPrice,
                 irrigationCountForDieselPump, specificConstantRate, pumpWorkingHour, waterAmountPerHour, waterPumpHeight, gravity, pumpMotorEfficiencyRate, irrigationArea);
     }
 
     //Gider - Kültürel İşler
-    //325
-    private BigDecimal workingPruneLaborPrice(BigDecimal pruneDailyWage, Double workHoursPerDay) {
-        return pruneDailyWage.divide(BigDecimal.valueOf(workHoursPerDay), 10, RoundingMode.HALF_UP);
-    }
-
     //3900
     private BigDecimal treePruneCost(Double treePruneAmountHour, BigDecimal workingPruneLaborPrice) {
         return BigDecimal.valueOf(treePruneAmountHour).multiply(workingPruneLaborPrice);
@@ -1067,11 +830,6 @@ public class CostCalculationService {
         return BigDecimal.valueOf(thinningPruneAmountHour).multiply(workingMixedLaborPrice);
     }
 
-    //60
-    private Double polesInputAmount(Double polesAmountPerDecare, Double poleLifeCycleRate) {
-        return polesAmountPerDecare / poleLifeCycleRate;
-    }
-
     //3140
     private BigDecimal pullPoleCostPerDecare(Double polePullLaborHour, BigDecimal workingMixedLaborPrice,
                                              Double polesAmountPerDecare, Double poleLifeCycleRate, BigDecimal polePricePerUnit) {
@@ -1084,16 +842,6 @@ public class CostCalculationService {
                                               Double plantVineInputAmount, BigDecimal vinePricePerUnit) {
         return BigDecimal.valueOf(plantVineHourPerDecare).multiply(workingManLaborPrice)
                 .add(BigDecimal.valueOf(plantVineInputAmount).multiply(vinePricePerUnit));
-    }
-
-    //6
-    private Double nettingLaborAmountPerDecare(Double nettingLaborHourPerDecare, Double nettingLifeAmount) {
-        return nettingLaborHourPerDecare / nettingLifeAmount;
-    }
-
-    //26,6666667
-    private Double nettingInputAmountPerDecare(Double nettingInputAmount, Double nettingLifeAmount) {
-        return nettingInputAmount / nettingLifeAmount;
     }
 
     //3100
@@ -1312,11 +1060,6 @@ public class CostCalculationService {
     }
 
     //Gider- Hasat
-    //3,8
-    private Double harvestAndPackingLaborAmountPerDay(Double averageYieldAsKgPerDecare, Double byHandHarvestAmountPerDay) {
-        return averageYieldAsKgPerDecare / byHandHarvestAmountPerDay;
-    }
-
     //881,7
     private BigDecimal harvestAndPackingCostPerDay(Integer harvestCount,
                                                    Double averageYieldAsKgPerDecare, Double byHandHarvestAmountPerDay,
@@ -1325,11 +1068,6 @@ public class CostCalculationService {
         return BigDecimal.valueOf(harvestCount).multiply(
                 BigDecimal.valueOf(harvestAndPackingLaborAmountPerDay(averageYieldAsKgPerDecare, byHandHarvestAmountPerDay))
                         .multiply(workingMixedLaborPrice));
-    }
-
-    //4,2
-    private Double harvestAndCleanLaborAmountPerDay(Double mainProductKgYieldAsUnitPerDecare, Double byMachineHarvestAmountPerDay) {
-        return mainProductKgYieldAsUnitPerDecare / byMachineHarvestAmountPerDay;
     }
 
     //958,3
@@ -1342,11 +1080,6 @@ public class CostCalculationService {
                         .multiply(workingMixedLaborPrice));
     }
 
-    //2,9
-    private Double shakeAndCrateLaborAmountPerDay(Double averageYieldAsKgPerDecare, Double shakeAndCrateInputAmount) {
-        return averageYieldAsKgPerDecare / shakeAndCrateInputAmount;
-    }
-
     //661,3
     private BigDecimal shakeAndCrateCostPerDay(Integer harvestCount,
                                                Double averageYieldAsKgPerDecare, Double shakeAndCrateInputAmount,
@@ -1355,11 +1088,6 @@ public class CostCalculationService {
         return BigDecimal.valueOf(harvestCount).multiply(
                 BigDecimal.valueOf(shakeAndCrateLaborAmountPerDay(averageYieldAsKgPerDecare, shakeAndCrateInputAmount))
                         .multiply(workingMixedLaborPrice));
-    }
-
-    //2,3
-    private Double cutAndBindLaborAmountPerDay(Double averageYieldAsKgPerDecare, Double cutAndBindInputAmount) {
-        return averageYieldAsKgPerDecare / cutAndBindInputAmount;
     }
 
     //529,0
@@ -1372,11 +1100,6 @@ public class CostCalculationService {
                         .multiply(workingMixedLaborPrice));
     }
 
-    //2,6
-    private Double cutAndLoadLaborAmountPerDay(Double averageYieldAsKgPerDecare, Double cutAndLoadInputAmount) {
-        return averageYieldAsKgPerDecare / cutAndLoadInputAmount;
-    }
-
     //587,8
     private BigDecimal cutAndLoadCostPerDay(Integer harvestCount,
                                             Double averageYieldAsKgPerDecare, Double cutAndLoadInputAmount,
@@ -1385,11 +1108,6 @@ public class CostCalculationService {
         return BigDecimal.valueOf(harvestCount).multiply(
                 BigDecimal.valueOf(cutAndLoadLaborAmountPerDay(averageYieldAsKgPerDecare, cutAndLoadInputAmount))
                         .multiply(workingMixedLaborPrice));
-    }
-
-    //1,6
-    private Double harvestAndLoadLaborAmountPerDay(Double averageYieldAsKgPerDecare, Double harvestAndLoadInputAmount) {
-        return averageYieldAsKgPerDecare / harvestAndLoadInputAmount;
     }
 
     //377,9
@@ -1402,11 +1120,6 @@ public class CostCalculationService {
                         .multiply(workingMixedLaborPrice));
     }
 
-    //0,6
-    private Double harvestAndBindLaborAmountPerDay(Double averageExpectedYieldAsBundlePerDecare, Double harvestAndBindInputAmount) {
-        return averageExpectedYieldAsBundlePerDecare / harvestAndBindInputAmount;
-    }
-
     //147,6
     private BigDecimal harvestAndBindCostPerDay(Integer harvestCount,
                                                 Double averageExpectedYieldAsBundlePerDecare, Double harvestAndBindInputAmount,
@@ -1415,11 +1128,6 @@ public class CostCalculationService {
         return BigDecimal.valueOf(harvestCount).multiply(
                 BigDecimal.valueOf(harvestAndBindLaborAmountPerDay(averageExpectedYieldAsBundlePerDecare, harvestAndBindInputAmount))
                         .multiply(workingMixedLaborPrice));
-    }
-
-    //5,0
-    private Double cutAndBindAndLoadLaborAmountPerDay(Double mainProductKgYieldAsUnitPerDecare, Double cutAndBindAndLoadInputAmount) {
-        return mainProductKgYieldAsUnitPerDecare / cutAndBindAndLoadInputAmount;
     }
 
     //1150,0
@@ -1432,11 +1140,6 @@ public class CostCalculationService {
                         .multiply(workingMixedLaborPrice));
     }
 
-    //5,7
-    private Double harvestGrLaborAmountPerDay(Double mainProductKgYieldAsGrPerDecare, Double harvestGrInputAmount) {
-        return mainProductKgYieldAsGrPerDecare / harvestGrInputAmount;
-    }
-
     //1314,3
     private BigDecimal harvestGrCostPerDay(Integer harvestCount,
                                            Double mainProductKgYieldAsGrPerDecare, Double harvestGrInputAmount,
@@ -1445,11 +1148,6 @@ public class CostCalculationService {
         return BigDecimal.valueOf(harvestCount).multiply(
                 BigDecimal.valueOf(harvestGrLaborAmountPerDay(mainProductKgYieldAsGrPerDecare, harvestGrInputAmount))
                         .multiply(workingMixedLaborPrice));
-    }
-
-    //0,75
-    private Double harvestLeafLaborAmountPerDay(Double leafProductKgYieldAsGrPerDecare, Double harvestLeafInputAmount) {
-        return leafProductKgYieldAsGrPerDecare / harvestLeafInputAmount;
     }
 
     //172,5
@@ -1492,11 +1190,6 @@ public class CostCalculationService {
         return BigDecimal.valueOf(harvestCount).multiply(seederRentalPricePerDecare);
     }
 
-    //2,170
-    private Double harvestAndMachineLaborAmountPerDay(Double averageYieldAsKgPerDecare, Double harvestAndMachineInputAmount) {
-        return averageYieldAsKgPerDecare / harvestAndMachineInputAmount;
-    }
-
     //611,6
     private BigDecimal harvestAndMachineCostPerDecare(Integer harvestCount,
                                                       Double havestAndMachineDieselInputAmount, BigDecimal cityDieselPrice,
@@ -1505,11 +1198,6 @@ public class CostCalculationService {
         return BigDecimal.valueOf(harvestCount).multiply(
                 BigDecimal.valueOf(havestAndMachineDieselInputAmount).multiply(cityDieselPrice)
                         .add(BigDecimal.valueOf(harvestAndMachineLaborAmountPerDay(averageYieldAsKgPerDecare, harvestAndMachineInputAmount)).multiply(workingMixedLaborPrice)));
-    }
-
-    //3,833
-    private Double machineShakingLaborAmountPerDay(Double averageYieldAsKgPerDecare, Double machineShakingInputAmount) {
-        return averageYieldAsKgPerDecare / machineShakingInputAmount;
     }
 
     //1181,7
@@ -1686,30 +1374,15 @@ public class CostCalculationService {
     }
 
     //Gider- Harman
-    //1,15
-    private Double blendTransportDieselAmount(Double transportKmAmount, Double averageYieldAsKgPerDecare, Double tractorLoadCapacity) {
-        return transportKmAmount * (averageYieldAsKgPerDecare / tractorLoadCapacity);
-    }
-
     //86,3
     private BigDecimal blendTransportCost(Double transportKmAmount, Double averageYieldAsKgPerDecare, Double tractorLoadCapacity, BigDecimal cityDieselPrice) {
         return BigDecimal.valueOf(blendTransportDieselAmount(transportKmAmount, averageYieldAsKgPerDecare, tractorLoadCapacity)).multiply(cityDieselPrice);
-    }
-
-    //0,96
-    private Double blendLaborAmountPerDay(Double averageYieldAsKgPerDecare, Double blendAmountPerDay) {
-        return averageYieldAsKgPerDecare / blendAmountPerDay;
     }
 
     //239,6
     private BigDecimal blendLaborCostPerDay(Double averageYieldAsKgPerDecare, Double blendAmountPerDay, BigDecimal maleDailyWage, Double workHoursPerDay) {
         if (blendAmountPerDay == 0d) return BigDecimal.ZERO;
         return BigDecimal.valueOf(blendLaborAmountPerDay(averageYieldAsKgPerDecare, blendAmountPerDay)).multiply(workingManLaborPrice(maleDailyWage, workHoursPerDay));
-    }
-
-    //0,38
-    private Double cureLaborAmountPerDay(Double averageYieldAsKgPerDecare, Double cureAmountPerDay) {
-        return averageYieldAsKgPerDecare / cureAmountPerDay;
     }
 
     //88,2
@@ -1719,11 +1392,6 @@ public class CostCalculationService {
         return BigDecimal.valueOf(cureLaborAmountPerDay(averageYieldAsKgPerDecare, cureAmountPerDay)).multiply(workingMixedLaborPrice(maleDailyWage, maleCostRate, femaleDailyWage, femaleCostRate, workHoursPerDay));
     }
 
-    //0,2
-    private Double sortLaborAmountPerDay(Double yieldAsGrPerDecare, Double sortAmountPerDay) {
-        return yieldAsGrPerDecare / sortAmountPerDay;
-    }
-
     //45,0
     private BigDecimal sortLaborCostPerDay(Double yieldAsGrPerDecare, Double sortAmountPerDay, BigDecimal womanDailyWage, Double workHoursPerDay) {
         if (sortAmountPerDay == 0d) return BigDecimal.ZERO;
@@ -1731,11 +1399,6 @@ public class CostCalculationService {
     }
 
     //600,0
-    //0,46
-    private Double blendThreshingAmount(Double averageYieldAsKgPerDecare, Double blendThreshingAmountPerHour) {
-        return averageYieldAsKgPerDecare / blendThreshingAmountPerHour;
-    }
-
     //368,0
     private BigDecimal blendThreshingCost(Double averageYieldAsKgPerDecare, Double blendThreshingAmountPerHour, BigDecimal threshingCostPerHour) {
         if (blendThreshingAmountPerHour == 0d) return BigDecimal.ZERO;
@@ -1788,19 +1451,9 @@ public class CostCalculationService {
     }
 
     //Gider- İşleme -kurutma
-    //8,05
-    private Double processSievingWashDryLaborAmount(Double averageYieldAsKgPerDecare, Double processSievingWashDryHourAmountPerTonne) {
-        return averageYieldAsKgPerDecare / 1000 * processSievingWashDryHourAmountPerTonne;
-    }
-
     //1851,5
     private BigDecimal processSievingWashDryCost(Double averageYieldAsKgPerDecare, Double processSievingWashDryHourAmountPerTonne, BigDecimal workingMixedLaborPrice) {
         return BigDecimal.valueOf(processSievingWashDryLaborAmount(averageYieldAsKgPerDecare, processSievingWashDryHourAmountPerTonne)).multiply(workingMixedLaborPrice);
-    }
-
-    //3,45
-    private Double processSievingWashDryDieselAmount(Double averageYieldAsKgPerDecare, Double processSievingWashDryDieselAmountPerTonne) {
-        return averageYieldAsKgPerDecare / 1000 * processSievingWashDryDieselAmountPerTonne;
     }
 
     //258,8
@@ -1808,19 +1461,9 @@ public class CostCalculationService {
         return BigDecimal.valueOf(processSievingWashDryDieselAmount(averageYieldAsKgPerDecare, processSievingWashDryDieselAmountPerTonne)).multiply(cityDieselPrice);
     }
 
-    //30
-    private Double processSievingWashDryLaborAmountPerBunch(Double averageExpectedYieldAsUnitPerDecare, Double processSievingWashDryLaborHourAmount) {
-        return averageExpectedYieldAsUnitPerDecare / 1000 * processSievingWashDryLaborHourAmount;
-    }
-
     //6900
     private BigDecimal processSievingWashDryCostPerBunch(Double averageExpectedYieldAsUnitPerDecare, Double processSievingWashDryLaborHourAmount, BigDecimal workingMixedLaborPrice) {
         return BigDecimal.valueOf(processSievingWashDryLaborAmountPerBunch(averageExpectedYieldAsUnitPerDecare, processSievingWashDryLaborHourAmount)).multiply(workingMixedLaborPrice);
-    }
-
-    //3,08
-    private Double processSievingWashDryLaborAmountSeparation(Double averageExpectedYieldAsBundlePerDecare, Double processSievingWashDryHourAmountPer1000) {
-        return averageExpectedYieldAsBundlePerDecare / 1000 * processSievingWashDryHourAmountPer1000;
     }
 
     //708,4
@@ -1828,19 +1471,9 @@ public class CostCalculationService {
         return BigDecimal.valueOf(processSievingWashDryLaborAmountSeparation(averageExpectedYieldAsBundlePerDecare, processSievingWashDryHourAmountPer1000)).multiply(workingMixedLaborPrice);
     }
 
-    //6,9
-    private Double processSievingWashDrySulfurizeLaborAmount(Double averageYieldAsKgPerDecare, Double processSievingWashDrySulfurizeHourPerTonne) {
-        return averageYieldAsKgPerDecare / 1000 * processSievingWashDrySulfurizeHourPerTonne;
-    }
-
     //1587,0
     private BigDecimal processSievingWashDrySulfurizeCost(Double averageYieldAsKgPerDecare, Double processSievingWashDrySulfurizeHourPerTonne, BigDecimal workingMixedLaborPrice) {
         return BigDecimal.valueOf(processSievingWashDrySulfurizeLaborAmount(averageYieldAsKgPerDecare, processSievingWashDrySulfurizeHourPerTonne)).multiply(workingMixedLaborPrice);
-    }
-
-    //5,75
-    private Double processSievingWashDryDipLaborAmount(Double averageYieldAsKgPerDecare, Double processSievingWashDryDipHourPerTonne) {
-        return averageYieldAsKgPerDecare / 1000 * processSievingWashDryDipHourPerTonne;
     }
 
     //1322,5
@@ -1848,30 +1481,15 @@ public class CostCalculationService {
         return BigDecimal.valueOf(processSievingWashDryDipLaborAmount(averageYieldAsKgPerDecare, processSievingWashDryDipHourPerTonne)).multiply(workingMixedLaborPrice);
     }
 
-    //11,5
-    private Double processSievingWashDryStringLaborAmount(Double averageYieldAsKgPerDecare, Double processSievingWashDryStringHourPerTonne) {
-        return averageYieldAsKgPerDecare / 1000 * processSievingWashDryStringHourPerTonne;
-    }
-
     //2645,0
     private BigDecimal processSievingWashDryStringCost(Double averageYieldAsKgPerDecare, Double processSievingWashDryStringHourPerTonne, BigDecimal workingMixedLaborPrice) {
         return BigDecimal.valueOf(processSievingWashDryStringLaborAmount(averageYieldAsKgPerDecare, processSievingWashDryStringHourPerTonne)).multiply(workingMixedLaborPrice);
-    }
-
-    //4,17
-    private Double processSievingWashDryProcessLabor(Double averageExpectedYieldAsUnitPerDecare, Double processSievingWashDryProcessPerDay) {
-        return averageExpectedYieldAsUnitPerDecare / processSievingWashDryProcessPerDay;
     }
 
     //958,3
     private BigDecimal processSievingWashDryProcessCost(Double averageExpectedYieldAsUnitPerDecare, Double processSievingWashDryProcessPerDay, BigDecimal workingMixedLaborPrice) {
         if (processSievingWashDryProcessPerDay == 0d) return BigDecimal.ZERO;
         return BigDecimal.valueOf(processSievingWashDryProcessLabor(averageExpectedYieldAsUnitPerDecare, processSievingWashDryProcessPerDay)).multiply(workingMixedLaborPrice);
-    }
-
-    //1,15
-    private Double processSievingWashDryLumpSumAmount(Double averageYieldAsKgPerDecare) {
-        return averageYieldAsKgPerDecare / 1000;
     }
 
     //575
@@ -1884,19 +1502,9 @@ public class CostCalculationService {
         return BigDecimal.valueOf(processSievingWashDryLumpSumAmount).multiply(processSulfuringMachinePricePerTonne);
     }
 
-    //23
-    private Double materialInputAmount(Double averageYieldAsKgPerDecare, Double materialInputAmountPerTonne) {
-        return averageYieldAsKgPerDecare / 1000 * materialInputAmountPerTonne;
-    }
-
     //92
     private BigDecimal materialCost(Double averageYieldAsKgPerDecare, Double materialInputAmountPerTonne, BigDecimal materialUnitPrice) {
         return BigDecimal.valueOf(materialInputAmount(averageYieldAsKgPerDecare, materialInputAmountPerTonne)).multiply(materialUnitPrice);
-    }
-
-    //16,1
-    private Double sortSizeScoreBrineLaborAmount(Double averageYieldAsKgPerDecare, Double sortSizeScoreBrineLaborHour) {
-        return averageYieldAsKgPerDecare / 1000 * sortSizeScoreBrineLaborHour;
     }
 
     //3703
@@ -1978,11 +1586,6 @@ public class CostCalculationService {
     }
 
     //Gider- Balyalama
-    //5,75
-    private Double balingMaterialInputAmount(Double averageYieldAsKgPerDecare, Double balingMaterialAmountPerTonne) {
-        return averageYieldAsKgPerDecare / 1000 * balingMaterialAmountPerTonne;
-    }
-
     //258
     private BigDecimal balingMaterialCost(Double balingMachineDieselAmountPerDecare, BigDecimal cityDieselPrice,
                                           Double balingMachineHourAmountPerDecare, BigDecimal workingManLaborPrice,
@@ -1990,11 +1593,6 @@ public class CostCalculationService {
         return BigDecimal.valueOf(balingMachineDieselAmountPerDecare).multiply(cityDieselPrice)
                 .add(BigDecimal.valueOf(balingMachineHourAmountPerDecare).multiply(workingManLaborPrice))
                 .add(BigDecimal.valueOf(balingMaterialInputAmount(averageYieldAsKgPerDecare, balingMaterialAmountPerTonne)).multiply(balingMaterialInputPrice));
-    }
-
-    //4,2
-    private Double balingMaterialInputKgPriceAmount(Double averageYieldSideStrawProduct, BigDecimal balingMaterialInputPrice) {
-        return averageYieldSideStrawProduct / 1000 * balingMaterialInputPrice.doubleValue();
     }
 
     //236,3
@@ -2006,20 +1604,10 @@ public class CostCalculationService {
                 .add(BigDecimal.valueOf(balingMaterialInputKgPriceAmount(averageYieldSideStrawProduct, balingMaterialInputPrice)).multiply(balingMaterialInputPrice));
     }
 
-    //52,3
-    private Double balingAverageInputAmount(Double averageYieldAsKgPerDecare, Double balingAverageWeight) {
-        return averageYieldAsKgPerDecare / balingAverageWeight;
-    }
-
     //418,2
     private BigDecimal balingAverageCost(Double averageYieldAsKgPerDecare, Double balingAverageWeight, BigDecimal rentPricePerBaling) {
         if (balingAverageWeight == 0d) return BigDecimal.ZERO;
         return BigDecimal.valueOf(balingAverageInputAmount(averageYieldAsKgPerDecare, balingAverageWeight)).multiply(rentPricePerBaling);
-    }
-
-    //13,6
-    private Double balingRentalInputAmount(Double averageYieldSideStrawProduct, Double balingAverageWeight) {
-        return averageYieldSideStrawProduct / balingAverageWeight;
     }
 
     //109,1
@@ -2063,21 +1651,9 @@ public class CostCalculationService {
     }
 
     //Gider- Pazara Nakil Ambalaj
-    //1,6445
-    private Double tractorDieselAmount(Double averageYieldAsKgPerDecare, Double tractorCapacity, Double tractorTransportCoefficient, Double transportationDistance) {
-        if (tractorCapacity == 0d) return 0d;
-        return averageYieldAsKgPerDecare / tractorCapacity * tractorTransportCoefficient * transportationDistance;
-    }
-
     //123,3
     private BigDecimal tractorTransportCost(Double averageYieldAsKgPerDecare, Double tractorCapacity, Double tractorTransportCoefficient, Double transportationDistance, BigDecimal cityDieselPrice) {
         return BigDecimal.valueOf(tractorDieselAmount(averageYieldAsKgPerDecare, tractorCapacity, tractorTransportCoefficient, transportationDistance)).multiply(cityDieselPrice);
-    }
-
-    //115
-    private Double transportLumpSumAmount(Double averageYieldAsKgPerDecare, Double weightPerUnit) {
-        if (weightPerUnit == 0d) return 0d;
-        return averageYieldAsKgPerDecare / weightPerUnit;
     }
 
     //287,5

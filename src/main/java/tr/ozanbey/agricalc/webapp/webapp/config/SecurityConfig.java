@@ -71,7 +71,7 @@ public class SecurityConfig {
                         .rememberMeParameter("")
                         .rememberMeCookieName("")
                         .tokenValiditySeconds(1209600) //2 weeks
-                        .useSecureCookie(false) // localhost için
+                        .useSecureCookie(true)
                         .key("")
                 )
                 .exceptionHandling(ex -> ex

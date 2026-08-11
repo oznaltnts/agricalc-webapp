@@ -473,7 +473,7 @@ CREATE TABLE `plantation_questions`
     `udate`       DATETIME     NULL     DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP,
     `status`      TINYINT      NOT NULL COMMENT '-1:deleted, 0:passive, 1:active',
     `q_value`     VARCHAR(255) NOT NULL,
-    `q_type`      VARCHAR(255) NOT NULL,
+    `q_type`      TINYINT      NOT NULL,
     `a_type`      VARCHAR(255) NOT NULL,
     `r_type`      VARCHAR(45)  NOT NULL DEFAULT 'EVERY_TIME',
     `is_required` TINYINT      NOT NULL DEFAULT '1',
@@ -498,12 +498,13 @@ CREATE TABLE `plantation_question_options`
 
 CREATE TABLE `plantation_product_questions`
 (
-    `id`                     BIGINT   NOT NULL AUTO_INCREMENT,
-    `idate`                  DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    `plantation_product_id`  BIGINT   NOT NULL,
-    `plantation_question_id` BIGINT   NOT NULL,
-    `minimum_value`          DOUBLE   NULL     DEFAULT NULL,
-    `maximum_value`          DOUBLE   NULL     DEFAULT NULL,
+    `id`                     BIGINT         NOT NULL AUTO_INCREMENT,
+    `idate`                  DATETIME       NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    `plantation_product_id`  BIGINT         NOT NULL,
+    `plantation_question_id` BIGINT         NOT NULL,
+    `minimum_value`          DECIMAL(15, 3) NULL     DEFAULT NULL,
+    `maximum_value`          DECIMAL(15, 3) NULL     DEFAULT NULL,
+    `unknown_value`          DECIMAL(15, 3) NULL     DEFAULT NULL,
     PRIMARY KEY (`id`),
     CONSTRAINT `FK_plantation_product_questions_plantation_products` FOREIGN KEY (`plantation_product_id`) REFERENCES `plantation_products` (`id`),
     CONSTRAINT `FK_plantation_product_questions_plantation_questions` FOREIGN KEY (`plantation_question_id`) REFERENCES `plantation_questions` (`id`),
@@ -593,6 +594,20 @@ CREATE TABLE `user_plant_parcel_plan_answers`
     PRIMARY KEY (`id`),
     CONSTRAINT `FK_user_plant_parcel_plan_answers_plans` FOREIGN KEY (`plant_plan_id`) REFERENCES `user_plant_parcel_plans` (`id`),
     CONSTRAINT `FK_user_plant_parcel_plan_answers_questions` FOREIGN KEY (`product_question_id`) REFERENCES `plantation_product_questions` (`id`)
+)
+    ENGINE = InnoDB
+    AUTO_INCREMENT = 1;
+
+CREATE TABLE `user_plant_parcel_plan_allocations`
+(
+    `id`               BIGINT         NOT NULL AUTO_INCREMENT,
+    `idate`            DATETIME       NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    `plant_plan_id`    BIGINT         NOT NULL,
+    `q_type`           TINYINT        NOT NULL,
+    `a_type`           VARCHAR(255)   NOT NULL,
+    `calculated_value` DECIMAL(15, 3) NOT NULL,
+    PRIMARY KEY (`id`),
+    CONSTRAINT `FK_user_plant_parcel_plan_allocations_user_plant_parcel_plans` FOREIGN KEY (`plant_plan_id`) REFERENCES `user_plant_parcel_plans` (`id`)
 )
     ENGINE = InnoDB
     AUTO_INCREMENT = 1;

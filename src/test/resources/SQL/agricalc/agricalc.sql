@@ -498,12 +498,13 @@ CREATE TABLE `plantation_question_options`
 
 CREATE TABLE `plantation_product_questions`
 (
-    `id`                     BIGINT   NOT NULL AUTO_INCREMENT,
-    `idate`                  DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    `plantation_product_id`  BIGINT   NOT NULL,
-    `plantation_question_id` BIGINT   NOT NULL,
-    `minimum_value`          DOUBLE   NULL     DEFAULT NULL,
-    `maximum_value`          DOUBLE   NULL     DEFAULT NULL,
+    `id`                     BIGINT         NOT NULL AUTO_INCREMENT,
+    `idate`                  DATETIME       NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    `plantation_product_id`  BIGINT         NOT NULL,
+    `plantation_question_id` BIGINT         NOT NULL,
+    `minimum_value`          DECIMAL(15, 3) NULL     DEFAULT NULL,
+    `maximum_value`          DECIMAL(15, 3) NULL     DEFAULT NULL,
+    `unknown_value`          DECIMAL(15, 3) NULL     DEFAULT NULL,
     PRIMARY KEY (`id`),
     CONSTRAINT `FK_plantation_product_questions_plantation_products` FOREIGN KEY (`plantation_product_id`) REFERENCES `plantation_products` (`id`),
     CONSTRAINT `FK_plantation_product_questions_plantation_questions` FOREIGN KEY (`plantation_question_id`) REFERENCES `plantation_questions` (`id`),

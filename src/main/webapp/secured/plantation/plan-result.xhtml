@@ -68,10 +68,10 @@
                         <p:outputLabel for="@previous" value="#{planResultController.getPlanAllocation('DIESEL_COST').calculatedValue}"/>
 
                         <p:outputLabel for="@next" value="Benzin İhtiyacı (Lt/Da):" style="font-weight: bold"/>
-                        <p:outputLabel for="@previous" value=""/>
+                        <p:outputLabel for="@previous" value="#{planResultController.getPlanAllocation('FUEL_AMOUNT').calculatedValue}"/>
 
                         <p:outputLabel for="@next" value="Eletrik (Kwa/Da):" style="font-weight: bold"/>
-                        <p:outputLabel for="@previous" value=""/>
+                        <p:outputLabel for="@previous" value="#{planResultController.getPlanAllocation('ELECTRICITY_AMOUNT').calculatedValue}"/>
 
                     </p:panelGrid>
                 </div>

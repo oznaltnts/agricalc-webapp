@@ -104,6 +104,7 @@ public class CostCommonService {
 
     //0,67
     protected Double soilPrepBlastingLaborAmount(Double soilPrepBlastingLaborRate, Double soilPrepBlastingFrequency) {
+        if (soilPrepBlastingFrequency == 0d) return 0d;
         return soilPrepBlastingLaborRate / soilPrepBlastingFrequency;
     }
 

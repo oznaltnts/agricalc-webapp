@@ -713,6 +713,9 @@ public class CostAllocationService extends CostCommonService {
                 animalPlowPerYear, animalPlowDieselAmount);
         planAllocationList.add(new UserPlantParcelPlanAllocation(parcelPlan, EnumPlantationQuestionType.EXPENSE_WEED, EnumAllocationType.DIESEL_AMOUNT, new BigDecimal(dieselAmount)));
 
+        Double fuelAmount = weedToolDieselAmount * weedToolCount;
+        planAllocationList.add(new UserPlantParcelPlanAllocation(parcelPlan, EnumPlantationQuestionType.EXPENSE_WEED, EnumAllocationType.FUEL_AMOUNT, new BigDecimal(fuelAmount)));
+
         BigDecimal dieselCost = calculateWildGrassDieselCost(
                 fillFurrowCount, fillFurrowDieselAmount, city.getDieselPrice(),
                 fillFurrowAmountCount, fillFurrowAmountDieselAmount,
@@ -947,6 +950,9 @@ public class CostAllocationService extends CostCommonService {
                 cazibeCount, waterAmountPerDecare, waterPricePerDecare,
                 electricityCount, inputAmountForElectricityPump, city.getElectricity());
         planAllocationList.add(new UserPlantParcelPlanAllocation(parcelPlan, EnumPlantationQuestionType.EXPENSE_IRRIGATION, EnumAllocationType.WATER_COST, waterCost));
+
+        Double electricityAmount = inputAmountForElectricityPump;
+        planAllocationList.add(new UserPlantParcelPlanAllocation(parcelPlan, EnumPlantationQuestionType.EXPENSE_IRRIGATION, EnumAllocationType.ELECTRICITY_AMOUNT, new BigDecimal(electricityAmount)));
 
         BigDecimal amortizationCost = amortizationForSelectedIrrigation;
         planAllocationList.add(new UserPlantParcelPlanAllocation(parcelPlan, EnumPlantationQuestionType.EXPENSE_IRRIGATION, EnumAllocationType.AMORTIZATION_AMOUNT, amortizationCost));

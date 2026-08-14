@@ -83,7 +83,7 @@ public class ExpensePlantingProfileController extends PlanProfileController {
 
     public boolean integerRenderer(PlantationProductQuestion question) {
         if (question.getPlantationQuestion().getAnswerType().equals(EnumQuestionAnswerType.INPUT_INTEGER)) {
-            if (List.of(84L).contains(question.getPlantationQuestion().getId()) && question.getMaximumValue().compareTo(BigDecimal.ONE) == 0) {
+            if (List.of(84L).contains(question.getPlantationQuestion().getId()) && question.getMaximumValue() != null && question.getMaximumValue().compareTo(BigDecimal.ONE) == 0) {
                 question.setIntegerValue(1);
                 return false;
             }

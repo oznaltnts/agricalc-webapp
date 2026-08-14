@@ -99,6 +99,7 @@
                                                    rendered="#{incomeProfileController.integerRenderer(question)}"
                                                    minValue="0"
                                                    decimalPlaces="0"
+                                                   thousandSeparator=""
                                                    value="#{question.integerValue}">
                                         <p:ajax process="@this"/>
                                     </p:inputNumber>
@@ -107,9 +108,10 @@
                                                    requiredMessage="#{question.plantationQuestion.value} giriniz."
                                                    rendered="#{incomeProfileController.doubleRenderer(question)}"
                                                    minValue="0"
+                                                   thousandSeparator=""
                                                    decimalPlaces="2"
                                                    value="#{question.doubleValue}">
-                                        <p:ajax process="@this"/>
+                                        <p:ajax process="@this" update="updateForm"/>
                                     </p:inputNumber>
 
                                     <p:inputNumber required="#{question.plantationQuestion.isRequired}"

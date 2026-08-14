@@ -28,7 +28,10 @@ public enum EnumAllocationType {
     STRING_COST(RGBAColor.DARK_TURQUOISE),
     NET_COVER_COST(RGBAColor.LIGHT_BLUE),
     MEDICINE_COST(RGBAColor.KHAKI),
-    MATERIAL_COST(RGBAColor.PINK);
+    MATERIAL_COST(RGBAColor.PINK),
+
+    FUEL_AMOUNT(RGBAColor.WHITE),
+    ELECTRICITY_AMOUNT(RGBAColor.WHITE);
 
     private final RGBAColor color;
 

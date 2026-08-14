@@ -12,6 +12,7 @@ import software.xdev.chartjs.model.color.RGBAColor;
 import software.xdev.chartjs.model.data.PieData;
 import software.xdev.chartjs.model.dataset.PieDataset;
 import tr.ozanbey.agricalc.webapp.service.enumtype.plantation.EnumAllocationType;
+import tr.ozanbey.agricalc.webapp.service.enumtype.plantation.EnumPlantationQuestionType;
 import tr.ozanbey.agricalc.webapp.service.service.plantation.CostAllocationService;
 import tr.ozanbey.agricalc.webapp.service.service.plantation.UserPlantParcelPlanService;
 import tr.ozanbey.agricalc.webapp.webapp.view.plantation.PlanAllocationResultView;
@@ -34,7 +35,6 @@ public class PlanResultController extends PlanProfileController {
     @Autowired
     private CostAllocationService costAllocationService;
 
-    //    private String polarAreaModel;
     private String pieModelForExpense;
     private String pieModelForAllocation;
 
@@ -72,18 +72,18 @@ public class PlanResultController extends PlanProfileController {
     }
 
     private void createPieChartExpenseModel() {
-        resultShowViewList.add(new ResultShowView("toprak", RGBAColor.BROWN, super.getParcelPlan().getSoilPrepCost()));
-        resultShowViewList.add(new ResultShowView("ekim", RGBAColor.YELLOW, super.getParcelPlan().getPlantingCost()));
-        resultShowViewList.add(new ResultShowView("gübre", RGBAColor.RED, super.getParcelPlan().getFertilizerCost()));
-        resultShowViewList.add(new ResultShowView("yabani ot", RGBAColor.BLUE, super.getParcelPlan().getWeedControlCost()));
-        resultShowViewList.add(new ResultShowView("sulama", RGBAColor.CRIMSON, super.getParcelPlan().getIrrigationCost()));
-        resultShowViewList.add(new ResultShowView("kültürel", RGBAColor.KHAKI, super.getParcelPlan().getCulturalCost()));
-        resultShowViewList.add(new ResultShowView("koruma", RGBAColor.LIGHT_BLUE, super.getParcelPlan().getProtectionCost()));
-        resultShowViewList.add(new ResultShowView("hasat", RGBAColor.VIOLET, super.getParcelPlan().getHarvestCost()));
-        resultShowViewList.add(new ResultShowView("harman", RGBAColor.DEEP_PINK, super.getParcelPlan().getBlendCost()));
-        resultShowViewList.add(new ResultShowView("kurutma", RGBAColor.GOLD, super.getParcelPlan().getDryingCost()));
-        resultShowViewList.add(new ResultShowView("balya", RGBAColor.AZURE, super.getParcelPlan().getBalingCost()));
-        resultShowViewList.add(new ResultShowView("paket", RGBAColor.GREEN, super.getParcelPlan().getTransportationCost()));
+        resultShowViewList.add(new ResultShowView(EnumPlantationQuestionType.EXPENSE_SOIL, super.getParcelPlan().getSoilPrepCost()));
+        resultShowViewList.add(new ResultShowView(EnumPlantationQuestionType.EXPENSE_PLANTING, super.getParcelPlan().getPlantingCost()));
+        resultShowViewList.add(new ResultShowView(EnumPlantationQuestionType.EXPENSE_FERTILIZER, super.getParcelPlan().getFertilizerCost()));
+        resultShowViewList.add(new ResultShowView(EnumPlantationQuestionType.EXPENSE_WEED, super.getParcelPlan().getWeedControlCost()));
+        resultShowViewList.add(new ResultShowView(EnumPlantationQuestionType.EXPENSE_IRRIGATION, super.getParcelPlan().getIrrigationCost()));
+        resultShowViewList.add(new ResultShowView(EnumPlantationQuestionType.EXPENSE_CULTURAL, super.getParcelPlan().getCulturalCost()));
+        resultShowViewList.add(new ResultShowView(EnumPlantationQuestionType.EXPENSE_PROTECTION, super.getParcelPlan().getProtectionCost()));
+        resultShowViewList.add(new ResultShowView(EnumPlantationQuestionType.EXPENSE_HARVEST, super.getParcelPlan().getHarvestCost()));
+        resultShowViewList.add(new ResultShowView(EnumPlantationQuestionType.EXPENSE_BLEND, super.getParcelPlan().getBlendCost()));
+        resultShowViewList.add(new ResultShowView(EnumPlantationQuestionType.EXPENSE_DRYING, super.getParcelPlan().getDryingCost()));
+        resultShowViewList.add(new ResultShowView(EnumPlantationQuestionType.EXPENSE_BALING, super.getParcelPlan().getBalingCost()));
+        resultShowViewList.add(new ResultShowView(EnumPlantationQuestionType.EXPENSE_PACKAGING, super.getParcelPlan().getTransportationCost()));
         pieModelForExpense = new PieChart()
                 .setData(new PieData()
                         .addDataset(new PieDataset()
@@ -94,12 +94,12 @@ public class PlanResultController extends PlanProfileController {
                                 .setLabel("Gider grafiği")
                                 .addBackgroundColors(resultShowViewList.stream()
                                         .filter(v -> v.getCostValueCost() != null && v.getCostValueCost().compareTo(BigDecimal.ZERO) > 0)
-                                        .map(ResultShowView::getCostValueRGBAColor)
+                                        .map(v -> v.getCostValueName().getColor())
                                         .toList().toArray(new Object[0]))
                         )
                         .setLabels(resultShowViewList.stream()
                                 .filter(v -> v.getCostValueCost() != null && v.getCostValueCost().compareTo(BigDecimal.ZERO) > 0)
-                                .map(ResultShowView::getCostValueName)
+                                .map(v -> v.getCostValueName().name())
                                 .toList().toArray(new String[0])))
                 .toJson();
     }
@@ -116,7 +116,7 @@ public class PlanResultController extends PlanProfileController {
                                                 && v.getCalculatedValue().compareTo(BigDecimal.ZERO) > 0)
                                         .map(PlanAllocationResultView::getCalculatedValue)
                                         .toList().toArray(new BigDecimal[0]))
-                                .setLabel("Gider grafiği")
+                                .setLabel("Gider dağılımı")
                                 .addBackgroundColors(planAllocationList.stream()
                                         .filter(v -> v.getCalculatedValue() != null
                                                 && EnumAllocationType.getAllocationCostTypes().contains(v.getAllocationType())
@@ -138,23 +138,24 @@ public class PlanResultController extends PlanProfileController {
     }
 
     private Double calculateValueRate(BigDecimal costValueCost) {
-        return costValueCost != null ? costValueCost.multiply(BigDecimal.valueOf(100)).divide(super.getParcelPlan().getTotalExpense(), 2, RoundingMode.HALF_UP).doubleValue() : 0d;
+        return costValueCost != null
+                && super.getParcelPlan().getTotalExpense().compareTo(BigDecimal.ZERO) > 0
+                ? costValueCost.multiply(BigDecimal.valueOf(100)).divide(super.getParcelPlan().getTotalExpense(), 2, RoundingMode.HALF_UP).doubleValue()
+                : 0d;
     }
 
     @Getter
     public class ResultShowView {
-        private final String costValueName;
-        private final RGBAColor costValueRGBAColor;
+        private final EnumPlantationQuestionType costValueName;
         private BigDecimal costValueCost = BigDecimal.ZERO;
 
-        public ResultShowView(String costValueName, RGBAColor costValueRGBAColor, BigDecimal costValueCost) {
+        public ResultShowView(EnumPlantationQuestionType costValueName, BigDecimal costValueCost) {
             this.costValueName = costValueName;
-            this.costValueRGBAColor = costValueRGBAColor;
             this.costValueCost = costValueCost == null ? this.costValueCost.setScale(3, RoundingMode.HALF_UP) : costValueCost;
         }
 
         public String getCostValueHexColor() {
-            return convertRGBAColorToHex(costValueRGBAColor);
+            return convertRGBAColorToHex(costValueName.getColor());
         }
 
         public Double getCostValueRate() {

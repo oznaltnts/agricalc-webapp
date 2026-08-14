@@ -26,7 +26,6 @@ import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Component
@@ -157,15 +156,85 @@ public class IncomeProfileController extends PlanProfileController {
     private static final List<Long> C_DOUBLE_YIELD_QUESTIONS = List.of(16L, 29L, 32L);
     private static final List<Long> SALE_QUESTIONS = List.of(8L, 9L, 10L);
 
+    private static final List<Long> LOW_QUALITY_PRICE_QUESTIONS = List.of(33L);
+    private static final List<Long> FRUIT_JUICE_PRICE_QUESTIONS = List.of(34L);
+    private static final List<Long> SIDE_STRAW_PRICE_QUESTIONS = List.of(35L, 36L);
+
     private boolean checkPreviousQuestionAnswerAccordingly(PlantationProductQuestion question) {
-        Optional<PlantationProductQuestion> optionalSaleQuestion = super.getParcelPlan().getPlantParcel().getProduct().getProductQuestionList().stream().filter(pq -> SALE_QUESTIONS.contains(pq.getPlantationQuestion().getId())).findFirst();
+        List<PlantationProductQuestion> questionList = super.getParcelPlan().getPlantParcel().getProduct().getProductQuestionList().stream()
+                .filter(pq -> SALE_QUESTIONS.contains(pq.getPlantationQuestion().getId())).toList();
         if (A_DOUBLE_YIELD_QUESTIONS.contains(question.getPlantationQuestion().getId())) {
-            return optionalSaleQuestion.map(plantationProductQuestion -> plantationProductQuestion.getSelectedAnswerId() != null && List.of(17L, 21L).contains(plantationProductQuestion.getSelectedAnswerId())).orElse(true);
+            if (questionList.isEmpty()) {
+                return true;
+            }
+            for (PlantationProductQuestion pq : questionList) {
+                if (pq.getSelectedAnswerId() != null && List.of(17L, 21L).contains(pq.getSelectedAnswerId())) {
+
+                }
+            }
+            return false;
         } else if (B_DOUBLE_YIELD_QUESTIONS.contains(question.getPlantationQuestion().getId())) {
-            return optionalSaleQuestion.map(plantationProductQuestion -> plantationProductQuestion.getSelectedAnswerId() != null && List.of(18L, 19L).contains(plantationProductQuestion.getSelectedAnswerId())).orElse(true);
+            if (questionList.isEmpty()) {
+                return true;
+            }
+            for (PlantationProductQuestion pq : questionList) {
+                if (pq.getSelectedAnswerId() != null && List.of(18L, 19L).contains(pq.getSelectedAnswerId())) {
+
+                }
+            }
+            return false;
         } else if (C_DOUBLE_YIELD_QUESTIONS.contains(question.getPlantationQuestion().getId())) {
-            return optionalSaleQuestion.map(plantationProductQuestion -> plantationProductQuestion.getSelectedAnswerId() != null && List.of(20L, 22L).contains(plantationProductQuestion.getSelectedAnswerId())).orElse(true);
+            if (questionList.isEmpty()) {
+                return true;
+            }
+            for (PlantationProductQuestion pq : questionList) {
+                if (pq.getSelectedAnswerId() != null && List.of(20L, 22L).contains(pq.getSelectedAnswerId())) {
+
+                }
+            }
+            return false;
         }
+
+        questionList = super.getParcelPlan().getPlantParcel().getProduct().getProductQuestionList().stream()
+                .filter(pq -> List.of(18L).contains(pq.getPlantationQuestion().getId())).toList();
+        if (LOW_QUALITY_PRICE_QUESTIONS.contains(question.getPlantationQuestion().getId())) {
+            if (questionList.isEmpty()) {
+                return true;
+            }
+            for (PlantationProductQuestion pq : questionList) {
+                if (pq.getDoubleValue() != null && pq.getDoubleValue() > 0) {
+                    return true;
+                }
+            }
+            return false;
+        }
+        questionList = super.getParcelPlan().getPlantParcel().getProduct().getProductQuestionList().stream()
+                .filter(pq -> List.of(19L).contains(pq.getPlantationQuestion().getId())).toList();
+        if (FRUIT_JUICE_PRICE_QUESTIONS.contains(question.getPlantationQuestion().getId())) {
+            if (questionList.isEmpty()) {
+                return true;
+            }
+            for (PlantationProductQuestion pq : questionList) {
+                if (pq.getDoubleValue() != null && pq.getDoubleValue() > 0) {
+                    return true;
+                }
+            }
+            return false;
+        }
+        questionList = super.getParcelPlan().getPlantParcel().getProduct().getProductQuestionList().stream()
+                .filter(pq -> List.of(20L, 21L, 22L, 23L, 24L, 25L, 26L).contains(pq.getPlantationQuestion().getId())).toList();
+        if (SIDE_STRAW_PRICE_QUESTIONS.contains(question.getPlantationQuestion().getId())) {
+            if (questionList.isEmpty()) {
+                return true;
+            }
+            for (PlantationProductQuestion pq : questionList) {
+                if (pq.getDoubleValue() != null && pq.getDoubleValue() > 0) {
+                    return true;
+                }
+            }
+            return false;
+        }
+
         return true;
     }
 
@@ -173,7 +242,7 @@ public class IncomeProfileController extends PlanProfileController {
     private IncomeCalculationService incomeCalculationService;
 
     public void nextSaveIncome() throws IOException {
-        super.getParcelPlan().setGrossIncome(incomeCalculationService.calculateIncome(super.getParcelPlan().getPlantParcel().getProduct().getProductQuestionList()));
+        super.getParcelPlan().setGrossIncome(incomeCalculationService.calculateIncome(super.getParcelPlan().getPlantParcel().getProduct().getProductQuestionList(), super.getParcelPlan().getId(), super.getParcelPlan().getPlantParcel().getCity()));
         goToNextPage(EnumPlantationQuestionType.INCOME);
     }
 

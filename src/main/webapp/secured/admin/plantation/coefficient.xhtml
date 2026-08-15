@@ -1,0 +1,68 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="jakarta.faces.html"
+                xmlns:f="jakarta.faces.core"
+                xmlns:ui="jakarta.faces.facelets"
+                xmlns:p="http://primefaces.org/ui"
+                template="/templates/template.xhtml">
+
+    <ui:define name="title">Bitkisel katsayılar</ui:define>
+
+    <ui:define name="metadata">
+        <f:metadata>
+        </f:metadata>
+    </ui:define>
+
+    <ui:define name="head">
+        <style type="text/css">
+        </style>
+    </ui:define>
+
+    <ui:define name="content">
+        <div class="grid">
+            <h:form class="col">
+                <p:growl id="growl" showDetail="false" severity="info warn error">
+                    <p:autoUpdate/>
+                </p:growl>
+
+                <p:dataTable var="coefficient"
+                             value="#{plantationCoefficientController.coefficientList}"
+                             styleClass="card"
+                             scrollable="true"
+                             scrollHeight="44%"
+                             stripedRows="true"
+                             reflow="true"
+                             size="small">
+                    <f:facet name="header">
+                        <h5 style="font-weight: bold">Bitkisel katsayılar</h5>
+                    </f:facet>
+
+                    <p:column headerText="Katsayı">
+                        <h:outputText value="#{msg[coefficient.enumCoefficientType]}"/>
+                    </p:column>
+                    <p:column headerText="Mazot">
+                        <p:inputNumber value="#{coefficient.dieselValue}"
+                                       thousandSeparator=""
+                                       rendered="#{coefficient.dieselValue ne null}"
+                                       decimalPlaces="2"
+                                       minValue="0"/>
+                    </p:column>
+                    <p:column headerText="İşçilik">
+                        <p:inputNumber value="#{coefficient.laborValue}"
+                                       required="true"
+                                       requiredMessage="#{msg[coefficient.enumCoefficientType]} için işçilik miktarı giriniz."
+                                       thousandSeparator=""
+                                       decimalPlaces="2"
+                                       minValue="0">
+                            <p:ajax update="@this"/>
+                        </p:inputNumber>
+                    </p:column>
+                    <f:facet name="footer">
+                        <p:commandButton id="saveButton" value="Kaydet"/>
+                    </f:facet>
+                </p:dataTable>
+            </h:form>
+        </div>
+
+
+    </ui:define>
+</ui:composition>

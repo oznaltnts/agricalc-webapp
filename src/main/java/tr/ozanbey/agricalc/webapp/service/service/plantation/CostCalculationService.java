@@ -176,6 +176,7 @@ public class CostCalculationService extends CostCommonService {
     private BigDecimal plantingHourCostPerDecare(Double workPowerHour, Double workPowerCount, BigDecimal workingWomanLaborPrice) {
         return BigDecimal.valueOf(plantingLaborAmountYumru(workPowerHour, workPowerCount)).multiply(workingWomanLaborPrice);
     }
+
     //Gider- Ekim Dikim
     //38508,2
     private BigDecimal plantingTotalCost(Double seedKgPerDecare, BigDecimal seedPricePerKg, Double seedGrPerDecare, Double seedUnitPerDecare, BigDecimal seedPricePer1000, Double decarePerBag, BigDecimal seedBagPrice,

@@ -25,6 +25,10 @@
                 <sec:authorize access="hasAuthority('ADMIN')">
                     <p:menuitem value="Kullanıcılar" icon="fa-solid fa-user-gear" url="/secured/admin/user-management"/>
 
+                    <p:submenu label="Bitkisel veri yönetimi" icon="fa-solid fa-sliders">
+                        <p:menuitem value="Katsayılar" icon="fa-solid fa-user-gear" url="/secured/admin/plantation/coefficient"/>
+                    </p:submenu>
+
                     <p:submenu label="Büyükbaş süt yönetimi" icon="fa-solid fa-sliders">
                         <p:menuitem value="Hayvan türleri" icon="fa-solid fa-cow" url="/secured/admin/animal/dairy-cow/cow-management"/>
                         <p:menuitem value="Hayvan katsayıları" icon="fa-solid fa-cow" url="/secured/admin/animal/dairy-cow/cow-coefficient"/>

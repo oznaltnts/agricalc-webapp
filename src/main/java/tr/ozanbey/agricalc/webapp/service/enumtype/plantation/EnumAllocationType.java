@@ -31,7 +31,8 @@ public enum EnumAllocationType {
     MATERIAL_COST(RGBAColor.PINK),
 
     FUEL_AMOUNT(RGBAColor.WHITE),
-    ELECTRICITY_AMOUNT(RGBAColor.WHITE);
+    ELECTRICITY_AMOUNT(RGBAColor.WHITE),
+    BLUE_WATER_FOOTSTEP(RGBAColor.WHITE);
 
     private final RGBAColor color;
 

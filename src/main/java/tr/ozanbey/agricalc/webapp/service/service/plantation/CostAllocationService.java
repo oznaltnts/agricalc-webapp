@@ -838,13 +838,35 @@ public class CostAllocationService extends CostCommonService {
                 .add(BigDecimal.valueOf(electricityCount * inputAmountForElectricityPump).multiply(electricity));
     }
 
+    //600
+    private double calculateIrrigationAmount(double waterAmountPerDecarePerTonne, int pressuredCount,
+                                             double waterAmountPerDecare, double cazibeCount,
+                                             double waterAmountPerTonne, double waterAmountCount,
+                                             double electricityCount, double electricityWaterAmountPerHour, double irrigationAreaElectricity, double electricityWaterPumpHeight,
+                                             double averageIrrigationAmountPerSeasonCount, double waterAmountPerHour, double pumpWorkingHour, double irrigationArea) {
+        return waterAmountPerDecarePerTonne * pressuredCount
+                + waterAmountPerDecare * cazibeCount
+                + waterAmountPerTonne * waterAmountCount
+                + electricityCount * (electricityWaterAmountPerHour * irrigationAreaElectricity) / electricityWaterPumpHeight
+                + averageIrrigationAmountPerSeasonCount * waterAmountPerHour * pumpWorkingHour / irrigationArea;
+    }
+
+    //1150
+    private double calculateYieldAnswer(double averageYieldAsKgPerDecare, double mainProductKgYieldAsGrPerDecare, double mainProductKgYield14AsUnitPerDecare, double mainProductKgYieldAsUnitPerDecare, double averageExpectedYieldAsBundlePerDecare, double averageExpectedYield17AsBundlePerDecare) {
+        return averageYieldAsKgPerDecare + (mainProductKgYieldAsGrPerDecare / 1000) + mainProductKgYield14AsUnitPerDecare + mainProductKgYieldAsUnitPerDecare + averageExpectedYieldAsBundlePerDecare + averageExpectedYield17AsBundlePerDecare;
+    }
+
+    //521,7391304
+    private Double calculateBlueWaterFootstep(double irrigationAmount, double yieldAnswer) {
+        return irrigationAmount / yieldAnswer * 1000;
+    }
+
     @Transactional
     public void irrigationAllocation(List<PlantationProductQuestion> productQuestionList, UserPlantParcelPlan parcelPlan, City city) {
         List<UserPlantParcelPlanAllocation> planAllocationList = new ArrayList<>();
         List<PlantationIrrigationValue> irrigationValueList = irrigationValueRepository.findByIrrigationTypeIn(EnumIrrigationType.values());
         List<PlantationCoefficient> coefficientList = coefficientRepository.findByEnumCoefficientTypeIn(EnumCoefficientType.values());
-        List<UserPlantParcelPlanAnswer> previousAnswerList = planAnswerRepository.findByPlantParcelPlan_IdAndProductQuestion_PlantationQuestion_IdIn(parcelPlan.getId(), List.of(41L));
-
+        List<UserPlantParcelPlanAnswer> previousAnswerList = planAnswerRepository.findByPlantParcelPlan_IdAndProductQuestion_PlantationQuestion_IdIn(parcelPlan.getId(), List.of(12L, 13L, 14L, 15L, 16L, 17L, 41L));
 
         int pressuredCount = integerValueSetter(productQuestionList, 156L);
         double cazibeCount = doubleValueSetter(productQuestionList, 159L);
@@ -956,6 +978,32 @@ public class CostAllocationService extends CostCommonService {
 
         BigDecimal amortizationCost = amortizationForSelectedIrrigation;
         planAllocationList.add(new UserPlantParcelPlanAllocation(parcelPlan, EnumPlantationQuestionType.EXPENSE_IRRIGATION, EnumAllocationType.AMORTIZATION_AMOUNT, amortizationCost));
+
+        double waterAmountPerTonne = doubleValueSetter(productQuestionList, 161L);
+        double waterAmountCount = doubleValueSetter(productQuestionList, 162L);
+        double averageIrrigationAmountPerSeasonCount = doubleValueSetter(productQuestionList, 173L);
+        double irrigationAmount = calculateIrrigationAmount(
+                waterAmountPerDecarePerTonne, pressuredCount,
+                waterAmountPerDecare, cazibeCount,
+                waterAmountPerTonne, waterAmountCount,
+                electricityCount, electricityWaterAmountPerHour, irrigationAreaElectricity, electricityWaterPumpHeight,
+                averageIrrigationAmountPerSeasonCount, waterAmountPerHour, pumpWorkingHour, irrigationArea);
+        double averageYieldAsKgPerDecare = doubleAnswerSetter(previousAnswerList, 12L);
+        double mainProductKgYieldAsGrPerDecare = doubleAnswerSetter(previousAnswerList, 13L);
+        double mainProductKgYield14AsUnitPerDecare = doubleAnswerSetter(previousAnswerList, 14L);
+        double mainProductKgYieldAsUnitPerDecare = doubleAnswerSetter(previousAnswerList, 15L);
+        double averageExpectedYieldAsBundlePerDecare = doubleAnswerSetter(previousAnswerList, 16L);
+        double averageExpectedYield17AsBundlePerDecare = doubleAnswerSetter(previousAnswerList, 17L);
+        double yieldAnswer = calculateYieldAnswer(
+                averageYieldAsKgPerDecare,
+                mainProductKgYieldAsGrPerDecare,
+                mainProductKgYield14AsUnitPerDecare,
+                mainProductKgYieldAsUnitPerDecare,
+                averageExpectedYieldAsBundlePerDecare,
+                averageExpectedYield17AsBundlePerDecare);
+        Double blueWaterFootstep = calculateBlueWaterFootstep(irrigationAmount, yieldAnswer);
+
+        planAllocationList.add(new UserPlantParcelPlanAllocation(parcelPlan, EnumPlantationQuestionType.EXPENSE_IRRIGATION, EnumAllocationType.BLUE_WATER_FOOTSTEP, new BigDecimal(blueWaterFootstep)));
 
         saveAllocationList(parcelPlan.getId(), EnumPlantationQuestionType.EXPENSE_IRRIGATION, planAllocationList);
     }

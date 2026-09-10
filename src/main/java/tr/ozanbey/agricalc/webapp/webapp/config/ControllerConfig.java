@@ -19,6 +19,7 @@ public class ControllerConfig implements WebMvcConfigurer {
         registry.addViewController("/public/how-it-works").setViewName("forward:/public/how-it-works.xhtml");
         registry.addViewController("/login").setViewName("forward:/public/login.xhtml");
         registry.addViewController("/register").setViewName("forward:/public/register.xhtml");
+        registry.addViewController("/public/financial-literacy").setViewName("forward:/public/financial-literacy.xhtml");
 
         registry.addViewController("/secured/profile").setViewName("forward:/secured/profile.xhtml");
         registry.addViewController("/secured/farmer").setViewName("forward:/secured/farmer-profile.xhtml");

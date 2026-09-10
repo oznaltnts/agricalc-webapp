@@ -573,3 +573,66 @@ CREATE TABLE `plantation_product_question_disease_medicines`
   DEFAULT CHARSET = utf8mb4
   COLLATE = utf8mb4_unicode_ci;
 
+CREATE TABLE `literacy_questions`
+(
+    `id`      BIGINT       NOT NULL AUTO_INCREMENT,
+    `idate`   DATETIME     NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    `udate`   DATETIME     NULL     DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP,
+    `status`  TINYINT      NOT NULL COMMENT '-1:deleted, 0:passive, 1:active',
+    `q_value` VARCHAR(255) NOT NULL,
+    `q_type`  TINYINT      NOT NULL,
+    PRIMARY KEY (`id`),
+    INDEX idx_literacy_questions (`status`)
+)
+    ENGINE = InnoDB
+    AUTO_INCREMENT = 1;
+
+CREATE TABLE `literacy_question_options`
+(
+    `id`                   BIGINT       NOT NULL AUTO_INCREMENT,
+    `idate`                DATETIME     NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    `udate`   DATETIME     NULL     DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP,
+    `status`  TINYINT      NOT NULL COMMENT '-1:deleted, 0:passive, 1:active',
+    `literacy_question_id` BIGINT       NOT NULL,
+    `option_value`         VARCHAR(255) NOT NULL,
+    `score_10_value`       DOUBLE       NOT NULL,
+    `score_11_value`       DOUBLE       NOT NULL,
+    PRIMARY KEY (`id`),
+    CONSTRAINT `FK_literacy_question_options_literacy_questions` FOREIGN KEY (`literacy_question_id`) REFERENCES `literacy_questions` (`id`),
+    INDEX idx_literacy_question_options (`literacy_question_id`)
+)
+    ENGINE = InnoDB
+    AUTO_INCREMENT = 1;
+
+CREATE TABLE `user_literacy_assessments`
+(
+    `id`                BIGINT   NOT NULL AUTO_INCREMENT,
+    `idate`             DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    `udate`             DATETIME NULL     DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP,
+    `status`            TINYINT  NOT NULL COMMENT '-1:deleted, 0:passive, 1:active',
+    `user_id`           BIGINT   NOT NULL,
+    `total_score`       DOUBLE,
+    `budget_score`      DOUBLE,
+    `debt_score`        DOUBLE,
+    `operational_score` DOUBLE,
+    `saving_score`      DOUBLE,
+    PRIMARY KEY (`id`),
+    CONSTRAINT `FK_user_literacy_assessments_users` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`)
+)
+    ENGINE = InnoDB
+    AUTO_INCREMENT = 1;
+
+CREATE TABLE `user_literacy_answers`
+(
+    `id`                          BIGINT   NOT NULL AUTO_INCREMENT,
+    `idate`                       DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    `user_literacy_assessment_id` BIGINT   NOT NULL,
+    `literacy_question_id`        BIGINT   NOT NULL,
+    `literacy_question_option_id` BIGINT   NOT NULL,
+    PRIMARY KEY (`id`),
+    CONSTRAINT `FK_user_literacy_answers_user_literacy_assessments` FOREIGN KEY (`user_literacy_assessment_id`) REFERENCES `user_literacy_assessments` (`id`),
+    CONSTRAINT `FK_user_literacy_answers_literacy_questions` FOREIGN KEY (`literacy_question_id`) REFERENCES `literacy_questions` (`id`),
+    CONSTRAINT `FK_user_literacy_answers_literacy_question_options` FOREIGN KEY (`literacy_question_option_id`) REFERENCES `literacy_question_options` (`id`)
+)
+    ENGINE = InnoDB
+    AUTO_INCREMENT = 1;

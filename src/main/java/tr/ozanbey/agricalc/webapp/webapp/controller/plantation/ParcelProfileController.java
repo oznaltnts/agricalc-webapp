@@ -15,7 +15,7 @@ import tr.ozanbey.agricalc.webapp.service.domain.plantation.UserPlantParcel;
 import tr.ozanbey.agricalc.webapp.service.enumtype.EnumStatus;
 import tr.ozanbey.agricalc.webapp.service.enumtype.plantation.EnumParcelDetail;
 import tr.ozanbey.agricalc.webapp.service.service.CityService;
-import tr.ozanbey.agricalc.webapp.service.service.plantation.PlantationProductService;
+import tr.ozanbey.agricalc.webapp.service.service.plantation.ProductService;
 import tr.ozanbey.agricalc.webapp.service.service.plantation.UserPlantParcelService;
 
 import java.util.List;
@@ -31,7 +31,7 @@ public class ParcelProfileController extends PlantationController {
     private UserPlantParcelService userPlantParcelService;
 
     @Autowired
-    private PlantationProductService productService;
+    private ProductService productService;
 
     @Autowired
     private CityService cityService;

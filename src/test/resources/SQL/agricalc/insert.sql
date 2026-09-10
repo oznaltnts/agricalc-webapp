@@ -379,7 +379,7 @@ INSERT INTO `plantation_products` (`id`,`status`,`name`) VALUES (172,1,'Reygrass
 INSERT INTO `plantation_products` (`id`,`status`,`name`) VALUES (173,1,'Reyhan');
 INSERT INTO `plantation_products` (`id`,`status`,`name`) VALUES (174,1,'Rezene');
 INSERT INTO `plantation_products` (`id`,`status`,`name`) VALUES (175,1,'Roka');
-INSERT INTO `plantation_products` (`id`,`status`,`name`) VALUES (176,1,'Rozmanin (Biberiye)');
+INSERT INTO `plantation_products` (`id`,`status`,`name`) VALUES (176,1,'Rozmarin (Biberiye)');
 INSERT INTO `plantation_products` (`id`,`status`,`name`) VALUES (177,1,'Safran');
 INSERT INTO `plantation_products` (`id`,`status`,`name`) VALUES (178,1,'Sahlep');
 INSERT INTO `plantation_products` (`id`,`status`,`name`) VALUES (179,1,'Sarımsak (Kuru)');

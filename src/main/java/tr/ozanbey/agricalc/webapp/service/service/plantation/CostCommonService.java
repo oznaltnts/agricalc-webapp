@@ -227,16 +227,19 @@ public class CostCommonService {
 
     //2,5
     protected Double animalFertilizerDieselAmount(Double animalFertilizerDieselRate, Double animalFertilizerFrequency) {
+        if (animalFertilizerFrequency == 0d) return 0d;
         return animalFertilizerDieselRate / animalFertilizerFrequency;
     }
 
     //3
     protected Double animalFertilizerLaborAmount(Double animalFertilizerLaborRate, Double animalFertilizerFrequency) {
+        if (animalFertilizerFrequency == 0d) return 0d;
         return animalFertilizerLaborRate / animalFertilizerFrequency;
     }
 
     //3
     protected Double animalFertilizerKgAmount(Double animalFertilizerPerDecare, Double animalFertilizerFrequency) {
+        if (animalFertilizerFrequency == 0d) return 0d;
         return animalFertilizerPerDecare / animalFertilizerFrequency;
     }
 

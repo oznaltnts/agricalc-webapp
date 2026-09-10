@@ -18,7 +18,8 @@ import tr.ozanbey.agricalc.webapp.service.enumtype.EnumStatus;
 import tr.ozanbey.agricalc.webapp.service.enumtype.plantation.EnumPlantationQuestionType;
 import tr.ozanbey.agricalc.webapp.service.enumtype.plantation.EnumQuestionAnswerType;
 import tr.ozanbey.agricalc.webapp.service.service.plantation.IncomeCalculationService;
-import tr.ozanbey.agricalc.webapp.service.service.plantation.PlantationProductService;
+import tr.ozanbey.agricalc.webapp.service.service.plantation.ProductService;
+import tr.ozanbey.agricalc.webapp.service.service.plantation.QuestionService;
 import tr.ozanbey.agricalc.webapp.service.service.plantation.UserPlantParcelPlanService;
 import tr.ozanbey.agricalc.webapp.webapp.util.JSFUtils;
 
@@ -38,7 +39,10 @@ public class IncomeProfileController extends PlanProfileController {
     private UserPlantParcelPlanService userPlantParcelPlanService;
 
     @Autowired
-    private PlantationProductService productService;
+    private ProductService productService;
+
+    @Autowired
+    private QuestionService questionService;
 
     private Map<Long, String> productionTechniqueList;
 
@@ -64,7 +68,7 @@ public class IncomeProfileController extends PlanProfileController {
         }
 
         if (!Hibernate.isInitialized(super.getParcelPlan().getPlantParcel().getProduct().getProductQuestionList())) {
-            List<PlantationProductQuestion> productQuestionList = productService.getActiveQuestionByQuestionType(super.getParcelPlan().getPlantParcel().getProduct().getId(), EnumStatus.ACTIVE, EnumPlantationQuestionType.INCOME);
+            List<PlantationProductQuestion> productQuestionList = questionService.getActiveQuestionByQuestionType(super.getParcelPlan().getPlantParcel().getProduct().getId(), EnumStatus.ACTIVE, EnumPlantationQuestionType.INCOME);
             List<UserPlantParcelPlanAnswer> planAnswerList = userPlantParcelPlanService.fillPlanAnswerValues(super.getParcelPlanId(), EnumPlantationQuestionType.INCOME);
             List<UserPlantParcelAnswer> parcelAnswerList = userPlantParcelPlanService.fillParcelAnswerValues(super.getParcelPlan().getPlantParcel().getId(), EnumPlantationQuestionType.INCOME);
             for (UserPlantParcelPlanAnswer userPlantParcelPlanAnswer : planAnswerList) {

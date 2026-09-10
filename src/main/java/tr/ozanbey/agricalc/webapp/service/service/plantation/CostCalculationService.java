@@ -1305,7 +1305,7 @@ public class CostCalculationService extends CostCommonService {
 
     public BigDecimal calculateHarvestCost(List<PlantationProductQuestion> productQuestionList, Long parcelPlanId, City city) {
         List<PlantationCoefficient> coefficientList = coefficientRepository.findByEnumCoefficientTypeIn(EnumCoefficientType.values());
-        List<UserPlantParcelPlanAnswer> previousAnswerList = planAnswerRepository.findByPlantParcelPlan_IdAndProductQuestion_PlantationQuestion_IdIn(parcelPlanId, List.of(12L, 13L, 15L, 16L, 24L, 41L, 42L, 43L));
+        List<UserPlantParcelPlanAnswer> previousAnswerList = planAnswerRepository.findByPlantParcelPlan_IdAndProductQuestion_PlantationQuestion_IdIn(parcelPlanId, List.of(11L, 12L, 13L, 14L, 15L, 16L, 17L, 24L, 41L, 42L, 43L));
 
         Integer harvestCount = integerValueSetter(productQuestionList, 209L);
         Double averageYieldAsKgPerDecare = doubleAnswerSetter(previousAnswerList, 12L);
@@ -1424,7 +1424,7 @@ public class CostCalculationService extends CostCommonService {
 
     public BigDecimal calculateBlendCost(List<PlantationProductQuestion> productQuestionList, Long parcelPlanId, City city) {
         List<PlantationCoefficient> coefficientList = coefficientRepository.findByEnumCoefficientTypeIn(EnumCoefficientType.values());
-        List<UserPlantParcelPlanAnswer> previousAnswerList = planAnswerRepository.findByPlantParcelPlan_IdAndProductQuestion_PlantationQuestion_IdIn(parcelPlanId, List.of(12L, 13L, 41L, 42L, 43L));
+        List<UserPlantParcelPlanAnswer> previousAnswerList = planAnswerRepository.findByPlantParcelPlan_IdAndProductQuestion_PlantationQuestion_IdIn(parcelPlanId, List.of(11L, 12L, 13L, 14L, 15L, 16L, 17L, 41L, 42L, 43L));
 
         Double transportKmAmount = doubleValueSetter(productQuestionList, 247L);
         Double averageYieldAsKgPerDecare = doubleAnswerSetter(previousAnswerList, 12L);

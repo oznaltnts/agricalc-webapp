@@ -9,7 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import tr.ozanbey.agricalc.webapp.service.domain.plantation.UserPlantParcel;
 import tr.ozanbey.agricalc.webapp.service.domain.plantation.UserPlantParcelPlan;
-import tr.ozanbey.agricalc.webapp.service.service.plantation.PlantationProductService;
+import tr.ozanbey.agricalc.webapp.service.service.plantation.ProductService;
 import tr.ozanbey.agricalc.webapp.service.service.plantation.UserPlantParcelPlanService;
 import tr.ozanbey.agricalc.webapp.service.service.plantation.UserPlantParcelService;
 import tr.ozanbey.agricalc.webapp.webapp.controller.BaseController;
@@ -33,7 +33,7 @@ public class ParcelPlanController extends BaseController {
     private UserPlantParcelService plantParcelService;
 
     @Autowired
-    private PlantationProductService productService;
+    private ProductService productService;
     private LocalDate planStartDate;
 
     private List<UserPlantParcelPlan> parcelPlanList;

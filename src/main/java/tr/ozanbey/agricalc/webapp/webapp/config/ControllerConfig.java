@@ -1,8 +1,8 @@
 package tr.ozanbey.agricalc.webapp.webapp.config;
 
 
-import org.springframework.boot.web.server.ErrorPage;
-import org.springframework.boot.web.server.ErrorPageRegistrar;
+import org.springframework.boot.web.error.ErrorPage;
+import org.springframework.boot.web.error.ErrorPageRegistrar;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.Ordered;

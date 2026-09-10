@@ -12,7 +12,7 @@ import tr.ozanbey.agricalc.webapp.service.enumtype.EnumStatus;
 import tr.ozanbey.agricalc.webapp.service.enumtype.plantation.EnumPlantationQuestionType;
 import tr.ozanbey.agricalc.webapp.service.enumtype.plantation.EnumQuestionAnswerType;
 import tr.ozanbey.agricalc.webapp.service.enumtype.plantation.EnumQuestionRecordType;
-import tr.ozanbey.agricalc.webapp.service.service.plantation.PlantationProductService;
+import tr.ozanbey.agricalc.webapp.service.service.plantation.QuestionService;
 import tr.ozanbey.agricalc.webapp.service.service.plantation.UserPlantParcelPlanService;
 import tr.ozanbey.agricalc.webapp.webapp.controller.BaseController;
 
@@ -80,7 +80,7 @@ public class PlanProfileController extends BaseController {
     }
 
     @Autowired
-    private PlantationProductService productService;
+    private QuestionService questionService;
 
     protected void goToNextPage(EnumPlantationQuestionType referenceType) throws IOException {
         userPlantParcelPlanService.savePlanAnswers(parcelPlan, referenceType);
@@ -110,7 +110,7 @@ public class PlanProfileController extends BaseController {
     }
 
     private boolean navigateNewPage(int checkTypeValue) throws IOException {
-        List<PlantationProductQuestion> productQuestionList = productService.checkIsThereQuestionToAsk(parcelPlan.getPlantParcel().getId(),
+        List<PlantationProductQuestion> productQuestionList = questionService.checkIsThereQuestionToAsk(parcelPlan.getPlantParcel().getId(),
                 parcelPlan.getPlantParcel().getProduct().getId(), EnumStatus.ACTIVE, EnumPlantationQuestionType.fromValue(checkTypeValue));
         if (!productQuestionList.isEmpty()) {
             if (checkTypeValue == 0) {

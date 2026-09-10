@@ -27,11 +27,7 @@ spring:
     driver-class-name: com.mysql.cj.jdbc.Driver
     poolName: ozanbey-agricalc-webapp-dbconnectionpool
   jpa:
-    database: MYSQL
     open-in-view: false
-    properties:
-      hibernate:
-        dialect: org.hibernate.dialect.MySQLDialect
 server:
   servlet:
     session:

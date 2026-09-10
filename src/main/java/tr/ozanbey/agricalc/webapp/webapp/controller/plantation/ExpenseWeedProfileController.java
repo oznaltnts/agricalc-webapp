@@ -16,7 +16,7 @@ import tr.ozanbey.agricalc.webapp.service.enumtype.plantation.EnumPlantationQues
 import tr.ozanbey.agricalc.webapp.service.enumtype.plantation.EnumQuestionAnswerType;
 import tr.ozanbey.agricalc.webapp.service.service.plantation.CostAllocationService;
 import tr.ozanbey.agricalc.webapp.service.service.plantation.CostCalculationService;
-import tr.ozanbey.agricalc.webapp.service.service.plantation.PlantationProductService;
+import tr.ozanbey.agricalc.webapp.service.service.plantation.QuestionService;
 import tr.ozanbey.agricalc.webapp.service.service.plantation.UserPlantParcelPlanService;
 
 import java.io.IOException;
@@ -34,7 +34,7 @@ public class ExpenseWeedProfileController extends PlanProfileController {
     private UserPlantParcelPlanService userPlantParcelPlanService;
 
     @Autowired
-    private PlantationProductService productService;
+    private QuestionService questionService;
 
     @PostConstruct
     public void init() {
@@ -47,7 +47,7 @@ public class ExpenseWeedProfileController extends PlanProfileController {
         }
 
         if (!Hibernate.isInitialized(super.getParcelPlan().getPlantParcel().getProduct().getProductQuestionList())) {
-            List<PlantationProductQuestion> productQuestionList = productService.getActiveQuestionByQuestionType(super.getParcelPlan().getPlantParcel().getProduct().getId(), EnumStatus.ACTIVE, EnumPlantationQuestionType.EXPENSE_WEED);
+            List<PlantationProductQuestion> productQuestionList = questionService.getActiveQuestionByQuestionType(super.getParcelPlan().getPlantParcel().getProduct().getId(), EnumStatus.ACTIVE, EnumPlantationQuestionType.EXPENSE_WEED);
             List<UserPlantParcelPlanAnswer> planAnswerList = userPlantParcelPlanService.fillPlanAnswerValues(super.getParcelPlanId(), EnumPlantationQuestionType.EXPENSE_WEED);
             List<UserPlantParcelAnswer> parcelAnswerList = userPlantParcelPlanService.fillParcelAnswerValues(super.getParcelPlan().getPlantParcel().getId(), EnumPlantationQuestionType.EXPENSE_WEED);
             for (UserPlantParcelPlanAnswer userPlantParcelPlanAnswer : planAnswerList) {

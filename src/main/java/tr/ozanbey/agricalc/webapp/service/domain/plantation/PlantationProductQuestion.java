@@ -35,6 +35,9 @@ public class PlantationProductQuestion extends AbstractEntity {
     @OneToMany(mappedBy = "productQuestion", fetch = FetchType.LAZY)
     private List<UserPlantParcelPlanAnswer> questionAnswerList;
 
+    @OneToMany(mappedBy = "productQuestion", fetch = FetchType.LAZY)
+    private List<PlantationProductQuestionDisease> productQuestionDiseaseList;
+
     @Transient
     private String selectedAnswer;
 

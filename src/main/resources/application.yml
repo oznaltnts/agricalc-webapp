@@ -49,6 +49,8 @@ spring:
     username:
     password:
     url: jdbc:mysql://localhost:3306/tektarim
+    hikari:
+      connection-timeout: 150000
   jpa:
     show-sql: true
     hibernate:

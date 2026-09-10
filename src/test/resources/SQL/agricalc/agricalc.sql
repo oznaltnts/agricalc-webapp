@@ -612,4 +612,67 @@ CREATE TABLE `user_plant_parcel_plan_allocations`
     ENGINE = InnoDB
     AUTO_INCREMENT = 1;
 
+CREATE TABLE `plantation_diseases`
+(
+    `id`           BIGINT                                                                                        NOT NULL AUTO_INCREMENT,
+    `idate`        DATETIME                                                                                      NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    `udate`        DATETIME                                                                                      NULL     DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP,
+    `status`       TINYINT                                                                                       NOT NULL DEFAULT 1 COMMENT '-1:deleted, 0:passive, 1:active',
+    `disease_type` ENUM ('ACARICIDE', 'FUNGICIDE', 'HERBICIDE', 'HORMONE', 'INSECTICIDE', 'PESTICIDE', 'OTHERS') NOT NULL DEFAULT 'OTHERS',
+    `disease_name` VARCHAR(255)                                                                                  NOT NULL,
+    PRIMARY KEY (`id`),
+    UNIQUE KEY UK_diseases (`disease_type`, `disease_name`)
+) ENGINE = InnoDB
+  DEFAULT CHARSET = utf8mb4
+  COLLATE = utf8mb4_unicode_ci;
+
+CREATE TABLE `plantation_product_question_diseases`
+(
+    `id`                  BIGINT         NOT NULL AUTO_INCREMENT,
+    `idate`               DATETIME       NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    `product_question_id` BIGINT         NOT NULL,
+    `disease_id`          BIGINT         NOT NULL,
+    `usage_coefficient`   DOUBLE         NOT NULL DEFAULT 0.0 COMMENT 'İlaç uygulama katsayısı',
+    `adhesive_price`      DECIMAL(15, 3) NOT NULL DEFAULT 0.000 COMMENT 'YAPIŞTIRICI (TL/Da)',
+    `water_amount`        DOUBLE         NOT NULL DEFAULT 25.0 COMMENT 'Su miktarı katsayısı',
+    PRIMARY KEY (`id`),
+    UNIQUE KEY UK_product_question_diseases (`product_question_id`, `disease_id`),
+    CONSTRAINT `FK_product_question_diseases_product_question` FOREIGN KEY (`product_question_id`) REFERENCES `plantation_product_questions` (`id`),
+    CONSTRAINT `FK_product_question_diseases_disease` FOREIGN KEY (`disease_id`) REFERENCES `plantation_diseases` (`id`)
+) ENGINE = InnoDB
+  DEFAULT CHARSET = utf8mb4
+  COLLATE = utf8mb4_unicode_ci;
+
+CREATE TABLE `plantation_medicines`
+(
+    `id`                BIGINT         NOT NULL AUTO_INCREMENT,
+    `idate`             DATETIME       NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    `udate`             DATETIME       NULL     DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP,
+    `status`            TINYINT        NOT NULL DEFAULT 1 COMMENT '-1:deleted, 0:passive, 1:active',
+    `disease_type_set`  JSON           NOT NULL,
+    `medicine_brand`    VARCHAR(50)    NOT NULL,
+    `commercial_name`   VARCHAR(255)   NOT NULL,
+    `active_ingredient` VARCHAR(255)   NOT NULL,
+    `medicine_price`    DECIMAL(15, 3) NOT NULL DEFAULT 0.000 COMMENT 'İlaç Fiyat (TL/Ad)',
+    `unit_packaging`    DOUBLE         NOT NULL DEFAULT 0 COMMENT 'AMBALAJ BİRİMİ (Gr,ml)',
+    PRIMARY KEY (`id`),
+    UNIQUE KEY UK_medicines (`medicine_brand`, `commercial_name`)
+) ENGINE = InnoDB
+  DEFAULT CHARSET = utf8mb4
+  COLLATE = utf8mb4_unicode_ci;
+
+CREATE TABLE `plantation_product_question_disease_medicines`
+(
+    `id`                          BIGINT   NOT NULL AUTO_INCREMENT,
+    `idate`                       DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    `product_question_disease_id` BIGINT   NOT NULL,
+    `medicine_id`                 BIGINT   NOT NULL,
+    `medicine_dosage`             DOUBLE   NOT NULL DEFAULT 0 COMMENT 'DOZAJ (Gr/Da,ml/Da)',
+    PRIMARY KEY (`id`),
+    UNIQUE KEY UK_product_question_disease_medicines (`product_question_disease_id`, `medicine_id`),
+    CONSTRAINT `FK_product_question_disease_medicines_product_question_disease` FOREIGN KEY (`product_question_disease_id`) REFERENCES `plantation_product_question_diseases` (`id`),
+    CONSTRAINT `FK_product_question_disease_medicines_medicines` FOREIGN KEY (`medicine_id`) REFERENCES `plantation_medicines` (`id`)
+) ENGINE = InnoDB
+  DEFAULT CHARSET = utf8mb4
+  COLLATE = utf8mb4_unicode_ci;
 

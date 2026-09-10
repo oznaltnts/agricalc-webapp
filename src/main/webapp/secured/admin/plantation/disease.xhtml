@@ -1,0 +1,196 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="jakarta.faces.html"
+                xmlns:f="jakarta.faces.core"
+                xmlns:ui="jakarta.faces.facelets"
+                xmlns:p="http://primefaces.org/ui"
+                template="/templates/template.xhtml">
+
+    <ui:define name="title">Bitkisel Hastalık</ui:define>
+
+    <ui:define name="metadata">
+        <f:metadata>
+        </f:metadata>
+    </ui:define>
+
+    <ui:define name="head">
+        <style type="text/css">
+            .ui-growl {
+                z-index: 1099 !important;
+            }
+        </style>
+    </ui:define>
+
+    <ui:define name="content">
+        <div class="grid">
+            <div class="col">
+                <div class="card">
+                    <h5 style="font-weight: bold">Hastalık yönetimi</h5>
+
+                    <h:form id="diseaseForm">
+                        <p:growl id="growl" showDetail="true" severity="info warn error">
+                            <p:autoUpdate/>
+                        </p:growl>
+
+                        <p:dataTable var="diseaseView"
+                                     value="#{diseaseController.diseaseViewList}"
+                                     selection="#{diseaseController.selectedDiseaseView}"
+                                     rowKey="#{diseaseView.diseaseId}">
+                            <f:facet name="header">
+                                <div class="flex justify-content-end">
+                                    <p:commandButton id="diseaseEditButton" value="Düzenle"
+                                                     disabled="#{diseaseController.selectedDiseaseView eq null}"
+                                                     icon="pi pi-pencil" styleClass="ml-2"
+                                                     action="#{diseaseController.handleProductListOnSelect()}"
+                                                     update="addDialogForm"
+                                                     onsuccess="PF('addDialogWidgetVar').show()"/>
+                                    <p:commandButton value="Yeni ekle"
+                                                     icon="pi pi-plus" styleClass="ml-2"
+                                                     update="addDialogForm"
+                                                     action="#{diseaseController.onRowSelect(null)}"
+                                                     onsuccess="PF('addDialogWidgetVar').show()"/>
+                                </div>
+                            </f:facet>
+
+                            <p:ajax event="rowSelect"
+                                    listener="#{diseaseController.onRowSelect}"
+                                    update="diseaseEditButton addDialog"/>
+                            <p:ajax event="rowUnselect"
+                                    listener="#{diseaseController.setSelectedDiseaseView(null)}"
+                                    update="diseaseEditButton addDialog"/>
+                            <p:column selectionBox="true" style="width:16px;text-align:center"/>
+                            <p:column headerText="Son güncelleme">
+                                <h:outputText value="#{diseaseView.lastUpdateTime}"/>
+                            </p:column>
+
+                            <p:column headerText="Statüs">
+                                <h:outputText value="#{msg[diseaseView.disease.status]}"/>
+                            </p:column>
+
+                            <p:column headerText="Türü">
+                                <h:outputText value="#{msg[diseaseView.disease.type]}"/>
+                            </p:column>
+
+                            <p:column headerText="Adı">
+                                <h:outputText value="#{diseaseView.disease.name}"/>
+                            </p:column>
+
+                        </p:dataTable>
+
+                    </h:form>
+                </div>
+            </div>
+        </div>
+
+        <p:dialog id="addDialog"
+                  widgetVar="addDialogWidgetVar"
+                  closable="false" closeOnEscape="false" maximizable="true" draggable="false"
+                  modal="true" responsive="true" resizable="false" width="65%" height="65vh">
+            <f:facet name="header">
+                #{diseaseController.selectedDiseaseView.disease eq null ? 'Yeni hastalık' : diseaseController.selectedDiseaseView.disease.name}
+            </f:facet>
+            <h:form id="addDialogForm">
+                <p:outputLabel for="@next" styleClass="font-bold"
+                               value="Son güncellenme: #{diseaseController.selectedDiseaseView.lastUpdateTime}"/>
+                <p:panelGrid layout="flex" styleClass="mt-3"
+                             contentStyle="align-items: center;" contentStyleClass="ui-fluid"
+                             columnClasses="col-12 md:col-2, col-12 md:col-10"
+                             rendered="#{diseaseController.selectedDiseaseView ne null}"
+                             columns="2">
+
+                    <p:outputLabel for="@next" value="Statü:"/>
+                    <p:selectOneMenu value="#{diseaseController.selectedDiseaseView.selectedStatus}"
+                                     hideNoSelectionOption="#{not empty diseaseController.selectedDiseaseView.selectedStatus}"
+                                     required="true" requiredMessage="Statü seçiniz.">
+                        <p:ajax update="@this" process="@this"/>
+                        <f:selectItem itemLabel="Statü seçiniz." itemValue="#{null}" noSelectionOption="true"/>
+                        <f:selectItems value="#{diseaseController.statuses}"
+                                       var="status"
+                                       itemLabel="#{msg[status]}"
+                                       itemValue="#{status}"/>
+                    </p:selectOneMenu>
+
+                    <p:outputLabel for="@next" value="Tip:"/>
+                    <p:selectOneMenu value="#{diseaseController.selectedDiseaseView.selectedDiseaseType}"
+                                     hideNoSelectionOption="#{not empty diseaseController.selectedDiseaseView.selectedDiseaseType}"
+                                     required="true" requiredMessage="Tip seçiniz.">
+                        <p:ajax update="addDialogForm"
+                                listener="#{diseaseController.handleProductListOnSelect()}"/>
+                        <f:selectItem itemLabel="Tip seçiniz." itemValue="#{null}" noSelectionOption="true"/>
+                        <f:selectItems value="#{diseaseController.types}"
+                                       var="type"
+                                       itemLabel="#{msg[type]}"
+                                       itemValue="#{type}"/>
+                    </p:selectOneMenu>
+
+                    <p:outputLabel for="@next" value="İsmi"/>
+                    <p:inputText value="#{diseaseController.selectedDiseaseView.selectedDiseaseName}"
+                                 maxlength="255"
+                                 required="true" requiredMessage="İsim giriniz.">
+                        <p:ajax update="@this"/>
+                    </p:inputText>
+
+                    <p:outputLabel for="@next" value="Ürünler:"/>
+                    <p:selectCheckboxMenu emptyLabel="Ürünler seçiniz."
+                                          value="#{diseaseController.selectedDiseaseView.selectedProductQuestionDiseaseViewList}"
+                                          filter="true" filterMatchMode="contains"
+                                          showSelectAll="true">
+                        <p:ajax event="toggleSelect" update="addProductOutputPanel"/>
+                        <p:ajax event="itemSelect" update="addProductOutputPanel"/>
+                        <p:ajax event="itemUnselect" update="addProductOutputPanel"/>
+
+                        <f:selectItems value="#{diseaseController.selectedDiseaseView.productQuestionDiseaseViewList}"
+                                       var="productDiseaseView"
+                                       itemLabel="#{productDiseaseView.productQuestionDisease.productQuestion.plantationProduct.name}"
+                                       itemValue="#{productDiseaseView}"/>
+                    </p:selectCheckboxMenu>
+
+                </p:panelGrid>
+
+                <p:outputPanel id="addProductOutputPanel" deferred="true">
+                    <ui:repeat value="#{diseaseController.selectedDiseaseView.selectedProductQuestionDiseaseViewList}"
+                               var="productVar">
+                        <p:panelGrid layout="flex"
+                                     contentStyle="align-items: center;" contentStyleClass="ui-fluid"
+                                     columnClasses="col-12 md:col-2 text-right, col-12 md:col-2 text-right, col-12 md:col-3, col-12 md:col-2 text-right, col-12 md:col-3"
+                                     rendered="#{diseaseController.selectedDiseaseView ne null}"
+                                     columns="6">
+                            <p:outputLabel for="@parent"
+                                           value="#{productVar.productQuestionDisease.productQuestion.plantationProduct.name}:"/>
+                            <p:outputLabel for="@next" value="Yapıştırıcı ücreti (TL/Da)"/>
+                            <p:inputNumber required="true"
+                                           requiredMessage="#{productVar.productQuestionDisease.productQuestion.plantationProduct.name} için yapıştırıcı ücreti girin."
+                                           decimalSeparator="," decimalPlaces="3" thousandSeparator="." minValue="0"
+                                           value="#{productVar.inputPrice}">
+                                <p:ajax process="@this"/>
+                            </p:inputNumber>
+                            <p:outputLabel for="@next" value="Karıştırılan su miktarı çarpanı"/>
+                            <p:inputNumber required="true"
+                                           requiredMessage="#{productVar.productQuestionDisease.productQuestion.plantationProduct.name} için karıştırılan su miktarı çarpanı girin."
+                                           decimalSeparator="," decimalPlaces="1" thousandSeparator="" minValue="0"
+                                           value="#{productVar.inputAmount}">
+                                <p:ajax process="@this"/>
+                            </p:inputNumber>
+                            <p:outputLabel/>
+                        </p:panelGrid>
+                    </ui:repeat>
+                </p:outputPanel>
+            </h:form>
+            <f:facet name="footer">
+                <h:form id="addButtonForm">
+                    <p:commandButton value="Vazgeç"
+                                     action="#{diseaseController.setSelectedDiseaseView(null)}"
+                                     update="addDialogForm diseaseForm"
+                                     process="@this"
+                                     styleClass="ui-button-flat mr-2"
+                                     onsuccess="PF('addDialogWidgetVar').hide()"/>
+                    <p:commandButton value="Kaydet"
+                                     validateClient="true"
+                                     action="#{diseaseController.saveSelectedDiseaseView()}"
+                                     update="addDialogForm diseaseForm"
+                                     process="addDialogForm"/>
+                </h:form>
+            </f:facet>
+        </p:dialog>
+    </ui:define>
+
+</ui:composition>

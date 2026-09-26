@@ -7,15 +7,15 @@ import tr.ozanbey.agricalc.webapp.service.domain.AbstractEntity;
 @Getter
 @Setter
 @Entity
-@Table(name = "user_plant_parcel_answers")
+@Table(name = "user_plantation_answers")
 @NoArgsConstructor
 @AllArgsConstructor
 @ToString(onlyExplicitlyIncluded = true)
-public class UserPlantParcelAnswer extends AbstractEntity {
+public class UserPlantationAnswer extends AbstractEntity {
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_parcel_id", referencedColumnName = "id", nullable = false)
-    private UserPlantParcel plantParcel;
+    @JoinColumn(name = "user_plantation_id", referencedColumnName = "id", nullable = false)
+    private UserPlantation userPlantation;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "product_question_id", referencedColumnName = "id", nullable = false)

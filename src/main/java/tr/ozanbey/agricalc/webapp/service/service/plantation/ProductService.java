@@ -6,6 +6,7 @@ import org.springframework.stereotype.Service;
 import tr.ozanbey.agricalc.webapp.service.domain.plantation.PlantationProduct;
 import tr.ozanbey.agricalc.webapp.service.domain.plantation.PlantationProductOption;
 import tr.ozanbey.agricalc.webapp.service.enumtype.EnumStatus;
+import tr.ozanbey.agricalc.webapp.service.enumtype.plantation.EnumPlantationType;
 import tr.ozanbey.agricalc.webapp.service.repository.plantation.PlantationProductOptionRepository;
 import tr.ozanbey.agricalc.webapp.service.repository.plantation.PlantationProductRepository;
 
@@ -21,8 +22,12 @@ public class ProductService {
     @Autowired
     private PlantationProductOptionRepository productOptionRepository;
 
-    public List<PlantationProduct> getActiveProducts(EnumStatus status) {
+    public List<PlantationProduct> getProductListByStatus(EnumStatus status) {
         return productRepository.findByStatusOrderByNameAsc(status);
+    }
+
+    public List<PlantationProduct> getProductListByPlantationTypeAndStatus(EnumPlantationType plantationType, EnumStatus status) {
+        return productRepository.findByPlantationTypeAndStatusOrderByNameAsc(plantationType, status);
     }
 
     public List<PlantationProductOption> getProductOption(Long productId) {

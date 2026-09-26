@@ -38,12 +38,12 @@
             <div class="col">
                 <div class="card">
                     <p:steps activeIndex="4">
-                        <p:menuitem value="Ahırlar" containerStyleClass="steps-desktop"/>
-                        <p:menuitem value="Hayvanlar" containerStyleClass="steps-desktop"/>
-                        <p:menuitem value="Yemler"/>
+                        <p:menuitem value="Genel bilgiler" containerStyleClass="steps-desktop"/>
+                        <p:menuitem value="Hayvan varlığı projeksiyonu" containerStyleClass="steps-desktop"/>
+                        <p:menuitem value="Beslemede kullanılan yemler"/>
                         <p:menuitem value="Yem rasyonu"/>
-                        <p:menuitem value="Giderler"/>
-                        <p:menuitem value="Gelirler"/>
+                        <p:menuitem value="Diğer üretim giderleri"/>
+                        <p:menuitem value="Üretim gelirleri"/>
                         <p:menuitem value="Sonuçlar"/>
                     </p:steps>
                 </div>
@@ -187,7 +187,7 @@
         <div class="grid">
             <div class="col">
                 <p:outputPanel style="display: flex; justify-content: space-between;">
-                    <p:button value="Büyükbaş süt yem rasyonu"
+                    <p:button value="YER RASYONUNA GERİ DÖN"
                               styleClass="m-1"
                               iconPos="left"
                               href="/secured/animal/dairy-cow/feed-rasyon"
@@ -195,7 +195,7 @@
                         <f:param name="barnId"
                                  value="#{dairyCowCostController.barnId}"/>
                     </p:button>
-                    <p:button value="Büyükbaş süt gelirleri"
+                    <p:button value="ÜRETİM GELİRLERİNE İLERLE"
                               styleClass="m-1"
                               iconPos="right"
                               href="/secured/animal/dairy-cow/income"

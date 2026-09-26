@@ -16,6 +16,10 @@ public enum EnumStatus {
         this.value = value;
     }
 
+    public static EnumStatus[] userStatuses() {
+        return new EnumStatus[]{ACTIVE, PASSIVE};
+    }
+
     public static EnumStatus fromValue(Integer value) {
         for (EnumStatus s : EnumStatus.values()) {
             if (Objects.equals(s.value, value)) {

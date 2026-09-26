@@ -12,8 +12,8 @@ import tr.ozanbey.agricalc.webapp.service.enumtype.plantation.EnumIrrigationType
 import tr.ozanbey.agricalc.webapp.service.enumtype.plantation.EnumPlantationQuestionType;
 import tr.ozanbey.agricalc.webapp.service.repository.plantation.PlantationCoefficientRepository;
 import tr.ozanbey.agricalc.webapp.service.repository.plantation.PlantationIrrigationValueRepository;
-import tr.ozanbey.agricalc.webapp.service.repository.plantation.UserPlantParcelPlanAllocationRepository;
-import tr.ozanbey.agricalc.webapp.service.repository.plantation.UserPlantParcelPlanAnswerRepository;
+import tr.ozanbey.agricalc.webapp.service.repository.plantation.UserPlantationPlanAllocationRepository;
+import tr.ozanbey.agricalc.webapp.service.repository.plantation.UserPlantationPlanAnswerRepository;
 import tr.ozanbey.agricalc.webapp.webapp.view.plantation.PlanAllocationResultView;
 
 import java.math.BigDecimal;
@@ -29,18 +29,17 @@ public class CostAllocationService extends CostCommonService {
     private PlantationCoefficientRepository coefficientRepository;
 
     @Autowired
-    private UserPlantParcelPlanAnswerRepository planAnswerRepository;
+    private UserPlantationPlanAnswerRepository planAnswerRepository;
 
     @Autowired
-    private UserPlantParcelPlanAllocationRepository planAllocationRepository;
+    private UserPlantationPlanAllocationRepository planAllocationRepository;
 
     @Autowired
     private PlantationIrrigationValueRepository irrigationValueRepository;
 
-    public List<PlanAllocationResultView> getAllocationListByPlanId(Long parcelPlanId, EnumAllocationType[] allocationTypes) {
-        return planAllocationRepository.findByPlanIdGroupByAllocationType(parcelPlanId, allocationTypes);
+    public List<PlanAllocationResultView> getAllocationListByPlanId(Long plantationPlanId, EnumAllocationType[] allocationTypes) {
+        return planAllocationRepository.findByPlanIdGroupByAllocationType(plantationPlanId, allocationTypes);
     }
-
 
     private int decimalValueChecker(List<PlantationProductQuestion> questionList, Long questionId) {
         Optional<PlantationProductQuestion> optional = questionList.stream()
@@ -63,7 +62,6 @@ public class CostAllocationService extends CostCommonService {
     }
 
     private int choiceValueChecker(List<PlantationProductQuestion> questionList, List<Long> questionIdList, List<Long> answerIdList) {
-        int returnValue = 0;
         for (Long questionId : questionIdList) {
             Optional<PlantationProductQuestion> optional = questionList.stream()
                     .filter(q -> q.getPlantationQuestion().getId().equals(questionId))
@@ -108,11 +106,10 @@ public class CostAllocationService extends CostCommonService {
     }
 
     @Transactional
-    public void soilPrepAllocation(List<PlantationProductQuestion> productQuestionList, UserPlantParcelPlan parcelPlan, City city) {
-        List<UserPlantParcelPlanAllocation> planAllocationList = new ArrayList<>();
+    public void soilPrepAllocation(List<PlantationProductQuestion> productQuestionList, UserPlantationPlan plantationPlan, City city) {
+        List<UserPlantationPlanAllocation> planAllocationList = new ArrayList<>();
 
         List<PlantationCoefficient> coefficientList = coefficientRepository.findByEnumCoefficientTypeIn(EnumCoefficientType.values());
-//        List<UserPlantParcelPlanAnswer> previousAnswerList = planAnswerRepository.findByPlantParcelPlan_IdAndProductQuestion_PlantationQuestion_IdIn(parcelPlan.getId(), List.of(41L, 42L));
 
         int laserCount = decimalValueChecker(productQuestionList, 44L);
         int soilBlastCount = doubleValueChecker(productQuestionList, 45L);
@@ -121,7 +118,7 @@ public class CostAllocationService extends CostCommonService {
         Integer transactionCount = calculateSoilTransaction(
                 laserCount, soilBlastCount,
                 deepPlowCount, secondaryOpCount);
-        planAllocationList.add(new UserPlantParcelPlanAllocation(parcelPlan, EnumPlantationQuestionType.EXPENSE_SOIL, EnumAllocationType.TRANSACTION_COUNT, new BigDecimal(transactionCount)));
+        planAllocationList.add(new UserPlantationPlanAllocation(plantationPlan, EnumPlantationQuestionType.EXPENSE_SOIL, EnumAllocationType.TRANSACTION_COUNT, new BigDecimal(transactionCount)));
 
         double laserDieselAmount = 0d;
         double soilBlastFrequency = doubleValueSetter(productQuestionList, 45L);
@@ -134,10 +131,10 @@ public class CostAllocationService extends CostCommonService {
                 soilBlastCount, soilBlastDieselAmount,
                 deepPlowCount, deepPlowDieselAmount,
                 secondaryOpCount, secondaryOpDieselAmount);
-        planAllocationList.add(new UserPlantParcelPlanAllocation(parcelPlan, EnumPlantationQuestionType.EXPENSE_SOIL, EnumAllocationType.DIESEL_AMOUNT, new BigDecimal(dieselAmount)));
+        planAllocationList.add(new UserPlantationPlanAllocation(plantationPlan, EnumPlantationQuestionType.EXPENSE_SOIL, EnumAllocationType.DIESEL_AMOUNT, new BigDecimal(dieselAmount)));
 
         BigDecimal dieselCost = calculateSoilDieselCost(dieselAmount, city.getDieselPrice());
-        planAllocationList.add(new UserPlantParcelPlanAllocation(parcelPlan, EnumPlantationQuestionType.EXPENSE_SOIL, EnumAllocationType.DIESEL_COST, dieselCost));
+        planAllocationList.add(new UserPlantationPlanAllocation(plantationPlan, EnumPlantationQuestionType.EXPENSE_SOIL, EnumAllocationType.DIESEL_COST, dieselCost));
 
         double laserLaborAmount = 0d;
         double soilBlastLaborRate = coefficientList.stream().filter(c -> c.getEnumCoefficientType().equals(EnumCoefficientType.SOIL_BLASTING)).findFirst().get().getLaborValue();
@@ -149,18 +146,18 @@ public class CostAllocationService extends CostCommonService {
                 soilBlastCount, soilBlastLaborAmount,
                 deepPlowCount, deepPlowLaborAmount,
                 secondaryOpCount, secondaryOpLaborAmount);
-        planAllocationList.add(new UserPlantParcelPlanAllocation(parcelPlan, EnumPlantationQuestionType.EXPENSE_SOIL, EnumAllocationType.LABOR_AMOUNT, new BigDecimal(laborAmount)));
+        planAllocationList.add(new UserPlantationPlanAllocation(plantationPlan, EnumPlantationQuestionType.EXPENSE_SOIL, EnumAllocationType.LABOR_AMOUNT, new BigDecimal(laborAmount)));
 
         BigDecimal maleDailyWage = decimalValueSetter(productQuestionList, 41L);
         double workHoursPerDay = coefficientList.stream().filter(c -> c.getEnumCoefficientType().equals(EnumCoefficientType.WORKING_HOURS)).findFirst().get().getLaborValue();
         BigDecimal workingManLaborPrice = workingManLaborPrice(maleDailyWage, workHoursPerDay);
         BigDecimal laborCost = calculateSoilLaborCost(laborAmount, workingManLaborPrice);
-        planAllocationList.add(new UserPlantParcelPlanAllocation(parcelPlan, EnumPlantationQuestionType.EXPENSE_SOIL, EnumAllocationType.LABOR_COST, laborCost));
+        planAllocationList.add(new UserPlantationPlanAllocation(plantationPlan, EnumPlantationQuestionType.EXPENSE_SOIL, EnumAllocationType.LABOR_COST, laborCost));
 
         BigDecimal laserCost = decimalValueSetter(productQuestionList, 44L);
-        planAllocationList.add(new UserPlantParcelPlanAllocation(parcelPlan, EnumPlantationQuestionType.EXPENSE_SOIL, EnumAllocationType.LUMP_SUM_COST, laserCost));
+        planAllocationList.add(new UserPlantationPlanAllocation(plantationPlan, EnumPlantationQuestionType.EXPENSE_SOIL, EnumAllocationType.LUMP_SUM_COST, laserCost));
 
-        saveAllocationList(parcelPlan.getId(), EnumPlantationQuestionType.EXPENSE_SOIL, planAllocationList);
+        saveAllocationList(plantationPlan.getId(), EnumPlantationQuestionType.EXPENSE_SOIL, planAllocationList);
     }
 
     //10
@@ -220,10 +217,10 @@ public class CostAllocationService extends CostCommonService {
     }
 
     @Transactional
-    public void plantingAllocation(List<PlantationProductQuestion> productQuestionList, UserPlantParcelPlan parcelPlan, City city) {
-        List<UserPlantParcelPlanAllocation> planAllocationList = new ArrayList<>();
+    public void plantingAllocation(List<PlantationProductQuestion> productQuestionList, UserPlantationPlan plantationPlan, City city) {
+        List<UserPlantationPlanAllocation> planAllocationList = new ArrayList<>();
         List<PlantationCoefficient> coefficientList = coefficientRepository.findByEnumCoefficientTypeIn(EnumCoefficientType.values());
-        List<UserPlantParcelPlanAnswer> previousAnswerList = planAnswerRepository.findByPlantParcelPlan_IdAndProductQuestion_PlantationQuestion_IdIn(parcelPlan.getId(), List.of(41L, 42L));
+        List<UserPlantationPlanAnswer> previousAnswerList = planAnswerRepository.findByUserPlantationPlan_IdAndProductQuestion_PlantationQuestion_IdIn(plantationPlan.getId(), List.of(41L, 42L));
 
         int aSeedThrowMibzer = choiceValueChecker(productQuestionList, List.of(64L, 65L), List.of(57L, 60L));
         int aSeedThrowMibzerCost = decimalValueChecker(productQuestionList, 66L);
@@ -241,7 +238,7 @@ public class CostAllocationService extends CostCommonService {
                 bSteelingPlantEl, bSteelingPlantMakine,
                 bSteelingPlantMakineSahipli, cSeedlingPlant,
                 cYumruPlantAmount, cYumruPlantTimeAmount);
-        planAllocationList.add(new UserPlantParcelPlanAllocation(parcelPlan, EnumPlantationQuestionType.EXPENSE_PLANTING, EnumAllocationType.TRANSACTION_COUNT, new BigDecimal(transactionCount)));
+        planAllocationList.add(new UserPlantationPlanAllocation(plantationPlan, EnumPlantationQuestionType.EXPENSE_PLANTING, EnumAllocationType.TRANSACTION_COUNT, new BigDecimal(transactionCount)));
 
         double seederEnergyPerDecare = coefficientList.stream().filter(c -> c.getEnumCoefficientType().equals(EnumCoefficientType.DRILL_PLANTING)).findFirst().get().getDieselValue();
         double seedUsageYear = doubleValueSetter(productQuestionList, 69L);
@@ -256,12 +253,12 @@ public class CostAllocationService extends CostCommonService {
                 aSeedThrowMibzerDieselAmount,
                 bSteelingPlantMakineDieselAmount,
                 bSteelingPlantMakineSahipliDieselAmount);
-        planAllocationList.add(new UserPlantParcelPlanAllocation(parcelPlan, EnumPlantationQuestionType.EXPENSE_PLANTING, EnumAllocationType.DIESEL_AMOUNT, new BigDecimal(dieselAmount)));
+        planAllocationList.add(new UserPlantationPlanAllocation(plantationPlan, EnumPlantationQuestionType.EXPENSE_PLANTING, EnumAllocationType.DIESEL_AMOUNT, new BigDecimal(dieselAmount)));
 
         BigDecimal dieselCost = calculatePlantingDieselCost(
                 dieselAmount,
                 city.getDieselPrice());
-        planAllocationList.add(new UserPlantParcelPlanAllocation(parcelPlan, EnumPlantationQuestionType.EXPENSE_PLANTING, EnumAllocationType.DIESEL_COST, dieselCost));
+        planAllocationList.add(new UserPlantationPlanAllocation(plantationPlan, EnumPlantationQuestionType.EXPENSE_PLANTING, EnumAllocationType.DIESEL_COST, dieselCost));
 
         double seederLaborPerDecare = coefficientList.stream().filter(c -> c.getEnumCoefficientType().equals(EnumCoefficientType.DRILL_PLANTING)).findFirst().get().getLaborValue();
         double aSeedThrowMibzerLaborAmount = plantingYearLaborAmount(seedUsageYear, seederLaborPerDecare);
@@ -282,7 +279,7 @@ public class CostAllocationService extends CostCommonService {
                 cSeedlingPlantLaborAmount,
                 workPowerCount,
                 cYumruPlantLaborAmount);
-        planAllocationList.add(new UserPlantParcelPlanAllocation(parcelPlan, EnumPlantationQuestionType.EXPENSE_PLANTING, EnumAllocationType.LABOR_AMOUNT, new BigDecimal(laborAmount)));
+        planAllocationList.add(new UserPlantationPlanAllocation(plantationPlan, EnumPlantationQuestionType.EXPENSE_PLANTING, EnumAllocationType.LABOR_AMOUNT, new BigDecimal(laborAmount)));
 
         BigDecimal maleDailyWage = decimalAnswerSetter(previousAnswerList, 41L);
         BigDecimal femaleDailyWage = decimalAnswerSetter(previousAnswerList, 42L);
@@ -302,7 +299,7 @@ public class CostAllocationService extends CostCommonService {
                 workingMixedLaborPrice,
                 workPowerCount,
                 cYumruPlantLaborAmount);
-        planAllocationList.add(new UserPlantParcelPlanAllocation(parcelPlan, EnumPlantationQuestionType.EXPENSE_PLANTING, EnumAllocationType.LABOR_COST, laborCost));
+        planAllocationList.add(new UserPlantationPlanAllocation(plantationPlan, EnumPlantationQuestionType.EXPENSE_PLANTING, EnumAllocationType.LABOR_COST, laborCost));
 
         BigDecimal plantingLumpSumPrice = decimalValueSetter(productQuestionList, 66L);
         BigDecimal plantingDroneLumpSumPrice = decimalValueSetter(productQuestionList, 68L);
@@ -311,7 +308,7 @@ public class CostAllocationService extends CostCommonService {
                 plantingLumpSumPrice,
                 plantingDroneLumpSumPrice,
                 rentalDrillCostPerHour);
-        planAllocationList.add(new UserPlantParcelPlanAllocation(parcelPlan, EnumPlantationQuestionType.EXPENSE_PLANTING, EnumAllocationType.LUMP_SUM_COST, lumpSumCost));
+        planAllocationList.add(new UserPlantationPlanAllocation(plantationPlan, EnumPlantationQuestionType.EXPENSE_PLANTING, EnumAllocationType.LUMP_SUM_COST, lumpSumCost));
 
         double seedKgPerDecare = doubleValueSetter(productQuestionList, 57L);
         BigDecimal seedPricePerKg = decimalValueSetter(productQuestionList, 61L);
@@ -329,14 +326,14 @@ public class CostAllocationService extends CostCommonService {
                 plantingSeedGrCost,
                 plantingSeed1000Cost,
                 plantingSeedBagCost);
-        planAllocationList.add(new UserPlantParcelPlanAllocation(parcelPlan, EnumPlantationQuestionType.EXPENSE_PLANTING, EnumAllocationType.SEED_COST, seedCost));
+        planAllocationList.add(new UserPlantationPlanAllocation(plantationPlan, EnumPlantationQuestionType.EXPENSE_PLANTING, EnumAllocationType.SEED_COST, seedCost));
 
         BigDecimal seedlingUnitPrice = decimalValueSetter(productQuestionList, 73L);
         BigDecimal seedlingCost = seedlingUnitCostPerDecare(
                 plantingSeedlingPerDecare,
                 seedlingUsageYear,
                 seedlingUnitPrice);
-        planAllocationList.add(new UserPlantParcelPlanAllocation(parcelPlan, EnumPlantationQuestionType.EXPENSE_PLANTING, EnumAllocationType.SEEDLING_COST, seedlingCost));
+        planAllocationList.add(new UserPlantationPlanAllocation(plantationPlan, EnumPlantationQuestionType.EXPENSE_PLANTING, EnumAllocationType.SEEDLING_COST, seedlingCost));
 
         int plantingSteelingPerDecare = integerValueSetter(productQuestionList, 72L);
         BigDecimal steelingUnitPrice = decimalValueSetter(productQuestionList, 74L);
@@ -344,7 +341,7 @@ public class CostAllocationService extends CostCommonService {
                 plantingSteelingPerDecare,
                 seedlingUsageYear,
                 steelingUnitPrice);
-        planAllocationList.add(new UserPlantParcelPlanAllocation(parcelPlan, EnumPlantationQuestionType.EXPENSE_PLANTING, EnumAllocationType.CUTTING_COST, cuttingCost));
+        planAllocationList.add(new UserPlantationPlanAllocation(plantationPlan, EnumPlantationQuestionType.EXPENSE_PLANTING, EnumAllocationType.CUTTING_COST, cuttingCost));
 
         double averageYumruAmount = doubleValueSetter(productQuestionList, 85L);
         double yumruUsageYear = doubleValueSetter(productQuestionList, 90L);
@@ -353,9 +350,9 @@ public class CostAllocationService extends CostCommonService {
         BigDecimal tuberCost = calculateTuberCost(
                 cSeedlingPlantTuberAmount,
                 yumruKgPrice);
-        planAllocationList.add(new UserPlantParcelPlanAllocation(parcelPlan, EnumPlantationQuestionType.EXPENSE_PLANTING, EnumAllocationType.TUBER_COST, tuberCost));
+        planAllocationList.add(new UserPlantationPlanAllocation(plantationPlan, EnumPlantationQuestionType.EXPENSE_PLANTING, EnumAllocationType.TUBER_COST, tuberCost));
 
-        saveAllocationList(parcelPlan.getId(), EnumPlantationQuestionType.EXPENSE_PLANTING, planAllocationList);
+        saveAllocationList(plantationPlan.getId(), EnumPlantationQuestionType.EXPENSE_PLANTING, planAllocationList);
     }
 
     //18
@@ -432,10 +429,10 @@ public class CostAllocationService extends CostCommonService {
     }
 
     @Transactional
-    public void fertilizerAllocation(List<PlantationProductQuestion> productQuestionList, UserPlantParcelPlan parcelPlan, City city) {
-        List<UserPlantParcelPlanAllocation> planAllocationList = new ArrayList<>();
+    public void fertilizerAllocation(List<PlantationProductQuestion> productQuestionList, UserPlantationPlan plantationPlan, City city) {
+        List<UserPlantationPlanAllocation> planAllocationList = new ArrayList<>();
         List<PlantationCoefficient> coefficientList = coefficientRepository.findByEnumCoefficientTypeIn(EnumCoefficientType.values());
-        List<UserPlantParcelPlanAnswer> previousAnswerList = planAnswerRepository.findByPlantParcelPlan_IdAndProductQuestion_PlantationQuestion_IdIn(parcelPlan.getId(), List.of(41L));
+        List<UserPlantationPlanAnswer> previousAnswerList = planAnswerRepository.findByUserPlantationPlan_IdAndProductQuestion_PlantationQuestion_IdIn(plantationPlan.getId(), List.of(41L));
 
         int composeCount = doubleValueChecker(productQuestionList, 93L);
         int firstComposeCount = doubleValueChecker(productQuestionList, 95L);
@@ -455,7 +452,7 @@ public class CostAllocationService extends CostCommonService {
                 animalFertilizerCount, humicCount,
                 leonarditeCount, solucanCount,
                 bioConditionerCount);
-        planAllocationList.add(new UserPlantParcelPlanAllocation(parcelPlan, EnumPlantationQuestionType.EXPENSE_FERTILIZER, EnumAllocationType.TRANSACTION_COUNT, new BigDecimal(transactionCount)));
+        planAllocationList.add(new UserPlantationPlanAllocation(plantationPlan, EnumPlantationQuestionType.EXPENSE_FERTILIZER, EnumAllocationType.TRANSACTION_COUNT, new BigDecimal(transactionCount)));
 
 
         double composeDieselAmount = coefficientList.stream().filter(c -> c.getEnumCoefficientType().equals(EnumCoefficientType.BASE_FERTILIZER)).findFirst().get().getDieselValue();
@@ -480,10 +477,10 @@ public class CostAllocationService extends CostCommonService {
                 leonarditeCount, leonarditeDieselAmount,
                 solucanCount, solucanDieselAmount,
                 bioConditionerCount, bioConditionerDieselAmount);
-        planAllocationList.add(new UserPlantParcelPlanAllocation(parcelPlan, EnumPlantationQuestionType.EXPENSE_FERTILIZER, EnumAllocationType.DIESEL_AMOUNT, new BigDecimal(dieselAmount)));
+        planAllocationList.add(new UserPlantationPlanAllocation(plantationPlan, EnumPlantationQuestionType.EXPENSE_FERTILIZER, EnumAllocationType.DIESEL_AMOUNT, new BigDecimal(dieselAmount)));
 
         BigDecimal dieselCost = calculateFertilizerDieselCost(dieselAmount, city.getDieselPrice());
-        planAllocationList.add(new UserPlantParcelPlanAllocation(parcelPlan, EnumPlantationQuestionType.EXPENSE_FERTILIZER, EnumAllocationType.DIESEL_COST, dieselCost));
+        planAllocationList.add(new UserPlantationPlanAllocation(plantationPlan, EnumPlantationQuestionType.EXPENSE_FERTILIZER, EnumAllocationType.DIESEL_COST, dieselCost));
 
         double composeLaborAmount = coefficientList.stream().filter(c -> c.getEnumCoefficientType().equals(EnumCoefficientType.BASE_FERTILIZER)).findFirst().get().getLaborValue();
         double firstComposeLaborAmount = coefficientList.stream().filter(c -> c.getEnumCoefficientType().equals(EnumCoefficientType.TOP_FERTILIZER)).findFirst().get().getLaborValue();
@@ -506,13 +503,13 @@ public class CostAllocationService extends CostCommonService {
                 leonarditeCount, leonarditeLaborAmount,
                 solucanCount, solucanLaborAmount,
                 bioConditionerCount, bioConditionerLaborAmount);
-        planAllocationList.add(new UserPlantParcelPlanAllocation(parcelPlan, EnumPlantationQuestionType.EXPENSE_FERTILIZER, EnumAllocationType.LABOR_AMOUNT, new BigDecimal(laborAmount)));
+        planAllocationList.add(new UserPlantationPlanAllocation(plantationPlan, EnumPlantationQuestionType.EXPENSE_FERTILIZER, EnumAllocationType.LABOR_AMOUNT, new BigDecimal(laborAmount)));
 
         BigDecimal maleDailyWage = decimalAnswerSetter(previousAnswerList, 41L);
         double workHoursPerDay = coefficientList.stream().filter(c -> c.getEnumCoefficientType().equals(EnumCoefficientType.WORKING_HOURS)).findFirst().get().getLaborValue();
         BigDecimal workingManLaborPrice = workingManLaborPrice(maleDailyWage, workHoursPerDay);
         BigDecimal laborCost = calculateFertilizerLaborCost(laborAmount, workingManLaborPrice);
-        planAllocationList.add(new UserPlantParcelPlanAllocation(parcelPlan, EnumPlantationQuestionType.EXPENSE_FERTILIZER, EnumAllocationType.LABOR_COST, laborCost));
+        planAllocationList.add(new UserPlantationPlanAllocation(plantationPlan, EnumPlantationQuestionType.EXPENSE_FERTILIZER, EnumAllocationType.LABOR_COST, laborCost));
 
 
         double composeAmount = doubleValueSetter(productQuestionList, 93L);
@@ -550,9 +547,9 @@ public class CostAllocationService extends CostCommonService {
                 leonarditeCount, leonarditeAmount, leonarditePrice,
                 solucanCount, solucanAmount, solucanPrice,
                 bioConditionerCount, bioConditionerAmount, bioConditionerPrice);
-        planAllocationList.add(new UserPlantParcelPlanAllocation(parcelPlan, EnumPlantationQuestionType.EXPENSE_FERTILIZER, EnumAllocationType.FERTILIZER_COST, fertilizerCost));
+        planAllocationList.add(new UserPlantationPlanAllocation(plantationPlan, EnumPlantationQuestionType.EXPENSE_FERTILIZER, EnumAllocationType.FERTILIZER_COST, fertilizerCost));
 
-        saveAllocationList(parcelPlan.getId(), EnumPlantationQuestionType.EXPENSE_FERTILIZER, planAllocationList);
+        saveAllocationList(plantationPlan.getId(), EnumPlantationQuestionType.EXPENSE_FERTILIZER, planAllocationList);
     }
 
     //19
@@ -667,10 +664,10 @@ public class CostAllocationService extends CostCommonService {
     }
 
     @Transactional
-    public void wildGrassAllocation(List<PlantationProductQuestion> productQuestionList, UserPlantParcelPlan parcelPlan, City city) {
-        List<UserPlantParcelPlanAllocation> planAllocationList = new ArrayList<>();
+    public void wildGrassAllocation(List<PlantationProductQuestion> productQuestionList, UserPlantationPlan plantationPlan, City city) {
+        List<UserPlantationPlanAllocation> planAllocationList = new ArrayList<>();
         List<PlantationCoefficient> coefficientList = coefficientRepository.findByEnumCoefficientTypeIn(EnumCoefficientType.values());
-        List<UserPlantParcelPlanAnswer> previousAnswerList = planAnswerRepository.findByPlantParcelPlan_IdAndProductQuestion_PlantationQuestion_IdIn(parcelPlan.getId(), List.of(41L, 42L));
+        List<UserPlantationPlanAnswer> previousAnswerList = planAnswerRepository.findByUserPlantationPlan_IdAndProductQuestion_PlantationQuestion_IdIn(plantationPlan.getId(), List.of(41L, 42L));
 
         int fillFurrowCount = doubleValueChecker(productQuestionList, 119L);
         int fillFurrowAmountCount = decimalValueChecker(productQuestionList, 120L);
@@ -688,7 +685,7 @@ public class CostAllocationService extends CostCommonService {
                 machineWeedingCount, medicineCount,
                 handCountFrequency, mulchCostPricePerKg,
                 weedToolCount, animalPlowPerYear);
-        planAllocationList.add(new UserPlantParcelPlanAllocation(parcelPlan, EnumPlantationQuestionType.EXPENSE_WEED, EnumAllocationType.TRANSACTION_COUNT, new BigDecimal(transactionCount)));
+        planAllocationList.add(new UserPlantationPlanAllocation(plantationPlan, EnumPlantationQuestionType.EXPENSE_WEED, EnumAllocationType.TRANSACTION_COUNT, new BigDecimal(transactionCount)));
 
         double fillFurrowDieselAmount = 0d;
         double fillFurrowAmountDieselAmount = doubleValueSetter(productQuestionList, 120L);
@@ -711,10 +708,10 @@ public class CostAllocationService extends CostCommonService {
                 mulchCostPricePerKg, mulchDieselAmount,
                 weedToolCount, weedToolDieselAmount,
                 animalPlowPerYear, animalPlowDieselAmount);
-        planAllocationList.add(new UserPlantParcelPlanAllocation(parcelPlan, EnumPlantationQuestionType.EXPENSE_WEED, EnumAllocationType.DIESEL_AMOUNT, new BigDecimal(dieselAmount)));
+        planAllocationList.add(new UserPlantationPlanAllocation(plantationPlan, EnumPlantationQuestionType.EXPENSE_WEED, EnumAllocationType.DIESEL_AMOUNT, new BigDecimal(dieselAmount)));
 
         Double fuelAmount = weedToolDieselAmount * weedToolCount;
-        planAllocationList.add(new UserPlantParcelPlanAllocation(parcelPlan, EnumPlantationQuestionType.EXPENSE_WEED, EnumAllocationType.FUEL_AMOUNT, new BigDecimal(fuelAmount)));
+        planAllocationList.add(new UserPlantationPlanAllocation(plantationPlan, EnumPlantationQuestionType.EXPENSE_WEED, EnumAllocationType.FUEL_AMOUNT, new BigDecimal(fuelAmount)));
 
         BigDecimal dieselCost = calculateWildGrassDieselCost(
                 fillFurrowCount, fillFurrowDieselAmount, city.getDieselPrice(),
@@ -727,7 +724,7 @@ public class CostAllocationService extends CostCommonService {
                 mulchCostPricePerKg, mulchDieselAmount,
                 weedToolCount, weedToolDieselAmount, city.getFuelPrice(),
                 animalPlowPerYear, animalPlowDieselAmount);
-        planAllocationList.add(new UserPlantParcelPlanAllocation(parcelPlan, EnumPlantationQuestionType.EXPENSE_WEED, EnumAllocationType.DIESEL_COST, dieselCost));
+        planAllocationList.add(new UserPlantationPlanAllocation(plantationPlan, EnumPlantationQuestionType.EXPENSE_WEED, EnumAllocationType.DIESEL_COST, dieselCost));
 
         double fillFurrowLaborAmount = doubleValueSetter(productQuestionList, 119L);
         double fillFurrowAmountLaborAmount = coefficientList.stream().filter(c -> c.getEnumCoefficientType().equals(EnumCoefficientType.THROAT_FILLING)).findFirst().get().getLaborValue();
@@ -752,7 +749,7 @@ public class CostAllocationService extends CostCommonService {
                 mulchCostPricePerKg, mulchLaborAmount,
                 weedToolCount, weedToolLaborAmount,
                 animalPlowPerYear, animalPlowLaborAmount);
-        planAllocationList.add(new UserPlantParcelPlanAllocation(parcelPlan, EnumPlantationQuestionType.EXPENSE_WEED, EnumAllocationType.LABOR_AMOUNT, new BigDecimal(laborAmount)));
+        planAllocationList.add(new UserPlantationPlanAllocation(plantationPlan, EnumPlantationQuestionType.EXPENSE_WEED, EnumAllocationType.LABOR_AMOUNT, new BigDecimal(laborAmount)));
 
         double workHoursPerDay = coefficientList.stream().filter(c -> c.getEnumCoefficientType().equals(EnumCoefficientType.WORKING_HOURS)).findFirst().get().getLaborValue();
         BigDecimal maleDailyWage = decimalAnswerSetter(previousAnswerList, 41L);
@@ -773,20 +770,20 @@ public class CostAllocationService extends CostCommonService {
                 mulchCostPricePerKg, mulchLaborAmount,
                 weedToolCount, weedToolLaborAmount,
                 animalPlowPerYear, animalPlowLaborAmount);
-        planAllocationList.add(new UserPlantParcelPlanAllocation(parcelPlan, EnumPlantationQuestionType.EXPENSE_WEED, EnumAllocationType.LABOR_COST, laborCost));
+        planAllocationList.add(new UserPlantationPlanAllocation(plantationPlan, EnumPlantationQuestionType.EXPENSE_WEED, EnumAllocationType.LABOR_COST, laborCost));
 
         BigDecimal productMedicinePrice = BigDecimal.valueOf(8.115076667d);
         BigDecimal herbicideCost = calculateWildGrassHerbicideCost(medicineCount, productMedicinePrice);
-        planAllocationList.add(new UserPlantParcelPlanAllocation(parcelPlan, EnumPlantationQuestionType.EXPENSE_WEED, EnumAllocationType.HERBICIDE_COST, herbicideCost));
+        planAllocationList.add(new UserPlantationPlanAllocation(plantationPlan, EnumPlantationQuestionType.EXPENSE_WEED, EnumAllocationType.HERBICIDE_COST, herbicideCost));
 
 
         double mulchAmountPerDecare = doubleValueSetter(productQuestionList, 139L);
         double mulchInputAmount = mulchUsageYear == 0d ? 0d : mulchingCostAmount(mulchAmountPerDecare, mulchUsageYear);
         BigDecimal mulchInputCost = decimalValueSetter(productQuestionList, 140L);
         BigDecimal mulchCost = calculateWildGrassMulchCost(mulchInputAmount, mulchInputCost);
-        planAllocationList.add(new UserPlantParcelPlanAllocation(parcelPlan, EnumPlantationQuestionType.EXPENSE_WEED, EnumAllocationType.MULCH_COST, mulchCost));
+        planAllocationList.add(new UserPlantationPlanAllocation(plantationPlan, EnumPlantationQuestionType.EXPENSE_WEED, EnumAllocationType.MULCH_COST, mulchCost));
 
-        saveAllocationList(parcelPlan.getId(), EnumPlantationQuestionType.EXPENSE_WEED, planAllocationList);
+        saveAllocationList(plantationPlan.getId(), EnumPlantationQuestionType.EXPENSE_WEED, planAllocationList);
     }
 
     //40
@@ -844,11 +841,18 @@ public class CostAllocationService extends CostCommonService {
                                              double waterAmountPerTonne, double waterAmountCount,
                                              double electricityCount, double electricityWaterAmountPerHour, double irrigationAreaElectricity, double electricityWaterPumpHeight,
                                              double averageIrrigationAmountPerSeasonCount, double waterAmountPerHour, double pumpWorkingHour, double irrigationArea) {
+        double newElectricityWaterPumpHeight = 0d;
+        if (electricityWaterPumpHeight != 0d)
+            newElectricityWaterPumpHeight = electricityCount * (electricityWaterAmountPerHour * irrigationAreaElectricity) / electricityWaterPumpHeight;
+        double newIrrigationArea = 0d;
+        if (irrigationArea != 0d)
+            newIrrigationArea = averageIrrigationAmountPerSeasonCount * waterAmountPerHour * pumpWorkingHour / irrigationArea;
+
         return waterAmountPerDecarePerTonne * pressuredCount
                 + waterAmountPerDecare * cazibeCount
                 + waterAmountPerTonne * waterAmountCount
-                + electricityCount * (electricityWaterAmountPerHour * irrigationAreaElectricity) / electricityWaterPumpHeight
-                + averageIrrigationAmountPerSeasonCount * waterAmountPerHour * pumpWorkingHour / irrigationArea;
+                + newElectricityWaterPumpHeight
+                + newIrrigationArea;
     }
 
     //1150
@@ -862,11 +866,11 @@ public class CostAllocationService extends CostCommonService {
     }
 
     @Transactional
-    public void irrigationAllocation(List<PlantationProductQuestion> productQuestionList, UserPlantParcelPlan parcelPlan, City city) {
-        List<UserPlantParcelPlanAllocation> planAllocationList = new ArrayList<>();
+    public void irrigationAllocation(List<PlantationProductQuestion> productQuestionList, UserPlantationPlan plantationPlan, City city) {
+        List<UserPlantationPlanAllocation> planAllocationList = new ArrayList<>();
         List<PlantationIrrigationValue> irrigationValueList = irrigationValueRepository.findByIrrigationTypeIn(EnumIrrigationType.values());
         List<PlantationCoefficient> coefficientList = coefficientRepository.findByEnumCoefficientTypeIn(EnumCoefficientType.values());
-        List<UserPlantParcelPlanAnswer> previousAnswerList = planAnswerRepository.findByPlantParcelPlan_IdAndProductQuestion_PlantationQuestion_IdIn(parcelPlan.getId(), List.of(12L, 13L, 14L, 15L, 16L, 17L, 41L));
+        List<UserPlantationPlanAnswer> previousAnswerList = planAnswerRepository.findByUserPlantationPlan_IdAndProductQuestion_PlantationQuestion_IdIn(plantationPlan.getId(), List.of(12L, 13L, 14L, 15L, 16L, 17L, 41L));
 
         int pressuredCount = integerValueSetter(productQuestionList, 156L);
         double cazibeCount = doubleValueSetter(productQuestionList, 159L);
@@ -877,7 +881,7 @@ public class CostAllocationService extends CostCommonService {
                 cazibeCount,
                 electricityCount,
                 irrigationArea);
-        planAllocationList.add(new UserPlantParcelPlanAllocation(parcelPlan, EnumPlantationQuestionType.EXPENSE_IRRIGATION, EnumAllocationType.TRANSACTION_COUNT, new BigDecimal(transactionCount)));
+        planAllocationList.add(new UserPlantationPlanAllocation(plantationPlan, EnumPlantationQuestionType.EXPENSE_IRRIGATION, EnumAllocationType.TRANSACTION_COUNT, new BigDecimal(transactionCount)));
 
         BigDecimal amortizationForSelectedIrrigation = BigDecimal.ZERO;
         double irrigationLaborRateForSelectedIrrigation = 0d;
@@ -938,23 +942,23 @@ public class CostAllocationService extends CostCommonService {
                 cazibeCount, pumpEfficiencyRate,
                 electricityCount, 0d,
                 irrigationArea, dieselInputAmountForDieselPump);
-        planAllocationList.add(new UserPlantParcelPlanAllocation(parcelPlan, EnumPlantationQuestionType.EXPENSE_IRRIGATION, EnumAllocationType.DIESEL_AMOUNT, new BigDecimal(dieselAmount)));
+        planAllocationList.add(new UserPlantationPlanAllocation(plantationPlan, EnumPlantationQuestionType.EXPENSE_IRRIGATION, EnumAllocationType.DIESEL_AMOUNT, new BigDecimal(dieselAmount)));
 
         BigDecimal dieselCost = calculateIrrigationDieselCost(dieselAmount, city.getDieselPrice());
-        planAllocationList.add(new UserPlantParcelPlanAllocation(parcelPlan, EnumPlantationQuestionType.EXPENSE_IRRIGATION, EnumAllocationType.DIESEL_COST, dieselCost));
+        planAllocationList.add(new UserPlantationPlanAllocation(plantationPlan, EnumPlantationQuestionType.EXPENSE_IRRIGATION, EnumAllocationType.DIESEL_COST, dieselCost));
 
         Double laborAmount = calculateIrrigationLaborAmount(
                 pressuredCount, irrigationLaborRateForSelectedIrrigation,
                 cazibeCount,
                 electricityCount, 0.15d,
                 irrigationArea);
-        planAllocationList.add(new UserPlantParcelPlanAllocation(parcelPlan, EnumPlantationQuestionType.EXPENSE_IRRIGATION, EnumAllocationType.LABOR_AMOUNT, new BigDecimal(laborAmount)));
+        planAllocationList.add(new UserPlantationPlanAllocation(plantationPlan, EnumPlantationQuestionType.EXPENSE_IRRIGATION, EnumAllocationType.LABOR_AMOUNT, new BigDecimal(laborAmount)));
 
         double workHoursPerDay = coefficientList.stream().filter(c -> c.getEnumCoefficientType().equals(EnumCoefficientType.WORKING_HOURS)).findFirst().get().getLaborValue();
         BigDecimal maleDailyWage = decimalAnswerSetter(previousAnswerList, 41L);
         BigDecimal workingManLaborPrice = workingManLaborPrice(maleDailyWage, workHoursPerDay);
         BigDecimal laborCost = calculateIrrigationLaborCost(laborAmount, workingManLaborPrice);
-        planAllocationList.add(new UserPlantParcelPlanAllocation(parcelPlan, EnumPlantationQuestionType.EXPENSE_IRRIGATION, EnumAllocationType.LABOR_COST, laborCost));
+        planAllocationList.add(new UserPlantationPlanAllocation(plantationPlan, EnumPlantationQuestionType.EXPENSE_IRRIGATION, EnumAllocationType.LABOR_COST, laborCost));
 
         double waterAmountPerDecarePerTonne = doubleValueSetter(productQuestionList, 155L);
         BigDecimal waterPricePerTonne = decimalValueSetter(productQuestionList, 154L);
@@ -971,13 +975,13 @@ public class CostAllocationService extends CostCommonService {
                 pressuredCount, waterAmountPerDecarePerTonne, waterPricePerTonne,
                 cazibeCount, waterAmountPerDecare, waterPricePerDecare,
                 electricityCount, inputAmountForElectricityPump, city.getElectricity());
-        planAllocationList.add(new UserPlantParcelPlanAllocation(parcelPlan, EnumPlantationQuestionType.EXPENSE_IRRIGATION, EnumAllocationType.WATER_COST, waterCost));
+        planAllocationList.add(new UserPlantationPlanAllocation(plantationPlan, EnumPlantationQuestionType.EXPENSE_IRRIGATION, EnumAllocationType.WATER_COST, waterCost));
 
         Double electricityAmount = inputAmountForElectricityPump;
-        planAllocationList.add(new UserPlantParcelPlanAllocation(parcelPlan, EnumPlantationQuestionType.EXPENSE_IRRIGATION, EnumAllocationType.ELECTRICITY_AMOUNT, new BigDecimal(electricityAmount)));
+        planAllocationList.add(new UserPlantationPlanAllocation(plantationPlan, EnumPlantationQuestionType.EXPENSE_IRRIGATION, EnumAllocationType.ELECTRICITY_AMOUNT, new BigDecimal(electricityAmount)));
 
         BigDecimal amortizationCost = amortizationForSelectedIrrigation;
-        planAllocationList.add(new UserPlantParcelPlanAllocation(parcelPlan, EnumPlantationQuestionType.EXPENSE_IRRIGATION, EnumAllocationType.AMORTIZATION_AMOUNT, amortizationCost));
+        planAllocationList.add(new UserPlantationPlanAllocation(plantationPlan, EnumPlantationQuestionType.EXPENSE_IRRIGATION, EnumAllocationType.AMORTIZATION_AMOUNT, amortizationCost));
 
         double waterAmountPerTonne = doubleValueSetter(productQuestionList, 161L);
         double waterAmountCount = doubleValueSetter(productQuestionList, 162L);
@@ -1002,10 +1006,9 @@ public class CostAllocationService extends CostCommonService {
                 averageExpectedYieldAsBundlePerDecare,
                 averageExpectedYield17AsBundlePerDecare);
         Double blueWaterFootstep = calculateBlueWaterFootstep(irrigationAmount, yieldAnswer);
+        planAllocationList.add(new UserPlantationPlanAllocation(plantationPlan, EnumPlantationQuestionType.EXPENSE_IRRIGATION, EnumAllocationType.BLUE_WATER_FOOTSTEP, new BigDecimal(blueWaterFootstep)));
 
-        planAllocationList.add(new UserPlantParcelPlanAllocation(parcelPlan, EnumPlantationQuestionType.EXPENSE_IRRIGATION, EnumAllocationType.BLUE_WATER_FOOTSTEP, new BigDecimal(blueWaterFootstep)));
-
-        saveAllocationList(parcelPlan.getId(), EnumPlantationQuestionType.EXPENSE_IRRIGATION, planAllocationList);
+        saveAllocationList(plantationPlan.getId(), EnumPlantationQuestionType.EXPENSE_IRRIGATION, planAllocationList);
     }
 
     //11
@@ -1059,10 +1062,10 @@ public class CostAllocationService extends CostCommonService {
     }
 
     @Transactional
-    public void culturalAllocation(List<PlantationProductQuestion> productQuestionList, UserPlantParcelPlan parcelPlan, City city) {
-        List<UserPlantParcelPlanAllocation> planAllocationList = new ArrayList<>();
+    public void culturalAllocation(List<PlantationProductQuestion> productQuestionList, UserPlantationPlan plantationPlan, City city) {
+        List<UserPlantationPlanAllocation> planAllocationList = new ArrayList<>();
         List<PlantationCoefficient> coefficientList = coefficientRepository.findByEnumCoefficientTypeIn(EnumCoefficientType.values());
-        List<UserPlantParcelPlanAnswer> previousAnswerList = planAnswerRepository.findByPlantParcelPlan_IdAndProductQuestion_PlantationQuestion_IdIn(parcelPlan.getId(), List.of(41L, 42L, 43L));
+        List<UserPlantationPlanAnswer> previousAnswerList = planAnswerRepository.findByUserPlantationPlan_IdAndProductQuestion_PlantationQuestion_IdIn(plantationPlan.getId(), List.of(41L, 42L, 43L));
 
         int treeCuttingCount = doubleValueChecker(productQuestionList, 175L);
         int vineyardCuttingCount = doubleValueChecker(productQuestionList, 176L);
@@ -1080,7 +1083,7 @@ public class CostAllocationService extends CostCommonService {
                 winterCuttingCount, summerCuttingCount, basalShootCount,
                 fruitThinningCount, pullPoleCount, plantVineCount,
                 netLifespanCount, bendingTyingCount);
-        planAllocationList.add(new UserPlantParcelPlanAllocation(parcelPlan, EnumPlantationQuestionType.EXPENSE_CULTURAL, EnumAllocationType.TRANSACTION_COUNT, new BigDecimal(transactionCount)));
+        planAllocationList.add(new UserPlantationPlanAllocation(plantationPlan, EnumPlantationQuestionType.EXPENSE_CULTURAL, EnumAllocationType.TRANSACTION_COUNT, new BigDecimal(transactionCount)));
 
 
         double treePruneAmountHour = doubleValueSetter(productQuestionList, 175L);
@@ -1101,7 +1104,7 @@ public class CostAllocationService extends CostCommonService {
                 winterPruneAmountHour, summerPruneAmountHour, basalPruneAmountHour,
                 thinningPruneAmountHour, polePullLaborHour, plantVineHourPerDecare,
                 nettingLaborAmountPerDecare, bendingRopeHourPerDecare);
-        planAllocationList.add(new UserPlantParcelPlanAllocation(parcelPlan, EnumPlantationQuestionType.EXPENSE_CULTURAL, EnumAllocationType.LABOR_AMOUNT, new BigDecimal(laborAmount)));
+        planAllocationList.add(new UserPlantationPlanAllocation(plantationPlan, EnumPlantationQuestionType.EXPENSE_CULTURAL, EnumAllocationType.LABOR_AMOUNT, new BigDecimal(laborAmount)));
 
         double workHoursPerDay = coefficientList.stream().filter(c -> c.getEnumCoefficientType().equals(EnumCoefficientType.WORKING_HOURS)).findFirst().get().getLaborValue();
         double maleCostRate = coefficientList.stream().filter(c -> c.getEnumCoefficientType().equals(EnumCoefficientType.MALE_WORKER_RATIO)).findFirst().get().getLaborValue();
@@ -1124,27 +1127,27 @@ public class CostAllocationService extends CostCommonService {
                 plantVineHourPerDecare,
                 nettingLaborAmountPerDecare,
                 bendingRopeHourPerDecare);
-        planAllocationList.add(new UserPlantParcelPlanAllocation(parcelPlan, EnumPlantationQuestionType.EXPENSE_CULTURAL, EnumAllocationType.LABOR_COST, laborCost));
+        planAllocationList.add(new UserPlantationPlanAllocation(plantationPlan, EnumPlantationQuestionType.EXPENSE_CULTURAL, EnumAllocationType.LABOR_COST, laborCost));
 
         double polesAmountPerDecare = doubleValueSetter(productQuestionList, 182L);
         double poleLifeCycleRate = coefficientList.stream().filter(c -> c.getEnumCoefficientType().equals(EnumCoefficientType.POLE_SERVICE_LIFE)).findFirst().get().getLaborValue();
         double polesInputAmount = polesInputAmount(polesAmountPerDecare, poleLifeCycleRate);
         BigDecimal polePricePerUnit = decimalValueSetter(productQuestionList, 183L);
         BigDecimal poleCost = calculateCulturalPoleCost(polesInputAmount, polePricePerUnit);
-        planAllocationList.add(new UserPlantParcelPlanAllocation(parcelPlan, EnumPlantationQuestionType.EXPENSE_CULTURAL, EnumAllocationType.POLE_COST, poleCost));
+        planAllocationList.add(new UserPlantationPlanAllocation(plantationPlan, EnumPlantationQuestionType.EXPENSE_CULTURAL, EnumAllocationType.POLE_COST, poleCost));
 
         double plantVineInputAmount = doubleValueSetter(productQuestionList, 185L);
         BigDecimal vinePricePerUnit = decimalValueSetter(productQuestionList, 186L);
         BigDecimal stringCost = calculateCulturalStringCost(plantVineInputAmount, vinePricePerUnit);
-        planAllocationList.add(new UserPlantParcelPlanAllocation(parcelPlan, EnumPlantationQuestionType.EXPENSE_CULTURAL, EnumAllocationType.STRING_COST, stringCost));
+        planAllocationList.add(new UserPlantationPlanAllocation(plantationPlan, EnumPlantationQuestionType.EXPENSE_CULTURAL, EnumAllocationType.STRING_COST, stringCost));
 
         double nettingInputAmount = doubleValueSetter(productQuestionList, 189L);
         double nettingInputAmountPerDecare = nettingLifeAmount == 0d ? 0d : nettingInputAmountPerDecare(nettingInputAmount, nettingLifeAmount);
         BigDecimal nettingInputPrice = decimalValueSetter(productQuestionList, 190L);
         BigDecimal netCoverCost = calculateCulturalNetCoverCost(nettingInputAmountPerDecare, nettingInputPrice);
-        planAllocationList.add(new UserPlantParcelPlanAllocation(parcelPlan, EnumPlantationQuestionType.EXPENSE_CULTURAL, EnumAllocationType.NET_COVER_COST, netCoverCost));
+        planAllocationList.add(new UserPlantationPlanAllocation(plantationPlan, EnumPlantationQuestionType.EXPENSE_CULTURAL, EnumAllocationType.NET_COVER_COST, netCoverCost));
 
-        saveAllocationList(parcelPlan.getId(), EnumPlantationQuestionType.EXPENSE_CULTURAL, planAllocationList);
+        saveAllocationList(plantationPlan.getId(), EnumPlantationQuestionType.EXPENSE_CULTURAL, planAllocationList);
     }
 
     //19
@@ -1201,10 +1204,10 @@ public class CostAllocationService extends CostCommonService {
     }
 
     @Transactional
-    public void protectionAllocation(List<PlantationProductQuestion> productQuestionList, UserPlantParcelPlan parcelPlan, City city) {
-        List<UserPlantParcelPlanAllocation> planAllocationList = new ArrayList<>();
+    public void protectionAllocation(List<PlantationProductQuestion> productQuestionList, UserPlantationPlan plantationPlan, City city) {
+        List<UserPlantationPlanAllocation> planAllocationList = new ArrayList<>();
         List<PlantationCoefficient> coefficientList = coefficientRepository.findByEnumCoefficientTypeIn(EnumCoefficientType.values());
-        List<UserPlantParcelPlanAnswer> previousAnswerList = planAnswerRepository.findByPlantParcelPlan_IdAndProductQuestion_PlantationQuestion_IdIn(parcelPlan.getId(), List.of(41L));
+        List<UserPlantationPlanAnswer> previousAnswerList = planAnswerRepository.findByUserPlantationPlan_IdAndProductQuestion_PlantationQuestion_IdIn(plantationPlan.getId(), List.of(41L));
 
         int foliarForFungalCount = integerValueSetter(productQuestionList, 195L);
         int medicineForInsectCount = integerValueSetter(productQuestionList, 197L);
@@ -1219,7 +1222,7 @@ public class CostAllocationService extends CostCommonService {
                 medicineForBordeauxCount,
                 medicineForHormoneCount,
                 cottonDefoliantCount);
-        planAllocationList.add(new UserPlantParcelPlanAllocation(parcelPlan, EnumPlantationQuestionType.EXPENSE_PROTECTION, EnumAllocationType.TRANSACTION_COUNT, new BigDecimal(transactionCount)));
+        planAllocationList.add(new UserPlantationPlanAllocation(plantationPlan, EnumPlantationQuestionType.EXPENSE_PROTECTION, EnumAllocationType.TRANSACTION_COUNT, new BigDecimal(transactionCount)));
 
         int machineMedicineCount = integerValueSetter(productQuestionList, 203L);
         double machineMedicineDieselRate = coefficientList.stream().filter(c -> c.getEnumCoefficientType().equals(EnumCoefficientType.MACHINE_SPRAYING)).findFirst().get().getDieselValue();
@@ -1231,10 +1234,10 @@ public class CostAllocationService extends CostCommonService {
                 machineMedicineCount, machineMedicineDieselRate,
                 backpackMedicineCount, backpackMedicineDieselRate,
                 irrigationMedicineCount, irrigationMedicineDieselRate);
-        planAllocationList.add(new UserPlantParcelPlanAllocation(parcelPlan, EnumPlantationQuestionType.EXPENSE_PROTECTION, EnumAllocationType.DIESEL_AMOUNT, new BigDecimal(dieselAmount)));
+        planAllocationList.add(new UserPlantationPlanAllocation(plantationPlan, EnumPlantationQuestionType.EXPENSE_PROTECTION, EnumAllocationType.DIESEL_AMOUNT, new BigDecimal(dieselAmount)));
 
         BigDecimal dieselCost = calculateProtectionDieselCost(dieselAmount, city.getDieselPrice());
-        planAllocationList.add(new UserPlantParcelPlanAllocation(parcelPlan, EnumPlantationQuestionType.EXPENSE_PROTECTION, EnumAllocationType.DIESEL_COST, dieselCost));
+        planAllocationList.add(new UserPlantationPlanAllocation(plantationPlan, EnumPlantationQuestionType.EXPENSE_PROTECTION, EnumAllocationType.DIESEL_COST, dieselCost));
 
         double machineMedicineLaborRate = coefficientList.stream().filter(c -> c.getEnumCoefficientType().equals(EnumCoefficientType.MACHINE_SPRAYING)).findFirst().get().getLaborValue();
         double backpackMedicineLaborRate = coefficientList.stream().filter(c -> c.getEnumCoefficientType().equals(EnumCoefficientType.BACKPACK_SPRAYING)).findFirst().get().getLaborValue();
@@ -1243,13 +1246,13 @@ public class CostAllocationService extends CostCommonService {
                 machineMedicineCount, machineMedicineLaborRate,
                 backpackMedicineCount, backpackMedicineLaborRate,
                 irrigationMedicineCount, irrigationMedicineLaborRate);
-        planAllocationList.add(new UserPlantParcelPlanAllocation(parcelPlan, EnumPlantationQuestionType.EXPENSE_PROTECTION, EnumAllocationType.LABOR_AMOUNT, new BigDecimal(laborAmount)));
+        planAllocationList.add(new UserPlantationPlanAllocation(plantationPlan, EnumPlantationQuestionType.EXPENSE_PROTECTION, EnumAllocationType.LABOR_AMOUNT, new BigDecimal(laborAmount)));
 
         double workHoursPerDay = coefficientList.stream().filter(c -> c.getEnumCoefficientType().equals(EnumCoefficientType.WORKING_HOURS)).findFirst().get().getLaborValue();
         BigDecimal maleDailyWage = decimalAnswerSetter(previousAnswerList, 41L);
         BigDecimal workingManLaborPrice = workingManLaborPrice(maleDailyWage, workHoursPerDay);
         BigDecimal laborCost = calculateProtectionLaborCost(laborAmount, workingManLaborPrice);
-        planAllocationList.add(new UserPlantParcelPlanAllocation(parcelPlan, EnumPlantationQuestionType.EXPENSE_PROTECTION, EnumAllocationType.LABOR_COST, laborCost));
+        planAllocationList.add(new UserPlantationPlanAllocation(plantationPlan, EnumPlantationQuestionType.EXPENSE_PROTECTION, EnumAllocationType.LABOR_COST, laborCost));
 
         BigDecimal productFungalMedicinePricePerUnit = BigDecimal.valueOf(5.88859433);//TODO
         BigDecimal productInsectMedicinePricePerUnit = BigDecimal.valueOf(3.916881333);//TODO
@@ -1264,14 +1267,14 @@ public class CostAllocationService extends CostCommonService {
                 medicineForBordeauxCount, productBordeauxMedicinePricePerUnit,
                 medicineForHormoneCount, productHormonePricePerUnit,
                 cottonDefoliantCount, productCottonDefoliantPricePerUnit);
-        planAllocationList.add(new UserPlantParcelPlanAllocation(parcelPlan, EnumPlantationQuestionType.EXPENSE_PROTECTION, EnumAllocationType.MEDICINE_COST, medicineCost));
+        planAllocationList.add(new UserPlantationPlanAllocation(plantationPlan, EnumPlantationQuestionType.EXPENSE_PROTECTION, EnumAllocationType.MEDICINE_COST, medicineCost));
 
         Integer droneMedicineCount = integerValueSetter(productQuestionList, 206L);
         BigDecimal droneMedicineRentalPricePerDecare = decimalValueSetter(productQuestionList, 207L);
         BigDecimal lumpSumCost = calculateProtectionLumpSumCost(droneMedicineCount, droneMedicineRentalPricePerDecare);
-        planAllocationList.add(new UserPlantParcelPlanAllocation(parcelPlan, EnumPlantationQuestionType.EXPENSE_PROTECTION, EnumAllocationType.LUMP_SUM_COST, lumpSumCost));
+        planAllocationList.add(new UserPlantationPlanAllocation(plantationPlan, EnumPlantationQuestionType.EXPENSE_PROTECTION, EnumAllocationType.LUMP_SUM_COST, lumpSumCost));
 
-        saveAllocationList(parcelPlan.getId(), EnumPlantationQuestionType.EXPENSE_PROTECTION, planAllocationList);
+        saveAllocationList(plantationPlan.getId(), EnumPlantationQuestionType.EXPENSE_PROTECTION, planAllocationList);
     }
 
     //22
@@ -1347,9 +1350,9 @@ public class CostAllocationService extends CostCommonService {
     }
 
     @Transactional
-    public void harvestAllocation(List<PlantationProductQuestion> productQuestionList, UserPlantParcelPlan parcelPlan, City city) {
-        List<UserPlantParcelPlanAllocation> planAllocationList = new ArrayList<>();
-        List<UserPlantParcelPlanAnswer> previousAnswerList = planAnswerRepository.findByPlantParcelPlan_IdAndProductQuestion_PlantationQuestion_IdIn(parcelPlan.getId(), List.of(12L, 13L, 15L, 16L, 24L, 41L, 42L, 43L));
+    public void harvestAllocation(List<PlantationProductQuestion> productQuestionList, UserPlantationPlan plantationPlan, City city) {
+        List<UserPlantationPlanAllocation> planAllocationList = new ArrayList<>();
+        List<UserPlantationPlanAnswer> previousAnswerList = planAnswerRepository.findByUserPlantationPlan_IdAndProductQuestion_PlantationQuestion_IdIn(plantationPlan.getId(), List.of(12L, 13L, 15L, 16L, 24L, 41L, 42L, 43L));
         List<PlantationCoefficient> coefficientList = coefficientRepository.findByEnumCoefficientTypeIn(EnumCoefficientType.values());
 
         Integer harvestCount = integerValueSetter(productQuestionList, 209L);
@@ -1400,7 +1403,7 @@ public class CostAllocationService extends CostCommonService {
                 lumpSumHarvestCostPerTonneCount,
                 mowingDieselAmountPerDecareCount,
                 motorizedCuttingLaborAmountCount);
-        planAllocationList.add(new UserPlantParcelPlanAllocation(parcelPlan, EnumPlantationQuestionType.EXPENSE_HARVEST, EnumAllocationType.TRANSACTION_COUNT, new BigDecimal(transactionCount)));
+        planAllocationList.add(new UserPlantationPlanAllocation(plantationPlan, EnumPlantationQuestionType.EXPENSE_HARVEST, EnumAllocationType.TRANSACTION_COUNT, new BigDecimal(transactionCount)));
 
         double havestAndMachineDieselInputAmount = doubleValueSetter(productQuestionList, 236L);
         double machineShakingDieselInputAmount = doubleValueSetter(productQuestionList, 238L);
@@ -1414,10 +1417,10 @@ public class CostAllocationService extends CostCommonService {
                 mowingDieselAmountPerDecare,
                 motorizedCuttingDieselAmount
         );
-        planAllocationList.add(new UserPlantParcelPlanAllocation(parcelPlan, EnumPlantationQuestionType.EXPENSE_HARVEST, EnumAllocationType.DIESEL_AMOUNT, new BigDecimal(dieselAmount)));
+        planAllocationList.add(new UserPlantationPlanAllocation(plantationPlan, EnumPlantationQuestionType.EXPENSE_HARVEST, EnumAllocationType.DIESEL_AMOUNT, new BigDecimal(dieselAmount)));
 
         BigDecimal dieselCost = calculateHarvestDieselCost(dieselAmount, city.getDieselPrice());
-        planAllocationList.add(new UserPlantParcelPlanAllocation(parcelPlan, EnumPlantationQuestionType.EXPENSE_HARVEST, EnumAllocationType.DIESEL_COST, dieselCost));
+        planAllocationList.add(new UserPlantationPlanAllocation(plantationPlan, EnumPlantationQuestionType.EXPENSE_HARVEST, EnumAllocationType.DIESEL_COST, dieselCost));
 
         double averageYieldAsKgPerDecare = doubleAnswerSetter(previousAnswerList, 12L);
         double byHandHarvestAmountPerDay = doubleValueSetter(productQuestionList, 219L);
@@ -1457,7 +1460,7 @@ public class CostAllocationService extends CostCommonService {
                 harvestAndBindLaborAmountPerDay, cutAndBindAndLoadLaborAmountPerDay, harvestGrLaborAmountPerDay,
                 harvestLeafLaborAmountPerDay, harvestAndMachineLaborAmountPerDay, machineShakingLaborAmountPerDay,
                 uprootHarvestLaborAmountPerDecare, mowingLaborAmountPerDecare, motorizedCuttingLaborAmount);
-        planAllocationList.add(new UserPlantParcelPlanAllocation(parcelPlan, EnumPlantationQuestionType.EXPENSE_HARVEST, EnumAllocationType.LABOR_AMOUNT, new BigDecimal(laborAmount)));
+        planAllocationList.add(new UserPlantationPlanAllocation(plantationPlan, EnumPlantationQuestionType.EXPENSE_HARVEST, EnumAllocationType.LABOR_AMOUNT, new BigDecimal(laborAmount)));
 
         double workHoursPerDay = coefficientList.stream().filter(c -> c.getEnumCoefficientType().equals(EnumCoefficientType.WORKING_HOURS)).findFirst().get().getLaborValue();
         double maleCostRate = coefficientList.stream().filter(c -> c.getEnumCoefficientType().equals(EnumCoefficientType.MALE_WORKER_RATIO)).findFirst().get().getLaborValue();
@@ -1484,7 +1487,7 @@ public class CostAllocationService extends CostCommonService {
                 mowingLaborAmountPerDecare, workingManLaborPrice,
                 motorizedCuttingLaborAmount, pruneDailyWage
         );
-        planAllocationList.add(new UserPlantParcelPlanAllocation(parcelPlan, EnumPlantationQuestionType.EXPENSE_HARVEST, EnumAllocationType.LABOR_COST, laborCost));
+        planAllocationList.add(new UserPlantationPlanAllocation(plantationPlan, EnumPlantationQuestionType.EXPENSE_HARVEST, EnumAllocationType.LABOR_COST, laborCost));
 
         BigDecimal harvesterRentalPricePerDecare = decimalValueSetter(productQuestionList, 229L);
         BigDecimal demolitionRentalPricePerDecare = decimalValueSetter(productQuestionList, 230L);
@@ -1503,9 +1506,9 @@ public class CostAllocationService extends CostCommonService {
                 seederRentalPricePerDecare,
                 lumpSumCostPerTonne,
                 lumpSumHarvestCostPerTonne);
-        planAllocationList.add(new UserPlantParcelPlanAllocation(parcelPlan, EnumPlantationQuestionType.EXPENSE_HARVEST, EnumAllocationType.LUMP_SUM_COST, lumpSumCost));
+        planAllocationList.add(new UserPlantationPlanAllocation(plantationPlan, EnumPlantationQuestionType.EXPENSE_HARVEST, EnumAllocationType.LUMP_SUM_COST, lumpSumCost));
 
-        saveAllocationList(parcelPlan.getId(), EnumPlantationQuestionType.EXPENSE_HARVEST, planAllocationList);
+        saveAllocationList(plantationPlan.getId(), EnumPlantationQuestionType.EXPENSE_HARVEST, planAllocationList);
     }
 
     //6
@@ -1540,9 +1543,9 @@ public class CostAllocationService extends CostCommonService {
     }
 
     @Transactional
-    public void blendAllocation(List<PlantationProductQuestion> productQuestionList, UserPlantParcelPlan parcelPlan, City city) {
-        List<UserPlantParcelPlanAllocation> planAllocationList = new ArrayList<>();
-        List<UserPlantParcelPlanAnswer> previousAnswerList = planAnswerRepository.findByPlantParcelPlan_IdAndProductQuestion_PlantationQuestion_IdIn(parcelPlan.getId(), List.of(12L, 13L, 41L, 42L));
+    public void blendAllocation(List<PlantationProductQuestion> productQuestionList, UserPlantationPlan plantationPlan, City city) {
+        List<UserPlantationPlanAllocation> planAllocationList = new ArrayList<>();
+        List<UserPlantationPlanAnswer> previousAnswerList = planAnswerRepository.findByUserPlantationPlan_IdAndProductQuestion_PlantationQuestion_IdIn(plantationPlan.getId(), List.of(12L, 13L, 41L, 42L));
         List<PlantationCoefficient> coefficientList = coefficientRepository.findByEnumCoefficientTypeIn(EnumCoefficientType.values());
 
         int transportKmAmountCount = doubleValueChecker(productQuestionList, 247L);
@@ -1558,16 +1561,16 @@ public class CostAllocationService extends CostCommonService {
                 sortAmountPerDayCount,
                 blendThreshingCostPerDecareCount,
                 threshingCostPerHourCount);
-        planAllocationList.add(new UserPlantParcelPlanAllocation(parcelPlan, EnumPlantationQuestionType.EXPENSE_BLEND, EnumAllocationType.TRANSACTION_COUNT, new BigDecimal(transactionCount)));
+        planAllocationList.add(new UserPlantationPlanAllocation(plantationPlan, EnumPlantationQuestionType.EXPENSE_BLEND, EnumAllocationType.TRANSACTION_COUNT, new BigDecimal(transactionCount)));
 
         double transportKmAmount = doubleValueSetter(productQuestionList, 247L);
         double averageYieldAsKgPerDecare = doubleAnswerSetter(previousAnswerList, 12L);
         double tractorLoadCapacity = coefficientList.stream().filter(c -> c.getEnumCoefficientType().equals(EnumCoefficientType.TRACTOR_CARRYING_CAPACITY)).findFirst().get().getLaborValue();
         Double dieselAmount = blendTransportDieselAmount(transportKmAmount, averageYieldAsKgPerDecare, tractorLoadCapacity);
-        planAllocationList.add(new UserPlantParcelPlanAllocation(parcelPlan, EnumPlantationQuestionType.EXPENSE_BLEND, EnumAllocationType.DIESEL_AMOUNT, new BigDecimal(dieselAmount)));
+        planAllocationList.add(new UserPlantationPlanAllocation(plantationPlan, EnumPlantationQuestionType.EXPENSE_BLEND, EnumAllocationType.DIESEL_AMOUNT, new BigDecimal(dieselAmount)));
 
         BigDecimal dieselCost = calculateBlendDieselCost(dieselAmount, city.getDieselPrice());
-        planAllocationList.add(new UserPlantParcelPlanAllocation(parcelPlan, EnumPlantationQuestionType.EXPENSE_BLEND, EnumAllocationType.DIESEL_COST, dieselCost));
+        planAllocationList.add(new UserPlantationPlanAllocation(plantationPlan, EnumPlantationQuestionType.EXPENSE_BLEND, EnumAllocationType.DIESEL_COST, dieselCost));
 
         double blendAmountPerDay = doubleValueSetter(productQuestionList, 249L);
         double blendLaborAmountPerDay = blendLaborAmountPerDay(averageYieldAsKgPerDecare, blendAmountPerDay);
@@ -1577,7 +1580,7 @@ public class CostAllocationService extends CostCommonService {
         double sortAmountPerDay = doubleValueSetter(productQuestionList, 251L);
         double sortLaborAmountPerDay = sortLaborAmountPerDay(yieldAsGrPerDecare, sortAmountPerDay);
         Double laborAmount = calculateBlendLaborAmount(blendLaborAmountPerDay, cureLaborAmountPerDay, sortLaborAmountPerDay);
-        planAllocationList.add(new UserPlantParcelPlanAllocation(parcelPlan, EnumPlantationQuestionType.EXPENSE_BLEND, EnumAllocationType.LABOR_AMOUNT, new BigDecimal(laborAmount)));
+        planAllocationList.add(new UserPlantationPlanAllocation(plantationPlan, EnumPlantationQuestionType.EXPENSE_BLEND, EnumAllocationType.LABOR_AMOUNT, new BigDecimal(laborAmount)));
 
 
         BigDecimal maleDailyWage = decimalAnswerSetter(previousAnswerList, 41L);
@@ -1592,7 +1595,7 @@ public class CostAllocationService extends CostCommonService {
                 blendLaborAmountPerDay, workingManLaborPrice,
                 cureLaborAmountPerDay, workingMixedLaborPrice,
                 sortLaborAmountPerDay, workingWomanLaborPrice);
-        planAllocationList.add(new UserPlantParcelPlanAllocation(parcelPlan, EnumPlantationQuestionType.EXPENSE_BLEND, EnumAllocationType.LABOR_COST, laborCost));
+        planAllocationList.add(new UserPlantationPlanAllocation(plantationPlan, EnumPlantationQuestionType.EXPENSE_BLEND, EnumAllocationType.LABOR_COST, laborCost));
 
         double blendThreshingLumpSumAmount = 1;
         BigDecimal blendThreshingCostPerDecare = decimalValueSetter(productQuestionList, 253L);
@@ -1602,9 +1605,9 @@ public class CostAllocationService extends CostCommonService {
         BigDecimal lumpSumCost = calculateBlendLumpSumCost(
                 blendThreshingLumpSumAmount, blendThreshingCostPerDecare,
                 blendThreshingAmount, threshingCostPerHour);
-        planAllocationList.add(new UserPlantParcelPlanAllocation(parcelPlan, EnumPlantationQuestionType.EXPENSE_BLEND, EnumAllocationType.LUMP_SUM_COST, lumpSumCost));
+        planAllocationList.add(new UserPlantationPlanAllocation(plantationPlan, EnumPlantationQuestionType.EXPENSE_BLEND, EnumAllocationType.LUMP_SUM_COST, lumpSumCost));
 
-        saveAllocationList(parcelPlan.getId(), EnumPlantationQuestionType.EXPENSE_BLEND, planAllocationList);
+        saveAllocationList(plantationPlan.getId(), EnumPlantationQuestionType.EXPENSE_BLEND, planAllocationList);
     }
 
 
@@ -1641,9 +1644,9 @@ public class CostAllocationService extends CostCommonService {
     }
 
     @Transactional
-    public void dryingAllocation(List<PlantationProductQuestion> productQuestionList, UserPlantParcelPlan parcelPlan, City city) {
-        List<UserPlantParcelPlanAllocation> planAllocationList = new ArrayList<>();
-        List<UserPlantParcelPlanAnswer> previousAnswerList = planAnswerRepository.findByPlantParcelPlan_IdAndProductQuestion_PlantationQuestion_IdIn(parcelPlan.getId(), List.of(12L, 15L, 16L, 41L, 42L));
+    public void dryingAllocation(List<PlantationProductQuestion> productQuestionList, UserPlantationPlan plantationPlan, City city) {
+        List<UserPlantationPlanAllocation> planAllocationList = new ArrayList<>();
+        List<UserPlantationPlanAnswer> previousAnswerList = planAnswerRepository.findByUserPlantationPlan_IdAndProductQuestion_PlantationQuestion_IdIn(plantationPlan.getId(), List.of(12L, 15L, 16L, 41L, 42L));
         List<PlantationCoefficient> coefficientList = coefficientRepository.findByEnumCoefficientTypeIn(EnumCoefficientType.values());
 
         int processSievingWashDryHourAmountPerTonneCount = doubleValueChecker(productQuestionList, 259L);
@@ -1671,15 +1674,15 @@ public class CostAllocationService extends CostCommonService {
                 processSulfuringMachinePricePerTonneCount,
                 materialUnitPriceCount,
                 sortSizeScoreBrineLaborHourCount);
-        planAllocationList.add(new UserPlantParcelPlanAllocation(parcelPlan, EnumPlantationQuestionType.EXPENSE_DRYING, EnumAllocationType.TRANSACTION_COUNT, new BigDecimal(transactionCount)));
+        planAllocationList.add(new UserPlantationPlanAllocation(plantationPlan, EnumPlantationQuestionType.EXPENSE_DRYING, EnumAllocationType.TRANSACTION_COUNT, new BigDecimal(transactionCount)));
 
         double averageYieldAsKgPerDecare = doubleAnswerSetter(previousAnswerList, 12L);
         double processSievingWashDryDieselAmountPerTonne = doubleValueSetter(productQuestionList, 260L);
         Double dieselAmount = processSievingWashDryDieselAmount(averageYieldAsKgPerDecare, processSievingWashDryDieselAmountPerTonne);
-        planAllocationList.add(new UserPlantParcelPlanAllocation(parcelPlan, EnumPlantationQuestionType.EXPENSE_DRYING, EnumAllocationType.DIESEL_AMOUNT, new BigDecimal(dieselAmount)));
+        planAllocationList.add(new UserPlantationPlanAllocation(plantationPlan, EnumPlantationQuestionType.EXPENSE_DRYING, EnumAllocationType.DIESEL_AMOUNT, new BigDecimal(dieselAmount)));
 
         BigDecimal dieselCost = calculateDryingDieselCost(dieselAmount, city.getDieselPrice());
-        planAllocationList.add(new UserPlantParcelPlanAllocation(parcelPlan, EnumPlantationQuestionType.EXPENSE_DRYING, EnumAllocationType.DIESEL_COST, dieselCost));
+        planAllocationList.add(new UserPlantationPlanAllocation(plantationPlan, EnumPlantationQuestionType.EXPENSE_DRYING, EnumAllocationType.DIESEL_COST, dieselCost));
 
         double processSievingWashDryHourAmountPerTonne = doubleValueSetter(productQuestionList, 259L);
         double processSievingWashDryLaborAmount = processSievingWashDryLaborAmount(averageYieldAsKgPerDecare, processSievingWashDryHourAmountPerTonne);
@@ -1708,7 +1711,7 @@ public class CostAllocationService extends CostCommonService {
                 processSievingWashDryStringLaborAmount,
                 processSievingWashDryProcessLabor,
                 sortSizeScoreBrineLaborAmount);
-        planAllocationList.add(new UserPlantParcelPlanAllocation(parcelPlan, EnumPlantationQuestionType.EXPENSE_DRYING, EnumAllocationType.LABOR_AMOUNT, new BigDecimal(laborAmount)));
+        planAllocationList.add(new UserPlantationPlanAllocation(plantationPlan, EnumPlantationQuestionType.EXPENSE_DRYING, EnumAllocationType.LABOR_AMOUNT, new BigDecimal(laborAmount)));
 
         BigDecimal maleDailyWage = decimalAnswerSetter(previousAnswerList, 41L);
         BigDecimal femaleDailyWage = decimalAnswerSetter(previousAnswerList, 42L);
@@ -1717,21 +1720,21 @@ public class CostAllocationService extends CostCommonService {
         double femaleCostRate = coefficientList.stream().filter(c -> c.getEnumCoefficientType().equals(EnumCoefficientType.FEMALE_WORKER_RATIO)).findFirst().get().getLaborValue();
         BigDecimal workingMixedLaborPrice = workingMixedLaborPrice(maleDailyWage, maleCostRate, femaleDailyWage, femaleCostRate, workHoursPerDay);
         BigDecimal laborCost = calculateDryingLaborCost(laborAmount, workingMixedLaborPrice);
-        planAllocationList.add(new UserPlantParcelPlanAllocation(parcelPlan, EnumPlantationQuestionType.EXPENSE_DRYING, EnumAllocationType.LABOR_COST, laborCost));
+        planAllocationList.add(new UserPlantationPlanAllocation(plantationPlan, EnumPlantationQuestionType.EXPENSE_DRYING, EnumAllocationType.LABOR_COST, laborCost));
 
         double materialInputAmountPerTonne = doubleValueSetter(productQuestionList, 270L);
         double materialInputAmount = materialInputAmount(averageYieldAsKgPerDecare, materialInputAmountPerTonne);
         BigDecimal materialUnitPrice = decimalValueSetter(productQuestionList, 271L);
         BigDecimal materialCost = calculateDryingMaterialCost(materialInputAmount, materialUnitPrice);
-        planAllocationList.add(new UserPlantParcelPlanAllocation(parcelPlan, EnumPlantationQuestionType.EXPENSE_DRYING, EnumAllocationType.MATERIAL_COST, materialCost));
+        planAllocationList.add(new UserPlantationPlanAllocation(plantationPlan, EnumPlantationQuestionType.EXPENSE_DRYING, EnumAllocationType.MATERIAL_COST, materialCost));
 
         double processSievingWashDryLumpSumAmount = processSievingWashDryLumpSumAmount(averageYieldAsKgPerDecare);
         BigDecimal processDryMachinePricePerTonne = decimalValueSetter(productQuestionList, 267L);
         BigDecimal processSulfuringMachinePricePerTonne = decimalValueSetter(productQuestionList, 268L);
         BigDecimal lumpSumCost = calculateDryingLumpSumCost(processSievingWashDryLumpSumAmount, processDryMachinePricePerTonne, processSulfuringMachinePricePerTonne);
-        planAllocationList.add(new UserPlantParcelPlanAllocation(parcelPlan, EnumPlantationQuestionType.EXPENSE_DRYING, EnumAllocationType.LUMP_SUM_COST, lumpSumCost));
+        planAllocationList.add(new UserPlantationPlanAllocation(plantationPlan, EnumPlantationQuestionType.EXPENSE_DRYING, EnumAllocationType.LUMP_SUM_COST, lumpSumCost));
 
-        saveAllocationList(parcelPlan.getId(), EnumPlantationQuestionType.EXPENSE_DRYING, planAllocationList);
+        saveAllocationList(plantationPlan.getId(), EnumPlantationQuestionType.EXPENSE_DRYING, planAllocationList);
     }
 
     //1,4
@@ -1769,30 +1772,30 @@ public class CostAllocationService extends CostCommonService {
     }
 
     @Transactional
-    public void balingAllocation(List<PlantationProductQuestion> productQuestionList, UserPlantParcelPlan parcelPlan, City city) {
-        List<UserPlantParcelPlanAllocation> planAllocationList = new ArrayList<>();
-        List<UserPlantParcelPlanAnswer> previousAnswerList = planAnswerRepository.findByPlantParcelPlan_IdAndProductQuestion_PlantationQuestion_IdIn(parcelPlan.getId(), List.of(12L, 20L, 41L));
+    public void balingAllocation(List<PlantationProductQuestion> productQuestionList, UserPlantationPlan plantationPlan, City city) {
+        List<UserPlantationPlanAllocation> planAllocationList = new ArrayList<>();
+        List<UserPlantationPlanAnswer> previousAnswerList = planAnswerRepository.findByUserPlantationPlan_IdAndProductQuestion_PlantationQuestion_IdIn(plantationPlan.getId(), List.of(12L, 20L, 41L));
         List<PlantationCoefficient> coefficientList = coefficientRepository.findByEnumCoefficientTypeIn(EnumCoefficientType.values());
 
         Integer transactionCount = 4;//TODO
-        planAllocationList.add(new UserPlantParcelPlanAllocation(parcelPlan, EnumPlantationQuestionType.EXPENSE_BALING, EnumAllocationType.TRANSACTION_COUNT, new BigDecimal(transactionCount)));
+        planAllocationList.add(new UserPlantationPlanAllocation(plantationPlan, EnumPlantationQuestionType.EXPENSE_BALING, EnumAllocationType.TRANSACTION_COUNT, new BigDecimal(transactionCount)));
 
         double balingMachineDieselAmountPerDecare = doubleValueSetter(productQuestionList, 276L);
         Double dieselAmount = calculateBalingDieselAmount(balingMachineDieselAmountPerDecare);
-        planAllocationList.add(new UserPlantParcelPlanAllocation(parcelPlan, EnumPlantationQuestionType.EXPENSE_BALING, EnumAllocationType.DIESEL_AMOUNT, new BigDecimal(dieselAmount)));
+        planAllocationList.add(new UserPlantationPlanAllocation(plantationPlan, EnumPlantationQuestionType.EXPENSE_BALING, EnumAllocationType.DIESEL_AMOUNT, new BigDecimal(dieselAmount)));
 
         BigDecimal dieselCost = calculateBalingDieselCost(dieselAmount, city.getDieselPrice());
-        planAllocationList.add(new UserPlantParcelPlanAllocation(parcelPlan, EnumPlantationQuestionType.EXPENSE_BALING, EnumAllocationType.DIESEL_COST, dieselCost));
+        planAllocationList.add(new UserPlantationPlanAllocation(plantationPlan, EnumPlantationQuestionType.EXPENSE_BALING, EnumAllocationType.DIESEL_COST, dieselCost));
 
         double balingMachineHourAmountPerDecare = doubleValueSetter(productQuestionList, 277L);
         Double laborAmount = calculateBalingLaborAmount(balingMachineHourAmountPerDecare);
-        planAllocationList.add(new UserPlantParcelPlanAllocation(parcelPlan, EnumPlantationQuestionType.EXPENSE_BALING, EnumAllocationType.LABOR_AMOUNT, new BigDecimal(laborAmount)));
+        planAllocationList.add(new UserPlantationPlanAllocation(plantationPlan, EnumPlantationQuestionType.EXPENSE_BALING, EnumAllocationType.LABOR_AMOUNT, new BigDecimal(laborAmount)));
 
         BigDecimal maleDailyWage = decimalAnswerSetter(previousAnswerList, 41L);
         double workHoursPerDay = coefficientList.stream().filter(c -> c.getEnumCoefficientType().equals(EnumCoefficientType.WORKING_HOURS)).findFirst().get().getLaborValue();
         BigDecimal workingManLaborPrice = workingManLaborPrice(maleDailyWage, workHoursPerDay);
         BigDecimal laborCost = calculateBalingLaborCost(laborAmount, workingManLaborPrice);
-        planAllocationList.add(new UserPlantParcelPlanAllocation(parcelPlan, EnumPlantationQuestionType.EXPENSE_BALING, EnumAllocationType.LABOR_COST, laborCost));
+        planAllocationList.add(new UserPlantationPlanAllocation(plantationPlan, EnumPlantationQuestionType.EXPENSE_BALING, EnumAllocationType.LABOR_COST, laborCost));
 
         double averageYieldAsKgPerDecare = doubleAnswerSetter(previousAnswerList, 12L);
         double balingMaterialAmountPerTonne = doubleValueSetter(productQuestionList, 278L);
@@ -1801,16 +1804,16 @@ public class CostAllocationService extends CostCommonService {
         BigDecimal balingMaterialInputPrice = decimalValueSetter(productQuestionList, 279L);
         double balingMaterialInputKgPriceAmount = balingMaterialInputKgPriceAmount(averageYieldSideStrawProduct, balingMaterialInputPrice);
         BigDecimal materialCost = calculateBalingMaterialCost(balingMaterialInputAmount, balingMaterialInputPrice, balingMaterialInputKgPriceAmount);
-        planAllocationList.add(new UserPlantParcelPlanAllocation(parcelPlan, EnumPlantationQuestionType.EXPENSE_BALING, EnumAllocationType.MATERIAL_COST, materialCost));
+        planAllocationList.add(new UserPlantationPlanAllocation(plantationPlan, EnumPlantationQuestionType.EXPENSE_BALING, EnumAllocationType.MATERIAL_COST, materialCost));
 
         double balingAverageWeight = doubleValueSetter(productQuestionList, 280L);
         double balingAverageInputAmount = balingAverageInputAmount(averageYieldAsKgPerDecare, balingAverageWeight);
         BigDecimal rentPricePerBaling = decimalValueSetter(productQuestionList, 281L);
         double balingRentalInputAmount = balingRentalInputAmount(averageYieldSideStrawProduct, balingAverageWeight);
         BigDecimal lumpSumCost = calculateBalingLumpSumCost(balingAverageInputAmount, rentPricePerBaling, balingRentalInputAmount);
-        planAllocationList.add(new UserPlantParcelPlanAllocation(parcelPlan, EnumPlantationQuestionType.EXPENSE_BALING, EnumAllocationType.LUMP_SUM_COST, lumpSumCost));
+        planAllocationList.add(new UserPlantationPlanAllocation(plantationPlan, EnumPlantationQuestionType.EXPENSE_BALING, EnumAllocationType.LUMP_SUM_COST, lumpSumCost));
 
-        saveAllocationList(parcelPlan.getId(), EnumPlantationQuestionType.EXPENSE_BALING, planAllocationList);
+        saveAllocationList(plantationPlan.getId(), EnumPlantationQuestionType.EXPENSE_BALING, planAllocationList);
     }
 
     //2
@@ -1829,38 +1832,38 @@ public class CostAllocationService extends CostCommonService {
     }
 
     @Transactional
-    public void packagingAllocation(List<PlantationProductQuestion> productQuestionList, UserPlantParcelPlan parcelPlan, City city) {
-        List<UserPlantParcelPlanAllocation> planAllocationList = new ArrayList<>();
-        List<UserPlantParcelPlanAnswer> previousAnswerList = planAnswerRepository.findByPlantParcelPlan_IdAndProductQuestion_PlantationQuestion_IdIn(parcelPlan.getId(), List.of(12L));
+    public void packagingAllocation(List<PlantationProductQuestion> productQuestionList, UserPlantationPlan plantationPlan, City city) {
+        List<UserPlantationPlanAllocation> planAllocationList = new ArrayList<>();
+        List<UserPlantationPlanAnswer> previousAnswerList = planAnswerRepository.findByUserPlantationPlan_IdAndProductQuestion_PlantationQuestion_IdIn(plantationPlan.getId(), List.of(12L));
         List<PlantationCoefficient> coefficientList = coefficientRepository.findByEnumCoefficientTypeIn(EnumCoefficientType.values());
 
         int transportationDistanceCount = doubleValueChecker(productQuestionList, 283L);
         int weightPerUnitCount = doubleValueChecker(productQuestionList, 292L);
         Integer transactionCount = calculatePackagingTransaction(transportationDistanceCount, weightPerUnitCount);
-        planAllocationList.add(new UserPlantParcelPlanAllocation(parcelPlan, EnumPlantationQuestionType.EXPENSE_PACKAGING, EnumAllocationType.TRANSACTION_COUNT, new BigDecimal(transactionCount)));
+        planAllocationList.add(new UserPlantationPlanAllocation(plantationPlan, EnumPlantationQuestionType.EXPENSE_PACKAGING, EnumAllocationType.TRANSACTION_COUNT, new BigDecimal(transactionCount)));
 
         double averageYieldAsKgPerDecare = doubleAnswerSetter(previousAnswerList, 12L);
         double tractorCapacity = doubleValueSetter(productQuestionList, 284L);
         double tractorTransportCoefficient = coefficientList.stream().filter(c -> c.getEnumCoefficientType().equals(EnumCoefficientType.CARRYING_CAPACITY)).findFirst().get().getLaborValue();
         double transportationDistance = doubleValueSetter(productQuestionList, 283L);
         Double dieselAmount = tractorDieselAmount(averageYieldAsKgPerDecare, tractorCapacity, tractorTransportCoefficient, transportationDistance);
-        planAllocationList.add(new UserPlantParcelPlanAllocation(parcelPlan, EnumPlantationQuestionType.EXPENSE_PACKAGING, EnumAllocationType.DIESEL_AMOUNT, new BigDecimal(dieselAmount)));
+        planAllocationList.add(new UserPlantationPlanAllocation(plantationPlan, EnumPlantationQuestionType.EXPENSE_PACKAGING, EnumAllocationType.DIESEL_AMOUNT, new BigDecimal(dieselAmount)));
 
         BigDecimal dieselCost = calculatePackagingDieselCost(dieselAmount, city.getDieselPrice());
-        planAllocationList.add(new UserPlantParcelPlanAllocation(parcelPlan, EnumPlantationQuestionType.EXPENSE_PACKAGING, EnumAllocationType.DIESEL_COST, dieselCost));
+        planAllocationList.add(new UserPlantationPlanAllocation(plantationPlan, EnumPlantationQuestionType.EXPENSE_PACKAGING, EnumAllocationType.DIESEL_COST, dieselCost));
 
         double weightPerUnit = doubleValueSetter(productQuestionList, 292L);
         double transportLumpSumAmount = transportLumpSumAmount(averageYieldAsKgPerDecare, weightPerUnit);
         BigDecimal packagingPricePerUnit = decimalValueSetter(productQuestionList, 293L);
         BigDecimal materialCost = calculatePackagingMaterialCost(transportLumpSumAmount, packagingPricePerUnit);
-        planAllocationList.add(new UserPlantParcelPlanAllocation(parcelPlan, EnumPlantationQuestionType.EXPENSE_PACKAGING, EnumAllocationType.MATERIAL_COST, materialCost));
+        planAllocationList.add(new UserPlantationPlanAllocation(plantationPlan, EnumPlantationQuestionType.EXPENSE_PACKAGING, EnumAllocationType.MATERIAL_COST, materialCost));
 
-        saveAllocationList(parcelPlan.getId(), EnumPlantationQuestionType.EXPENSE_PACKAGING, planAllocationList);
+        saveAllocationList(plantationPlan.getId(), EnumPlantationQuestionType.EXPENSE_PACKAGING, planAllocationList);
     }
 
 
-    private void saveAllocationList(Long planId, EnumPlantationQuestionType questionType, List<UserPlantParcelPlanAllocation> planAllocationList) {
-        planAllocationRepository.deleteByPlantParcelPlan_IdAndQuestionType(planId, questionType);
+    private void saveAllocationList(Long planId, EnumPlantationQuestionType questionType, List<UserPlantationPlanAllocation> planAllocationList) {
+        planAllocationRepository.deleteByUserPlantationPlan_IdAndQuestionType(planId, questionType);
         planAllocationRepository.saveAll(planAllocationList);
     }
 }

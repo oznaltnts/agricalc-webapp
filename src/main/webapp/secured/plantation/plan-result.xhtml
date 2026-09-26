@@ -9,8 +9,8 @@
 
     <ui:define name="metadata">
         <f:metadata>
-            <f:viewParam name="parcelPlanId"
-                         value="#{planResultController.parcelPlanId}"/>
+            <f:viewParam name="plantationPlanId"
+                         value="#{planResultController.plantationPlanId}"/>
             <f:viewAction action="#{planResultController.createResultPageValues}"/>
         </f:metadata>
     </ui:define>
@@ -24,7 +24,7 @@
         <div class="grid">
             <div class="col">
                 <div class="card">
-                    <p:steps activeIndex="3">
+                    <p:steps activeIndex="5">
                         <p:menuitem value="Üretim planları"/>
                         <p:menuitem value="Demirbaş bilgileri"/>
                         <p:menuitem value="Arazi bilgileri"/>
@@ -46,13 +46,13 @@
                                  columnClasses="col-12 md:col-5 xl:col-5, col-12 md:col-7 xl:col-7"
                                  columns="2">
                         <p:outputLabel for="@next" value="Ürün:" style="font-weight: bold"/>
-                        <p:outputLabel for="@previous" value="#{planResultController.parcelPlan.plantParcel.product.name}"/>
+                        <p:outputLabel for="@previous" value="#{planResultController.userPlantationPlan.primaryProduct.name}"/>
 
                         <p:outputLabel for="@next" value="Şehir:" style="font-weight: bold"/>
-                        <p:outputLabel for="@previous" value="#{planResultController.parcelPlan.plantParcel.city.name}"/>
+                        <p:outputLabel for="@previous" value="#{planResultController.userPlantationPlan.userPlantation.district.city.name}"/>
 
                         <p:outputLabel for="@next" value="Boyut:" style="font-weight: bold"/>
-                        <p:outputLabel for="@previous" value="#{planResultController.parcelPlan.plantParcel.areaDecare} (Dekar)"/>
+                        <p:outputLabel for="@previous" value="#{planResultController.userPlantationPlan.userPlantation.area} (Dekar)"/>
                     </p:panelGrid>
                 </div>
             </div>
@@ -85,22 +85,22 @@
                                  columnClasses="col-12 md:col-5 xl:col-3, col-12 md:col-7 xl:col-3, col-12 md:col-5 xl:col-3, col-12 md:col-7 xl:col-3"
                                  columns="4">
                         <p:outputLabel for="@next" value="Dekar başına brüt gelir:" style="font-weight: bold"/>
-                        <p:outputLabel for="@previous" value="#{planResultController.parcelPlan.grossIncome} TL"/>
+                        <p:outputLabel for="@previous" value="#{planResultController.userPlantationPlan.grossIncome} TL"/>
 
                         <p:outputLabel for="@next" value="Toplam brüt gelir:" style="font-weight: bold"/>
-                        <p:outputLabel for="@previous" value="#{planResultController.parcelPlan.plantParcel.areaDecare * planResultController.parcelPlan.grossIncome} TL"/>
+                        <p:outputLabel for="@previous" value="#{planResultController.userPlantationPlan.userPlantation.area * planResultController.userPlantationPlan.grossIncome} TL"/>
 
                         <p:outputLabel for="@next" value="Dekar başına brüt gider:" style="font-weight: bold"/>
-                        <p:outputLabel for="@previous" value="#{planResultController.parcelPlan.totalExpense} TL"/>
+                        <p:outputLabel for="@previous" value="#{planResultController.userPlantationPlan.totalExpense} TL"/>
 
                         <p:outputLabel for="@next" value="Toplam brüt gider:" style="font-weight: bold"/>
-                        <p:outputLabel for="@previous" value="#{planResultController.parcelPlan.plantParcel.areaDecare * planResultController.parcelPlan.totalExpense} TL"/>
+                        <p:outputLabel for="@previous" value="#{planResultController.userPlantationPlan.userPlantation.area * planResultController.userPlantationPlan.totalExpense} TL"/>
 
                         <p:outputLabel for="@next" value="Dekar başına net gelir:" style="font-weight: bold"/>
-                        <p:outputLabel for="@previous" value="#{planResultController.parcelPlan.grossIncome - planResultController.parcelPlan.totalExpense} TL"/>
+                        <p:outputLabel for="@previous" value="#{planResultController.userPlantationPlan.grossIncome - planResultController.userPlantationPlan.totalExpense} TL"/>
 
                         <p:outputLabel for="@next" value="Toplam net gelir:" style="font-weight: bold"/>
-                        <p:outputLabel for="@previous" value="#{planResultController.parcelPlan.plantParcel.areaDecare * (planResultController.parcelPlan.grossIncome - planResultController.parcelPlan.totalExpense)} TL"/>
+                        <p:outputLabel for="@previous" value="#{planResultController.userPlantationPlan.userPlantation.area * (planResultController.userPlantationPlan.grossIncome - planResultController.userPlantationPlan.totalExpense)} TL"/>
 
                     </p:panelGrid>
                 </h:form>
@@ -191,7 +191,7 @@
                             <h:outputText value="#{allocation.allocationType}"/>
                         </p:column>
                         <p:column headerText="Oranı">
-                            <h:outputText value="#{allocation.calculatedValue * 100 / planResultController.parcelPlan.totalExpense}"/>
+                            <h:outputText value="#{allocation.calculatedValue * 100 / planResultController.userPlantationPlan.totalExpense}"/>
                         </p:column>
                         <p:column headerText="Miktarı">
                             <h:outputText value="#{allocation.calculatedValue}"/>

@@ -3,7 +3,7 @@ package tr.ozanbey.agricalc.webapp.service.service.plantation;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import tr.ozanbey.agricalc.webapp.service.domain.plantation.PlantationProductQuestion;
-import tr.ozanbey.agricalc.webapp.service.domain.plantation.UserPlantParcelPlanAnswer;
+import tr.ozanbey.agricalc.webapp.service.domain.plantation.UserPlantationPlanAnswer;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -17,8 +17,8 @@ public class CostCommonService {
     soru cevaplanmadıysa 0 mı kabul edilmeli? minimum değer mi alınmalı, 2 durum da farklı sonuç yaratacak
     */
 
-    protected BigDecimal decimalAnswerSetter(List<UserPlantParcelPlanAnswer> answerList, Long questionId) {
-        Optional<UserPlantParcelPlanAnswer> optional = answerList.stream()
+    protected BigDecimal decimalAnswerSetter(List<UserPlantationPlanAnswer> answerList, Long questionId) {
+        Optional<UserPlantationPlanAnswer> optional = answerList.stream()
                 .filter(a -> a.getProductQuestion().getPlantationQuestion().getId().equals(questionId))
                 .findAny();
         if (optional.isPresent()) {
@@ -33,8 +33,8 @@ public class CostCommonService {
         return BigDecimal.ZERO;
     }
 
-    protected Double doubleAnswerSetter(List<UserPlantParcelPlanAnswer> answerList, Long questionId) {
-        Optional<UserPlantParcelPlanAnswer> optional = answerList.stream()
+    protected Double doubleAnswerSetter(List<UserPlantationPlanAnswer> answerList, Long questionId) {
+        Optional<UserPlantationPlanAnswer> optional = answerList.stream()
                 .filter(a -> a.getProductQuestion().getPlantationQuestion().getId().equals(questionId))
                 .findAny();
         if (optional.isPresent()) {
@@ -47,6 +47,22 @@ public class CostCommonService {
             }
         }
         return 0d;
+    }
+
+    protected Integer integerAnswerSetter(List<UserPlantationPlanAnswer> answerList, Long questionId) {
+        Optional<UserPlantationPlanAnswer> optional = answerList.stream()
+                .filter(q -> q.getProductQuestion().getPlantationQuestion().getId().equals(questionId))
+                .findAny();
+        if (optional.isPresent()) {
+            if (optional.get().getProductQuestion().getMaximumValue() != null && optional.get().getProductQuestion().getIntegerValue().doubleValue() > optional.get().getProductQuestion().getMaximumValue().doubleValue()) {
+                return optional.get().getProductQuestion().getMaximumValue().intValue();
+            } else if (optional.get().getProductQuestion().getMinimumValue() != null && optional.get().getProductQuestion().getMinimumValue().doubleValue() > optional.get().getProductQuestion().getIntegerValue().doubleValue()) {
+                return optional.get().getProductQuestion().getMinimumValue().intValue();
+            } else {
+                return optional.get().getProductQuestion().getIntegerValue();
+            }
+        }
+        return 0;
     }
 
     protected BigDecimal decimalValueSetter(List<PlantationProductQuestion> questionList, Long questionId) {
@@ -155,6 +171,7 @@ public class CostCommonService {
 
     //0,4444
     protected Double plantingSeedlingHandLaborAmount(Double plantingSeedlingPerDecare, Double averagePlantingHandPerPerson, Integer seedlingUsageYear) {
+        if (seedlingUsageYear == 0d || averagePlantingHandPerPerson == 0d) return 0d;
         return plantingSeedlingPerDecare / averagePlantingHandPerPerson / seedlingUsageYear;
     }
 
@@ -263,11 +280,13 @@ public class CostCommonService {
     //5,45
     protected Double dieselInputAmountForDieselPump(Double specificConstantRate, Double pumpWorkingHour, Double waterAmountPerHour, Double waterPumpHeight, Double gravity,
                                                     Double pumpMotorEfficiencyRate, Double irrigationArea) {
+        if (irrigationArea == 0d) return 0d;
         return ((specificConstantRate * pumpWorkingHour * (waterAmountPerHour / 3600) * waterPumpHeight * gravity) / pumpMotorEfficiencyRate) / irrigationArea;
     }
 
     //6
     protected Double nettingLaborAmountPerDecare(Double nettingLaborHourPerDecare, Double nettingLifeAmount) {
+        if (nettingLifeAmount == 0d) return 0d;
         return nettingLaborHourPerDecare / nettingLifeAmount;
     }
 
@@ -278,96 +297,115 @@ public class CostCommonService {
 
     //60
     protected Double polesInputAmount(Double polesAmountPerDecare, Double poleLifeCycleRate) {
+        if (poleLifeCycleRate == 0d) return 0d;
         return polesAmountPerDecare / poleLifeCycleRate;
     }
 
     //26,6666667
     protected Double nettingInputAmountPerDecare(Double nettingInputAmount, Double nettingLifeAmount) {
+        if (nettingLifeAmount == 0d) return 0d;
         return nettingInputAmount / nettingLifeAmount;
     }
 
     //3,8
     protected Double harvestAndPackingLaborAmountPerDay(Double averageYieldAsKgPerDecare, Double byHandHarvestAmountPerDay) {
+        if (byHandHarvestAmountPerDay == 0d) return 0d;
         return averageYieldAsKgPerDecare / byHandHarvestAmountPerDay;
     }
 
     //4,2
     protected Double harvestAndCleanLaborAmountPerDay(Double mainProductKgYieldAsUnitPerDecare, Double byMachineHarvestAmountPerDay) {
+        if (byMachineHarvestAmountPerDay == 0d) return 0d;
         return mainProductKgYieldAsUnitPerDecare / byMachineHarvestAmountPerDay;
     }
 
     //2,9
     protected Double shakeAndCrateLaborAmountPerDay(Double averageYieldAsKgPerDecare, Double shakeAndCrateInputAmount) {
+        if (shakeAndCrateInputAmount == 0d) return 0d;
         return averageYieldAsKgPerDecare / shakeAndCrateInputAmount;
     }
 
     //2,3
     protected Double cutAndBindLaborAmountPerDay(Double averageYieldAsKgPerDecare, Double cutAndBindInputAmount) {
+        if (cutAndBindInputAmount == 0d) return 0d;
         return averageYieldAsKgPerDecare / cutAndBindInputAmount;
     }
 
     //2,6
     protected Double cutAndLoadLaborAmountPerDay(Double averageYieldAsKgPerDecare, Double cutAndLoadInputAmount) {
+        if (cutAndLoadInputAmount == 0d) return 0d;
         return averageYieldAsKgPerDecare / cutAndLoadInputAmount;
     }
 
     //1,6
     protected Double harvestAndLoadLaborAmountPerDay(Double averageYieldAsKgPerDecare, Double harvestAndLoadInputAmount) {
+        if (harvestAndLoadInputAmount == 0d) return 0d;
         return averageYieldAsKgPerDecare / harvestAndLoadInputAmount;
     }
 
     //0,6
     protected Double harvestAndBindLaborAmountPerDay(Double averageExpectedYieldAsBundlePerDecare, Double harvestAndBindInputAmount) {
+        if (harvestAndBindInputAmount == 0d) return 0d;
         return averageExpectedYieldAsBundlePerDecare / harvestAndBindInputAmount;
     }
 
     //5,0
     protected Double cutAndBindAndLoadLaborAmountPerDay(Double mainProductKgYieldAsUnitPerDecare, Double cutAndBindAndLoadInputAmount) {
+        if (cutAndBindAndLoadInputAmount == 0d) return 0d;
         return mainProductKgYieldAsUnitPerDecare / cutAndBindAndLoadInputAmount;
     }
 
     //5,7
     protected Double harvestGrLaborAmountPerDay(Double mainProductKgYieldAsGrPerDecare, Double harvestGrInputAmount) {
+        if (harvestGrInputAmount == 0d) return 0d;
         return mainProductKgYieldAsGrPerDecare / harvestGrInputAmount;
     }
 
     //0,75
     protected Double harvestLeafLaborAmountPerDay(Double leafProductKgYieldAsGrPerDecare, Double harvestLeafInputAmount) {
+        if (harvestLeafInputAmount == 0d) return 0d;
         return leafProductKgYieldAsGrPerDecare / harvestLeafInputAmount;
     }
 
     //2,170
     protected Double harvestAndMachineLaborAmountPerDay(Double averageYieldAsKgPerDecare, Double harvestAndMachineInputAmount) {
+        if (harvestAndMachineInputAmount == 0d) return 0d;
         return averageYieldAsKgPerDecare / harvestAndMachineInputAmount;
     }
 
     //3,833
     protected Double machineShakingLaborAmountPerDay(Double averageYieldAsKgPerDecare, Double machineShakingInputAmount) {
+        if (machineShakingInputAmount == 0d) return 0d;
         return averageYieldAsKgPerDecare / machineShakingInputAmount;
     }
 
     //1,15
     protected Double blendTransportDieselAmount(Double transportKmAmount, Double averageYieldAsKgPerDecare, Double tractorLoadCapacity) {
+        if (tractorLoadCapacity == 0d) return 0d;
         return transportKmAmount * (averageYieldAsKgPerDecare / tractorLoadCapacity);
     }
 
     //0,96
     protected Double blendLaborAmountPerDay(Double averageYieldAsKgPerDecare, Double blendAmountPerDay) {
+        if (blendAmountPerDay == 0d) return 0d;
         return averageYieldAsKgPerDecare / blendAmountPerDay;
     }
 
     //0,38
     protected Double cureLaborAmountPerDay(Double averageYieldAsKgPerDecare, Double cureAmountPerDay) {
+        if (cureAmountPerDay == 0d) return 0d;
         return averageYieldAsKgPerDecare / cureAmountPerDay;
     }
 
     //0,2
     protected Double sortLaborAmountPerDay(Double yieldAsGrPerDecare, Double sortAmountPerDay) {
+        if (sortAmountPerDay == 0d) return 0d;
         return yieldAsGrPerDecare / sortAmountPerDay;
     }
 
     //0,46
     protected Double blendThreshingAmount(Double averageYieldAsKgPerDecare, Double blendThreshingAmountPerHour) {
+        if (blendThreshingAmountPerHour == 0d) return 0d;
         return averageYieldAsKgPerDecare / blendThreshingAmountPerHour;
     }
 
@@ -409,6 +447,7 @@ public class CostCommonService {
 
     //4,17
     protected Double processSievingWashDryProcessLabor(Double averageExpectedYieldAsUnitPerDecare, Double processSievingWashDryProcessPerDay) {
+        if (processSievingWashDryProcessPerDay == 0d) return 0d;
         return averageExpectedYieldAsUnitPerDecare / processSievingWashDryProcessPerDay;
     }
 
@@ -439,11 +478,13 @@ public class CostCommonService {
 
     //52,3
     protected Double balingAverageInputAmount(Double averageYieldAsKgPerDecare, Double balingAverageWeight) {
+        if (balingAverageWeight == 0d) return 0d;
         return averageYieldAsKgPerDecare / balingAverageWeight;
     }
 
     //13,6
     protected Double balingRentalInputAmount(Double averageYieldSideStrawProduct, Double balingAverageWeight) {
+        if (balingAverageWeight == 0d) return 0d;
         return averageYieldSideStrawProduct / balingAverageWeight;
     }
 

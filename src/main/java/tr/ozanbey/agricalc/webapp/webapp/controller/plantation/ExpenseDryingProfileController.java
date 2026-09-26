@@ -1,23 +1,21 @@
 package tr.ozanbey.agricalc.webapp.webapp.controller.plantation;
 
 
-import jakarta.annotation.PostConstruct;
 import jakarta.faces.view.ViewScoped;
 import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.Hibernate;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import tr.ozanbey.agricalc.webapp.service.domain.plantation.PlantationProductQuestion;
-import tr.ozanbey.agricalc.webapp.service.domain.plantation.UserPlantParcelAnswer;
-import tr.ozanbey.agricalc.webapp.service.domain.plantation.UserPlantParcelPlanAnswer;
+import tr.ozanbey.agricalc.webapp.service.domain.plantation.UserPlantationAnswer;
+import tr.ozanbey.agricalc.webapp.service.domain.plantation.UserPlantationPlanAnswer;
 import tr.ozanbey.agricalc.webapp.service.enumtype.EnumStatus;
 import tr.ozanbey.agricalc.webapp.service.enumtype.plantation.EnumPlantationQuestionType;
 import tr.ozanbey.agricalc.webapp.service.enumtype.plantation.EnumQuestionAnswerType;
 import tr.ozanbey.agricalc.webapp.service.service.plantation.CostAllocationService;
 import tr.ozanbey.agricalc.webapp.service.service.plantation.CostCalculationService;
 import tr.ozanbey.agricalc.webapp.service.service.plantation.QuestionService;
-import tr.ozanbey.agricalc.webapp.service.service.plantation.UserPlantParcelPlanService;
+import tr.ozanbey.agricalc.webapp.service.service.plantation.UserPlantationPlanService;
 
 import java.io.IOException;
 import java.util.List;
@@ -28,33 +26,29 @@ import java.util.List;
 @Setter
 public class ExpenseDryingProfileController extends PlanProfileController {
 
-    @Autowired
-    private UserPlantParcelPlanService userPlantParcelPlanService;
+    private static final List<Long> A_DRYING_QUESTIONS = List.of(257L, 258L, 259L, 260L, 261L, 262L, 263L, 264L, 265L, 266L, 267L, 268L, 269L, 270L, 271L, 272L);
+    private static final List<Long> ONE_DRYING_QUESTIONS = List.of(259L, 260L, 261L, 262L, 263L, 264L, 265L, 266L, 269L, 270L, 271L, 272L);
+    private static final List<Long> TWO_DRYING_QUESTIONS = List.of(267L, 268L);
+    private static final List<Long> ONE_A_DRYING_QUESTIONS = List.of(270L, 271L, 272L);
 
-    @Autowired
-    private QuestionService questionService;
-
-    @PostConstruct
-    public void init() {
+    public ExpenseDryingProfileController(UserPlantationPlanService userPlantationPlanService,
+                                          QuestionService questionService,
+                                          CostCalculationService costCalculationService,
+                                          CostAllocationService costAllocationService) {
+        super(userPlantationPlanService, questionService, costCalculationService, costAllocationService);
     }
 
     public void fillExpenseDryingQuestionList() throws IOException {
-        if (super.getParcelPlanId() == null || !checkPlanIdForUser(super.getParcelPlanId())) {
-            super.navigationController.redirectToUrl("/secured/plantation/parcel");
+        if (super.getPlantationPlanId() == null || !checkPlanIdForUser(super.getPlantationPlanId())) {
+            super.navigationController.redirectToUrl("/secured/plantation-list");
             return;
         }
 
-        if (!Hibernate.isInitialized(super.getParcelPlan().getPlantParcel().getProduct().getProductQuestionList())) {
-            List<PlantationProductQuestion> productQuestionList = questionService.getActiveQuestionByQuestionType(super.getParcelPlan().getPlantParcel().getProduct().getId(), EnumStatus.ACTIVE, EnumPlantationQuestionType.EXPENSE_DRYING);
-            List<UserPlantParcelPlanAnswer> planAnswerList = userPlantParcelPlanService.fillPlanAnswerValues(super.getParcelPlanId(), EnumPlantationQuestionType.EXPENSE_DRYING);
-            List<UserPlantParcelAnswer> parcelAnswerList = userPlantParcelPlanService.fillParcelAnswerValues(super.getParcelPlan().getPlantParcel().getId(), EnumPlantationQuestionType.EXPENSE_DRYING);
-            for (UserPlantParcelPlanAnswer userPlantParcelPlanAnswer : planAnswerList) {
-                fillAnsweredQuestionValues(userPlantParcelPlanAnswer.getProductQuestion().getId(), userPlantParcelPlanAnswer.getAnswerValue(), productQuestionList, false);
-            }
-            for (UserPlantParcelAnswer userPlantParcelAnswer : parcelAnswerList) {
-                fillAnsweredQuestionValues(userPlantParcelAnswer.getProductQuestion().getId(), userPlantParcelAnswer.getAnswerValue(), productQuestionList, true);
-            }
-            super.getParcelPlan().getPlantParcel().getProduct().setProductQuestionList(productQuestionList);
+        if (!Hibernate.isInitialized(super.getUserPlantationPlan().getPrimaryProduct().getProductQuestionList())) {
+            List<PlantationProductQuestion> productQuestionList = getQuestionService().getActiveQuestionByQuestionType(super.getUserPlantationPlan().getPrimaryProduct().getId(), EnumStatus.ACTIVE, EnumPlantationQuestionType.EXPENSE_DRYING);
+            List<UserPlantationPlanAnswer> planAnswerList = getUserPlantationPlanService().fillPlanAnswerValues(super.getPlantationPlanId(), EnumPlantationQuestionType.EXPENSE_DRYING);
+            List<UserPlantationAnswer> plantationAnswerList = getUserPlantationPlanService().fillPlantationAnswerValues(super.getUserPlantationPlan().getUserPlantation().getId(), EnumPlantationQuestionType.EXPENSE_DRYING);
+            assignAnswerListsToProduct(planAnswerList, productQuestionList, plantationAnswerList);
         }
     }
 
@@ -88,22 +82,17 @@ public class ExpenseDryingProfileController extends PlanProfileController {
         return false;
     }
 
-    private static final List<Long> A_DRYING_QUESTIONS = List.of(257L, 258L, 259L, 260L, 261L, 262L, 263L, 264L, 265L, 266L, 267L, 268L, 269L, 270L, 271L, 272L);
-    private static final List<Long> ONE_DRYING_QUESTIONS = List.of(259L, 260L, 261L, 262L, 263L, 264L, 265L, 266L, 269L, 270L, 271L, 272L);
-    private static final List<Long> TWO_DRYING_QUESTIONS = List.of(267L, 268L);
-    private static final List<Long> ONE_A_DRYING_QUESTIONS = List.of(270L, 271L, 272L);
-
     private boolean checkPreviousQuestionAnswerAccordingly(PlantationProductQuestion question) {
 
-        List<PlantationProductQuestion> questionList = super.getParcelPlan().getPlantParcel().getProduct().getProductQuestionList().stream()
+        List<PlantationProductQuestion> questionList = super.getUserPlantationPlan().getPrimaryProduct().getProductQuestionList().stream()
                 .filter(pq -> List.of(256L).contains(pq.getPlantationQuestion().getId())).toList();
         if (A_DRYING_QUESTIONS.contains(question.getPlantationQuestion().getId())) {
             if (questionList.isEmpty()) {
-                List<PlantationProductQuestion> subQuestionList = super.getParcelPlan().getPlantParcel().getProduct().getProductQuestionList().stream()
+                List<PlantationProductQuestion> subQuestionList = super.getUserPlantationPlan().getPrimaryProduct().getProductQuestionList().stream()
                         .filter(spq -> List.of(257L, 258L).contains(spq.getPlantationQuestion().getId())).toList();
                 if (ONE_DRYING_QUESTIONS.contains(question.getPlantationQuestion().getId())) {
                     if (subQuestionList.isEmpty()) {
-                        List<PlantationProductQuestion> subSubQuestionList = super.getParcelPlan().getPlantParcel().getProduct().getProductQuestionList().stream()
+                        List<PlantationProductQuestion> subSubQuestionList = super.getUserPlantationPlan().getPrimaryProduct().getProductQuestionList().stream()
                                 .filter(sspq -> List.of(269L).contains(sspq.getPlantationQuestion().getId())).toList();
                         if (ONE_A_DRYING_QUESTIONS.contains(question.getPlantationQuestion().getId())) {
                             if (subSubQuestionList.isEmpty()) {
@@ -120,7 +109,7 @@ public class ExpenseDryingProfileController extends PlanProfileController {
                     }
                     for (PlantationProductQuestion spq : subQuestionList) {
                         if (spq.getSelectedAnswerId() != null && List.of(187L, 189L).contains(spq.getSelectedAnswerId())) {
-                            List<PlantationProductQuestion> subSubQuestionList = super.getParcelPlan().getPlantParcel().getProduct().getProductQuestionList().stream()
+                            List<PlantationProductQuestion> subSubQuestionList = super.getUserPlantationPlan().getPrimaryProduct().getProductQuestionList().stream()
                                     .filter(sspq -> List.of(269L).contains(sspq.getPlantationQuestion().getId())).toList();
                             if (ONE_A_DRYING_QUESTIONS.contains(question.getPlantationQuestion().getId())) {
                                 if (subSubQuestionList.isEmpty()) {
@@ -153,11 +142,11 @@ public class ExpenseDryingProfileController extends PlanProfileController {
             }
             for (PlantationProductQuestion pq : questionList) {
                 if (pq.getSelectedAnswerId() != null && List.of(185L).contains(pq.getSelectedAnswerId())) {
-                    List<PlantationProductQuestion> subQuestionList = super.getParcelPlan().getPlantParcel().getProduct().getProductQuestionList().stream()
+                    List<PlantationProductQuestion> subQuestionList = super.getUserPlantationPlan().getPrimaryProduct().getProductQuestionList().stream()
                             .filter(spq -> List.of(257L, 258L).contains(spq.getPlantationQuestion().getId())).toList();
                     if (ONE_DRYING_QUESTIONS.contains(question.getPlantationQuestion().getId())) {
                         if (subQuestionList.isEmpty()) {
-                            List<PlantationProductQuestion> subSubQuestionList = super.getParcelPlan().getPlantParcel().getProduct().getProductQuestionList().stream()
+                            List<PlantationProductQuestion> subSubQuestionList = super.getUserPlantationPlan().getPrimaryProduct().getProductQuestionList().stream()
                                     .filter(sspq -> List.of(269L).contains(sspq.getPlantationQuestion().getId())).toList();
                             if (ONE_A_DRYING_QUESTIONS.contains(question.getPlantationQuestion().getId())) {
                                 if (subSubQuestionList.isEmpty()) {
@@ -174,7 +163,7 @@ public class ExpenseDryingProfileController extends PlanProfileController {
                         }
                         for (PlantationProductQuestion spq : subQuestionList) {
                             if (spq.getSelectedAnswerId() != null && List.of(187L, 189L).contains(spq.getSelectedAnswerId())) {
-                                List<PlantationProductQuestion> subSubQuestionList = super.getParcelPlan().getPlantParcel().getProduct().getProductQuestionList().stream()
+                                List<PlantationProductQuestion> subSubQuestionList = super.getUserPlantationPlan().getPrimaryProduct().getProductQuestionList().stream()
                                         .filter(sspq -> List.of(269L).contains(sspq.getPlantationQuestion().getId())).toList();
                                 if (ONE_A_DRYING_QUESTIONS.contains(question.getPlantationQuestion().getId())) {
                                     if (subSubQuestionList.isEmpty()) {
@@ -211,15 +200,9 @@ public class ExpenseDryingProfileController extends PlanProfileController {
         return true;
     }
 
-    @Autowired
-    private CostCalculationService costCalculationService;
-
-    @Autowired
-    private CostAllocationService costAllocationService;
-
     public void nextSaveExpense() throws IOException {
-        super.getParcelPlan().setDryingCost(costCalculationService.calculateProcessDryCost(super.getParcelPlan().getPlantParcel().getProduct().getProductQuestionList(), super.getParcelPlan().getId(), super.getParcelPlan().getPlantParcel().getCity()));
-        costAllocationService.dryingAllocation(super.getParcelPlan().getPlantParcel().getProduct().getProductQuestionList(), super.getParcelPlan(), super.getParcelPlan().getPlantParcel().getCity());
+        super.getUserPlantationPlan().setDryingCost(getCostCalculationService().calculateProcessDryCost(super.getUserPlantationPlan().getPrimaryProduct().getProductQuestionList(), super.getUserPlantationPlan().getId(), super.getUserPlantationPlan().getUserPlantation().getDistrict().getCity()));
+        getCostAllocationService().dryingAllocation(super.getUserPlantationPlan().getPrimaryProduct().getProductQuestionList(), super.getUserPlantationPlan(), super.getUserPlantationPlan().getUserPlantation().getDistrict().getCity());
         goToNextPage(EnumPlantationQuestionType.EXPENSE_DRYING);
     }
 

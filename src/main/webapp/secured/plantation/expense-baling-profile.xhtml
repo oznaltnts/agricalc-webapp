@@ -9,8 +9,8 @@
 
     <ui:define name="metadata">
         <f:metadata>
-            <f:viewParam name="parcelPlanId"
-                         value="#{expenseBalingProfileController.parcelPlanId}"/>
+            <f:viewParam name="plantationPlanId"
+                         value="#{expenseBalingProfileController.plantationPlanId}"/>
             <f:viewAction action="#{expenseBalingProfileController.fillExpenseBalingQuestionList}"/>
         </f:metadata>
     </ui:define>
@@ -47,7 +47,7 @@
 
                     <p:focus context="@next"/>
 
-                    <ui:repeat value="#{expenseBalingProfileController.parcelPlan.plantParcel.product.productQuestionList}"
+                    <ui:repeat value="#{expenseBalingProfileController.userPlantationPlan.primaryProduct.productQuestionList}"
                                var="question">
                         <ui:fragment rendered="#{!question.dontAskAgain}">
                             <p:panelGrid layout="flex"
@@ -100,6 +100,8 @@
                             </p:panelGrid>
                         </ui:fragment>
                     </ui:repeat>
+
+                    <p style="text-align: right">"Tekrar sorma" seçimleriniz hasat sonuna kadar sorulmaz.</p>
                 </p:outputPanel>
 
                 <p:outputPanel style="display: flex; justify-content: space-between; flex-direction: row-reverse;">

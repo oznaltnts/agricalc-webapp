@@ -12,27 +12,27 @@ import java.math.BigDecimal;
 @Getter
 @Setter
 @Entity
-@Table(name = "user_plant_parcel_plan_allocations")
+@Table(name = "user_plantation_plan_allocations")
 @NoArgsConstructor
 @AllArgsConstructor
 @ToString(onlyExplicitlyIncluded = true)
-public class UserPlantParcelPlanAllocation extends AbstractEntity {
+public class UserPlantationPlanAllocation extends AbstractEntity {
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "plant_plan_id", referencedColumnName = "id", nullable = false)
-    private UserPlantParcelPlan plantParcelPlan;
+    @JoinColumn(name = "user_plantation_plan_id", referencedColumnName = "id", nullable = false)
+    private UserPlantationPlan userPlantationPlan;
 
     @Convert(converter = EnumPlantationQuestionConverter.class)
-    @Column(name = "q_type", nullable = false, columnDefinition = "TINYINT")
+    @Column(name = "q_type", columnDefinition = "TINYINT", nullable = false)
     @ToString.Include
     private EnumPlantationQuestionType questionType;
 
-    @Column(name = "a_type", nullable = false)
+    @Column(name = "a_type", length = 33, nullable = false)
     @Enumerated(EnumType.STRING)
     @ToString.Include
     private EnumAllocationType allocationType;
 
-    @Column(name = "calculated_value", nullable = false)
+    @Column(name = "calculated_value", precision = 15, scale = 3, nullable = false)
     @ToString.Include
     private BigDecimal calculatedValue;
 

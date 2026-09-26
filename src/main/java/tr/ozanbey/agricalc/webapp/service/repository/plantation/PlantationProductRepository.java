@@ -5,6 +5,7 @@ import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
 import tr.ozanbey.agricalc.webapp.service.domain.plantation.PlantationProduct;
 import tr.ozanbey.agricalc.webapp.service.enumtype.EnumStatus;
+import tr.ozanbey.agricalc.webapp.service.enumtype.plantation.EnumPlantationType;
 
 import java.util.List;
 
@@ -12,5 +13,8 @@ public interface PlantationProductRepository extends JpaRepository<PlantationPro
 
     @EntityGraph(attributePaths = {"productOptionList"})
     List<PlantationProduct> findByStatusOrderByNameAsc(EnumStatus status);
+
+    @EntityGraph(attributePaths = {"productOptionList"})
+    List<PlantationProduct> findByPlantationTypeAndStatusOrderByNameAsc(EnumPlantationType plantationType, EnumStatus status);
 
 }

@@ -24,16 +24,16 @@ public class PlantationProductQuestion extends AbstractEntity {
     @JoinColumn(name = "plantation_question_id", referencedColumnName = "id", nullable = false)
     private PlantationQuestion plantationQuestion;
 
-    @Column(name = "minimum_value")
+    @Column(name = "minimum_value", precision = 15, scale = 3)
     @ToString.Include
     private BigDecimal minimumValue;
 
-    @Column(name = "maximum_value")
+    @Column(name = "maximum_value", precision = 15, scale = 3)
     @ToString.Include
     private BigDecimal maximumValue;
 
     @OneToMany(mappedBy = "productQuestion", fetch = FetchType.LAZY)
-    private List<UserPlantParcelPlanAnswer> questionAnswerList;
+    private List<UserPlantationPlanAnswer> questionAnswerList;
 
     @OneToMany(mappedBy = "productQuestion", fetch = FetchType.LAZY)
     private List<PlantationProductQuestionDisease> productQuestionDiseaseList;

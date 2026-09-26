@@ -6,15 +6,19 @@ import jakarta.faces.view.ViewScoped;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.stereotype.Component;
+import tr.ozanbey.agricalc.webapp.service.domain.User;
 
-@Component("homeController")
+@Component
 @ViewScoped
 @Getter
 @Setter
-public class HomeController extends BaseController {
+public class DashboardController extends BaseController {
+
+    private User user;
 
     @PostConstruct
     public void init() {
+        user = getCurrentUser().getUser();
     }
 
 }

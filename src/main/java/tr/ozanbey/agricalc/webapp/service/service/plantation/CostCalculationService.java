@@ -7,12 +7,12 @@ import tr.ozanbey.agricalc.webapp.service.domain.City;
 import tr.ozanbey.agricalc.webapp.service.domain.plantation.PlantationCoefficient;
 import tr.ozanbey.agricalc.webapp.service.domain.plantation.PlantationIrrigationValue;
 import tr.ozanbey.agricalc.webapp.service.domain.plantation.PlantationProductQuestion;
-import tr.ozanbey.agricalc.webapp.service.domain.plantation.UserPlantParcelPlanAnswer;
+import tr.ozanbey.agricalc.webapp.service.domain.plantation.UserPlantationPlanAnswer;
 import tr.ozanbey.agricalc.webapp.service.enumtype.plantation.EnumCoefficientType;
 import tr.ozanbey.agricalc.webapp.service.enumtype.plantation.EnumIrrigationType;
 import tr.ozanbey.agricalc.webapp.service.repository.plantation.PlantationCoefficientRepository;
 import tr.ozanbey.agricalc.webapp.service.repository.plantation.PlantationIrrigationValueRepository;
-import tr.ozanbey.agricalc.webapp.service.repository.plantation.UserPlantParcelPlanAnswerRepository;
+import tr.ozanbey.agricalc.webapp.service.repository.plantation.UserPlantationPlanAnswerRepository;
 
 import java.math.BigDecimal;
 import java.util.List;
@@ -28,7 +28,7 @@ public class CostCalculationService extends CostCommonService {
     private PlantationIrrigationValueRepository irrigationValueRepository;
 
     @Autowired
-    private UserPlantParcelPlanAnswerRepository planAnswerRepository;
+    private UserPlantationPlanAnswerRepository planAnswerRepository;
 
     //Gider- Toprak Hazırlığı
     //300
@@ -78,7 +78,7 @@ public class CostCalculationService extends CostCommonService {
                 .add(soilPrepSecondaryCostPerDecare(soilPrepSecondaryOperationCount, soilPrepSecondaryDieselRate, cityDieselPrice, soilPrepSecondaryLaborRate, soilPrepLaborPrice));
     }
 
-    public BigDecimal calculateSoilPrep(List<PlantationProductQuestion> productQuestionList, Long parcelPlanId, City city) {
+    public BigDecimal calculateSoilPrep(List<PlantationProductQuestion> productQuestionList, Long plantationPlanId, City city) {
         List<PlantationCoefficient> coefficientList = coefficientRepository.findByEnumCoefficientTypeIn(EnumCoefficientType.values());
 
         Integer soilPrepLaserOperationCount = 1;
@@ -217,9 +217,9 @@ public class CostCalculationService extends CostCommonService {
                 .add(plantingHourCostPerDecare(workPowerHour, workPowerCount, workingWomanLaborPrice));
     }
 
-    public BigDecimal calculatePlantingCost(List<PlantationProductQuestion> productQuestionList, Long parcelPlanId, City city) {
+    public BigDecimal calculatePlantingCost(List<PlantationProductQuestion> productQuestionList, Long plantationPlanId, City city) {
         List<PlantationCoefficient> coefficientList = coefficientRepository.findByEnumCoefficientTypeIn(EnumCoefficientType.values());
-        List<UserPlantParcelPlanAnswer> previousAnswerList = planAnswerRepository.findByPlantParcelPlan_IdAndProductQuestion_PlantationQuestion_IdIn(parcelPlanId, List.of(41L, 42L));
+        List<UserPlantationPlanAnswer> previousAnswerList = planAnswerRepository.findByUserPlantationPlan_IdAndProductQuestion_PlantationQuestion_IdIn(plantationPlanId, List.of(41L, 42L));
 
         Double seedKgPerDecare = doubleValueSetter(productQuestionList, 57L);
         BigDecimal seedPricePerKg = decimalValueSetter(productQuestionList, 61L);
@@ -422,9 +422,9 @@ public class CostCalculationService extends CostCommonService {
                 .add(bioConditionerCostPerDecare(bioConditionerDieselRate, cityDieselPrice, bioConditionerLaborRate, workingManLaborPrice, bioConditionerPerDecare, bioConditionerPerTon));
     }
 
-    public BigDecimal calculateFertilizerCost(List<PlantationProductQuestion> productQuestionList, Long parcelPlanId, City city) {
+    public BigDecimal calculateFertilizerCost(List<PlantationProductQuestion> productQuestionList, Long plantationPlanId, City city) {
         List<PlantationCoefficient> coefficientList = coefficientRepository.findByEnumCoefficientTypeIn(EnumCoefficientType.values());
-        List<UserPlantParcelPlanAnswer> previousAnswerList = planAnswerRepository.findByPlantParcelPlan_IdAndProductQuestion_PlantationQuestion_IdIn(parcelPlanId, List.of(41L));
+        List<UserPlantationPlanAnswer> previousAnswerList = planAnswerRepository.findByUserPlantationPlan_IdAndProductQuestion_PlantationQuestion_IdIn(plantationPlanId, List.of(41L));
 
         Double baseFertilizerDieselRate = coefficientList.stream().filter(c -> c.getEnumCoefficientType().equals(EnumCoefficientType.BASE_FERTILIZER)).findFirst().get().getDieselValue();
         BigDecimal cityDieselPrice = city.getDieselPrice();
@@ -519,15 +519,33 @@ public class CostCalculationService extends CostCommonService {
                         .add(BigDecimal.valueOf(machineWeedingLabor).multiply(workingManLaborPrice)));
     }
 
+//    //17,08683
+//    private BigDecimal medicineGenisYaprakCostPerDecare() {
+//    }
+//
+//    //17,08683
+//    private BigDecimal medicineGenisYaprakTotalCostPerDecare() {
+//    }
+//
+//    //8,11508
+//    private BigDecimal medicineLumpSumCostPerDecare() {
+//    }
+
     //188,7301533
     private BigDecimal medicineCostPerDecare(Integer medicineCount,
                                              Double medicineEnergyAmount, BigDecimal cityDieselPrice,
                                              Double medicineLaborAmount, BigDecimal workingManLaborPrice,
-                                             BigDecimal productMedicinePrice) {
+
+                                             BigDecimal productMedicinePrice
+
+    ) {
         return BigDecimal.valueOf(medicineCount).multiply(
                 BigDecimal.valueOf(medicineEnergyAmount).multiply(cityDieselPrice)
                         .add(BigDecimal.valueOf(medicineLaborAmount).multiply(workingManLaborPrice))
-                        .add(productMedicinePrice));
+                        .add(
+                                productMedicinePrice
+                        )
+        );
     }
 
     //2300
@@ -568,7 +586,10 @@ public class CostCalculationService extends CostCommonService {
                                           Integer handWeedingCount, Double averageHandLaborAmount,
                                           Integer tractorWeedingCount, Double averageTractorLaborAmount, Double tractorWeedingLabor,
                                           Integer machineWeedingCount, Double averageMachineLaborAmount, Double machineWeedingLabor,
-                                          Integer medicineCount, Double medicineEnergyAmount, Double medicineLaborAmount, BigDecimal productMedicinePrice,
+                                          Integer medicineCount, Double medicineEnergyAmount, Double medicineLaborAmount,
+
+                                          BigDecimal productMedicinePrice,
+
                                           Integer handCountFrequency, Double averageLaborHourAmount, Double maleCostRate, Double femaleCostRate,
                                           Double totalMulchingHour, Double mulchUsageYear, Double mulchAmountPerDecare, BigDecimal mulchCostPricePerKg,
                                           Integer weedToolCount, Double averageWeedToolLaborAmount, BigDecimal cityFuelPrice, Double weedToolLaborDecareAmountPerDay,
@@ -583,16 +604,20 @@ public class CostCalculationService extends CostCommonService {
                 .add(weedingByHandCostPerDecare(handWeedingCount, averageHandLaborAmount, workingWomanLaborPrice))
                 .add(weedingByTractorCostPerDecare(tractorWeedingCount, averageTractorLaborAmount, cityDieselPrice, tractorWeedingLabor, workingManLaborPrice))
                 .add(weedingByMachineCostPerDecare(machineWeedingCount, averageMachineLaborAmount, cityDieselPrice, machineWeedingLabor, workingManLaborPrice))
-                .add(medicineCostPerDecare(medicineCount, medicineEnergyAmount, cityDieselPrice, medicineLaborAmount, workingManLaborPrice, productMedicinePrice))
+                .add(medicineCostPerDecare(medicineCount, medicineEnergyAmount, cityDieselPrice, medicineLaborAmount, workingManLaborPrice,
+
+                        productMedicinePrice
+
+                ))
                 .add(byHandCostPerDecare(handCountFrequency, averageLaborHourAmount, workingMixedLaborPrice))
                 .add(mulchingCostPerDecare(totalMulchingHour, mulchUsageYear, workingMixedLaborPrice, mulchAmountPerDecare, mulchCostPricePerKg))
                 .add(weedToolCostPerDecare(weedToolCount, averageWeedToolLaborAmount, cityFuelPrice, weedToolLaborDecareAmountPerDay, workingManLaborPrice))
                 .add(animalPlowCostPerDecare(animalPlowPerYear, animalPlowAmountDecarePerDay, workingManLaborPrice));
     }
 
-    public BigDecimal calculateWildGrassControlCost(List<PlantationProductQuestion> productQuestionList, Long parcelPlanId, City city) {
+    public BigDecimal calculateWildGrassControlCost(List<PlantationProductQuestion> productQuestionList, Long plantationPlanId, City city) {
         List<PlantationCoefficient> coefficientList = coefficientRepository.findByEnumCoefficientTypeIn(EnumCoefficientType.values());
-        List<UserPlantParcelPlanAnswer> previousAnswerList = planAnswerRepository.findByPlantParcelPlan_IdAndProductQuestion_PlantationQuestion_IdIn(parcelPlanId, List.of(41L, 42L));
+        List<UserPlantationPlanAnswer> previousAnswerList = planAnswerRepository.findByUserPlantationPlan_IdAndProductQuestion_PlantationQuestion_IdIn(plantationPlanId, List.of(41L, 42L));
 
         Double throatFillingLaborAmount = doubleValueSetter(productQuestionList, 119L);
         BigDecimal femaleDailyWage = decimalAnswerSetter(previousAnswerList, 42L);
@@ -633,7 +658,10 @@ public class CostCalculationService extends CostCommonService {
                 handWeedingCount, averageHandLaborAmount,
                 tractorWeedingCount, averageTractorLaborAmount, tractorWeedingLabor,
                 machineWeedingCount, averageMachineLaborAmount, machineWeedingLabor,
-                medicineCount, medicineEnergyAmount, medicineLaborAmount, productMedicinePrice,
+                medicineCount, medicineEnergyAmount, medicineLaborAmount,
+
+                productMedicinePrice,
+
                 handCountFrequency, averageLaborHourAmount, maleCostRate, femaleCostRate,
                 totalMulchingHour, mulchUsageYear, mulchAmountPerDecare, mulchCostPricePerKg,
                 weedToolCount, averageWeedToolLaborAmount, cityFuelPrice, weedToolLaborDecareAmountPerDay,
@@ -708,9 +736,9 @@ public class CostCalculationService extends CostCommonService {
         //TODO irrigationCountForDieselPump değerinde hata var, 4 mü 12 mi? giriş yoksa gelmeli mi? To:İbrahim Bey
     }
 
-    public BigDecimal calculateIrrigationCost(List<PlantationProductQuestion> productQuestionList, Long parcelPlanId, City city) {
+    public BigDecimal calculateIrrigationCost(List<PlantationProductQuestion> productQuestionList, Long plantationPlanId, City city) {
         List<PlantationCoefficient> coefficientList = coefficientRepository.findByEnumCoefficientTypeIn(EnumCoefficientType.values());
-        List<UserPlantParcelPlanAnswer> previousAnswerList = planAnswerRepository.findByPlantParcelPlan_IdAndProductQuestion_PlantationQuestion_IdIn(parcelPlanId, List.of(41L, 42L));
+        List<UserPlantationPlanAnswer> previousAnswerList = planAnswerRepository.findByUserPlantationPlan_IdAndProductQuestion_PlantationQuestion_IdIn(plantationPlanId, List.of(41L, 42L));
         List<PlantationIrrigationValue> irrigationValueList = irrigationValueRepository.findByIrrigationTypeIn(EnumIrrigationType.values());
 
         BigDecimal amortizationForSelectedIrrigation = BigDecimal.ZERO;
@@ -888,9 +916,9 @@ public class CostCalculationService extends CostCommonService {
                 .add(bendingRopeCostPerDecare(bendingRopeHourPerDecare, workingManLaborPrice));
     }
 
-    public BigDecimal calculateCulturalWorkCost(List<PlantationProductQuestion> productQuestionList, Long parcelPlanId, City city) {
+    public BigDecimal calculateCulturalWorkCost(List<PlantationProductQuestion> productQuestionList, Long plantationPlanId, City city) {
         List<PlantationCoefficient> coefficientList = coefficientRepository.findByEnumCoefficientTypeIn(EnumCoefficientType.values());
-        List<UserPlantParcelPlanAnswer> previousAnswerList = planAnswerRepository.findByPlantParcelPlan_IdAndProductQuestion_PlantationQuestion_IdIn(parcelPlanId, List.of(41L, 42L, 43L));
+        List<UserPlantationPlanAnswer> previousAnswerList = planAnswerRepository.findByUserPlantationPlan_IdAndProductQuestion_PlantationQuestion_IdIn(plantationPlanId, List.of(41L, 42L, 43L));
 
         Double treePruneAmountHour = doubleValueSetter(productQuestionList, 175L);
         BigDecimal pruneDailyWage = decimalAnswerSetter(previousAnswerList, 43L);
@@ -1017,9 +1045,9 @@ public class CostCalculationService extends CostCommonService {
                 .add(droneMedicineCostPerDecare(droneMedicineCount, droneMedicineRentalPricePerDecare));
     }
 
-    public BigDecimal calculatePlantProtectionCost(List<PlantationProductQuestion> productQuestionList, Long parcelPlanId, City city) {
+    public BigDecimal calculatePlantProtectionCost(List<PlantationProductQuestion> productQuestionList, Long plantationPlanId, City city) {
         List<PlantationCoefficient> coefficientList = coefficientRepository.findByEnumCoefficientTypeIn(EnumCoefficientType.values());
-        List<UserPlantParcelPlanAnswer> previousAnswerList = planAnswerRepository.findByPlantParcelPlan_IdAndProductQuestion_PlantationQuestion_IdIn(parcelPlanId, List.of(41L));
+        List<UserPlantationPlanAnswer> previousAnswerList = planAnswerRepository.findByUserPlantationPlan_IdAndProductQuestion_PlantationQuestion_IdIn(plantationPlanId, List.of(41L));
 
         Integer foliarForFungalCount = integerValueSetter(productQuestionList, 195L);
         BigDecimal productFungalMedicinePricePerUnit = BigDecimal.valueOf(5.88859433);//TODO
@@ -1303,9 +1331,9 @@ public class CostCalculationService extends CostCommonService {
                 .add(motorizedCuttingCostPerDecare(harvestCount, motorizedCuttingDieselAmount, cityDieselPrice, motorizedCuttingLaborAmount, workingPruneLaborPrice));
     }
 
-    public BigDecimal calculateHarvestCost(List<PlantationProductQuestion> productQuestionList, Long parcelPlanId, City city) {
+    public BigDecimal calculateHarvestCost(List<PlantationProductQuestion> productQuestionList, Long plantationPlanId, City city) {
         List<PlantationCoefficient> coefficientList = coefficientRepository.findByEnumCoefficientTypeIn(EnumCoefficientType.values());
-        List<UserPlantParcelPlanAnswer> previousAnswerList = planAnswerRepository.findByPlantParcelPlan_IdAndProductQuestion_PlantationQuestion_IdIn(parcelPlanId, List.of(11L, 12L, 13L, 14L, 15L, 16L, 17L, 24L, 41L, 42L, 43L));
+        List<UserPlantationPlanAnswer> previousAnswerList = planAnswerRepository.findByUserPlantationPlan_IdAndProductQuestion_PlantationQuestion_IdIn(plantationPlanId, List.of(11L, 12L, 13L, 14L, 15L, 16L, 17L, 24L, 41L, 42L, 43L));
 
         Integer harvestCount = integerValueSetter(productQuestionList, 209L);
         Double averageYieldAsKgPerDecare = doubleAnswerSetter(previousAnswerList, 12L);
@@ -1422,9 +1450,9 @@ public class CostCalculationService extends CostCommonService {
                 .add(blendThreshingCost(averageYieldAsKgPerDecare, blendThreshingAmountPerHour, threshingCostPerHour));
     }
 
-    public BigDecimal calculateBlendCost(List<PlantationProductQuestion> productQuestionList, Long parcelPlanId, City city) {
+    public BigDecimal calculateBlendCost(List<PlantationProductQuestion> productQuestionList, Long plantationPlanId, City city) {
         List<PlantationCoefficient> coefficientList = coefficientRepository.findByEnumCoefficientTypeIn(EnumCoefficientType.values());
-        List<UserPlantParcelPlanAnswer> previousAnswerList = planAnswerRepository.findByPlantParcelPlan_IdAndProductQuestion_PlantationQuestion_IdIn(parcelPlanId, List.of(11L, 12L, 13L, 14L, 15L, 16L, 17L, 41L, 42L, 43L));
+        List<UserPlantationPlanAnswer> previousAnswerList = planAnswerRepository.findByUserPlantationPlan_IdAndProductQuestion_PlantationQuestion_IdIn(plantationPlanId, List.of(11L, 12L, 13L, 14L, 15L, 16L, 17L, 41L, 42L, 43L));
 
         Double transportKmAmount = doubleValueSetter(productQuestionList, 247L);
         Double averageYieldAsKgPerDecare = doubleAnswerSetter(previousAnswerList, 12L);
@@ -1545,9 +1573,9 @@ public class CostCalculationService extends CostCommonService {
                 .add(sortSizeScoreBrineCost(averageYieldAsKgPerDecare, sortSizeScoreBrineLaborHour, workingMixedLaborPrice));
     }
 
-    public BigDecimal calculateProcessDryCost(List<PlantationProductQuestion> productQuestionList, Long parcelPlanId, City city) {
+    public BigDecimal calculateProcessDryCost(List<PlantationProductQuestion> productQuestionList, Long plantationPlanId, City city) {
         List<PlantationCoefficient> coefficientList = coefficientRepository.findByEnumCoefficientTypeIn(EnumCoefficientType.values());
-        List<UserPlantParcelPlanAnswer> previousAnswerList = planAnswerRepository.findByPlantParcelPlan_IdAndProductQuestion_PlantationQuestion_IdIn(parcelPlanId, List.of(12L, 15L, 16L, 41L, 42L, 43L));
+        List<UserPlantationPlanAnswer> previousAnswerList = planAnswerRepository.findByUserPlantationPlan_IdAndProductQuestion_PlantationQuestion_IdIn(plantationPlanId, List.of(12L, 15L, 16L, 41L, 42L, 43L));
 
         Double averageYieldAsKgPerDecare = doubleAnswerSetter(previousAnswerList, 12L);
         Double processSievingWashDryHourAmountPerTonne = doubleValueSetter(productQuestionList, 259L);
@@ -1630,9 +1658,9 @@ public class CostCalculationService extends CostCommonService {
                 .add(balingRentalCostPerBaling(averageYieldSideStrawProduct, balingAverageWeight, rentPricePerBaling));
     }
 
-    public BigDecimal calculateBalingCost(List<PlantationProductQuestion> productQuestionList, Long parcelPlanId, City city) {
+    public BigDecimal calculateBalingCost(List<PlantationProductQuestion> productQuestionList, Long plantationPlanId, City city) {
         List<PlantationCoefficient> coefficientList = coefficientRepository.findByEnumCoefficientTypeIn(EnumCoefficientType.values());
-        List<UserPlantParcelPlanAnswer> previousAnswerList = planAnswerRepository.findByPlantParcelPlan_IdAndProductQuestion_PlantationQuestion_IdIn(parcelPlanId, List.of(12L, 20L, 41L, 42L, 43L));
+        List<UserPlantationPlanAnswer> previousAnswerList = planAnswerRepository.findByUserPlantationPlan_IdAndProductQuestion_PlantationQuestion_IdIn(plantationPlanId, List.of(12L, 20L, 41L, 42L, 43L));
 
         Double balingMachineDieselAmountPerDecare = doubleValueSetter(productQuestionList, 276L);
         BigDecimal cityDieselPrice = city.getDieselPrice();
@@ -1670,9 +1698,9 @@ public class CostCalculationService extends CostCommonService {
                 .add(packagingCost(averageYieldAsKgPerDecare, weightPerUnit, packagingPricePerUnit));
     }
 
-    public BigDecimal calculateTransportPackagingCost(List<PlantationProductQuestion> productQuestionList, Long parcelPlanId, City city) {
+    public BigDecimal calculateTransportPackagingCost(List<PlantationProductQuestion> productQuestionList, Long plantationPlanId, City city) {
         List<PlantationCoefficient> coefficientList = coefficientRepository.findByEnumCoefficientTypeIn(EnumCoefficientType.values());
-        List<UserPlantParcelPlanAnswer> previousAnswerList = planAnswerRepository.findByPlantParcelPlan_IdAndProductQuestion_PlantationQuestion_IdIn(parcelPlanId, List.of(12L, 41L, 42L, 43L));
+        List<UserPlantationPlanAnswer> previousAnswerList = planAnswerRepository.findByUserPlantationPlan_IdAndProductQuestion_PlantationQuestion_IdIn(plantationPlanId, List.of(12L, 41L, 42L, 43L));
 
         Double averageYieldAsKgPerDecare = doubleAnswerSetter(previousAnswerList, 12L);
         Double tractorCapacity = doubleValueSetter(productQuestionList, 284L);

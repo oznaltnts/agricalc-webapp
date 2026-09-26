@@ -18,17 +18,22 @@
     <div class="layout-menu-container">
         <h:form id="menuform">
             <fr:menu widgetVar="FreyaMenuWidget">
-                <p:menuitem value="Ana sayfa" icon="fa-solid fa-home" url="/"/>
+                <!--p:menuitem value="Ana sayfa" icon="fa-solid fa-home" url="/"/-->
                 <!--p:menuitem value="Nasıl çalışır?" icon="fa-solid fa-question" url="/public/how-it-works"/-->
-                <!--p:menuitem value="Hakkımızda" icon="fa-solid fa-circle-info" url="#"/-->
-                <p:menuitem value="Finansal okuryazarlık" icon="fa-regular fa-wallet" url="/public/financial-literacy"/>
+
+                <p:submenu label="Hakkımızda" icon="fa-solid fa-sliders">
+                    <p:menuitem value="Biz kimiz?" icon="fa-solid fa-viruses" url="#"/>
+                    <p:menuitem value="Etik kurulu" icon="fa-solid fa-viruses" url="#"/>
+                    <p:menuitem value="Bilim kurulu" icon="fa-solid fa-viruses" url="#"/>
+                </p:submenu>
 
                 <sec:authorize access="hasAuthority('ADMIN')">
                     <p:menuitem value="Kullanıcılar" icon="fa-solid fa-user-gear" url="/secured/admin/user-management"/>
 
                     <p:submenu label="Bitkisel veri yönetimi" icon="fa-solid fa-sliders">
                         <p:menuitem value="Katsayılar" icon="fa-solid fa-user-gear" url="/secured/admin/plantation/coefficient"/>
-                        <p:menuitem value="Hastalıklar" icon="fa-solid fa-user-gear" url="/secured/admin/plantation/disease"/>
+                        <p:menuitem value="Hastalıklar" icon="fa-solid fa-viruses" url="/secured/admin/plantation/disease"/>
+                        <p:menuitem value="İlaçlar" icon="fa-solid fa-vial-circle-check" url="/secured/admin/plantation/medicine"/>
                     </p:submenu>
 
                     <p:submenu label="Büyükbaş süt yönetimi" icon="fa-solid fa-sliders">
@@ -40,17 +45,34 @@
                 </sec:authorize>
 
                 <sec:authorize access="hasAuthority('USER')">
-                    <p:menuitem value="Çiftçilik bilgileri" icon="fa-solid fa-user-pen" url="/secured/farmer"/>
+                    <p:menuitem value="Çiftçilik bilgileri giriş ekranı" icon="fa-solid fa-user-pen" url="#"/>
 
-                    <p:submenu label="Bitkisel" icon="fa-solid fa-wheat-awn">
-                        <p:menuitem value="İşletme bilgileri" icon="fa-solid fa-tractor" url="/secured/plantation/business"/>
-                        <p:menuitem value="Arazi planları" icon="fa-solid fa-tractor" url="/secured/plantation/parcel"/>
+                    <p:submenu label="Bitkisel üretim giriş ekranı" icon="fa-solid fa-wheat-awn">
+                        <p:menuitem value="Arazi bilgilerim" icon="fa-solid fa-tractor" url="/secured/plantation-list"/>
+                        <p:menuitem value="İşletme bilgilerim" icon="fa-solid fa-tractor" url="#"/>
                     </p:submenu>
 
-                    <p:submenu label="Hayvansal" icon="fa-solid fa-cow">
+                    <p:submenu label="Hayvansal üretim giriş ekranı" icon="fa-solid fa-cow">
                         <p:menuitem value="Büyükbaş süt" icon="fa-solid fa-building-wheat" url="/secured/animal/dairy-cow/barn"/>
                     </p:submenu>
                 </sec:authorize>
+                <p:submenu label="Uzmana sor" icon="fa-solid fa-question">
+                    <p:menuitem value="Tarım finansman uzmanına sor" icon="fa-regular fa-wallet" url="#"/>
+                    <p:menuitem value="Bitkisel üretim uzmanına sor" icon="fa-regular fa-wallet" url="#"/>
+                    <p:menuitem value="Hayvansal üretim uzmanına sor" icon="fa-regular fa-wallet" url="#"/>
+                    <p:menuitem value="Bilim kuruluna sor" icon="fa-regular fa-wallet" url="#"/>
+                </p:submenu>
+
+                <p:menuitem value="Ne kadar kredi kullanabilirim?" icon="fa-regular fa-wallet" url="#"/>
+                <p:submenu label="Tarım akademisi" icon="fa-solid fa-question">
+                    <p:menuitem value="Ne kadar finansal okuryazarım?" icon="fa-regular fa-wallet" url="/public/financial-literacy"/>
+                    <p:menuitem value="Ürün bazlı fiyat tahmin raporları" icon="fa-regular fa-wallet" url="#"/>
+                    <p:menuitem value="Hastalık tanımlama ve ilaç önerileri" icon="fa-regular fa-wallet" url="#"/>
+                    <p:menuitem value="Sulama projemi çiz" icon="fa-regular fa-wallet" url="#"/>
+                    <p:menuitem value="Faydalı linkler" icon="fa-regular fa-wallet" url="#"/>
+                </p:submenu>
+
+                <p:menuitem value="İletişim" icon="fa-regular fa-wallet" url="#"/>
             </fr:menu>
         </h:form>
     </div>

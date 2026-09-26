@@ -1,11 +1,9 @@
 package tr.ozanbey.agricalc.webapp.webapp.controller.plantation;
 
 
-import jakarta.annotation.PostConstruct;
 import jakarta.faces.view.ViewScoped;
 import lombok.Getter;
 import lombok.Setter;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import software.xdev.chartjs.model.charts.PieChart;
 import software.xdev.chartjs.model.color.RGBAColor;
@@ -14,7 +12,9 @@ import software.xdev.chartjs.model.dataset.PieDataset;
 import tr.ozanbey.agricalc.webapp.service.enumtype.plantation.EnumAllocationType;
 import tr.ozanbey.agricalc.webapp.service.enumtype.plantation.EnumPlantationQuestionType;
 import tr.ozanbey.agricalc.webapp.service.service.plantation.CostAllocationService;
-import tr.ozanbey.agricalc.webapp.service.service.plantation.UserPlantParcelPlanService;
+import tr.ozanbey.agricalc.webapp.service.service.plantation.CostCalculationService;
+import tr.ozanbey.agricalc.webapp.service.service.plantation.QuestionService;
+import tr.ozanbey.agricalc.webapp.service.service.plantation.UserPlantationPlanService;
 import tr.ozanbey.agricalc.webapp.webapp.view.plantation.PlanAllocationResultView;
 
 import java.io.IOException;
@@ -29,18 +29,17 @@ import java.util.List;
 @Setter
 public class PlanResultController extends PlanProfileController {
 
-    @Autowired
-    private UserPlantParcelPlanService userPlantParcelPlanService;
-
-    @Autowired
-    private CostAllocationService costAllocationService;
-
     private String pieModelForExpense;
     private String pieModelForAllocation;
-
     private BigDecimal totalExpense = BigDecimal.ZERO;
     private List<ResultShowView> resultShowViewList = new ArrayList<>();
     private List<PlanAllocationResultView> planAllocationList;
+    public PlanResultController(UserPlantationPlanService userPlantationPlanService,
+                                QuestionService questionService,
+                                CostCalculationService costCalculationService,
+                                CostAllocationService costAllocationService) {
+        super(userPlantationPlanService, questionService, costCalculationService, costAllocationService);
+    }
 
     public List<PlanAllocationResultView> getPlanAllocationList() {
         return planAllocationList.stream().filter(a -> EnumAllocationType.getAllocationCostTypes().contains(a.getAllocationType())).toList();
@@ -50,13 +49,9 @@ public class PlanResultController extends PlanProfileController {
         return planAllocationList.stream().filter(a -> a.getAllocationType() == allocationType).findFirst().orElse(null);
     }
 
-    @PostConstruct
-    public void init() {
-    }
-
     public void createResultPageValues() throws IOException {
-        if (super.getParcelPlanId() == null || !checkPlanIdForUser(super.getParcelPlanId())) {
-            super.navigationController.redirectToUrl("/secured/plantation/parcel");
+        if (super.getPlantationPlanId() == null || !checkPlanIdForUser(super.getPlantationPlanId())) {
+            super.navigationController.redirectToUrl("/secured/plantation-list");
             return;
         }
         createPieChartExpenseModel();
@@ -72,18 +67,18 @@ public class PlanResultController extends PlanProfileController {
     }
 
     private void createPieChartExpenseModel() {
-        resultShowViewList.add(new ResultShowView(EnumPlantationQuestionType.EXPENSE_SOIL, super.getParcelPlan().getSoilPrepCost()));
-        resultShowViewList.add(new ResultShowView(EnumPlantationQuestionType.EXPENSE_PLANTING, super.getParcelPlan().getPlantingCost()));
-        resultShowViewList.add(new ResultShowView(EnumPlantationQuestionType.EXPENSE_FERTILIZER, super.getParcelPlan().getFertilizerCost()));
-        resultShowViewList.add(new ResultShowView(EnumPlantationQuestionType.EXPENSE_WEED, super.getParcelPlan().getWeedControlCost()));
-        resultShowViewList.add(new ResultShowView(EnumPlantationQuestionType.EXPENSE_IRRIGATION, super.getParcelPlan().getIrrigationCost()));
-        resultShowViewList.add(new ResultShowView(EnumPlantationQuestionType.EXPENSE_CULTURAL, super.getParcelPlan().getCulturalCost()));
-        resultShowViewList.add(new ResultShowView(EnumPlantationQuestionType.EXPENSE_PROTECTION, super.getParcelPlan().getProtectionCost()));
-        resultShowViewList.add(new ResultShowView(EnumPlantationQuestionType.EXPENSE_HARVEST, super.getParcelPlan().getHarvestCost()));
-        resultShowViewList.add(new ResultShowView(EnumPlantationQuestionType.EXPENSE_BLEND, super.getParcelPlan().getBlendCost()));
-        resultShowViewList.add(new ResultShowView(EnumPlantationQuestionType.EXPENSE_DRYING, super.getParcelPlan().getDryingCost()));
-        resultShowViewList.add(new ResultShowView(EnumPlantationQuestionType.EXPENSE_BALING, super.getParcelPlan().getBalingCost()));
-        resultShowViewList.add(new ResultShowView(EnumPlantationQuestionType.EXPENSE_PACKAGING, super.getParcelPlan().getTransportationCost()));
+        resultShowViewList.add(new ResultShowView(EnumPlantationQuestionType.EXPENSE_SOIL, super.getUserPlantationPlan().getSoilPrepCost()));
+        resultShowViewList.add(new ResultShowView(EnumPlantationQuestionType.EXPENSE_PLANTING, super.getUserPlantationPlan().getPlantingCost()));
+        resultShowViewList.add(new ResultShowView(EnumPlantationQuestionType.EXPENSE_FERTILIZER, super.getUserPlantationPlan().getFertilizerCost()));
+        resultShowViewList.add(new ResultShowView(EnumPlantationQuestionType.EXPENSE_WEED, super.getUserPlantationPlan().getWeedControlCost()));
+        resultShowViewList.add(new ResultShowView(EnumPlantationQuestionType.EXPENSE_IRRIGATION, super.getUserPlantationPlan().getIrrigationCost()));
+        resultShowViewList.add(new ResultShowView(EnumPlantationQuestionType.EXPENSE_CULTURAL, super.getUserPlantationPlan().getCulturalCost()));
+        resultShowViewList.add(new ResultShowView(EnumPlantationQuestionType.EXPENSE_PROTECTION, super.getUserPlantationPlan().getProtectionCost()));
+        resultShowViewList.add(new ResultShowView(EnumPlantationQuestionType.EXPENSE_HARVEST, super.getUserPlantationPlan().getHarvestCost()));
+        resultShowViewList.add(new ResultShowView(EnumPlantationQuestionType.EXPENSE_BLEND, super.getUserPlantationPlan().getBlendCost()));
+        resultShowViewList.add(new ResultShowView(EnumPlantationQuestionType.EXPENSE_DRYING, super.getUserPlantationPlan().getDryingCost()));
+        resultShowViewList.add(new ResultShowView(EnumPlantationQuestionType.EXPENSE_BALING, super.getUserPlantationPlan().getBalingCost()));
+        resultShowViewList.add(new ResultShowView(EnumPlantationQuestionType.EXPENSE_PACKAGING, super.getUserPlantationPlan().getTransportationCost()));
         pieModelForExpense = new PieChart()
                 .setData(new PieData()
                         .addDataset(new PieDataset()
@@ -105,7 +100,7 @@ public class PlanResultController extends PlanProfileController {
     }
 
     private void createPieChartAllocationModel() {
-        planAllocationList = costAllocationService.getAllocationListByPlanId(super.getParcelPlanId(), EnumAllocationType.values());
+        planAllocationList = getCostAllocationService().getAllocationListByPlanId(super.getPlantationPlanId(), EnumAllocationType.values());
 
         pieModelForAllocation = new PieChart()
                 .setData(new PieData()
@@ -139,8 +134,8 @@ public class PlanResultController extends PlanProfileController {
 
     private Double calculateValueRate(BigDecimal costValueCost) {
         return costValueCost != null
-                && super.getParcelPlan().getTotalExpense().compareTo(BigDecimal.ZERO) > 0
-                ? costValueCost.multiply(BigDecimal.valueOf(100)).divide(super.getParcelPlan().getTotalExpense(), 2, RoundingMode.HALF_UP).doubleValue()
+                && super.getUserPlantationPlan().getTotalExpense().compareTo(BigDecimal.ZERO) > 0
+                ? costValueCost.multiply(BigDecimal.valueOf(100)).divide(super.getUserPlantationPlan().getTotalExpense(), 2, RoundingMode.HALF_UP).doubleValue()
                 : 0d;
     }
 

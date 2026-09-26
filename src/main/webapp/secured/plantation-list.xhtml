@@ -1,0 +1,470 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="jakarta.faces.html"
+                xmlns:f="jakarta.faces.core"
+                xmlns:ui="jakarta.faces.facelets"
+                xmlns:p="http://primefaces.org/ui"
+                template="/templates/template.xhtml">
+
+    <ui:define name="title">Bitkisel Üretim Alanlarım</ui:define>
+
+    <ui:define name="metadata">
+        <f:metadata>
+        </f:metadata>
+    </ui:define>
+
+    <ui:define name="head">
+        <style type="text/css">
+            .plantation-toolbar.ui-sticky {
+                top: 62px !important;
+            }
+
+            .ui-datatable-sticky.ui-sticky {
+                top: 127px !important;
+            }
+
+            @media screen and (max-width: 640px) {
+                .plantation-sidebar {
+                    width: 95%;
+                }
+            }
+
+            @media screen and (min-width: 641px) and (max-width: 960px) {
+                .plantation-sidebar {
+                    width: 70%;
+                }
+
+            }
+
+            @media screen and (min-width: 961px) {
+                .plantation-sidebar {
+                    width: 50%;
+                }
+            }
+        </style>
+    </ui:define>
+
+    <ui:define name="content">
+        <h:form id="sidebarForm">
+            <p:sidebar widgetVar="sidebarWidgetVar"
+                       styleClass="plantation-sidebar"
+                       baseZIndex="-1"
+                       position="right">
+                <p:ajax event="close" listener="#{plantationListController.handleClose}" update="@this"/>
+                <h4 style="font-weight: bold;">Arazi ekle/düzenle</h4>
+                <p:accordionPanel id="apId" scrollIntoView="center"
+                                  multiple="true"
+                                  widgetVar="apWidgetVar"
+                                  style="overflow-y: auto;max-height: calc(100vh - 10rem);border: 1px solid"
+                                  styleClass="ui-fluid"
+                                  rendered="#{not empty plantationListController.selectedPlantationView}">
+                    <p:tab title="Zorunlu tanımlama bilgileri">
+                        <f:facet name="actions">
+                            <p style="color: red;">* işareti olanlar zorunludur.</p>
+                        </f:facet>
+                        <span class="ui-float-label">
+                            <p:inputText value="#{plantationListController.selectedPlantationView.name}"
+                                         required="true" requiredMessage="Aranize bir isim verin."
+                                         maxlength="118"/>
+                            <p:outputLabel for="@previous"
+                                           value="Arazinin adı"/>
+                        </span>
+                        <span class="ui-float-label mt-5">
+                            <p:selectOneMenu value="#{plantationListController.selectedPlantationView.selectedStatus}"
+                                             required="true" requiredMessage="Arazinin kullanım durumunu seçiniz."
+                                             autoWidth="false">
+                                <p:ajax update="@this" process="@this"/>
+                                <f:selectItems value="#{plantationListController.statuses}"
+                                               var="enumStatus"
+                                               itemLabel="#{msg[enumStatus]}" itemValue="#{enumStatus}"/>
+                            </p:selectOneMenu>
+                            <p:outputLabel for="@previous"
+                                           value="Arazinin kullanım durumu"/>
+                        </span>
+                        <p:tooltip for="@next"
+                                   value="Plan başladıktan sonra değiştirilemez."/>
+                        <p:outputPanel styleClass="ui-float-label mt-5">
+                            <p:selectOneMenu value="#{plantationListController.selectedPlantationView.selectedType}"
+                                             disabled="#{plantationListController.selectedPlantationView.anyPlanStarted}"
+                                             required="#{!plantationListController.selectedPlantationView.anyPlanStarted}"
+                                             requiredMessage="Arazinin üretim durumunu seçiniz."
+                                             hideNoSelectionOption="#{not empty plantationListController.selectedPlantationView.selectedType}"
+                                             autoWidth="false">
+                                <p:ajax update="@this outputPanelOrchard"
+                                        process="@this"
+                                        listener="#{plantationListController.handleTypeSelect}"/>
+                                <f:selectItem itemLabel="" itemValue="#{null}" noSelectionOption="true"/>
+                                <f:selectItems value="#{plantationListController.plantationTypes}"
+                                               var="plantationType"
+                                               itemDisabled="#{plantationType eq 'GREENHOUSE'}"
+                                               itemLabel="#{msg[plantationType]}" itemValue="#{plantationType}"/>
+                            </p:selectOneMenu>
+                            <p:outputLabel for="@previous"
+                                           value="Arazinin üretim durumu"/>
+                        </p:outputPanel>
+                        <p:outputPanel id="outputPanelOrchard"
+                                       styleClass="ui-float-label mt-5">
+                            <p:tooltip for="@parent"
+                                       rendered="#{plantationListController.selectedPlantationView.selectedType eq 'ORCHARD'}"
+                                       value="Bahçe tipi (Çok yıllık) ürünler değiştirilemez."/>
+                            <p:selectOneMenu autoWidth="false"
+                                             rendered="#{plantationListController.selectedPlantationView.selectedType eq 'ORCHARD'}"
+                                             value="#{plantationListController.selectedPlantationView.selectedPrimaryProductId}"
+                                             disabled="#{plantationListController.selectedPlantationView.anyPlanStarted}"
+                                             required="#{!plantationListController.selectedPlantationView.anyPlanStarted}"
+                                             requiredMessage="Arazide üretilen ürün seçiniz."
+                                             hideNoSelectionOption="#{plantationListController.selectedPlantationView.selectedType eq 'ORCHARD' and not empty plantationListController.selectedPlantationView.selectedPrimaryProductId}">
+                                <p:ajax update="@this" process="@this"/>
+                                <f:selectItem itemLabel="" itemValue="#{null}"
+                                              noSelectionOption="#{plantationListController.selectedPlantationView.selectedType eq 'ORCHARD'}"/>
+                                <f:selectItems value="#{plantationListController.productList}"
+                                               var="productVar"
+                                               itemLabel="#{productVar.name}"
+                                               itemValue="#{productVar.id}"/>
+                            </p:selectOneMenu>
+                            <p:outputLabel for="@previous"
+                                           rendered="#{plantationListController.selectedPlantationView.selectedType eq 'ORCHARD'}"
+                                           value="Üretilen ana ürün"/>
+                        </p:outputPanel>
+                        <span class="ui-float-label mt-5">
+                            <p:inputNumber value="#{plantationListController.selectedPlantationView.area}"
+                                           required="true" requiredMessage="Arazinin boyutu giriniz."
+                                           minValue="0" maxValue="999999"
+                                           decimalPlaces="2" decimalSeparator="," thousandSeparator=""/>
+                            <p:outputLabel for="@previous"
+                                           value="Arazinin boyutu (Dekar)"/>
+                        </span>
+                        <span class="ui-float-label mt-5">
+                            <p:selectOneMenu value="#{plantationListController.selectedPlantationView.selectedCityId}"
+                                             required="true" requiredMessage="Arazinin şehrini seçiniz."
+                                             hideNoSelectionOption="#{not empty plantationListController.selectedPlantationView.selectedCityId}"
+                                             autoWidth="false">
+                                <p:ajax update="@this outputPanelCityDistrict"
+                                        process="@this"
+                                        listener="#{plantationListController.handleCitySelect}"/>
+                                <f:selectItem itemLabel="" itemValue="#{null}" noSelectionOption="true"/>
+                                <f:selectItems value="#{plantationListController.cityList}"
+                                               var="cityVar"
+                                               itemLabel="#{cityVar.name}" itemValue="#{cityVar.id}"/>
+                            </p:selectOneMenu>
+                            <p:outputLabel for="@previous"
+                                           value="Arazinin şehri"/>
+                        </span>
+                        <p:outputPanel id="outputPanelCityDistrict" styleClass="ui-float-label mt-5">
+                            <p:selectOneMenu autoWidth="false"
+                                             value="#{plantationListController.selectedPlantationView.selectedCityDistrictId}"
+                                             required="true" requiredMessage="Arazinin ilçesini seçiniz."
+                                             hideNoSelectionOption="#{not empty plantationListController.selectedPlantationView.selectedCityDistrictId}">
+                                <p:ajax update="@this" process="@this"/>
+                                <f:selectItem itemLabel="" itemValue="#{null}" noSelectionOption="true"/>
+                                <f:selectItems value="#{plantationListController.districtList}"
+                                               var="districtVar"
+                                               itemLabel="#{districtVar.name}" itemValue="#{districtVar.id}"/>
+                            </p:selectOneMenu>
+                            <p:outputLabel for="@previous"
+                                           value="Arazinin ilçesi"/>
+                        </p:outputPanel>
+                    </p:tab>
+                    <p:tab title="Genel tanımlama bilgileri">
+                        <h6>Mülkiyet durumu</h6>
+                        <span>
+                            <p:selectOneRadio layout="responsive" columns="3"
+                                              value="#{plantationListController.selectedPlantationView.ownedOrRental}"
+                                              unselectable="true">
+                                <p:ajax update="outputPanelSellOrRentPrice" process="@this"/>
+                                <f:selectItem itemLabel="Sahipli" itemValue="#{true}"/>
+                                <f:selectItem itemLabel="Kiralık" itemValue="#{false}"/>
+                            </p:selectOneRadio>
+                        </span>
+                        <p:outputPanel id="outputPanelSellOrRentPrice" styleClass="ui-float-label mt-5">
+                            <p:inputNumber value="#{plantationListController.selectedPlantationView.sellOrRentPrice}"
+                                           minValue="0" maxValue="999999999"
+                                           rendered="#{plantationListController.selectedPlantationView.ownedOrRental ne null}"
+                                           decimalPlaces="3" decimalSeparator="," thousandSeparator="."/>
+                            <p:outputLabel for="@previous"
+                                           rendered="#{plantationListController.selectedPlantationView.ownedOrRental ne null}"
+                                           value="Arazinin #{plantationListController.selectedPlantationView.ownedOrRental ? 'fiyatı' : 'kirası'} (TL)"/>
+                        </p:outputPanel>
+                        <h6>Arazi adres bilgiler</h6>
+                        <span class="ui-float-label mt-5">
+                            <p:inputText value="#{plantationListController.selectedPlantationView.village}"
+                                         maxlength="118"/>
+                            <p:outputLabel for="@previous"
+                                           value="Arazinin köyü"/>
+                        </span>
+                        <span class="ui-float-label mt-5">
+                            <p:inputText value="#{plantationListController.selectedPlantationView.neighborhood}"
+                                         maxlength="118"/>
+                            <p:outputLabel for="@previous"
+                                           value="Arazinin mahallesi"/>
+                        </span>
+                        <span class="ui-float-label mt-5">
+                            <p:inputNumber value="#{plantationListController.selectedPlantationView.adaNumber}"
+                                           minValue="0" maxValue="999999999"
+                                           decimalPlaces="0" thousandSeparator=""/>
+                            <p:outputLabel for="@previous"
+                                           value="Arazinin ada numarası"/>
+                        </span>
+                        <span class="ui-float-label mt-5">
+                            <p:inputNumber value="#{plantationListController.selectedPlantationView.paftaNumber}"
+                                           minValue="0" maxValue="999999999"
+                                           decimalPlaces="0" thousandSeparator=""/>
+                            <p:outputLabel for="@previous"
+                                           value="Arazinin pafta numarası"/>
+                        </span>
+                    </p:tab>
+                    <p:tab title="Yardımcı tanımlama bilgileri">
+                        <h6>Arazinin durumu</h6>
+                        <span>
+                            <p:selectOneRadio layout="responsive" columns="3"
+                                              value="#{plantationListController.selectedPlantationView.selectedStatusType}"
+                                              unselectable="true">
+                                <f:selectItem itemLabel="Kuru" itemValue="Kuru"/>
+                                <f:selectItem itemLabel="Sulu" itemValue="Sulu"/>
+                                <f:selectItem itemLabel="Dikili" itemValue="Dikili"/>
+                            </p:selectOneRadio>
+                        </span>
+                        <h6>Nadas durumu</h6>
+                        <span>
+                            <p:selectOneRadio layout="responsive" columns="3"
+                                              value="#{plantationListController.selectedPlantationView.selectedNadas}"
+                                              unselectable="true">
+                                <f:selectItem itemLabel="Evet" itemValue="#{true}"/>
+                                <f:selectItem itemLabel="Hayır" itemValue="#{false}"/>
+                            </p:selectOneRadio>
+                        </span>
+                        <h6>Arazinin eğimi</h6>
+                        <span>
+                            <p:selectOneRadio layout="responsive" columns="3"
+                                              value="#{plantationListController.selectedPlantationView.selectedSlope}"
+                                              unselectable="true">
+                                <f:selectItem itemLabel="Düz" itemValue="Düz"/>
+                                <f:selectItem itemLabel="Az eğimli" itemValue="Az eğimli"/>
+                                <f:selectItem itemLabel="Eğimli" itemValue="Eğimli"/>
+                                <f:selectItem itemLabel="Bazı yerler düz" itemValue="Bazı yerler düz"/>
+                                <f:selectItem itemLabel="Dik" itemValue="Dik"/>
+                                <f:selectItem itemLabel="Çok dik" itemValue="Çok dik"/>
+                                <f:selectItem itemLabel="Setlenmiş dik" itemValue="Setlenmiş dik"/>
+                            </p:selectOneRadio>
+                        </span>
+                        <h6>Arazinin yönü</h6>
+                        <span>
+                            <p:selectOneRadio layout="responsive" columns="3"
+                                              value="#{plantationListController.selectedPlantationView.selectedOrientation}"
+                                              unselectable="true">
+                                <f:selectItem itemLabel="Kuzey" itemValue="Kuzey"/>
+                                <f:selectItem itemLabel="Kuzeydoğu" itemValue="Kuzeydoğu"/>
+                                <f:selectItem itemLabel="Doğu" itemValue="Doğu"/>
+                                <f:selectItem itemLabel="Güneydoğu" itemValue="Güneydoğu"/>
+                                <f:selectItem itemLabel="Güney" itemValue="Güney"/>
+                                <f:selectItem itemLabel="Güneybatı" itemValue="Güneybatı"/>
+                                <f:selectItem itemLabel="Batı" itemValue="Batı"/>
+                                <f:selectItem itemLabel="Kuzeybatı" itemValue="Kuzeybatı"/>
+                            </p:selectOneRadio>
+                        </span>
+                    </p:tab>
+                    <p:tab title="Toprak tanımlama bilgileri">
+                        <h6>Bünye şekli</h6>
+                        <span>
+                            <p:selectOneRadio layout="responsive" columns="3"
+                                              value="#{plantationListController.selectedPlantationView.selectedSoilTexture}"
+                                              unselectable="false">
+                                <f:selectItem itemLabel="Tınlı" itemValue="Tınlı"/>
+                                <f:selectItem itemLabel="Kumlu" itemValue="Kumlu"/>
+                                <f:selectItem itemLabel="Killi" itemValue="Killi"/>
+                                <f:selectItem itemLabel="Kumlu - tınlı" itemValue="Kumlu - tınlı"/>
+                                <f:selectItem itemLabel="Milli tın" itemValue="Milli tın"/>
+                                <f:selectItem itemLabel="Bilmiyorum" itemValue="Bilmiyorum"/>
+                            </p:selectOneRadio>
+                        </span>
+                        <h6>Aktif derinlik</h6>
+                        <span>
+                            <p:selectOneRadio layout="responsive" columns="3"
+                                              value="#{plantationListController.selectedPlantationView.selectedSoilDepth}"
+                                              unselectable="false">
+                                <f:selectItem itemLabel="Sığ (0-30 cm)" itemValue="Sığ"/>
+                                <f:selectItem itemLabel="Orta sığ (31-60 cm)" itemValue="Orta sığ"/>
+                                <f:selectItem itemLabel="Orta (61-90 cm)" itemValue="Orta"/>
+                                <f:selectItem itemLabel="Derin (91+ cm)" itemValue="Derin"/>
+                                <f:selectItem itemLabel="Bilmiyorum" itemValue="Bilmiyorum"/>
+                            </p:selectOneRadio>
+                        </span>
+                        <h6>Organik madde miktarı</h6>
+                        <span>
+                            <p:selectOneRadio layout="responsive" columns="3"
+                                              value="#{plantationListController.selectedPlantationView.selectedOrganicMatter}"
+                                              unselectable="false">
+                                <f:selectItem itemLabel="Çok az (% 0-1)" itemValue="Çok az"/>
+                                <f:selectItem itemLabel="Az (% 1-1,5)" itemValue="Az"/>
+                                <f:selectItem itemLabel="Orta (% 1,5-2)" itemValue="Orta"/>
+                                <f:selectItem itemLabel="Yeterli (% 2-3)" itemValue="Yeterli"/>
+                                <f:selectItem itemLabel="Çok iyi (% 3+)" itemValue="Çok iyi"/>
+                                <f:selectItem itemLabel="Bilmiyorum" itemValue="Bilmiyorum"/>
+                            </p:selectOneRadio>
+                        </span>
+                        <h6>Tuzluluk miktarı</h6>
+                        <span>
+                            <p:selectOneRadio layout="responsive" columns="3"
+                                              value="#{plantationListController.selectedPlantationView.selectedSoilSalinity}"
+                                              unselectable="false">
+                                <f:selectItem itemLabel="Tuzsus" itemValue="Tuzsus"/>
+                                <f:selectItem itemLabel="Çok az" itemValue="Çok az"/>
+                                <f:selectItem itemLabel="Az tuzlu" itemValue="Az tuzlu"/>
+                                <f:selectItem itemLabel="Tuzlu" itemValue="Tuzlu"/>
+                                <f:selectItem itemLabel="Çok tuzlu" itemValue="Çok tuzlu"/>
+                                <f:selectItem itemLabel="Bilmiyorum" itemValue="Bilmiyorum"/>
+                            </p:selectOneRadio>
+                        </span>
+                        <h6>Kireç miktarı</h6>
+                        <span>
+                            <p:selectOneRadio layout="responsive" columns="3"
+                                              value="#{plantationListController.selectedPlantationView.selectedLime}"
+                                              unselectable="false">
+                                <f:selectItem itemLabel="Kireçsiz" itemValue="Kireçsiz"/>
+                                <f:selectItem itemLabel="Az kireçli" itemValue="Az kireçli"/>
+                                <f:selectItem itemLabel="Orta kireçli" itemValue="Orta kireçli"/>
+                                <f:selectItem itemLabel="Kireçli" itemValue="Kireçli"/>
+                                <f:selectItem itemLabel="Çok kireçli" itemValue="Çok kireçli"/>
+                                <f:selectItem itemLabel="Bilmiyorum" itemValue="Bilmiyorum"/>
+                            </p:selectOneRadio>
+                        </span>
+                        <h6>Fosfor miktarı</h6>
+                        <span>
+                            <p:selectOneRadio layout="responsive" columns="3"
+                                              value="#{plantationListController.selectedPlantationView.selectedPhosphorus}"
+                                              unselectable="false">
+                                <f:selectItem itemLabel="Çok az" itemValue="Çok az"/>
+                                <f:selectItem itemLabel="Az" itemValue="Az"/>
+                                <f:selectItem itemLabel="Orta" itemValue="Orta"/>
+                                <f:selectItem itemLabel="Yüksek" itemValue="Yüksek"/>
+                                <f:selectItem itemLabel="Çok yüksek" itemValue="Çok yüksek"/>
+                                <f:selectItem itemLabel="Bilmiyorum" itemValue="Bilmiyorum"/>
+                            </p:selectOneRadio>
+                        </span>
+                        <h6>Potasyum miktarı</h6>
+                        <span>
+                            <p:selectOneRadio layout="responsive" columns="3"
+                                              value="#{plantationListController.selectedPlantationView.selectedPotassium}"
+                                              unselectable="false">
+                                <f:selectItem itemLabel="Çok az" itemValue="Çok az"/>
+                                <f:selectItem itemLabel="Az" itemValue="Az"/>
+                                <f:selectItem itemLabel="Orta" itemValue="Orta"/>
+                                <f:selectItem itemLabel="Yüksek" itemValue="Yüksek"/>
+                                <f:selectItem itemLabel="Çok yüksek" itemValue="Çok yüksek"/>
+                                <f:selectItem itemLabel="Bilmiyorum" itemValue="Bilmiyorum"/>
+                            </p:selectOneRadio>
+                        </span>
+                    </p:tab>
+                </p:accordionPanel>
+
+                <p:outputPanel styleClass="mt-5">
+                    <p:commandButton value="Kaydet"
+                                     process="sidebarForm"
+                                     update="growlForm plantationForm apId"
+                                     styleClass="m-1 ui-button-success"
+                                     onclick="PF('apWidgetVar').selectAll()"
+                                     validateClient="true"
+                                     iconPos="right"
+                                     action="#{plantationListController.savePlantationDetail}"
+                                     icon="pi pi-save"/>
+                    <p:commandButton value="Vazgeç"
+                                     process="@none"
+                                     oncomplete="PF('sidebarWidgetVar').hide()"
+                                     styleClass="m-1 ui-button-warning"
+                                     iconPos="right"
+                                     resetValues="true"
+                                     action="#{plantationListController.setSelectedPlantationView(null)}"
+                                     icon="pi pi-times">
+                        <p:resetInput target="sidebarForm"/>
+                    </p:commandButton>
+                </p:outputPanel>
+            </p:sidebar>
+        </h:form>
+
+        <div class="grid">
+            <div class="col">
+                <div class="card">
+                    <h3 style="font-weight: bold">Bitkisel Üretim Alanlarım</h3>
+                    <p>Arazilerinizi görüntüleyin, bilgilerini güncelleyin ve planlama başlatın.</p>
+                    <h:form id="plantationForm">
+                        <p:toolbar id="ptbId" styleClass="plantation-toolbar">
+                            <p:toolbarGroup align="right">
+                                <p:commandButton value="Yeni arazi ekle"
+                                                 icon="pi pi-plus"
+                                                 actionListener="#{plantationListController.create}"
+                                                 oncomplete="PF('sidebarWidgetVar').show()"
+                                                 update="sidebarForm">
+                                    <p:resetInput target="sidebarForm"/>
+                                </p:commandButton>
+                            </p:toolbarGroup>
+                        </p:toolbar>
+
+                        <p:dataTable stripedRows="true" size="large" reflow="true"
+                                     emptyMessage="Henüz arazi eklemediniz"
+                                     stickyHeader="true" stickyTopAt=".plantation-toolbar"
+                                     var="pdtVar" rowKey="#{pdtVar.userPlantationId}"
+                                     value="#{plantationListController.plantationList}">
+                            <p:column headerText="Adı">
+                                <h:outputText value="#{pdtVar.name}"/>
+                            </p:column>
+                            <p:column headerText="Kullanımı" style="width: 10rem">
+                                <h:outputText value="#{msg[pdtVar.selectedType]}"/>
+                            </p:column>
+                            <p:column headerText="Konumu">
+                                <h:outputText value="#{pdtVar.selectedCityName} - #{pdtVar.selectedDistrictName}"/>
+                            </p:column>
+                            <p:column headerText="Durumu" style="min-width: 3rem">
+                                <h:outputText value="#{msg[pdtVar.selectedStatus]}"/>
+                            </p:column>
+                            <p:column headerText="Alanı">
+                                <h:outputText value="#{pdtVar.area} dekar"/>
+                            </p:column>
+                            <p:column headerText="Mülkiyet" style="width: 3rem">
+                                <h:outputText value="#{pdtVar.ownedOrRental eq null ? '-' : pdtVar.ownedOrRental ? 'Sahipli' : 'Kiralık'}"/>
+                            </p:column>
+                            <p:column headerText="Üretim">
+                                <h:outputText value="#{pdtVar.selectedPrimaryProductName eq null ? '-' : pdtVar.selectedPrimaryProductName}"/>
+                            </p:column>
+                            <p:column style="width: 8rem">
+                                <p:tooltip for="@next"
+                                           rendered="#{pdtVar.selectedStatus eq 'PASSIVE'}"
+                                           value="Plan yapabilmek için aktifleştirin"/>
+                                <p:outputPanel>
+                                    <p:linkButton outcome="/secured/plantation-plan-list"
+                                                  styleClass="ml-1"
+                                                  disabled="#{pdtVar.selectedStatus eq 'PASSIVE'}"
+                                                  value="Planlar">
+                                        <f:param name="userPlantationId"
+                                                 value="#{pdtVar.userPlantationId}"/>
+                                    </p:linkButton>
+                                    <p:menuButton styleClass="ml-1 ui-button-secondary">
+                                        <p:menuitem value="Düzenle"
+                                                    action="#{plantationListController.update(pdtVar)}"
+                                                    icon="pi pi-save" process="@this"
+                                                    oncomplete="PF('sidebarWidgetVar').show()"
+                                                    update="sidebarForm"/>
+                                        <p:menuitem value="Kaldır"
+                                                    action="#{plantationListController.delete(pdtVar)}"
+                                                    icon="pi pi-trash"
+                                                    update="plantationForm">
+                                            <p:confirm header="Bu araziyi kaldır"
+                                                       message="Bu işlem geri alınamaz!"
+                                                       yesButtonLabel="Onayla"
+                                                       yesButtonClass="ui-button-danger"
+                                                       yesButtonIcon="pi pi-trash"
+                                                       noButtonLabel="Vazgeç"
+                                                       noButtonClass="ui-button-warning"
+                                                       icon="pi pi-exclamation-triangle"/>
+                                        </p:menuitem>
+                                    </p:menuButton>
+                                </p:outputPanel>
+                            </p:column>
+                        </p:dataTable>
+
+                        <p:sticky target="ptbId" stickyTopAt=".layout-config-button"/>
+                    </h:form>
+                </div>
+            </div>
+        </div>
+    </ui:define>
+
+</ui:composition>

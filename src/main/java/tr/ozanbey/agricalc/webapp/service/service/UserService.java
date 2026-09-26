@@ -4,22 +4,16 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import tr.ozanbey.agricalc.webapp.service.domain.City;
 import tr.ozanbey.agricalc.webapp.service.domain.User;
-import tr.ozanbey.agricalc.webapp.service.domain.UserInformation;
 import tr.ozanbey.agricalc.webapp.service.domain.UserRole;
 import tr.ozanbey.agricalc.webapp.service.enumtype.EnumRole;
 import tr.ozanbey.agricalc.webapp.service.enumtype.EnumStatus;
-import tr.ozanbey.agricalc.webapp.service.repository.UserInformationRepository;
 import tr.ozanbey.agricalc.webapp.service.repository.UserRepository;
-import tr.ozanbey.agricalc.webapp.service.repository.UserRoleRepository;
 import tr.ozanbey.agricalc.webapp.webapp.util.helpers.DateHelper;
 import tr.ozanbey.agricalc.webapp.webapp.util.io.CryptoUtils;
-import tr.ozanbey.agricalc.webapp.webapp.view.UserInformationView;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 import java.util.Optional;
 
 @Service
@@ -28,12 +22,6 @@ public class UserService {
 
     @Autowired
     private UserRepository userRepository;
-
-    @Autowired
-    private UserRoleRepository roleRepository;
-
-    @Autowired
-    private UserInformationRepository informationRepository;
 
     public Optional<User> getUserIdByPhoneAndStatus(String phone, EnumStatus status) {
         return userRepository.findByPhoneAndStatus(phone, status);
@@ -54,13 +42,13 @@ public class UserService {
         user.setStatus(EnumStatus.ACTIVE);
         user.setPhone(formatted);
         user.setPassword(CryptoUtils.oneWayHash(password));
-        assignRoleToUser(user, EnumRole.USER);
+        assignRoleToUser(user);
         userRepository.save(user);
     }
 
-    private void assignRoleToUser(User user, EnumRole enumRole) {
+    private void assignRoleToUser(User user) {
         List<UserRole> userRoleList = new ArrayList<>();
-        UserRole role = new UserRole(user, enumRole);
+        UserRole role = new UserRole(user, EnumRole.USER);
         userRoleList.add(role);
         user.setRoleList(userRoleList);
     }
@@ -75,69 +63,6 @@ public class UserService {
         user.setBeforeLastLogin(user.getLastLogin());
         user.setLastLogin(DateHelper.now());
         userRepository.save(user);
-    }
-
-    public UserInformationView getInformationByUserId(Long userId) {
-        UserInformation information = informationRepository.findByUser_Id(userId);
-        UserInformationView view = new UserInformationView();
-        if (information != null) {
-            if (information.getCity() != null)
-                view.setUserCityId(information.getCity().getId());
-            view.setTckn(information.getTckn());
-            view.setName(information.getNameSurname());
-            view.setEmail(information.getEmail());
-            view.setDistrict(information.getDistrict());
-            view.setVillage(information.getVillage());
-            view.setNeighborhood(information.getNeighborhood());
-        }
-        return view;
-    }
-
-    @Transactional
-    public boolean save(UserInformationView informationView, User user) {
-        UserInformation information = informationRepository.findByUser_Id(user.getId());
-        if (checkIsThereDifference(informationView, information)) {
-            if (information == null) {
-                information = new UserInformation();
-            }
-            viewToEntity(informationView, information, user);
-            informationRepository.save(information);
-            return true;
-        }
-        return false;
-    }
-
-    private void viewToEntity(UserInformationView informationView, UserInformation information, User user) {
-        information.setUser(user);
-        if (informationView.getUserCityId() != null) {
-            information.setCity(new City(informationView.getUserCityId()));
-        }
-        information.setTckn(informationView.getTckn());
-        information.setNameSurname(informationView.getName());
-        information.setEmail(informationView.getEmail());
-        information.setDistrict(informationView.getDistrict());
-        information.setVillage(informationView.getVillage());
-        information.setNeighborhood(informationView.getNeighborhood());
-    }
-
-    private boolean checkIsThereDifference(UserInformationView view, UserInformation info) {
-        if (info == null && view == null)
-            return false;
-
-        if (info == null || view == null)
-            return true;
-
-        return !Objects.equals(info.getCity() != null ? info.getCity().getId() : null, view.getUserCityId())
-                || !Objects.equals(info.getTckn(), view.getTckn())
-                || !Objects.equals(info.getNameSurname(), view.getName())
-                || !Objects.equals(info.getEmail(), view.getEmail())
-                || !Objects.equals(info.getDistrict(), view.getDistrict())
-                || !Objects.equals(info.getVillage(), view.getVillage())
-                || !Objects.equals(info.getNeighborhood(), view.getNeighborhood());
-    }
-
-    public List<UserInformationView> getUsersAsInfoViewList() {
-        return informationRepository.findAllAsInfoView();
     }
 
 }

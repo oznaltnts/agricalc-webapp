@@ -34,6 +34,9 @@ public class User extends AbstractStatusEntity {
     @Column(name = "before_last_login")
     private LocalDateTime beforeLastLogin;
 
+    @OneToOne(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    private UserInformation information;
+
     public User(Long id) {
         super.setId(id);
     }

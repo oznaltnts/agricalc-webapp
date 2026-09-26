@@ -29,13 +29,13 @@ public interface PlantationProductQuestionRepository extends JpaRepository<Plant
     @Query("""
                 SELECT DISTINCT ppq
                 FROM PlantationProductQuestion ppq
-                LEFT JOIN UserPlantParcelAnswer uppa ON uppa.productQuestion.id = ppq.id AND uppa.plantParcel.id = :plantParcelId
+                LEFT JOIN UserPlantationAnswer uppa ON uppa.productQuestion.id = ppq.id AND uppa.userPlantation.id = :plantationId
                 WHERE ppq.plantationProduct.id = :productId
                 AND ppq.plantationQuestion.status = :status
                 AND ppq.plantationQuestion.questionType = :questionType
                 AND uppa.answerValue IS NULL
             """)
-    List<PlantationProductQuestion> nextQuestionQuery(@Param("plantParcelId") Long plantParcelId,
+    List<PlantationProductQuestion> nextQuestionQuery(@Param("plantationId") Long plantationId,
                                                       @Param("productId") Long productId,
                                                       @Param("status") EnumStatus status,
                                                       @Param("questionType") EnumPlantationQuestionType questionType);

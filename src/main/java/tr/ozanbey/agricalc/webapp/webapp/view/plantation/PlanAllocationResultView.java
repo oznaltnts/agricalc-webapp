@@ -16,7 +16,7 @@ import java.math.BigDecimal;
 @Setter
 public class PlanAllocationResultView implements Serializable {
 
-    private Long parcelPlanId;
+    private Long plantationPlanId;
     private EnumPlantationQuestionType questionType;
     private EnumAllocationType allocationType;
     private BigDecimal calculatedValue;

@@ -1,0 +1,252 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="jakarta.faces.html"
+                xmlns:f="jakarta.faces.core"
+                xmlns:ui="jakarta.faces.facelets"
+                xmlns:p="http://primefaces.org/ui"
+                template="/templates/template.xhtml">
+
+    <ui:define name="title">Bitkisel Üretim Alanlarım</ui:define>
+
+    <ui:define name="metadata">
+        <f:metadata>
+            <f:viewParam name="userPlantationId"
+                         value="#{plantationPlanListController.userPlantationId}"/>
+            <f:viewAction action="#{plantationPlanListController.fillPlantationPlanList}"/>
+        </f:metadata>
+    </ui:define>
+
+    <ui:define name="head">
+        <style type="text/css">
+            .plantation-plan-toolbar.ui-sticky {
+                top: 62px !important;
+            }
+
+            .ui-datatable-sticky.ui-sticky {
+                top: 127px !important;
+            }
+
+            @media screen and (max-width: 640px) {
+                .plantation-plan-sidebar {
+                    width: 95%;
+                }
+            }
+
+            @media screen and (min-width: 641px) and (max-width: 960px) {
+                .plantation-plan-sidebar {
+                    width: 70%;
+                }
+
+            }
+
+            @media screen and (min-width: 961px) {
+                .plantation-plan-sidebar {
+                    width: 50%;
+                }
+            }
+        </style>
+    </ui:define>
+
+    <ui:define name="content">
+        <h:form id="sidebarForm">
+            <p:sidebar widgetVar="sidebarWidgetVar"
+                       styleClass="plantation-plan-sidebar"
+                       baseZIndex="-1"
+                       position="right">
+                <p:ajax event="close" listener="#{plantationPlanListController.handleClose}" update="@this"/>
+                <h4 style="font-weight: bold;">Plan ekle/düzenle</h4>
+                <p:accordionPanel id="apId" scrollIntoView="center"
+                                  multiple="true"
+                                  widgetVar="apWidgetVar"
+                                  style="overflow-y: auto;max-height: calc(100vh - 10rem);border: 1px solid"
+                                  styleClass="ui-fluid"
+                                  rendered="#{not empty plantationPlanListController.selectedPlantationPlanView}">
+                    <p:tab title="Plan başlatma bilgileri">
+                        <f:facet name="actions">
+                            <p style="color: red;">* işareti olanlar zorunludur.</p>
+                        </f:facet>
+                        <span class="ui-float-label">
+                           <p:datePicker view="month"
+                                         pattern="MM.yyyy"
+                                         value="#{plantationPlanListController.selectedPlantationPlanView.planStartDate}"
+                                         required="true" requiredMessage="Plan başlangıcını seçiniz."
+                                         showLongMonthNames="true"
+                                         showIcon="true">
+                               <p:ajax update="@next"/>
+                           </p:datePicker>
+                            <p:outputLabel for="@previous"
+                                           value="Plan başlangıcı"/>
+                        </span>
+                        <p:outputPanel styleClass="ui-float-label mt-5">
+                            <p:tooltip for="@parent"
+                                       value="#{plantationPlanListController.selectedPlantationPlanView.processTooltipMessage}"/>
+                            <p:selectOneMenu autoWidth="false"
+                                             value="#{plantationPlanListController.selectedPlantationPlanView.selectedPrimaryProductId}"
+                                             disabled="#{plantationPlanListController.selectedPlantationPlanView.anyProcessStarted}"
+                                             required="#{!plantationPlanListController.selectedPlantationPlanView.anyProcessStarted}"
+                                             requiredMessage="Planlanan ana ürünü seçiniz."
+                                             hideNoSelectionOption="#{not empty plantationPlanListController.selectedPlantationPlanView.selectedPrimaryProductId}">
+                                <p:ajax update="@parent outputPanelSecondary outputPanelTriple"
+                                        process="@this"
+                                        listener="#{plantationPlanListController.handlePrimaryProductSelect}"/>
+                                <f:selectItem itemLabel="" itemValue="#{null}" noSelectionOption="true"/>
+                                <f:selectItems value="#{plantationPlanListController.productList}"
+                                               var="productVar"
+                                               itemLabel="#{productVar.name}" itemValue="#{productVar.id}"/>
+                            </p:selectOneMenu>
+                            <p:outputLabel for="@previous"
+                                           value="Planlanan ana ürün"/>
+                        </p:outputPanel>
+                        <p:tooltip for="@next"
+                                   value="Süreç başladıktan sonra değiştirilemez."/>
+                        <p:outputPanel id="outputPanelSecondary"
+                                       styleClass="ui-float-label mt-5">
+                            <p:selectOneMenu autoWidth="false"
+                                             disabled="#{plantationPlanListController.selectedPlantationPlanView.anyProcessStarted}"
+                                             value="#{plantationPlanListController.selectedPlantationPlanView.selectedSecondaryProductId}"
+                                             rendered="#{plantationPlanListController.selectedPlantationView.selectedCityTriple ne null and plantationPlanListController.selectedPlantationPlanView.selectedPlantationType ne 'ORCHARD'}">
+                                <p:ajax update="@this outputPanelTriple" process="@this"/>
+                                <f:selectItem itemLabel="" itemValue="#{null}"/>
+                                <f:selectItems value="#{plantationPlanListController.openFieldProductList}"
+                                               var="productVar"
+                                               rendered="#{plantationPlanListController.selectedPlantationView.selectedCityTriple ne null and plantationPlanListController.selectedPlantationPlanView.selectedPlantationType ne 'ORCHARD'}"
+                                               itemLabel="#{productVar.name}"
+                                               itemValue="#{productVar.id}"/>
+                            </p:selectOneMenu>
+                            <p:outputLabel for="@previous"
+                                           rendered="#{plantationPlanListController.selectedPlantationView.selectedCityTriple ne null and plantationPlanListController.selectedPlantationPlanView.selectedPlantationType ne 'ORCHARD'}"
+                                           value="Üretilen ikincil ürün"/>
+                        </p:outputPanel>
+                        <p:outputPanel id="outputPanelTriple"
+                                       styleClass="ui-float-label mt-5">
+                            <p:selectOneMenu autoWidth="false"
+                                             disabled="#{plantationPlanListController.selectedPlantationPlanView.anyProcessStarted}"
+                                             value="#{plantationPlanListController.selectedPlantationPlanView.selectedLastProductId}"
+                                             rendered="#{plantationPlanListController.selectedPlantationView.selectedCityTriple and plantationPlanListController.selectedPlantationPlanView.selectedSecondaryProductId ne null}">
+                                <p:ajax update="@this outputPanelTriple" process="@this"/>
+                                <f:selectItem itemLabel="" itemValue="#{null}"/>
+                                <f:selectItems value="#{plantationPlanListController.openFieldProductList}"
+                                               var="productVar"
+                                               rendered="#{plantationPlanListController.selectedPlantationView.selectedCityTriple and plantationPlanListController.selectedPlantationPlanView.selectedSecondaryProductId ne null}"
+                                               itemLabel="#{productVar.name}"
+                                               itemValue="#{productVar.id}"/>
+                            </p:selectOneMenu>
+                            <p:outputLabel for="@previous"
+                                           rendered="#{plantationPlanListController.selectedPlantationView.selectedCityTriple and plantationPlanListController.selectedPlantationPlanView.selectedSecondaryProductId ne null}"
+                                           value="Üretilen son ürün"/>
+                        </p:outputPanel>
+                    </p:tab>
+                </p:accordionPanel>
+
+                <p:outputPanel styleClass="mt-5">
+                    <p:commandButton value="Kaydet"
+                                     process="sidebarForm"
+                                     update="growlForm plantationPlanForm apId"
+                                     styleClass="m-1 ui-button-success"
+                                     onclick="PF('apWidgetVar').selectAll()"
+                                     validateClient="true"
+                                     iconPos="right"
+                                     action="#{plantationPlanListController.savePlantationPlanDetail}"
+                                     icon="pi pi-save"/>
+                    <p:commandButton value="Vazgeç"
+                                     process="@none"
+                                     oncomplete="PF('sidebarWidgetVar').hide()"
+                                     styleClass="m-1 ui-button-warning"
+                                     iconPos="right"
+                                     resetValues="true"
+                                     action="#{plantationPlanListController.setSelectedPlantationPlanView(null)}"
+                                     icon="pi pi-times">
+                        <p:resetInput target="sidebarForm"/>
+                    </p:commandButton>
+                </p:outputPanel>
+            </p:sidebar>
+        </h:form>
+
+        <div class="grid">
+            <div class="col">
+                <div class="card">
+                    <h3 style="font-weight: bold">Arazi Üretim Planlarım</h3>
+                    <p>Planlarınızı görüntüleyin, bilgilerini güncelleyin ve süreci tamamlayın.</p>
+                    <h:form id="plantationPlanForm">
+                        <p:toolbar id="pptbId" styleClass="plantation-plan-toolbar">
+                            <p:toolbarGroup align="right">
+                                <p:commandButton value="Yeni plan ekle"
+                                                 icon="pi pi-plus"
+                                                 actionListener="#{plantationPlanListController.create}"
+                                                 oncomplete="PF('sidebarWidgetVar').show()"
+                                                 update="sidebarForm">
+                                    <p:resetInput target="sidebarForm"/>
+                                </p:commandButton>
+                                <p:linkButton outcome="/secured/plantation-list"
+                                              styleClass="ml-1 ui-button-secondary"
+                                              value="Arazilere dön"/>
+                            </p:toolbarGroup>
+                        </p:toolbar>
+
+                        <p:dataTable stripedRows="true" size="large" reflow="true"
+                                     emptyMessage="Henüz plan eklemediniz"
+                                     stickyHeader="true" stickyTopAt=".plantation-plan-toolbar"
+                                     var="ppdtVar" rowKey="#{ppdtVar.plantationPlanId}"
+                                     value="#{plantationPlanListController.plantationPlanList}">
+                            <p:column headerText="Plan durumu" style="min-width: 3rem">
+                                <h:outputText value="#{msg[ppdtVar.selectedStatus]}"/>
+                            </p:column>
+                            <p:column headerText="Başlangıcı">
+                                <h:outputText value="#{ppdtVar.planStartDate}"/>
+                            </p:column>
+                            <p:column headerText="Ana üretim">
+                                <h:outputText value="#{ppdtVar.selectedPrimaryProductName}"/>
+                            </p:column>
+                            <p:column headerText="İkincil Üretim">
+                                <h:outputText value="#{ppdtVar.selectedSecondaryProductName ne null ? ppdtVar.selectedSecondaryProductName : '-'}"/>
+                            </p:column>
+                            <p:column headerText="Net gelir">
+                                <h:outputText value="#{ppdtVar.selectedStatus eq 'PASSIVE' ? ppdtVar.grossIncome - ppdtVar.totalExpense : 'Süreci tamamlayın.'}"/>
+                            </p:column>
+                            <p:column style="width: 8rem">
+                                <p:outputPanel>
+                                    <p:linkButton outcome="/secured/plantation/income-profile"
+                                                  styleClass="ml-1"
+                                                  rendered="#{ppdtVar.selectedStatus eq 'ACTIVE'}"
+                                                  value="Süreç">
+                                        <f:param name="plantationPlanId"
+                                                 value="#{ppdtVar.plantationPlanId}"/>
+                                    </p:linkButton>
+                                    <p:linkButton outcome="/secured/plantation/plan-result"
+                                                  styleClass="ml-1"
+                                                  rendered="#{ppdtVar.selectedStatus eq 'PASSIVE'}"
+                                                  value="Sonuç">
+                                        <f:param name="plantationPlanId"
+                                                 value="#{ppdtVar.plantationPlanId}"/>
+                                    </p:linkButton>
+                                    <p:menuButton styleClass="ml-1 ui-button-secondary">
+                                        <p:menuitem value="Düzenle"
+                                                    action="#{plantationPlanListController.update(ppdtVar)}"
+                                                    icon="pi pi-save"
+                                                    oncomplete="PF('sidebarWidgetVar').show()"
+                                                    update="sidebarForm"/>
+                                        <p:menuitem value="Kaldır"
+                                                    action="#{plantationPlanListController.delete(ppdtVar)}"
+                                                    icon="pi pi-trash"
+                                                    update="plantationPlanForm">
+                                            <p:confirm header="Bu planı kaldır"
+                                                       message="Bu işlem geri alınamaz!"
+                                                       yesButtonLabel="Onayla"
+                                                       yesButtonClass="ui-button-danger"
+                                                       yesButtonIcon="pi pi-trash"
+                                                       noButtonLabel="Vazgeç"
+                                                       noButtonClass="ui-button-warning"
+                                                       icon="pi pi-exclamation-triangle"/>
+                                        </p:menuitem>
+                                    </p:menuButton>
+                                </p:outputPanel>
+                            </p:column>
+                        </p:dataTable>
+
+                        <p:sticky target="pptbId" stickyTopAt=".layout-config-button"/>
+                    </h:form>
+                </div>
+            </div>
+        </div>
+    </ui:define>
+
+</ui:composition>

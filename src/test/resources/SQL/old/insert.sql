@@ -355,7 +355,7 @@ INSERT INTO `dairy_cow_incomes` (`status`, `name`, `unit`) VALUES ('1', 'Süt de
 INSERT INTO `dairy_cow_incomes` (`status`, `name`, `unit`) VALUES ('1', 'Buzağı desteği', '(TL/Adet)');
 INSERT INTO `dairy_cow_incomes` (`status`, `name`, `unit`) VALUES ('1', 'Soy kütüğü desteği', '(TL/Adet)');
 INSERT INTO `dairy_cow_incomes` (`status`, `name`, `unit`) VALUES ('1', 'Hastalıktan ari işletme desteği', '(TL/Adet)');
-INSERT INTO `dairy_cow_incomes` (`status`, `name`, `unit`) VALUES ('1', 'Gübre satış yada biyogaz feliriniz varsa giriniz', '(TL/Yıl)');
+INSERT INTO `dairy_cow_incomes` (`status`, `name`, `unit`) VALUES ('1', 'Gübre satış yada biyogaz geliriniz varsa giriniz', '(TL/Yıl)');
 INSERT INTO `dairy_cow_incomes` (`status`, `name`, `unit`) VALUES ('1', 'Varsa diğer gelir giriniz', '(TL/Yıl)');
 
 ##plantation

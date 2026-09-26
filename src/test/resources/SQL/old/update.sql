@@ -325,3 +325,46 @@ UPDATE tektarim.plantation_questions SET r_type = 'FOR_ONCE' WHERE id =295;
 UPDATE tektarim.plantation_questions SET r_type = 'FOR_ONCE' WHERE id =296;
 UPDATE tektarim.plantation_questions SET r_type = 'FOR_ONCE' WHERE id =297;
 UPDATE tektarim.plantation_questions SET r_type = 'FOR_ONCE' WHERE id =298;
+
+
+ALTER TABLE `tektarim`.`cities`
+    ADD COLUMN `is_triple` TINYINT NULL DEFAULT NULL AFTER `neighbors_ids`;
+UPDATE `tektarim`.`cities` SET `is_triple` = '1' WHERE (`id` = '1');
+UPDATE `tektarim`.`cities` SET `is_triple` = '0' WHERE (`id` = '2');
+UPDATE `tektarim`.`cities` SET `is_triple` = '1' WHERE (`id` = '7');
+UPDATE `tektarim`.`cities` SET `is_triple` = '0' WHERE (`id` = '9');
+UPDATE `tektarim`.`cities` SET `is_triple` = '0' WHERE (`id` = '10');
+UPDATE `tektarim`.`cities` SET `is_triple` = '0' WHERE (`id` = '15');
+UPDATE `tektarim`.`cities` SET `is_triple` = '0' WHERE (`id` = '16');
+UPDATE `tektarim`.`cities` SET `is_triple` = '0' WHERE (`id` = '17');
+UPDATE `tektarim`.`cities` SET `is_triple` = '0' WHERE (`id` = '20');
+UPDATE `tektarim`.`cities` SET `is_triple` = '0' WHERE (`id` = '21');
+UPDATE `tektarim`.`cities` SET `is_triple` = '0' WHERE (`id` = '27');
+UPDATE `tektarim`.`cities` SET `is_triple` = '1' WHERE (`id` = '31');
+UPDATE `tektarim`.`cities` SET `is_triple` = '1' WHERE (`id` = '33');
+UPDATE `tektarim`.`cities` SET `is_triple` = '0' WHERE (`id` = '35');
+UPDATE `tektarim`.`cities` SET `is_triple` = '0' WHERE (`id` = '42');
+UPDATE `tektarim`.`cities` SET `is_triple` = '0' WHERE (`id` = '45');
+UPDATE `tektarim`.`cities` SET `is_triple` = '0' WHERE (`id` = '46');
+UPDATE `tektarim`.`cities` SET `is_triple` = '0' WHERE (`id` = '47');
+UPDATE `tektarim`.`cities` SET `is_triple` = '1' WHERE (`id` = '48');
+UPDATE `tektarim`.`cities` SET `is_triple` = '0' WHERE (`id` = '55');
+UPDATE `tektarim`.`cities` SET `is_triple` = '0' WHERE (`id` = '60');
+UPDATE `tektarim`.`cities` SET `is_triple` = '0' WHERE (`id` = '63');
+UPDATE `tektarim`.`cities` SET `is_triple` = '0' WHERE (`id` = '64');
+UPDATE `tektarim`.`cities` SET `is_triple` = '0' WHERE (`id` = '72');
+UPDATE `tektarim`.`cities` SET `is_triple` = '0' WHERE (`id` = '73');
+UPDATE `tektarim`.`cities` SET `is_triple` = '0' WHERE (`id` = '76');
+UPDATE `tektarim`.`cities` SET `is_triple` = '0' WHERE (`id` = '77');
+UPDATE `tektarim`.`cities` SET `is_triple` = '0' WHERE (`id` = '79');
+UPDATE `tektarim`.`cities` SET `is_triple` = '1' WHERE (`id` = '80');
+
+DROP TABLE `tektarim`.`user_informations`;
+DROP TABLE `tektarim`.`user_plant_parcel_plan_allocations`;
+DROP TABLE `tektarim`.`user_plant_parcel_plan_answers`;
+DROP TABLE `tektarim`.`user_plant_parcel_plans`;
+DROP TABLE `tektarim`.`user_plant_parcel_answers`;
+DROP TABLE `tektarim`.`user_plant_parcels`;
+
+
+

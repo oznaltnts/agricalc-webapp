@@ -1,23 +1,21 @@
 package tr.ozanbey.agricalc.webapp.webapp.controller.plantation;
 
 
-import jakarta.annotation.PostConstruct;
 import jakarta.faces.view.ViewScoped;
 import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.Hibernate;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import tr.ozanbey.agricalc.webapp.service.domain.plantation.PlantationProductQuestion;
-import tr.ozanbey.agricalc.webapp.service.domain.plantation.UserPlantParcelAnswer;
-import tr.ozanbey.agricalc.webapp.service.domain.plantation.UserPlantParcelPlanAnswer;
+import tr.ozanbey.agricalc.webapp.service.domain.plantation.UserPlantationAnswer;
+import tr.ozanbey.agricalc.webapp.service.domain.plantation.UserPlantationPlanAnswer;
 import tr.ozanbey.agricalc.webapp.service.enumtype.EnumStatus;
 import tr.ozanbey.agricalc.webapp.service.enumtype.plantation.EnumPlantationQuestionType;
 import tr.ozanbey.agricalc.webapp.service.enumtype.plantation.EnumQuestionAnswerType;
 import tr.ozanbey.agricalc.webapp.service.service.plantation.CostAllocationService;
 import tr.ozanbey.agricalc.webapp.service.service.plantation.CostCalculationService;
 import tr.ozanbey.agricalc.webapp.service.service.plantation.QuestionService;
-import tr.ozanbey.agricalc.webapp.service.service.plantation.UserPlantParcelPlanService;
+import tr.ozanbey.agricalc.webapp.service.service.plantation.UserPlantationPlanService;
 
 import java.io.IOException;
 import java.util.List;
@@ -29,33 +27,38 @@ import java.util.Optional;
 @Setter
 public class ExpenseIrrigationProfileController extends PlanProfileController {
 
-    @Autowired
-    private UserPlantParcelPlanService userPlantParcelPlanService;
-
-    @Autowired
-    private QuestionService questionService;
-
-    @PostConstruct
-    public void init() {
+    private static final List<Long> NOT_IRRIGATION_QUESTIONS = List.of(151L);
+    private static final List<Long> IRRIGATION_QUESTIONS = List.of(148L, 149L, 150L);
+    private static final List<Long> A_WATER_QUESTIONS = List.of(152L);
+    private static final List<Long> B_WATER_QUESTIONS = List.of(163L);
+    private static final List<Long> WATER_SOURCE_QUESTIONS = List.of(151L);
+    private static final List<Long> PRESSURE_QUESTIONS = List.of(153L);
+    private static final List<Long> WATER_PRESSURE_QUESTIONS = List.of(152L);
+    private static final List<Long> FIRST_A_PAYMENT_QUESTIONS = List.of(154L, 155L, 156L);
+    private static final List<Long> FIRST_B_PAYMENT_QUESTIONS = List.of(157L, 158L, 159L);
+    private static final List<Long> SECOND_PAYMENT_QUESTIONS = List.of(160L, 161L, 162L);
+    private static final List<Long> WATER_PAYMENT_QUESTIONS = List.of(153L);
+    private static final List<Long> FIRST_PUMP_QUESTIONS = List.of(164L, 165L, 166L, 167L, 168L);
+    private static final List<Long> SECOND_PUMP_QUESTIONS = List.of(169L, 170L, 171L, 172L, 173L);
+    private static final List<Long> PUMP_MOTOR_QUESTIONS = List.of(163L);
+    public ExpenseIrrigationProfileController(UserPlantationPlanService userPlantationPlanService,
+                                              QuestionService questionService,
+                                              CostCalculationService costCalculationService,
+                                              CostAllocationService costAllocationService) {
+        super(userPlantationPlanService, questionService, costCalculationService, costAllocationService);
     }
 
     public void fillExpenseIrrigationQuestionList() throws IOException {
-        if (super.getParcelPlanId() == null || !checkPlanIdForUser(super.getParcelPlanId())) {
-            super.navigationController.redirectToUrl("/secured/plantation/parcel");
+        if (super.getPlantationPlanId() == null || !checkPlanIdForUser(super.getPlantationPlanId())) {
+            super.navigationController.redirectToUrl("/secured/plantation-list");
             return;
         }
 
-        if (!Hibernate.isInitialized(super.getParcelPlan().getPlantParcel().getProduct().getProductQuestionList())) {
-            List<PlantationProductQuestion> productQuestionList = questionService.getActiveQuestionByQuestionType(super.getParcelPlan().getPlantParcel().getProduct().getId(), EnumStatus.ACTIVE, EnumPlantationQuestionType.EXPENSE_IRRIGATION);
-            List<UserPlantParcelPlanAnswer> planAnswerList = userPlantParcelPlanService.fillPlanAnswerValues(super.getParcelPlanId(), EnumPlantationQuestionType.EXPENSE_IRRIGATION);
-            List<UserPlantParcelAnswer> parcelAnswerList = userPlantParcelPlanService.fillParcelAnswerValues(super.getParcelPlan().getPlantParcel().getId(), EnumPlantationQuestionType.EXPENSE_IRRIGATION);
-            for (UserPlantParcelPlanAnswer userPlantParcelPlanAnswer : planAnswerList) {
-                fillAnsweredQuestionValues(userPlantParcelPlanAnswer.getProductQuestion().getId(), userPlantParcelPlanAnswer.getAnswerValue(), productQuestionList, false);
-            }
-            for (UserPlantParcelAnswer userPlantParcelAnswer : parcelAnswerList) {
-                fillAnsweredQuestionValues(userPlantParcelAnswer.getProductQuestion().getId(), userPlantParcelAnswer.getAnswerValue(), productQuestionList, true);
-            }
-            super.getParcelPlan().getPlantParcel().getProduct().setProductQuestionList(productQuestionList);
+        if (!Hibernate.isInitialized(super.getUserPlantationPlan().getPrimaryProduct().getProductQuestionList())) {
+            List<PlantationProductQuestion> productQuestionList = getQuestionService().getActiveQuestionByQuestionType(super.getUserPlantationPlan().getPrimaryProduct().getId(), EnumStatus.ACTIVE, EnumPlantationQuestionType.EXPENSE_IRRIGATION);
+            List<UserPlantationPlanAnswer> planAnswerList = getUserPlantationPlanService().fillPlanAnswerValues(super.getPlantationPlanId(), EnumPlantationQuestionType.EXPENSE_IRRIGATION);
+            List<UserPlantationAnswer> plantationAnswerList = getUserPlantationPlanService().fillPlantationAnswerValues(super.getUserPlantationPlan().getUserPlantation().getId(), EnumPlantationQuestionType.EXPENSE_IRRIGATION);
+            assignAnswerListsToProduct(planAnswerList, productQuestionList, plantationAnswerList);
         }
     }
 
@@ -99,41 +102,22 @@ public class ExpenseIrrigationProfileController extends PlanProfileController {
         return false;
     }
 
-    private static final List<Long> NOT_IRRIGATION_QUESTIONS = List.of(151L);
-    private static final List<Long> IRRIGATION_QUESTIONS = List.of(148L, 149L, 150L);
-
-    private static final List<Long> A_WATER_QUESTIONS = List.of(152L);
-    private static final List<Long> B_WATER_QUESTIONS = List.of(163L);
-    private static final List<Long> WATER_SOURCE_QUESTIONS = List.of(151L);
-
-    private static final List<Long> PRESSURE_QUESTIONS = List.of(153L);
-    private static final List<Long> WATER_PRESSURE_QUESTIONS = List.of(152L);
-
-    private static final List<Long> FIRST_A_PAYMENT_QUESTIONS = List.of(154L, 155L, 156L);
-    private static final List<Long> FIRST_B_PAYMENT_QUESTIONS = List.of(157L, 158L, 159L);
-    private static final List<Long> SECOND_PAYMENT_QUESTIONS = List.of(160L, 161L, 162L);
-    private static final List<Long> WATER_PAYMENT_QUESTIONS = List.of(153L);
-
-    private static final List<Long> FIRST_PUMP_QUESTIONS = List.of(164L, 165L, 166L, 167L, 168L);
-    private static final List<Long> SECOND_PUMP_QUESTIONS = List.of(169L, 170L, 171L, 172L, 173L);
-    private static final List<Long> PUMP_MOTOR_QUESTIONS = List.of(163L);
-
     private boolean checkPreviousQuestionAnswerAccordingly(PlantationProductQuestion question) {
-        Optional<PlantationProductQuestion> optionalQuestion = super.getParcelPlan().getPlantParcel().getProduct().getProductQuestionList().stream().filter(pq -> IRRIGATION_QUESTIONS.contains(pq.getPlantationQuestion().getId())).findFirst();
+        Optional<PlantationProductQuestion> optionalQuestion = super.getUserPlantationPlan().getPrimaryProduct().getProductQuestionList().stream().filter(pq -> IRRIGATION_QUESTIONS.contains(pq.getPlantationQuestion().getId())).findFirst();
         if (NOT_IRRIGATION_QUESTIONS.contains(question.getPlantationQuestion().getId())) {
             return optionalQuestion.map(plantationProductQuestion -> plantationProductQuestion.getSelectedAnswerId() != null && List.of(122L, 123L, 124L, 125L, 126L, 128L, 129L, 130L, 131L, 133L, 134L, 135L, 136L).contains(plantationProductQuestion.getSelectedAnswerId())).orElse(true);
         }
-        optionalQuestion = super.getParcelPlan().getPlantParcel().getProduct().getProductQuestionList().stream().filter(pq -> WATER_SOURCE_QUESTIONS.contains(pq.getPlantationQuestion().getId())).findFirst();
+        optionalQuestion = super.getUserPlantationPlan().getPrimaryProduct().getProductQuestionList().stream().filter(pq -> WATER_SOURCE_QUESTIONS.contains(pq.getPlantationQuestion().getId())).findFirst();
         if (A_WATER_QUESTIONS.contains(question.getPlantationQuestion().getId())) {
             return optionalQuestion.map(plantationProductQuestion -> plantationProductQuestion.getSelectedAnswerId() != null && List.of(138L).contains(plantationProductQuestion.getSelectedAnswerId())).orElse(true);
         } else if (B_WATER_QUESTIONS.contains(question.getPlantationQuestion().getId())) {
             return optionalQuestion.map(plantationProductQuestion -> plantationProductQuestion.getSelectedAnswerId() != null && List.of(139L).contains(plantationProductQuestion.getSelectedAnswerId())).orElse(true);
         }
-        Optional<PlantationProductQuestion> optionalQuestion2 = super.getParcelPlan().getPlantParcel().getProduct().getProductQuestionList().stream().filter(pq -> WATER_PRESSURE_QUESTIONS.contains(pq.getPlantationQuestion().getId())).findFirst();
+        Optional<PlantationProductQuestion> optionalQuestion2 = super.getUserPlantationPlan().getPrimaryProduct().getProductQuestionList().stream().filter(pq -> WATER_PRESSURE_QUESTIONS.contains(pq.getPlantationQuestion().getId())).findFirst();
         if (PRESSURE_QUESTIONS.contains(question.getPlantationQuestion().getId())) {
             return optionalQuestion2.map(plantationProductQuestion -> plantationProductQuestion.getSelectedAnswerId() != null && List.of(140L, 141L).contains(plantationProductQuestion.getSelectedAnswerId())).orElse(true);
         }
-        optionalQuestion = super.getParcelPlan().getPlantParcel().getProduct().getProductQuestionList().stream().filter(pq -> WATER_PAYMENT_QUESTIONS.contains(pq.getPlantationQuestion().getId())).findFirst();
+        optionalQuestion = super.getUserPlantationPlan().getPrimaryProduct().getProductQuestionList().stream().filter(pq -> WATER_PAYMENT_QUESTIONS.contains(pq.getPlantationQuestion().getId())).findFirst();
         if (FIRST_A_PAYMENT_QUESTIONS.contains(question.getPlantationQuestion().getId())) {
             if (optionalQuestion2.map(plantationProductQuestion -> plantationProductQuestion.getSelectedAnswerId() != null && List.of(140L).contains(plantationProductQuestion.getSelectedAnswerId())).orElse(true)) {
                 return optionalQuestion.map(plantationProductQuestion -> plantationProductQuestion.getSelectedAnswerId() != null && List.of(142L).contains(plantationProductQuestion.getSelectedAnswerId())).orElse(true);
@@ -147,7 +131,7 @@ public class ExpenseIrrigationProfileController extends PlanProfileController {
         } else if (SECOND_PAYMENT_QUESTIONS.contains(question.getPlantationQuestion().getId())) {
             return optionalQuestion.map(plantationProductQuestion -> plantationProductQuestion.getSelectedAnswerId() != null && List.of(143L).contains(plantationProductQuestion.getSelectedAnswerId())).orElse(true);
         }
-        optionalQuestion = super.getParcelPlan().getPlantParcel().getProduct().getProductQuestionList().stream().filter(pq -> PUMP_MOTOR_QUESTIONS.contains(pq.getPlantationQuestion().getId())).findFirst();
+        optionalQuestion = super.getUserPlantationPlan().getPrimaryProduct().getProductQuestionList().stream().filter(pq -> PUMP_MOTOR_QUESTIONS.contains(pq.getPlantationQuestion().getId())).findFirst();
         if (FIRST_PUMP_QUESTIONS.contains(question.getPlantationQuestion().getId())) {
             return optionalQuestion.map(plantationProductQuestion -> plantationProductQuestion.getSelectedAnswerId() != null && List.of(144L).contains(plantationProductQuestion.getSelectedAnswerId())).orElse(true);
         } else if (SECOND_PUMP_QUESTIONS.contains(question.getPlantationQuestion().getId())) {
@@ -156,15 +140,9 @@ public class ExpenseIrrigationProfileController extends PlanProfileController {
         return true;
     }
 
-    @Autowired
-    private CostCalculationService costCalculationService;
-
-    @Autowired
-    private CostAllocationService costAllocationService;
-
     public void nextSaveExpense() throws IOException {
-        super.getParcelPlan().setIrrigationCost(costCalculationService.calculateIrrigationCost(super.getParcelPlan().getPlantParcel().getProduct().getProductQuestionList(), super.getParcelPlan().getId(), super.getParcelPlan().getPlantParcel().getCity()));
-        costAllocationService.irrigationAllocation(super.getParcelPlan().getPlantParcel().getProduct().getProductQuestionList(), super.getParcelPlan(), super.getParcelPlan().getPlantParcel().getCity());
+        super.getUserPlantationPlan().setIrrigationCost(getCostCalculationService().calculateIrrigationCost(super.getUserPlantationPlan().getPrimaryProduct().getProductQuestionList(), super.getUserPlantationPlan().getId(), super.getUserPlantationPlan().getUserPlantation().getDistrict().getCity()));
+        getCostAllocationService().irrigationAllocation(super.getUserPlantationPlan().getPrimaryProduct().getProductQuestionList(), super.getUserPlantationPlan(), super.getUserPlantationPlan().getUserPlantation().getDistrict().getCity());
         goToNextPage(EnumPlantationQuestionType.EXPENSE_IRRIGATION);
     }
 

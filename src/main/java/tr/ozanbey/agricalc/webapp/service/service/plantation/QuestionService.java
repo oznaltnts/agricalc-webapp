@@ -21,8 +21,8 @@ public class QuestionService {
         return productQuestionRepository.getQuestionListByProductIdAndQuestionStatusAndQuestionTypeOrderByIdAsc(productId, status, questionType);
     }
 
-    public List<PlantationProductQuestion> checkIsThereQuestionToAsk(Long parcelId, Long productId, EnumStatus status, EnumPlantationQuestionType questionType) {
-        return productQuestionRepository.nextQuestionQuery(parcelId, productId, status, questionType);
+    public List<PlantationProductQuestion> checkIsThereQuestionToAsk(Long plantationId, Long productId, EnumStatus status, EnumPlantationQuestionType questionType) {
+        return productQuestionRepository.nextQuestionQuery(plantationId, productId, status, questionType);
     }
 
 }

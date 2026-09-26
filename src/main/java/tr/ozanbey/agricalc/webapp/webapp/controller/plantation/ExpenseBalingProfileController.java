@@ -1,23 +1,21 @@
 package tr.ozanbey.agricalc.webapp.webapp.controller.plantation;
 
 
-import jakarta.annotation.PostConstruct;
 import jakarta.faces.view.ViewScoped;
 import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.Hibernate;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import tr.ozanbey.agricalc.webapp.service.domain.plantation.PlantationProductQuestion;
-import tr.ozanbey.agricalc.webapp.service.domain.plantation.UserPlantParcelAnswer;
-import tr.ozanbey.agricalc.webapp.service.domain.plantation.UserPlantParcelPlanAnswer;
+import tr.ozanbey.agricalc.webapp.service.domain.plantation.UserPlantationAnswer;
+import tr.ozanbey.agricalc.webapp.service.domain.plantation.UserPlantationPlanAnswer;
 import tr.ozanbey.agricalc.webapp.service.enumtype.EnumStatus;
 import tr.ozanbey.agricalc.webapp.service.enumtype.plantation.EnumPlantationQuestionType;
 import tr.ozanbey.agricalc.webapp.service.enumtype.plantation.EnumQuestionAnswerType;
 import tr.ozanbey.agricalc.webapp.service.service.plantation.CostAllocationService;
 import tr.ozanbey.agricalc.webapp.service.service.plantation.CostCalculationService;
 import tr.ozanbey.agricalc.webapp.service.service.plantation.QuestionService;
-import tr.ozanbey.agricalc.webapp.service.service.plantation.UserPlantParcelPlanService;
+import tr.ozanbey.agricalc.webapp.service.service.plantation.UserPlantationPlanService;
 
 import java.io.IOException;
 import java.util.List;
@@ -29,33 +27,30 @@ import java.util.Optional;
 @Setter
 public class ExpenseBalingProfileController extends PlanProfileController {
 
-    @Autowired
-    private UserPlantParcelPlanService userPlantParcelPlanService;
+    private static final List<Long> X_BALING_QUESTIONS = List.of(274L);
+    private static final List<Long> BALING_QUESTIONS = List.of(273L);
+    private static final List<Long> A_BALING_QUESTIONS = List.of(275L);
+    private static final List<Long> ONE_BALING_QUESTIONS = List.of(276L, 277L, 278L, 279L);
+    private static final List<Long> TWO_BALING_QUESTIONS = List.of(280L, 281L);
 
-    @Autowired
-    private QuestionService questionService;
-
-    @PostConstruct
-    public void init() {
+    public ExpenseBalingProfileController(UserPlantationPlanService userPlantationPlanService,
+                                          QuestionService questionService,
+                                          CostCalculationService costCalculationService,
+                                          CostAllocationService costAllocationService) {
+        super(userPlantationPlanService, questionService, costCalculationService, costAllocationService);
     }
 
     public void fillExpenseBalingQuestionList() throws IOException {
-        if (super.getParcelPlanId() == null || !checkPlanIdForUser(super.getParcelPlanId())) {
-            super.navigationController.redirectToUrl("/secured/plantation/parcel");
+        if (super.getPlantationPlanId() == null || !checkPlanIdForUser(super.getPlantationPlanId())) {
+            super.navigationController.redirectToUrl("/plantation/field");
             return;
         }
 
-        if (!Hibernate.isInitialized(super.getParcelPlan().getPlantParcel().getProduct().getProductQuestionList())) {
-            List<PlantationProductQuestion> productQuestionList = questionService.getActiveQuestionByQuestionType(super.getParcelPlan().getPlantParcel().getProduct().getId(), EnumStatus.ACTIVE, EnumPlantationQuestionType.EXPENSE_BALING);
-            List<UserPlantParcelPlanAnswer> planAnswerList = userPlantParcelPlanService.fillPlanAnswerValues(super.getParcelPlanId(), EnumPlantationQuestionType.EXPENSE_BALING);
-            List<UserPlantParcelAnswer> parcelAnswerList = userPlantParcelPlanService.fillParcelAnswerValues(super.getParcelPlan().getPlantParcel().getId(), EnumPlantationQuestionType.EXPENSE_BALING);
-            for (UserPlantParcelPlanAnswer userPlantParcelPlanAnswer : planAnswerList) {
-                fillAnsweredQuestionValues(userPlantParcelPlanAnswer.getProductQuestion().getId(), userPlantParcelPlanAnswer.getAnswerValue(), productQuestionList, false);
-            }
-            for (UserPlantParcelAnswer userPlantParcelAnswer : parcelAnswerList) {
-                fillAnsweredQuestionValues(userPlantParcelAnswer.getProductQuestion().getId(), userPlantParcelAnswer.getAnswerValue(), productQuestionList, true);
-            }
-            super.getParcelPlan().getPlantParcel().getProduct().setProductQuestionList(productQuestionList);
+        if (!Hibernate.isInitialized(super.getUserPlantationPlan().getPrimaryProduct().getProductQuestionList())) {
+            List<PlantationProductQuestion> productQuestionList = super.getQuestionService().getActiveQuestionByQuestionType(super.getUserPlantationPlan().getPrimaryProduct().getId(), EnumStatus.ACTIVE, EnumPlantationQuestionType.EXPENSE_BALING);
+            List<UserPlantationPlanAnswer> planAnswerList = super.getUserPlantationPlanService().fillPlanAnswerValues(super.getPlantationPlanId(), EnumPlantationQuestionType.EXPENSE_BALING);
+            List<UserPlantationAnswer> plantationAnswerList = super.getUserPlantationPlanService().fillPlantationAnswerValues(super.getUserPlantationPlan().getUserPlantation().getId(), EnumPlantationQuestionType.EXPENSE_BALING);
+            assignAnswerListsToProduct(planAnswerList, productQuestionList, plantationAnswerList);
         }
     }
 
@@ -89,24 +84,16 @@ public class ExpenseBalingProfileController extends PlanProfileController {
         return false;
     }
 
-    private static final List<Long> X_BALING_QUESTIONS = List.of(274L);
-    private static final List<Long> BALING_QUESTIONS = List.of(273L);
-
-    private static final List<Long> A_BALING_QUESTIONS = List.of(275L);
-
-    private static final List<Long> ONE_BALING_QUESTIONS = List.of(276L, 277L, 278L, 279L);
-    private static final List<Long> TWO_BALING_QUESTIONS = List.of(280L, 281L);
-
     private boolean checkPreviousQuestionAnswerAccordingly(PlantationProductQuestion question) {
-        Optional<PlantationProductQuestion> optionalQuestion = super.getParcelPlan().getPlantParcel().getProduct().getProductQuestionList().stream().filter(pq -> BALING_QUESTIONS.contains(pq.getPlantationQuestion().getId())).findFirst();
+        Optional<PlantationProductQuestion> optionalQuestion = super.getUserPlantationPlan().getPrimaryProduct().getProductQuestionList().stream().filter(pq -> BALING_QUESTIONS.contains(pq.getPlantationQuestion().getId())).findFirst();
         if (X_BALING_QUESTIONS.contains(question.getPlantationQuestion().getId())) {
             return optionalQuestion.map(plantationProductQuestion -> plantationProductQuestion.getSelectedAnswerId() != null && List.of(193L).contains(plantationProductQuestion.getSelectedAnswerId())).orElse(true);
         }
-        optionalQuestion = super.getParcelPlan().getPlantParcel().getProduct().getProductQuestionList().stream().filter(pq -> X_BALING_QUESTIONS.contains(pq.getPlantationQuestion().getId())).findFirst();
+        optionalQuestion = super.getUserPlantationPlan().getPrimaryProduct().getProductQuestionList().stream().filter(pq -> X_BALING_QUESTIONS.contains(pq.getPlantationQuestion().getId())).findFirst();
         if (A_BALING_QUESTIONS.contains(question.getPlantationQuestion().getId())) {
             return optionalQuestion.map(plantationProductQuestion -> plantationProductQuestion.getSelectedAnswerId() != null && List.of(195L).contains(plantationProductQuestion.getSelectedAnswerId())).orElse(true);
         }
-        optionalQuestion = super.getParcelPlan().getPlantParcel().getProduct().getProductQuestionList().stream().filter(pq -> A_BALING_QUESTIONS.contains(pq.getPlantationQuestion().getId())).findFirst();
+        optionalQuestion = super.getUserPlantationPlan().getPrimaryProduct().getProductQuestionList().stream().filter(pq -> A_BALING_QUESTIONS.contains(pq.getPlantationQuestion().getId())).findFirst();
         if (ONE_BALING_QUESTIONS.contains(question.getPlantationQuestion().getId())) {
             return optionalQuestion.map(plantationProductQuestion -> plantationProductQuestion.getSelectedAnswerId() != null && List.of(197L).contains(plantationProductQuestion.getSelectedAnswerId())).orElse(true);
         } else if (TWO_BALING_QUESTIONS.contains(question.getPlantationQuestion().getId())) {
@@ -115,15 +102,9 @@ public class ExpenseBalingProfileController extends PlanProfileController {
         return true;
     }
 
-    @Autowired
-    private CostCalculationService costCalculationService;
-
-    @Autowired
-    private CostAllocationService costAllocationService;
-
     public void nextSaveExpense() throws IOException {
-        super.getParcelPlan().setBalingCost(costCalculationService.calculateBalingCost(super.getParcelPlan().getPlantParcel().getProduct().getProductQuestionList(), super.getParcelPlan().getId(), super.getParcelPlan().getPlantParcel().getCity()));
-        costAllocationService.balingAllocation(super.getParcelPlan().getPlantParcel().getProduct().getProductQuestionList(), super.getParcelPlan(), super.getParcelPlan().getPlantParcel().getCity());
+        super.getUserPlantationPlan().setBalingCost(getCostCalculationService().calculateBalingCost(super.getUserPlantationPlan().getPrimaryProduct().getProductQuestionList(), super.getUserPlantationPlan().getId(), super.getUserPlantationPlan().getUserPlantation().getDistrict().getCity()));
+        getCostAllocationService().balingAllocation(super.getUserPlantationPlan().getPrimaryProduct().getProductQuestionList(), super.getUserPlantationPlan(), super.getUserPlantationPlan().getUserPlantation().getDistrict().getCity());
         goToNextPage(EnumPlantationQuestionType.EXPENSE_BALING);
     }
 

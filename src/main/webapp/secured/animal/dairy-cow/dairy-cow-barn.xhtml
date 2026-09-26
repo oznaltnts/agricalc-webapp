@@ -29,12 +29,12 @@
             <div class="col">
                 <div class="card">
                     <p:steps activeIndex="0">
-                        <p:menuitem value="Ahırlar"/>
-                        <p:menuitem value="Hayvanlar"/>
-                        <p:menuitem value="Yemler"/>
+                        <p:menuitem value="Genel bilgiler"/>
+                        <p:menuitem value="Hayvan varlığı projeksiyonu"/>
+                        <p:menuitem value="Beslemede kullanılan yemler"/>
                         <p:menuitem value="Yem rasyonu"/>
-                        <p:menuitem value="Giderler"/>
-                        <p:menuitem value="Gelirler" containerStyleClass="steps-desktop"/>
+                        <p:menuitem value="Diğer üretim giderleri"/>
+                        <p:menuitem value="Üretim gelirleri" containerStyleClass="steps-desktop"/>
                         <p:menuitem value="Sonuçlar" containerStyleClass="steps-desktop"/>
                     </p:steps>
                 </div>
@@ -45,7 +45,7 @@
             <div class="col">
                 <h:form id="barnListForm"
                         class="card">
-                    <h5 class="mt-0" style="font-weight: bold">Büyükbaş süt ahırları</h5>
+                    <h5 class="mt-0" style="font-weight: bold">Büyükbaş süt işletmesi</h5>
 
                     <p:growl id="growl"
                              showDetail="true"
@@ -87,7 +87,7 @@
                             </p:cellEditor>
                         </p:column>
 
-                        <p:column headerText="Ahır kapasite">
+                        <p:column headerText="Ahır kapasite (BB adet)">
                             <p:cellEditor>
                                 <f:facet name="output">
                                     <h:outputText value="#{dairyCowBarn.barnCapacity}"/>
@@ -103,7 +103,7 @@
                             </p:cellEditor>
                         </p:column>
 
-                        <p:column headerText="Sağmal kapasite">
+                        <p:column headerText="Sağmal kapasite (İnek adet)">
                             <p:cellEditor>
                                 <f:facet name="output">
                                     <h:outputText value="#{dairyCowBarn.milkingCapacity}"/>
@@ -120,7 +120,7 @@
                             </p:cellEditor>
                         </p:column>
 
-                        <p:column headerText="Tesis Fiyatı">
+                        <p:column headerText="Ahır tesis fiyatı (TL)">
                             <p:cellEditor>
                                 <f:facet name="output">
                                     <h:outputText value="#{dairyCowBarn.barnPrice}"/>
@@ -132,7 +132,7 @@
                             </p:cellEditor>
                         </p:column>
 
-                        <p:column headerText="Doğum oranı">
+                        <p:column headerText="Doğum oranı (%)">
                             <p:cellEditor>
                                 <f:facet name="output">
                                     <h:outputText value="#{dairyCowBarn.birthRate}"/>
@@ -144,7 +144,7 @@
                             </p:cellEditor>
                         </p:column>
 
-                        <p:column headerText="Ölüm oranı">
+                        <p:column headerText="Ölüm oranı (%)">
                             <p:cellEditor>
                                 <f:facet name="output">
                                     <h:outputText value="#{dairyCowBarn.deathRate}"/>
@@ -156,7 +156,7 @@
                             </p:cellEditor>
                         </p:column>
 
-                        <p:column headerText="Suni tohumlama">
+                        <p:column headerText="Suni tohumlama sayısı (adet/bir hayvan)">
                             <p:cellEditor>
                                 <f:facet name="output">
                                     <h:outputText value="#{dairyCowBarn.inseminationRate}"/>
@@ -168,7 +168,7 @@
                             </p:cellEditor>
                         </p:column>
 
-                        <p:column headerText="Süt verimi">
+                        <p:column headerText="Ortalama laktasyon süt verimi (lt/hayvan)">
                             <p:cellEditor>
                                 <f:facet name="output">
                                     <h:outputText value="#{dairyCowBarn.milkYield}"/>
@@ -180,7 +180,7 @@
                             </p:cellEditor>
                         </p:column>
 
-                        <p:column headerText="Laktasyon süresi">
+                        <p:column headerText="Laktasyon süresi (gün)">
                             <p:cellEditor>
                                 <f:facet name="output">
                                     <h:outputText value="#{dairyCowBarn.lactationPeriod}"/>
@@ -202,7 +202,7 @@
                                          saveTitle="Save Row"/>
                         </p:column>
 
-                        <p:column headerText="Hayvanlar" style="width: 78px;text-align: right">
+                        <p:column headerText="Hayvan varlığı projeksiyonuna geç" width="150" style="text-align: right">
                             <p:button href="/secured/animal/dairy-cow/count"
                                       styleClass="rounded-button ui-button-flat"
                                       icon="fa-solid fa-right-long">

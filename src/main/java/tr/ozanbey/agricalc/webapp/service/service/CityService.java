@@ -1,9 +1,10 @@
 package tr.ozanbey.agricalc.webapp.service.service;
 
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import tr.ozanbey.agricalc.webapp.service.domain.City;
+import tr.ozanbey.agricalc.webapp.service.domain.CityDistrict;
+import tr.ozanbey.agricalc.webapp.service.repository.CityDistrictRepository;
 import tr.ozanbey.agricalc.webapp.service.repository.CityRepository;
 
 import java.util.List;
@@ -12,11 +13,21 @@ import java.util.List;
 @Slf4j
 public class CityService {
 
-    @Autowired
-    private CityRepository cityRepository;
+    private final CityRepository cityRepository;
+    private final CityDistrictRepository cityDistrictRepository;
+
+    public CityService(CityRepository cityRepository,
+                       CityDistrictRepository cityDistrictRepository) {
+        this.cityRepository = cityRepository;
+        this.cityDistrictRepository = cityDistrictRepository;
+    }
 
     public List<City> getAllCities() {
         return cityRepository.findAll();
+    }
+
+    public List<CityDistrict> getDistrictListByCityId(Long cityId) {
+        return cityDistrictRepository.findByCity_Id(cityId);
     }
 
 }

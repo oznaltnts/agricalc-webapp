@@ -36,10 +36,30 @@
 
             <div class="layout-main"> 
                 <div class="layout-content">
+                    <h:form id="growlForm">
+                        <p:growl id="growl"
+                                 showDetail="true"
+                                 severity="info warn error">
+                            <p:autoUpdate/>
+                        </p:growl>
+                    </h:form>
                     <ui:insert name="content"/>
                 </div>
                 <!-- TODO ui:include src="./footer.xhtml"/-->
             </div>
+            <h:form>
+                <p:confirmDialog global="true"
+                                 responsive="true">
+                    <p:commandButton value="No"
+                                     type="button"
+                                     styleClass="ui-confirmdialog-no"
+                                     icon="pi pi-times"/>
+                    <p:commandButton value="Yes"
+                                     type="button"
+                                     styleClass="ui-confirmdialog-yes"
+                                     icon="pi pi-check"/>
+                </p:confirmDialog>
+            </h:form>
          
             <p:ajaxStatus style="width:32px;height:32px;position:fixed;right:7px;bottom:7px">
                 <f:facet name="start">

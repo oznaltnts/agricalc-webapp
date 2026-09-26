@@ -20,12 +20,12 @@
             <div class="col">
                 <div class="card">
                     <p:steps activeIndex="6">
-                        <p:menuitem value="Ahırlar"/>
-                        <p:menuitem value="Hayvanlar"/>
-                        <p:menuitem value="Yemler"/>
+                        <p:menuitem value="Genel bilgiler" containerStyleClass="steps-desktop"/>
+                        <p:menuitem value="Hayvan varlığı projeksiyonu" containerStyleClass="steps-desktop"/>
+                        <p:menuitem value="Beslemede kullanılan yemler"/>
                         <p:menuitem value="Yem rasyonu"/>
-                        <p:menuitem value="Giderler"/>
-                        <p:menuitem value="Gelirler"/>
+                        <p:menuitem value="Diğer üretim giderleri"/>
+                        <p:menuitem value="Üretim gelirleri"/>
                         <p:menuitem value="Sonuçlar"/>
                     </p:steps>
                 </div>
@@ -304,7 +304,7 @@
             </div>
             <div class="col-12">
                 <p:outputPanel style="display: flex; justify-content: space-between;">
-                    <p:button value="Büyükbaş süt gelirleri"
+                    <p:button value="ÜRETİM GELİRLERİNE GERİ DÖN"
                               styleClass="m-1"
                               iconPos="left"
                               href="/secured/animal/dairy-cow/income"
@@ -312,7 +312,7 @@
                         <f:param name="barnId"
                                  value="#{dairyCowResultController.barnId}"/>
                     </p:button>
-                    <p:button value="Başa dön"
+                    <p:button value="YENİ PROJEKSİYONA BAŞLA"
                               styleClass="m-1"
                               iconPos="right"
                               href="/secured/animal/dairy-cow/barn"

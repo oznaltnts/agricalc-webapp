@@ -194,7 +194,38 @@ public class IncomeCalculationService {
                                         double sideFodderYield22PerDa,
                                         double sideSeedYield23PerDa,
                                         double sidePickleYield24PerDa,
-                                        double sideYield13PerDa, BigDecimal salePrice36PerGr) {
+                                        BigDecimal salePrice36PerGr) {
+        if (mainYield13PerDa != 0d) {
+            mainYield12PerDa = mainYield13PerDa / 1000;
+        } else if (mainYield17PerDa != 0d && harvestCount != 0) {
+            mainYield12PerDa = mainYield17PerDa * harvestCount;
+        } else if (mainYield14PerDa != 0d) {
+            mainYield12PerDa = mainYield14PerDa;
+        } else if (mainYield15PerDa != 0d) {
+            mainYield12PerDa = mainYield15PerDa;
+            salePrice30PerKg = salePrice31PerKg;
+        } else if (mainYield16PerDa != 0d) {
+            mainYield12PerDa = mainYield16PerDa;
+            salePrice30PerKg = salePrice32PerKg;
+        }
+
+        double highQualityYield1218PerDa = highQualityYield1218PerDa(mainYield12PerDa, lowQuality18Rate);
+        double lowQualityYield1218PerDa = lowQualityYield1218PerDa(mainYield12PerDa, lowQuality18Rate);
+        BigDecimal calculateNewMainIncome = highQualityGrossIncome3012PerDa(highQualityYield1218PerDa, salePrice30PerKg, lowQualityYield1218PerDa, salePrice33PerKg);
+        BigDecimal calculateNewJuiceIncome = BigDecimal.valueOf(juiceYield19PerDa).multiply(juicePrice34PerKg);
+        BigDecimal calculateNewStrawIncome = BigDecimal.valueOf(sideStrawYield20PerDa).multiply(sidePrice35PerKg);
+        BigDecimal calculateNewGrainIncome = BigDecimal.valueOf(sideGrainYield21PerDa).multiply(sidePrice35PerKg);
+        BigDecimal calculateNewFodderIncome = BigDecimal.valueOf(sideFodderYield22PerDa).multiply(sidePrice35PerKg);
+        BigDecimal calculateNewSeedIncome = BigDecimal.valueOf(sideSeedYield23PerDa).multiply(sidePrice35PerKg);
+        BigDecimal calculateNewPickleIncome = BigDecimal.valueOf(sidePickleYield24PerDa).multiply(sidePrice35PerKg);
+        return calculateNewMainIncome
+                .add(calculateNewJuiceIncome)
+                .add(calculateNewStrawIncome)
+                .add(calculateNewGrainIncome)
+                .add(calculateNewFodderIncome)
+                .add(calculateNewSeedIncome)
+                .add(calculateNewPickleIncome);
+/*
         BigDecimal mainProductGrossIncome3012PerDa = mainProductGrossIncome3012PerDa(salePrice30PerKg, mainYield12PerDa);
         BigDecimal juiceGrossIncome3012PerDa = juiceGrossIncome3012PerDa(mainProductGrossIncome3012PerDa, juiceYield19PerDa, juicePrice34PerKg);
 
@@ -225,9 +256,10 @@ public class IncomeCalculationService {
                 .add(sideSeedGrossIncome(sideSeedGrossIncome3012PerDa))
                 .add(sidePickleGrossIncome(sidePickleGrossIncome3012PerDa))
                 .add(sideProductGrossIncome(sideProductGrossIncome3013PerDa));
+ */
     }
 
-    public BigDecimal calculateIncome(List<PlantationProductQuestion> productQuestionList, Long parcelPlanId, City city) {
+    public BigDecimal calculateIncome(List<PlantationProductQuestion> productQuestionList, Long plantationPlanId, City city) {
         double mainYield17PerDa = doubleValueSetter(productQuestionList, 17L);
         int harvestCount = integerValueSetter(productQuestionList, 299L);
         double mainYield13PerDa = doubleValueSetter(productQuestionList, 13L);
@@ -248,14 +280,14 @@ public class IncomeCalculationService {
         double sideFodderYield22PerDa = doubleValueSetter(productQuestionList, 22L);
         double sideSeedYield23PerDa = doubleValueSetter(productQuestionList, 23L);
         double sidePickleYield24PerDa = doubleValueSetter(productQuestionList, 24L);
-        double sideYield13PerDa = doubleValueSetter(productQuestionList, 13L);
+//        double sideYield13PerDa = doubleValueSetter(productQuestionList, 13L);
         BigDecimal salePrice36PerGr = decimalValueSetter(productQuestionList, 36L);
 
         return totalGrossIncome(mainYield17PerDa, harvestCount, mainYield13PerDa, salePrice30PerKg, mainYield12PerDa,
                 mainYield14PerDa, mainYield15PerDa, salePrice31PerKg, mainYield16PerDa, salePrice32PerKg,
                 lowQuality18Rate, salePrice33PerKg, juiceYield19PerDa, juicePrice34PerKg, sideStrawYield20PerDa,
                 sidePrice35PerKg, sideGrainYield21PerDa, sideFodderYield22PerDa, sideSeedYield23PerDa,
-                sidePickleYield24PerDa, sideYield13PerDa, salePrice36PerGr);
+                sidePickleYield24PerDa, salePrice36PerGr);
     }
 
     private BigDecimal decimalValueSetter(List<PlantationProductQuestion> questionList, Long questionId) {

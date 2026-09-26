@@ -30,12 +30,8 @@ public class UserInformation extends AbstractEntity {
     private String email;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "city_id", referencedColumnName = "id")
-    private City city;
-
-    @Column(name = "district")
-    @ToString.Include
-    private String district;
+    @JoinColumn(name = "city_district_id", referencedColumnName = "id")
+    private CityDistrict district;
 
     @Column(name = "village")
     @ToString.Include

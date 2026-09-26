@@ -37,12 +37,12 @@
             <div class="col">
                 <div class="card">
                     <p:steps activeIndex="3">
-                        <p:menuitem value="Ahırlar" containerStyleClass="steps-desktop"/>
-                        <p:menuitem value="Hayvanlar"/>
-                        <p:menuitem value="Yemler"/>
+                        <p:menuitem value="Genel bilgiler" containerStyleClass="steps-desktop"/>
+                        <p:menuitem value="Hayvan varlığı projeksiyonu"/>
+                        <p:menuitem value="Beslemede kullanılan yemler"/>
                         <p:menuitem value="Yem rasyonu"/>
-                        <p:menuitem value="Giderler"/>
-                        <p:menuitem value="Gelirler"/>
+                        <p:menuitem value="Diğer üretim giderleri"/>
+                        <p:menuitem value="Üretim gelirleri"/>
                         <p:menuitem value="Sonuçlar" containerStyleClass="steps-desktop"/>
                     </p:steps>
                 </div>
@@ -107,12 +107,13 @@
                         </p:column>
                     </p:dataTable>
                 </h:form>
+                <h5>Kullandığınız yem daha fazlaysa, kullanılan yemlere geri dönebilirsiniz.</h5>
             </div>
         </div>
         <div class="grid">
             <div class="col">
                 <h:form style="display: flex; justify-content: space-between; flex-direction: row-reverse;">
-                    <p:commandButton value="Büyükbaş süt işletme giderleri"
+                    <p:commandButton value="DİĞER GİDERLERE İLERLE"
                                      process="rasyonListForm"
                                      update="rasyonListForm"
                                      styleClass="m-1"
@@ -120,7 +121,7 @@
                                      iconPos="right"
                                      action="#{dairyCowFeedRasyonController.nextSaveFeedRasyon}"
                                      icon="fa-solid fa-angles-right"/>
-                    <p:commandButton value="Büyükbaş süt yemleri"
+                    <p:commandButton value="KULLANILAN YEMLERE DÖN"
                                      process="rasyonListForm"
                                      update="rasyonListForm"
                                      styleClass="m-1"

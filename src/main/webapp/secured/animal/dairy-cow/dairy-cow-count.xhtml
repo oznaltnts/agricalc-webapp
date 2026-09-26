@@ -37,12 +37,12 @@
             <div class="col">
                 <div class="card">
                     <p:steps activeIndex="1">
-                        <p:menuitem value="Ahırlar"/>
-                        <p:menuitem value="Hayvanlar"/>
-                        <p:menuitem value="Yemler"/>
+                        <p:menuitem value="Genel bilgiler"/>
+                        <p:menuitem value="Hayvan varlığı projeksiyonu"/>
+                        <p:menuitem value="Beslemede kullanılan yemler"/>
                         <p:menuitem value="Yem rasyonu"/>
-                        <p:menuitem value="Giderler"/>
-                        <p:menuitem value="Gelirler" containerStyleClass="steps-desktop"/>
+                        <p:menuitem value="Diğer üretim giderleri"/>
+                        <p:menuitem value="Üretim gelirleri" containerStyleClass="steps-desktop"/>
                         <p:menuitem value="Sonuçlar" containerStyleClass="steps-desktop"/>
                     </p:steps>
                 </div>
@@ -53,7 +53,7 @@
             <div class="col">
                 <h:form id="countListForm"
                         class="card">
-                    <h5 class="mt-0" style="font-weight: bold">Büyükbaş süt hayvanları</h5>
+                    <h5 class="mt-0" style="font-weight: bold">Hayvan varlığı projeksiyonu yap</h5>
 
                     <p:growl id="growl"
                              showDetail="true"
@@ -73,9 +73,9 @@
                         <p:ajax event="rowEditCancel" listener="#{dairyCowCountController.onRowCancel}"/>
 
                         <p:column>
-                            <h:outputText value="#{msg[cowCount.cowType]}"/>
+                            <h:outputText value="#{msg[cowCount.cowType]} (adet)"/>
                         </p:column>
-                        <p:column headerText="Hayvan varlığı">
+                        <p:column headerText="Mevcut hayvan varlığı (adet)">
                             <p:cellEditor>
                                 <f:facet name="output">
                                     <h:outputText value="#{cowCount.currentCount}"/>
@@ -91,7 +91,7 @@
                                 </f:facet>
                             </p:cellEditor>
                         </p:column>
-                        <p:column headerText="Alınacak hayvan">
+                        <p:column headerText="Yıl içinde alınacak hayvan sayısı (adet)">
                             <p:cellEditor>
                                 <f:facet name="output">
                                     <h:outputText value="#{cowCount.purchaseCount}"/>
@@ -102,7 +102,7 @@
                                 </f:facet>
                             </p:cellEditor>
                         </p:column>
-                        <p:column headerText="Satılacak hayvan">
+                        <p:column headerText="Yıl içinde satılacak hayvan sayısı (adet)">
                             <p:cellEditor>
                                 <f:facet name="output">
                                     <h:outputText value="#{cowCount.sellCount}"/>
@@ -113,10 +113,10 @@
                                 </f:facet>
                             </p:cellEditor>
                         </p:column>
-                        <p:column headerText="Yıl sonu">
+                        <p:column headerText="Yıl sonundaki hayvan sayısı (adet)">
                             <h:outputText value="#{cowCount.endYearCount}"/>
                         </p:column>
-                        <p:column headerText="Ortalama beslenen">
+                        <p:column headerText="Yıl içinde ortalama beslenen hayvan sayısı (adet)">
                             <h:outputText value="#{cowCount.averageFeedCount}"/>
                         </p:column>
                         <p:column style="width: calc(56px + 0.5rem)" headerText="Düzenle">
@@ -129,54 +129,65 @@
             </div>
         </div>
 
-        <h:form id="totalCard" class="grid">
+        <h:form id="totalCard">
+            <div class="grid">
             <div class="col">
-                <div class="card ">
+                <div class="card " style="font-size: 30px">
                     <span style="font-weight: bold">
-                        Toplam Büyükbaş Hayvan Sayısı:<br/>
+                        Toplam büyükbaş hayvan sayısı (adet):<br/>
                     </span><h:outputText value="#{dairyCowCountController.calculateView.totalCount}"/>
-
                 </div>
             </div>
             <div class="col">
-                <div class="card">
+                <div class="card" style="font-size: 30px">
                     <span style="font-weight: bold">
-                        Ahır Doluluk Oranı:<br/>
+                        Ahır doluluk oranı (%):<br/>
                     </span><h:outputText value="#{dairyCowCountController.calculateView.totalBarnUsageRate}"/>
                 </div>
             </div>
             <div class="col">
-                <div class="card">
+                <div class="card" style="font-size: 30px">
                     <span style="font-weight: bold">
-                        Yıl Sonu Hayvan Varlığı:<br/>
+                        Yıl sonu hayvan varlığı (adet):<br/>
                     </span><h:outputText value="#{dairyCowCountController.calculateView.endYearTotalCount}"/>
                 </div>
             </div>
+            </div>
+            <div class="grid">
             <div class="col">
-                <div class="card">
+                <div class="card" style="font-size: 30px">
                     <span style="font-weight: bold">
-                        Yıl Sonu Ahır Doluluk Oranı:<br/>
+                        Yıl sonu ahır doluluk oranı (adet):<br/>
                     </span><h:outputText value="#{dairyCowCountController.calculateView.endYearBarnUsageRate}"/>
                 </div>
             </div>
             <div class="col">
-                <div class="card">
+                <div class="card" style="font-size: 30px">
                     <span style="font-weight: bold">
-                        Yıl İçinde Ortalama Beslenecek Hayvan:<br/>
+                        Yıl içinde ortalama beslenecek hayvan sayısı (adet):<br/>
                     </span><h:outputText value="#{dairyCowCountController.calculateView.endYearTotalFeedCount}"/>
                 </div>
+            </div>
+            <div class="col">
+                <div class="card" style="font-size: 30px">
+                    <span style="font-weight: bold">
+                        Projeksiyon katsayısı:<br/>
+                    </span><h:outputText value="1.8"/>
+                    <br/><span style="color: red;font-weight: bold">İşletmenin zarar durumu</span>
+                </div>
+            </div>
             </div>
         </h:form>
 
         <div class="grid">
             <div class="col">
                 <p:outputPanel style="display: flex; justify-content: space-between;">
-                    <p:button value="Büyükbaş süt ahırları"
+                    <p:button value="GİDERLERE GERI DÖN"
                               styleClass="m-1"
                               iconPos="left"
                               href="/secured/animal/dairy-cow/barn"
                               icon="fa-solid fa-angles-left"/>
-                    <p:button value="Büyükbaş süt yemleri"
+                    <p:button value="KULLANILAN YEMLERE ILERLE"
                               styleClass="m-1"
                               iconPos="right"
                               href="/secured/animal/dairy-cow/feed"

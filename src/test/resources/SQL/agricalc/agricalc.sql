@@ -5,9 +5,10 @@ CREATE TABLE `cities`
 (
     `id`            BIGINT         NOT NULL AUTO_INCREMENT,
     `idate`         DATETIME       NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    `code`          VARCHAR(25)    NOT NULL,
+    `code`          TINYINT        NOT NULL,
     `name`          VARCHAR(255)   NOT NULL,
     `neighbors_ids` VARCHAR(45)    NULL     DEFAULT NULL,
+    `is_triple`     TINYINT        NULL     DEFAULT NULL,
     `diesel_price`  DECIMAL(15, 3) NOT NULL DEFAULT 75,
     `fuel_price`    DECIMAL(15, 3) NOT NULL DEFAULT 80,
     `electricity`   DECIMAL(15, 3) NOT NULL DEFAULT 4,
@@ -77,24 +78,25 @@ CREATE TABLE `user_login_successes`
 
 CREATE TABLE `user_informations`
 (
-    `id`           BIGINT       NOT NULL AUTO_INCREMENT,
-    `idate`        DATETIME     NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    `user_id`      BIGINT       NOT NULL,
-    `tckn`         VARCHAR(255) NULL     DEFAULT NULL,
-    `name_surname` VARCHAR(255) NULL     DEFAULT NULL,
-    `email`        VARCHAR(255) NULL     DEFAULT NULL,
-    `city_id`      BIGINT       NULL     DEFAULT NULL,
-    `district`     VARCHAR(255) NULL     DEFAULT NULL,
-    `village`      VARCHAR(255) NULL     DEFAULT NULL,
-    `neighborhood` VARCHAR(255) NULL     DEFAULT NULL,
+    `id`               BIGINT       NOT NULL AUTO_INCREMENT,
+    `idate`            DATETIME     NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    `user_id`          BIGINT       NOT NULL,
+    `tckn`             VARCHAR(255) NULL     DEFAULT NULL,
+    `name_surname`     VARCHAR(255) NULL     DEFAULT NULL,
+    `email`            VARCHAR(255) NULL     DEFAULT NULL,
+    `city_district_id` BIGINT       NULL     DEFAULT NULL,
+    `village`          VARCHAR(255) NULL     DEFAULT NULL,
+    `neighborhood`     VARCHAR(255) NULL     DEFAULT NULL,
     PRIMARY KEY (`id`),
     UNIQUE (`tckn`),
     UNIQUE (`email`),
     CONSTRAINT `FK_user_informations_users` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`),
-    CONSTRAINT `FK_user_informations_cities` FOREIGN KEY (`city_id`) REFERENCES `cities` (`id`),
+    CONSTRAINT `FK_user_informations_city_districts` FOREIGN KEY (`city_district_id`) REFERENCES `city_districts` (`id`),
     INDEX idx_user_informations (`user_id`)
 )
     ENGINE = InnoDB
+    DEFAULT CHARSET = utf8mb4
+    COLLATE = utf8mb4_unicode_ci
     AUTO_INCREMENT = 1;
 
 CREATE TABLE `user_plant_assets`
@@ -295,16 +297,16 @@ CREATE TABLE `user_dairy_cow_incomes`
     AUTO_INCREMENT = 1;
 
 ##plantation
-
 CREATE TABLE `plantation_products`
 (
-    `id`     BIGINT       NOT NULL AUTO_INCREMENT,
-    `idate`  DATETIME     NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    `udate`  DATETIME     NULL     DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP,
-    `status` TINYINT      NOT NULL COMMENT '-1:deleted, 0:passive, 1:active',
-    `name`   VARCHAR(255) NOT NULL,
+    `id`              BIGINT       NOT NULL AUTO_INCREMENT,
+    `idate`           DATETIME     NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    `udate`           DATETIME     NULL     DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP,
+    `status`          TINYINT      NOT NULL COMMENT '-1:deleted, 0:passive, 1:active',
+    `name`            VARCHAR(255) NOT NULL,
+    `plantation_type` VARCHAR(45)  NOT NULL,
     PRIMARY KEY (`id`),
-    INDEX idx_plantation_products (`status`)
+    INDEX idx_plantation_products (`plantation_type`, `status`)
 )
     ENGINE = InnoDB
     AUTO_INCREMENT = 1;
@@ -318,47 +320,6 @@ CREATE TABLE `plantation_product_options`
     PRIMARY KEY (`id`),
     CONSTRAINT `FK_plantation_product_options_plantation_products` FOREIGN KEY (`plantation_product_id`) REFERENCES `plantation_products` (`id`),
     INDEX idx_plantation_product_options (`plantation_product_id`)
-)
-    ENGINE = InnoDB
-    AUTO_INCREMENT = 1;
-
-CREATE TABLE `user_plant_parcels`
-(
-    `id`              BIGINT         NOT NULL AUTO_INCREMENT,
-    `idate`           DATETIME       NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    `user_id`         BIGINT         NOT NULL,
-    `product_id`      BIGINT         NOT NULL,
-    `parcel_type`     VARCHAR(255)   NULL     DEFAULT NULL,
-    `parcel_name`     VARCHAR(255)   NOT NULL,
-    `parcel_price`    DECIMAL(15, 3) NULL     DEFAULT NULL,
-    `area_decare`     DOUBLE         NOT NULL,
-    `rent_price`      DECIMAL(15, 3) NULL     DEFAULT NULL,
-    `city_id`         BIGINT         NOT NULL,
-    `district`        VARCHAR(255)   NULL     DEFAULT NULL,
-    `village`         VARCHAR(255)   NULL     DEFAULT NULL,
-    `neighborhood`    VARCHAR(255)   NULL     DEFAULT NULL,
-    `ada_number`      INTEGER        NULL     DEFAULT NULL,
-    `pafta_number`    INTEGER        NULL     DEFAULT NULL,
-    `status_type`     VARCHAR(255)   NULL     DEFAULT NULL,
-    `nadas`           TINYINT        NULL     DEFAULT NULL,
-    `slope`           VARCHAR(255)   NULL     DEFAULT NULL,
-    `orientation`     VARCHAR(255)   NULL     DEFAULT NULL,
-    `soil_texture`    VARCHAR(255)   NULL     DEFAULT NULL,
-    `soil_depth`      VARCHAR(255)   NULL     DEFAULT NULL,
-    `organic_matter`  VARCHAR(255)   NULL     DEFAULT NULL,
-    `soil_salinity`   VARCHAR(255)   NULL     DEFAULT NULL,
-    `lime`            VARCHAR(255)   NULL     DEFAULT NULL,
-    `phosphorus`      VARCHAR(255)   NULL     DEFAULT NULL,
-    `potassium`       VARCHAR(255)   NULL     DEFAULT NULL,
-    `watering_source` VARCHAR(255)   NULL     DEFAULT NULL,
-    `watering_type`   VARCHAR(255)   NULL     DEFAULT NULL,
-    `electric_source` VARCHAR(255)   NULL     DEFAULT NULL,
-    PRIMARY KEY (`id`),
-    UNIQUE (`user_id`, `parcel_name`),
-    CONSTRAINT `FK_user_plant_parcels_users` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`),
-    CONSTRAINT `FK_user_plant_parcels_plantation_products` FOREIGN KEY (`product_id`) REFERENCES `plantation_products` (`id`),
-    CONSTRAINT `FK_user_plant_parcels_cities` FOREIGN KEY (`city_id`) REFERENCES `cities` (`id`),
-    INDEX idx_user_plant_parcels (`user_id`)
 )
     ENGINE = InnoDB
     AUTO_INCREMENT = 1;
@@ -410,20 +371,6 @@ CREATE TABLE `plantation_product_questions`
     ENGINE = InnoDB
     AUTO_INCREMENT = 1;
 
-CREATE TABLE `user_plant_parcel_answers`
-(
-    `id`                  BIGINT       NOT NULL AUTO_INCREMENT,
-    `idate`               DATETIME     NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    `user_parcel_id`      BIGINT       NOT NULL,
-    `product_question_id` BIGINT       NOT NULL,
-    `answer_value`        VARCHAR(255) NOT NULL,
-    PRIMARY KEY (`id`),
-    CONSTRAINT `FK_user_plant_parcel_answers_user_plant_parcels` FOREIGN KEY (`user_parcel_id`) REFERENCES `user_plant_parcels` (`id`),
-    CONSTRAINT `FK_user_plant_parcel_answers_plantation_product_questions` FOREIGN KEY (`product_question_id`) REFERENCES `plantation_product_questions` (`id`)
-)
-    ENGINE = InnoDB
-    AUTO_INCREMENT = 1;
-
 CREATE TABLE `plantation_coefficients`
 (
     `id`           BIGINT       NOT NULL AUTO_INCREMENT,
@@ -453,60 +400,131 @@ CREATE TABLE `plantation_irrigation_values`
     ENGINE = InnoDB
     AUTO_INCREMENT = 1;
 
-CREATE TABLE `user_plant_parcel_plans`
+CREATE TABLE `user_plantations`
 (
-    `id`                  BIGINT         NOT NULL AUTO_INCREMENT,
-    `idate`               DATETIME       NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    `udate`               DATETIME       NULL     DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP,
-    `status`              TINYINT        NOT NULL COMMENT '-1:deleted, 0:passive, 1:active',
-    `parcel_id`           BIGINT         NOT NULL,
-    `start_date`          DATE           NULL     DEFAULT NULL,
-    `gross_income`        DECIMAL(15, 3) NULL     DEFAULT NULL,
-    `total_expense`       DECIMAL(15, 3) NULL     DEFAULT NULL,
-    `soil_prep_cost`      DECIMAL(15, 3) NULL     DEFAULT NULL,
-    `planting_cost`       DECIMAL(15, 3) NULL     DEFAULT NULL,
-    `fertilizer_cost`     DECIMAL(15, 3) NULL     DEFAULT NULL,
-    `weed_control_cost`   DECIMAL(15, 3) NULL     DEFAULT NULL,
-    `irrigation_cost`     DECIMAL(15, 3) NULL     DEFAULT NULL,
-    `cultural_cost`       DECIMAL(15, 3) NULL     DEFAULT NULL,
-    `protection_cost`     DECIMAL(15, 3) NULL     DEFAULT NULL,
-    `harvest_cost`        DECIMAL(15, 3) NULL     DEFAULT NULL,
-    `blend_cost`          DECIMAL(15, 3) NULL     DEFAULT NULL,
-    `drying_cost`         DECIMAL(15, 3) NULL     DEFAULT NULL,
-    `baling_cost`         DECIMAL(15, 3) NULL     DEFAULT NULL,
-    `transportation_cost` DECIMAL(15, 3) NULL     DEFAULT NULL,
+    `id`                 BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
+    `idate`              DATETIME        NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    `udate`              DATETIME        NULL     DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP,
+    `status`             TINYINT         NOT NULL COMMENT '-1:deleted, 0:passive, 1:active',
+    `user_id`            BIGINT          NOT NULL,
+    `name`               VARCHAR(118)    NOT NULL,
+    `area`               DOUBLE          NOT NULL,
+    `owned_or_rental`    TINYINT         NULL     DEFAULT NULL,
+    `sell_or_rent_price` DECIMAL(15, 3)  NULL     DEFAULT NULL,
+    `city_district_id`   BIGINT          NOT NULL,
+    `village`            VARCHAR(118)    NULL     DEFAULT NULL,
+    `neighborhood`       VARCHAR(118)    NULL     DEFAULT NULL,
+    `ada_number`         INT UNSIGNED    NULL     DEFAULT NULL,
+    `pafta_number`       INT UNSIGNED    NULL     DEFAULT NULL,
+    `orchard_product_id` BIGINT          NULL     DEFAULT NULL,
+    `status_type`        VARCHAR(45)     NULL     DEFAULT NULL,
+    `nadas`              TINYINT         NULL     DEFAULT NULL,
+    `slope`              VARCHAR(45)     NULL     DEFAULT NULL,
+    `orientation`        VARCHAR(45)     NULL     DEFAULT NULL,
+    `soil_texture`       VARCHAR(45)     NULL     DEFAULT NULL,
+    `soil_depth`         VARCHAR(45)     NULL     DEFAULT NULL,
+    `organic_matter`     VARCHAR(45)     NULL     DEFAULT NULL,
+    `soil_salinity`      VARCHAR(45)     NULL     DEFAULT NULL,
+    `lime`               VARCHAR(45)     NULL     DEFAULT NULL,
+    `phosphorus`         VARCHAR(45)     NULL     DEFAULT NULL,
+    `potassium`          VARCHAR(45)     NULL     DEFAULT NULL,
     PRIMARY KEY (`id`),
-    CONSTRAINT `FK_user_plant_parcel_plans_user_plant_parcels` FOREIGN KEY (`parcel_id`) REFERENCES `user_plant_parcels` (`id`)
+    CONSTRAINT `FK_user_plantations_user` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`),
+    CONSTRAINT `FK_user_plantations_product` FOREIGN KEY (`orchard_product_id`) REFERENCES `plantation_products` (`id`),
+    CONSTRAINT `FK_user_plantations_city_district` FOREIGN KEY (`city_district_id`) REFERENCES `city_districts` (`id`),
+    INDEX idx_user_plantations (`user_id`)
 )
     ENGINE = InnoDB
+    DEFAULT CHARSET = utf8mb4
+    COLLATE = utf8mb4_unicode_ci
     AUTO_INCREMENT = 1;
 
-CREATE TABLE `user_plant_parcel_plan_answers`
+CREATE TABLE `user_plantation_answers`
 (
-    `id`                  BIGINT       NOT NULL AUTO_INCREMENT,
-    `idate`               DATETIME     NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    `plant_plan_id`       BIGINT       NOT NULL,
-    `product_question_id` BIGINT       NOT NULL,
-    `answer_value`        VARCHAR(255) NOT NULL,
+    `id`                  BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
+    `idate`               DATETIME        NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    `user_plantation_id`  BIGINT UNSIGNED NOT NULL,
+    `product_question_id` BIGINT          NOT NULL,
+    `answer_value`        VARCHAR(255)    NOT NULL,
     PRIMARY KEY (`id`),
-    CONSTRAINT `FK_user_plant_parcel_plan_answers_plans` FOREIGN KEY (`plant_plan_id`) REFERENCES `user_plant_parcel_plans` (`id`),
-    CONSTRAINT `FK_user_plant_parcel_plan_answers_questions` FOREIGN KEY (`product_question_id`) REFERENCES `plantation_product_questions` (`id`)
+    CONSTRAINT `FK_user_plantation_answers_user_plantation` FOREIGN KEY (`user_plantation_id`) REFERENCES `user_plantations` (`id`),
+    CONSTRAINT `FK_user_plantation_answers_product_question` FOREIGN KEY (`product_question_id`) REFERENCES `plantation_product_questions` (`id`),
+    INDEX `idx_user_plantation_answers` (`user_plantation_id`)
 )
     ENGINE = InnoDB
+    DEFAULT CHARSET = utf8mb4
+    COLLATE = utf8mb4_unicode_ci
     AUTO_INCREMENT = 1;
 
-CREATE TABLE `user_plant_parcel_plan_allocations`
+CREATE TABLE `user_plantation_plans`
 (
-    `id`               BIGINT         NOT NULL AUTO_INCREMENT,
-    `idate`            DATETIME       NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    `plant_plan_id`    BIGINT         NOT NULL,
-    `q_type`           TINYINT        NOT NULL,
-    `a_type`           VARCHAR(255)   NOT NULL,
-    `calculated_value` DECIMAL(15, 3) NOT NULL,
+    `id`                   BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
+    `idate`                DATETIME        NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    `udate`                DATETIME        NULL     DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP,
+    `status`               TINYINT         NOT NULL COMMENT '-1:deleted, 0:passive, 1:active',
+    `user_plantation_id`   BIGINT UNSIGNED NOT NULL,
+    `start_date`           DATE            NOT NULL,
+    `primary_product_id`   BIGINT          NOT NULL,
+    `secondary_product_id` BIGINT          NULL     DEFAULT NULL,
+    `last_product_id`      BIGINT          NULL     DEFAULT NULL,
+    `gross_income`         DECIMAL(15, 3)  NULL     DEFAULT NULL,
+    `total_expense`        DECIMAL(15, 3)  NULL     DEFAULT NULL,
+    `soil_prep_cost`       DECIMAL(15, 3)  NULL     DEFAULT NULL,
+    `planting_cost`        DECIMAL(15, 3)  NULL     DEFAULT NULL,
+    `fertilizer_cost`      DECIMAL(15, 3)  NULL     DEFAULT NULL,
+    `weed_control_cost`    DECIMAL(15, 3)  NULL     DEFAULT NULL,
+    `irrigation_cost`      DECIMAL(15, 3)  NULL     DEFAULT NULL,
+    `cultural_cost`        DECIMAL(15, 3)  NULL     DEFAULT NULL,
+    `protection_cost`      DECIMAL(15, 3)  NULL     DEFAULT NULL,
+    `harvest_cost`         DECIMAL(15, 3)  NULL     DEFAULT NULL,
+    `blend_cost`           DECIMAL(15, 3)  NULL     DEFAULT NULL,
+    `drying_cost`          DECIMAL(15, 3)  NULL     DEFAULT NULL,
+    `baling_cost`          DECIMAL(15, 3)  NULL     DEFAULT NULL,
+    `transportation_cost`  DECIMAL(15, 3)  NULL     DEFAULT NULL,
     PRIMARY KEY (`id`),
-    CONSTRAINT `FK_user_plant_parcel_plan_allocations_user_plant_parcel_plans` FOREIGN KEY (`plant_plan_id`) REFERENCES `user_plant_parcel_plans` (`id`)
+    CONSTRAINT `FK_user_plantation_plans_user_plantation` FOREIGN KEY (`user_plantation_id`) REFERENCES `user_plantations` (`id`),
+    CONSTRAINT `FK_user_plantation_plans_primary_product` FOREIGN KEY (`primary_product_id`) REFERENCES `plantation_products` (`id`),
+    CONSTRAINT `FK_user_plantation_plans_secondary_product` FOREIGN KEY (`secondary_product_id`) REFERENCES `plantation_products` (`id`),
+    CONSTRAINT `FK_user_plantation_plans_last_product` FOREIGN KEY (`last_product_id`) REFERENCES `plantation_products` (`id`),
+    INDEX `idx_user_plantation_plans` (`user_plantation_id`)
 )
     ENGINE = InnoDB
+    DEFAULT CHARSET = utf8mb4
+    COLLATE = utf8mb4_unicode_ci
+    AUTO_INCREMENT = 1;
+
+CREATE TABLE `user_plantation_plan_answers`
+(
+    `id`                      BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
+    `idate`                   DATETIME        NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    `user_plantation_plan_id` BIGINT UNSIGNED NOT NULL,
+    `product_question_id`     BIGINT          NOT NULL,
+    `answer_value`            VARCHAR(255)    NOT NULL,
+    PRIMARY KEY (`id`),
+    UNIQUE KEY `UK_user_plantation_plan_answers` (`user_plantation_plan_id`, `product_question_id`),
+    CONSTRAINT `FK_user_plantation_plan_answers_user_plantation_plan` FOREIGN KEY (`user_plantation_plan_id`) REFERENCES `user_plantation_plans` (`id`),
+    CONSTRAINT `FK_user_plantation_plan_answers_product_question` FOREIGN KEY (`product_question_id`) REFERENCES `plantation_product_questions` (`id`),
+    INDEX `idx_user_plantation_plan_answers` (`user_plantation_plan_id`)
+)
+    ENGINE = InnoDB
+    DEFAULT CHARSET = utf8mb4
+    COLLATE = utf8mb4_unicode_ci
+    AUTO_INCREMENT = 1;
+
+CREATE TABLE `user_plantation_plan_allocations`
+(
+    `id`                      BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
+    `idate`                   DATETIME        NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    `user_plantation_plan_id` BIGINT UNSIGNED NOT NULL,
+    `q_type`                  TINYINT         NOT NULL,
+    `a_type`                  VARCHAR(45)     NOT NULL,
+    `calculated_value`        DECIMAL(15, 3)  NOT NULL,
+    PRIMARY KEY (`id`),
+    CONSTRAINT `FK_user_plantation_plan_allocations_user_plantation_plan` FOREIGN KEY (`user_plantation_plan_id`) REFERENCES `user_plantation_plans` (`id`)
+)
+    ENGINE = InnoDB
+    DEFAULT CHARSET = utf8mb4
+    COLLATE = utf8mb4_unicode_ci
     AUTO_INCREMENT = 1;
 
 CREATE TABLE `plantation_diseases`
@@ -591,8 +609,8 @@ CREATE TABLE `literacy_question_options`
 (
     `id`                   BIGINT       NOT NULL AUTO_INCREMENT,
     `idate`                DATETIME     NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    `udate`   DATETIME     NULL     DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP,
-    `status`  TINYINT      NOT NULL COMMENT '-1:deleted, 0:passive, 1:active',
+    `udate`                DATETIME     NULL     DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP,
+    `status`               TINYINT      NOT NULL COMMENT '-1:deleted, 0:passive, 1:active',
     `literacy_question_id` BIGINT       NOT NULL,
     `option_value`         VARCHAR(255) NOT NULL,
     `score_10_value`       DOUBLE       NOT NULL,
@@ -636,3 +654,21 @@ CREATE TABLE `user_literacy_answers`
 )
     ENGINE = InnoDB
     AUTO_INCREMENT = 1;
+
+CREATE TABLE `city_districts`
+(
+    `id`      BIGINT       NOT NULL AUTO_INCREMENT,
+    `idate`   DATETIME     NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    `city_id` BIGINT       NOT NULL,
+    `name`    VARCHAR(100) NOT NULL,
+    PRIMARY KEY (`id`),
+    UNIQUE KEY UK_city_districts (`city_id`, `name`),
+    CONSTRAINT `FK_city_districts_cities` FOREIGN KEY (`city_id`) REFERENCES `cities` (`id`),
+    INDEX idx_city_districts (`city_id`)
+)
+    ENGINE = InnoDB
+    DEFAULT CHARSET = utf8mb4
+    COLLATE = utf8mb4_unicode_ci
+    AUTO_INCREMENT = 1;
+
+

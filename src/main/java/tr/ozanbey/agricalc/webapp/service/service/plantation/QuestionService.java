@@ -17,6 +17,10 @@ public class QuestionService {
     @Autowired
     private PlantationProductQuestionRepository productQuestionRepository;
 
+    public List<PlantationProductQuestion> getDiseaseListByProductIdAndQuestionIdList(Long productId, List<Long> questionIdList, EnumStatus status) {
+        return productQuestionRepository.findByPlantationProduct_IdAndPlantationQuestion_IdInAndStatus(productId, questionIdList, status);
+    }
+
     public List<PlantationProductQuestion> getActiveQuestionByQuestionType(Long productId, EnumStatus status, EnumPlantationQuestionType questionType) {
         return productQuestionRepository.getQuestionListByProductIdAndQuestionStatusAndQuestionTypeOrderByIdAsc(productId, status, questionType);
     }

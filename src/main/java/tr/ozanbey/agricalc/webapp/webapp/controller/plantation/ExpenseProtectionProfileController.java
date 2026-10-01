@@ -1,30 +1,25 @@
 package tr.ozanbey.agricalc.webapp.webapp.controller.plantation;
 
 
+import jakarta.annotation.PostConstruct;
 import jakarta.faces.view.ViewScoped;
 import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.Hibernate;
 import org.springframework.stereotype.Component;
-import tr.ozanbey.agricalc.webapp.service.domain.AbstractEntity;
 import tr.ozanbey.agricalc.webapp.service.domain.plantation.PlantationProductQuestion;
-import tr.ozanbey.agricalc.webapp.service.domain.plantation.PlantationQuestionOption;
+import tr.ozanbey.agricalc.webapp.service.domain.plantation.PlantationProductQuestionDisease;
 import tr.ozanbey.agricalc.webapp.service.domain.plantation.UserPlantationAnswer;
 import tr.ozanbey.agricalc.webapp.service.domain.plantation.UserPlantationPlanAnswer;
 import tr.ozanbey.agricalc.webapp.service.enumtype.EnumStatus;
 import tr.ozanbey.agricalc.webapp.service.enumtype.plantation.EnumPlantationQuestionType;
 import tr.ozanbey.agricalc.webapp.service.enumtype.plantation.EnumQuestionAnswerType;
-import tr.ozanbey.agricalc.webapp.service.service.plantation.CostAllocationService;
-import tr.ozanbey.agricalc.webapp.service.service.plantation.CostCalculationService;
-import tr.ozanbey.agricalc.webapp.service.service.plantation.QuestionService;
-import tr.ozanbey.agricalc.webapp.service.service.plantation.UserPlantationPlanService;
+import tr.ozanbey.agricalc.webapp.service.service.plantation.*;
 
 import java.io.IOException;
-import java.util.HashMap;
+import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 @Component
@@ -33,21 +28,29 @@ import java.util.stream.Stream;
 @Setter
 public class ExpenseProtectionProfileController extends PlanProfileController {
 
-    private static final List<Long> FUNGUS_QUESTIONS = List.of(195L);
-    private static final List<Long> DISEASES_QUESTIONS = List.of(194L);
-    private static final List<Long> INSECT_QUESTIONS = List.of(197L);
-    private static final List<Long> RED_SPIDER_QUESTIONS = List.of(198L);
-    private static final List<Long> PESTS_QUESTIONS = List.of(196L);
+
     private static final List<Long> A_PEST_QUESTIONS = List.of(203L);
     private static final List<Long> B_PEST_QUESTIONS = List.of(204L);
     private static final List<Long> C_PEST_QUESTIONS = List.of(205L);
     private static final List<Long> D_PEST_QUESTIONS = List.of(206L, 207L);
     private static final List<Long> PEST_CONTROL_QUESTIONS = List.of(202L);
+
+    private final CostMedicineService costMedicineService;
+
     public ExpenseProtectionProfileController(UserPlantationPlanService userPlantationPlanService,
                                               QuestionService questionService,
                                               CostCalculationService costCalculationService,
-                                              CostAllocationService costAllocationService) {
+                                              CostAllocationService costAllocationService,
+                                              CostMedicineService costMedicineService) {
         super(userPlantationPlanService, questionService, costCalculationService, costAllocationService);
+        this.costMedicineService = costMedicineService;
+    }
+
+    private static final List<Long> DISEASE_QUESTIONS = List.of(194L, 195L, 196L, 197L, 198L, 199L, 200L, 201L);
+    private List<PlantationProductQuestion> diseaseQuestionList;
+
+    @PostConstruct
+    public void init() {
     }
 
     public void fillExpenseProtectionQuestionList() throws IOException {
@@ -55,9 +58,11 @@ public class ExpenseProtectionProfileController extends PlanProfileController {
             super.navigationController.redirectToUrl("/secured/plantation-list");
             return;
         }
+        diseaseQuestionList = getQuestionService().getDiseaseListByProductIdAndQuestionIdList(super.getUserPlantationPlan().getPrimaryProduct().getId(), DISEASE_QUESTIONS, EnumStatus.ACTIVE);
 
         if (!Hibernate.isInitialized(super.getUserPlantationPlan().getPrimaryProduct().getProductQuestionList())) {
             List<PlantationProductQuestion> productQuestionList = getQuestionService().getActiveQuestionByQuestionType(super.getUserPlantationPlan().getPrimaryProduct().getId(), EnumStatus.ACTIVE, EnumPlantationQuestionType.EXPENSE_PROTECTION);
+            productQuestionList.removeIf(productQuestion -> DISEASE_QUESTIONS.contains(productQuestion.getPlantationQuestion().getId()));
             List<UserPlantationPlanAnswer> planAnswerList = getUserPlantationPlanService().fillPlanAnswerValues(super.getPlantationPlanId(), EnumPlantationQuestionType.EXPENSE_PROTECTION);
             List<UserPlantationAnswer> plantationAnswerList = getUserPlantationPlanService().fillPlantationAnswerValues(super.getUserPlantationPlan().getUserPlantation().getId(), EnumPlantationQuestionType.EXPENSE_PROTECTION);
             assignAnswerListsToProduct(planAnswerList, productQuestionList, plantationAnswerList);
@@ -72,19 +77,6 @@ public class ExpenseProtectionProfileController extends PlanProfileController {
             return false;
         }
         return false;
-    }
-
-    public Map<Long, String> manyCheckboxSelectItems(PlantationProductQuestion question) {
-        Map<Long, String> returnValue = new HashMap<>();
-        if (question.getPlantationQuestion().getId().equals(194L)) {
-            returnValue.put(1L, "Mantari hastalık");
-        } else if (question.getPlantationQuestion().getId().equals(196L)) {
-            returnValue.put(1L, "Zararlı böcekler");
-            returnValue.put(2L, "Kırmızı örümcek");
-        } else {
-            returnValue = question.getPlantationQuestion().getQuestionOptionList().stream().collect(Collectors.toMap(AbstractEntity::getId, PlantationQuestionOption::getValue));
-        }
-        return returnValue;
     }
 
     public boolean oneRadioRenderer(PlantationProductQuestion question) {
@@ -118,19 +110,9 @@ public class ExpenseProtectionProfileController extends PlanProfileController {
     }
 
     private boolean checkPreviousQuestionAnswerAccordingly(PlantationProductQuestion question) {
-        Optional<PlantationProductQuestion> optionalQuestion = super.getUserPlantationPlan().getPrimaryProduct().getProductQuestionList().stream().filter(pq -> DISEASES_QUESTIONS.contains(pq.getPlantationQuestion().getId())).findFirst();
-        if (FUNGUS_QUESTIONS.contains(question.getPlantationQuestion().getId())) {
-            return optionalQuestion.map(plantationProductQuestion -> plantationProductQuestion.getSelectedAnswerIds() != null && Stream.of(1L).anyMatch(plantationProductQuestion.getSelectedAnswerIds()::contains)).orElse(true);
-        }
-
-        optionalQuestion = super.getUserPlantationPlan().getPrimaryProduct().getProductQuestionList().stream().filter(pq -> PESTS_QUESTIONS.contains(pq.getPlantationQuestion().getId())).findFirst();
-        if (INSECT_QUESTIONS.contains(question.getPlantationQuestion().getId())) {
-            return optionalQuestion.map(plantationProductQuestion -> plantationProductQuestion.getSelectedAnswerIds() != null && Stream.of(1L).anyMatch(plantationProductQuestion.getSelectedAnswerIds()::contains)).orElse(true);
-        } else if (RED_SPIDER_QUESTIONS.contains(question.getPlantationQuestion().getId())) {
-            return optionalQuestion.map(plantationProductQuestion -> plantationProductQuestion.getSelectedAnswerIds() != null && Stream.of(2L).anyMatch(plantationProductQuestion.getSelectedAnswerIds()::contains)).orElse(true);
-        }
-
-        optionalQuestion = super.getUserPlantationPlan().getPrimaryProduct().getProductQuestionList().stream().filter(pq -> PEST_CONTROL_QUESTIONS.contains(pq.getPlantationQuestion().getId())).findFirst();
+        Optional<PlantationProductQuestion> optionalQuestion = super.getUserPlantationPlan().getPrimaryProduct().getProductQuestionList().stream()
+                .filter(pq -> PEST_CONTROL_QUESTIONS.contains(pq.getPlantationQuestion().getId()))
+                .findFirst();
         if (A_PEST_QUESTIONS.contains(question.getPlantationQuestion().getId())) {
             return optionalQuestion.map(plantationProductQuestion -> plantationProductQuestion.getSelectedAnswerIds() != null && Stream.of(148L).anyMatch(plantationProductQuestion.getSelectedAnswerIds()::contains)).orElse(true);
         } else if (B_PEST_QUESTIONS.contains(question.getPlantationQuestion().getId())) {
@@ -144,8 +126,14 @@ public class ExpenseProtectionProfileController extends PlanProfileController {
     }
 
     public void nextSaveExpense() throws IOException {
-        super.getUserPlantationPlan().setProtectionCost(getCostCalculationService().calculatePlantProtectionCost(super.getUserPlantationPlan().getPrimaryProduct().getProductQuestionList(), super.getUserPlantationPlan().getId(), super.getUserPlantationPlan().getUserPlantation().getDistrict().getCity()));
-        getCostAllocationService().protectionAllocation(super.getUserPlantationPlan().getPrimaryProduct().getProductQuestionList(), super.getUserPlantationPlan(), super.getUserPlantationPlan().getUserPlantation().getDistrict().getCity());
+        super.getUserPlantationPlan().setProtectionCost(getCostCalculationService().calculatePlantProtectionCost(
+                super.getUserPlantationPlan().getPrimaryProduct().getProductQuestionList(),
+                super.getUserPlantationPlan().getId(),
+                super.getUserPlantationPlan().getUserPlantation().getDistrict().getCity()));
+        getCostAllocationService().protectionAllocation(
+                super.getUserPlantationPlan().getPrimaryProduct().getProductQuestionList(),
+                super.getUserPlantationPlan(),
+                super.getUserPlantationPlan().getUserPlantation().getDistrict().getCity());
         goToNextPage(EnumPlantationQuestionType.EXPENSE_PROTECTION);
     }
 
@@ -153,4 +141,13 @@ public class ExpenseProtectionProfileController extends PlanProfileController {
         goToPreviousPage(EnumPlantationQuestionType.EXPENSE_PROTECTION);
     }
 
+    public void handleDiseaseSelect(PlantationProductQuestion diseaseQuestion) {
+        List<PlantationProductQuestionDisease> newSelectedList = new ArrayList<>();
+        for (PlantationProductQuestionDisease productQuestionDisease : diseaseQuestion.getProductQuestionDiseaseList()) {
+            if (diseaseQuestion.getSelectedAnswerIds().contains(productQuestionDisease.getId())) {
+                newSelectedList.add(productQuestionDisease);
+            }
+        }
+        diseaseQuestion.setSelectedDiseaseList(newSelectedList);
+    }
 }

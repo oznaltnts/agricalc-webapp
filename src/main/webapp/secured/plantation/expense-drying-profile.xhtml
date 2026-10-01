@@ -5,7 +5,7 @@
                 xmlns:p="http://primefaces.org/ui"
                 template="/templates/template.xhtml">
 
-    <ui:define name="title">Gelir Bilgilerim</ui:define>
+    <ui:define name="title">İşleme - Kurutma Giderleri</ui:define>
 
     <ui:define name="metadata">
         <f:metadata>
@@ -17,6 +17,9 @@
 
     <ui:define name="head">
         <style type="text/css">
+            .ui-selectmanycheckbox label {
+                margin: auto 16px auto 8px;
+            }
         </style>
     </ui:define>
 
@@ -24,12 +27,12 @@
         <div class="grid">
             <div class="col">
                 <div class="card">
-                    <p:steps activeIndex="3">
+                    <p:steps activeIndex="4">
+                        <p:menuitem value="Bitkisel demirbaşlar"/>
+                        <p:menuitem value="Üretim alanları"/>
                         <p:menuitem value="Üretim planları"/>
-                        <p:menuitem value="Demirbaş bilgileri"/>
-                        <p:menuitem value="Arazi bilgileri"/>
                         <p:menuitem value="Gelir bilgileri"/>
-                        <p:menuitem value="Gider bilgileri"/>
+                        <p:menuitem value="Gider bilgileri (kurutma)"/>
                         <p:menuitem value="Sonuçlar" containerStyleClass="steps-desktop"/>
                     </p:steps>
                 </div>
@@ -43,12 +46,12 @@
                         <p:autoUpdate/>
                     </p:growl>
 
-                    <h5 class="mt-0" style="font-weight: bold">Gelir profili</h5>
+                    <h5 class="mt-0" style="font-weight: bold">İşleme - kurutma gideri bilgileri</h5>
 
                     <p:focus context="@next"/>
 
-                    <ui:repeat value="#{expenseDryingProfileController.userPlantationPlan.primaryProduct.productQuestionList}"
-                               var="question">
+                    <ui:repeat var="question"
+                               value="#{expenseDryingProfileController.userPlantationPlan.primaryProduct.productQuestionList}">
                         <ui:fragment rendered="#{!question.dontAskAgain}">
                             <p:panelGrid layout="flex"
                                          contentStyle="align-items: center;"
@@ -90,7 +93,8 @@
                                     </p:inputNumber>
 
                                     <ui:fragment rendered="#{expenseDryingProfileController.booleanCheckboxRenderer(question)}">
-                                        <div class="ui-inputgroup-addon" style="white-space: nowrap;max-height: 35px;min-width: 140px">
+                                        <div class="ui-inputgroup-addon"
+                                             style="white-space: nowrap;max-height: 35px;min-width: 140px">
                                             <p:selectBooleanCheckbox value="#{question.dontAskAgain}"
                                                                      itemLabel="Tekrar sorma"/>
                                         </div>

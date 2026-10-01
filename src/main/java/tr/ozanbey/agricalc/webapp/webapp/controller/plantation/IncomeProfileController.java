@@ -30,7 +30,7 @@ import java.util.stream.Collectors;
 @Setter
 public class IncomeProfileController extends PlanProfileController {
 
-    private static final List<Long> A_DOUBLE_YIELD_QUESTIONS = List.of(11L, 12L, 13L, 14L, 17L, 27L, 30L);
+    private static final List<Long> A_DOUBLE_YIELD_QUESTIONS = List.of(12L, 13L, 14L, 17L, 27L, 30L);
     private static final List<Long> B_DOUBLE_YIELD_QUESTIONS = List.of(15L, 28L, 31L);
     private static final List<Long> C_DOUBLE_YIELD_QUESTIONS = List.of(16L, 29L, 32L);
     private static final List<Long> SALE_QUESTIONS = List.of(8L, 9L, 10L);

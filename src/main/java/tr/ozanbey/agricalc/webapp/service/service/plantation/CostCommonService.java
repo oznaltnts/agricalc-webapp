@@ -280,8 +280,12 @@ public class CostCommonService {
     //5,45
     protected Double dieselInputAmountForDieselPump(Double specificConstantRate, Double pumpWorkingHour, Double waterAmountPerHour, Double waterPumpHeight, Double gravity,
                                                     Double pumpMotorEfficiencyRate, Double irrigationArea) {
-        if (irrigationArea == 0d) return 0d;
-        return ((specificConstantRate * pumpWorkingHour * (waterAmountPerHour / 3600) * waterPumpHeight * gravity) / pumpMotorEfficiencyRate) / irrigationArea;
+        if (irrigationArea == 0d)
+            return 0d;
+        double nextValue = 0d;
+        if (pumpMotorEfficiencyRate != 0d)
+            nextValue = (specificConstantRate * pumpWorkingHour * (waterAmountPerHour / 3600) * waterPumpHeight * gravity) / pumpMotorEfficiencyRate;
+        return nextValue / irrigationArea;
     }
 
     //6

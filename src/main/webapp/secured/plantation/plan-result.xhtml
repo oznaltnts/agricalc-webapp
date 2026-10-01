@@ -5,7 +5,7 @@
                 xmlns:p="http://primefaces.org/ui"
                 template="/templates/template.xhtml">
 
-    <ui:define name="title">Gelir Bilgilerim</ui:define>
+    <ui:define name="title">Bitkisel Planlama Sonuçları</ui:define>
 
     <ui:define name="metadata">
         <f:metadata>
@@ -25,11 +25,11 @@
             <div class="col">
                 <div class="card">
                     <p:steps activeIndex="5">
+                        <p:menuitem value="Bitkisel demirbaşlar"/>
+                        <p:menuitem value="Üretim alanları"/>
                         <p:menuitem value="Üretim planları"/>
-                        <p:menuitem value="Demirbaş bilgileri"/>
-                        <p:menuitem value="Arazi bilgileri"/>
                         <p:menuitem value="Gelir bilgileri"/>
-                        <p:menuitem value="Gider bilgileri"/>
+                        <p:menuitem value="Gider bilgileri ()"/>
                         <p:menuitem value="Sonuçlar" containerStyleClass="steps-desktop"/>
                     </p:steps>
                 </div>
@@ -46,13 +46,16 @@
                                  columnClasses="col-12 md:col-5 xl:col-5, col-12 md:col-7 xl:col-7"
                                  columns="2">
                         <p:outputLabel for="@next" value="Ürün:" style="font-weight: bold"/>
-                        <p:outputLabel for="@previous" value="#{planResultController.userPlantationPlan.primaryProduct.name}"/>
+                        <p:outputLabel for="@previous"
+                                       value="#{planResultController.userPlantationPlan.primaryProduct.name}"/>
 
                         <p:outputLabel for="@next" value="Şehir:" style="font-weight: bold"/>
-                        <p:outputLabel for="@previous" value="#{planResultController.userPlantationPlan.userPlantation.district.city.name}"/>
+                        <p:outputLabel for="@previous"
+                                       value="#{planResultController.userPlantationPlan.userPlantation.district.city.name}"/>
 
                         <p:outputLabel for="@next" value="Boyut:" style="font-weight: bold"/>
-                        <p:outputLabel for="@previous" value="#{planResultController.userPlantationPlan.userPlantation.area} (Dekar)"/>
+                        <p:outputLabel for="@previous"
+                                       value="#{planResultController.userPlantationPlan.userPlantation.area} (Dekar)"/>
                     </p:panelGrid>
                 </div>
             </div>
@@ -65,13 +68,16 @@
                                  columnClasses="col-12 md:col-5 xl:col-5, col-12 md:col-7 xl:col-7"
                                  columns="2">
                         <p:outputLabel for="@next" value="Mazot İhtiyacı (Lt/Da):" style="font-weight: bold"/>
-                        <p:outputLabel for="@previous" value="#{planResultController.getPlanAllocation('DIESEL_COST').calculatedValue}"/>
+                        <p:outputLabel for="@previous"
+                                       value="#{planResultController.getPlanAllocation('DIESEL_AMOUNT').calculatedValue}"/>
 
                         <p:outputLabel for="@next" value="Benzin İhtiyacı (Lt/Da):" style="font-weight: bold"/>
-                        <p:outputLabel for="@previous" value="#{planResultController.getPlanAllocation('FUEL_AMOUNT').calculatedValue}"/>
+                        <p:outputLabel for="@previous"
+                                       value="#{planResultController.getPlanAllocation('FUEL_AMOUNT').calculatedValue}"/>
 
                         <p:outputLabel for="@next" value="Eletrik (Kwa/Da):" style="font-weight: bold"/>
-                        <p:outputLabel for="@previous" value="#{planResultController.getPlanAllocation('ELECTRICITY_AMOUNT').calculatedValue}"/>
+                        <p:outputLabel for="@previous"
+                                       value="#{planResultController.getPlanAllocation('ELECTRICITY_AMOUNT').calculatedValue}"/>
 
                     </p:panelGrid>
                 </div>
@@ -85,22 +91,28 @@
                                  columnClasses="col-12 md:col-5 xl:col-3, col-12 md:col-7 xl:col-3, col-12 md:col-5 xl:col-3, col-12 md:col-7 xl:col-3"
                                  columns="4">
                         <p:outputLabel for="@next" value="Dekar başına brüt gelir:" style="font-weight: bold"/>
-                        <p:outputLabel for="@previous" value="#{planResultController.userPlantationPlan.grossIncome} TL"/>
+                        <p:outputLabel for="@previous"
+                                       value="#{planResultController.userPlantationPlan.grossIncome} TL"/>
 
                         <p:outputLabel for="@next" value="Toplam brüt gelir:" style="font-weight: bold"/>
-                        <p:outputLabel for="@previous" value="#{planResultController.userPlantationPlan.userPlantation.area * planResultController.userPlantationPlan.grossIncome} TL"/>
+                        <p:outputLabel for="@previous"
+                                       value="#{planResultController.userPlantationPlan.userPlantation.area * planResultController.userPlantationPlan.grossIncome} TL"/>
 
                         <p:outputLabel for="@next" value="Dekar başına brüt gider:" style="font-weight: bold"/>
-                        <p:outputLabel for="@previous" value="#{planResultController.userPlantationPlan.totalExpense} TL"/>
+                        <p:outputLabel for="@previous"
+                                       value="#{planResultController.userPlantationPlan.totalExpense} TL"/>
 
                         <p:outputLabel for="@next" value="Toplam brüt gider:" style="font-weight: bold"/>
-                        <p:outputLabel for="@previous" value="#{planResultController.userPlantationPlan.userPlantation.area * planResultController.userPlantationPlan.totalExpense} TL"/>
+                        <p:outputLabel for="@previous"
+                                       value="#{planResultController.userPlantationPlan.userPlantation.area * planResultController.userPlantationPlan.totalExpense} TL"/>
 
                         <p:outputLabel for="@next" value="Dekar başına net gelir:" style="font-weight: bold"/>
-                        <p:outputLabel for="@previous" value="#{planResultController.userPlantationPlan.grossIncome - planResultController.userPlantationPlan.totalExpense} TL"/>
+                        <p:outputLabel for="@previous"
+                                       value="#{planResultController.userPlantationPlan.grossIncome - planResultController.userPlantationPlan.totalExpense} TL"/>
 
                         <p:outputLabel for="@next" value="Toplam net gelir:" style="font-weight: bold"/>
-                        <p:outputLabel for="@previous" value="#{planResultController.userPlantationPlan.userPlantation.area * (planResultController.userPlantationPlan.grossIncome - planResultController.userPlantationPlan.totalExpense)} TL"/>
+                        <p:outputLabel for="@previous"
+                                       value="#{planResultController.userPlantationPlan.userPlantation.area * (planResultController.userPlantationPlan.grossIncome - planResultController.userPlantationPlan.totalExpense)} TL"/>
 
                     </p:panelGrid>
                 </h:form>
@@ -141,7 +153,8 @@
                                  columnClasses="col-12 md:col-5 xl:col-5, col-12 md:col-7 xl:col-7"
                                  columns="2">
                         <p:outputLabel for="@next" value="İşçilik ihtiyacı (Saat/Da):" style="font-weight: bold"/>
-                        <p:outputLabel for="@previous" value="#{planResultController.getPlanAllocation('LABOR_AMOUNT').calculatedValue}"/>
+                        <p:outputLabel for="@previous"
+                                       value="#{planResultController.getPlanAllocation('LABOR_AMOUNT').calculatedValue}"/>
 
                     </p:panelGrid>
                 </div>
@@ -154,7 +167,8 @@
                                  columnClasses="col-12 md:col-5 xl:col-5, col-12 md:col-7 xl:col-7"
                                  columns="2">
                         <p:outputLabel for="@next" value="İşlem sayısı (Adet/Da):" style="font-weight: bold"/>
-                        <p:outputLabel for="@previous" value="#{planResultController.getPlanAllocation('TRANSACTION_COUNT').calculatedValue}"/>
+                        <p:outputLabel for="@previous"
+                                       value="#{planResultController.getPlanAllocation('TRANSACTION_COUNT').calculatedValue}"/>
 
                     </p:panelGrid>
                 </div>
@@ -167,7 +181,8 @@
                                  columnClasses="col-12 md:col-5 xl:col-5, col-12 md:col-7 xl:col-7"
                                  columns="2">
                         <p:outputLabel for="@next" value="Mavi Su Ayak İzi:" style="font-weight: bold"/>
-                        <p:outputLabel for="@previous" value="#{planResultController.getPlanAllocation('BLUE_WATER_FOOTSTEP').calculatedValue}"/>
+                        <p:outputLabel for="@previous"
+                                       value="#{planResultController.getPlanAllocation('BLUE_WATER_FOOTSTEP').calculatedValue}"/>
 
                     </p:panelGrid>
                 </div>
@@ -187,7 +202,8 @@
                     <p:dataTable value="#{planResultController.planAllocationList}"
                                  size="small"
                                  var="allocation">
-                        <p:column headerText="İşlemler" style="background: #{planResultController.convertRGBAColorToHex(allocation.allocationType.color)}; color: #000000">
+                        <p:column headerText="İşlemler"
+                                  style="background: #{planResultController.convertRGBAColorToHex(allocation.allocationType.color)}; color: #000000">
                             <h:outputText value="#{allocation.allocationType}"/>
                         </p:column>
                         <p:column headerText="Oranı">

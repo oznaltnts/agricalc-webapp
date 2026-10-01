@@ -46,9 +46,8 @@
     <ui:define name="content">
         <h:form id="sidebarForm">
             <p:sidebar widgetVar="sidebarWidgetVar"
-                       styleClass="plantation-sidebar"
-                       baseZIndex="-1"
-                       position="right">
+                       styleClass="plantation-sidebar" modal="false"
+                       baseZIndex="-1" position="right">
                 <p:ajax event="close" listener="#{plantationListController.handleClose}" update="@this"/>
                 <h4 style="font-weight: bold;">Arazi ekle/düzenle</h4>
                 <p:accordionPanel id="apId" scrollIntoView="center"
@@ -68,6 +67,36 @@
                             <p:outputLabel for="@previous"
                                            value="Arazinin adı"/>
                         </span>
+                        <span class="ui-float-label mt-5">
+                            <p:selectOneMenu value="#{plantationListController.selectedPlantationView.selectedCityId}"
+                                             required="true" requiredMessage="Arazinin şehrini seçiniz."
+                                             hideNoSelectionOption="#{not empty plantationListController.selectedPlantationView.selectedCityId}"
+                                             autoWidth="false">
+                                <p:ajax update="@this outputPanelCityDistrict"
+                                        process="@this"
+                                        listener="#{plantationListController.handleCitySelect}"/>
+                                <f:selectItem itemLabel="" itemValue="#{null}" noSelectionOption="true"/>
+                                <f:selectItems value="#{plantationListController.cityList}"
+                                               var="cityVar"
+                                               itemLabel="#{cityVar.name}" itemValue="#{cityVar.id}"/>
+                            </p:selectOneMenu>
+                            <p:outputLabel for="@previous"
+                                           value="Arazinin şehri"/>
+                        </span>
+                        <p:outputPanel id="outputPanelCityDistrict" styleClass="ui-float-label mt-5">
+                            <p:selectOneMenu autoWidth="false"
+                                             value="#{plantationListController.selectedPlantationView.selectedCityDistrictId}"
+                                             required="true" requiredMessage="Arazinin ilçesini seçiniz."
+                                             hideNoSelectionOption="#{not empty plantationListController.selectedPlantationView.selectedCityDistrictId}">
+                                <p:ajax update="@this" process="@this"/>
+                                <f:selectItem itemLabel="" itemValue="#{null}" noSelectionOption="true"/>
+                                <f:selectItems value="#{plantationListController.districtList}"
+                                               var="districtVar"
+                                               itemLabel="#{districtVar.name}" itemValue="#{districtVar.id}"/>
+                            </p:selectOneMenu>
+                            <p:outputLabel for="@previous"
+                                           value="Arazinin ilçesi"/>
+                        </p:outputPanel>
                         <span class="ui-float-label mt-5">
                             <p:selectOneMenu value="#{plantationListController.selectedPlantationView.selectedStatus}"
                                              required="true" requiredMessage="Arazinin kullanım durumunu seçiniz."
@@ -133,36 +162,6 @@
                             <p:outputLabel for="@previous"
                                            value="Arazinin boyutu (Dekar)"/>
                         </span>
-                        <span class="ui-float-label mt-5">
-                            <p:selectOneMenu value="#{plantationListController.selectedPlantationView.selectedCityId}"
-                                             required="true" requiredMessage="Arazinin şehrini seçiniz."
-                                             hideNoSelectionOption="#{not empty plantationListController.selectedPlantationView.selectedCityId}"
-                                             autoWidth="false">
-                                <p:ajax update="@this outputPanelCityDistrict"
-                                        process="@this"
-                                        listener="#{plantationListController.handleCitySelect}"/>
-                                <f:selectItem itemLabel="" itemValue="#{null}" noSelectionOption="true"/>
-                                <f:selectItems value="#{plantationListController.cityList}"
-                                               var="cityVar"
-                                               itemLabel="#{cityVar.name}" itemValue="#{cityVar.id}"/>
-                            </p:selectOneMenu>
-                            <p:outputLabel for="@previous"
-                                           value="Arazinin şehri"/>
-                        </span>
-                        <p:outputPanel id="outputPanelCityDistrict" styleClass="ui-float-label mt-5">
-                            <p:selectOneMenu autoWidth="false"
-                                             value="#{plantationListController.selectedPlantationView.selectedCityDistrictId}"
-                                             required="true" requiredMessage="Arazinin ilçesini seçiniz."
-                                             hideNoSelectionOption="#{not empty plantationListController.selectedPlantationView.selectedCityDistrictId}">
-                                <p:ajax update="@this" process="@this"/>
-                                <f:selectItem itemLabel="" itemValue="#{null}" noSelectionOption="true"/>
-                                <f:selectItems value="#{plantationListController.districtList}"
-                                               var="districtVar"
-                                               itemLabel="#{districtVar.name}" itemValue="#{districtVar.id}"/>
-                            </p:selectOneMenu>
-                            <p:outputLabel for="@previous"
-                                           value="Arazinin ilçesi"/>
-                        </p:outputPanel>
                     </p:tab>
                     <p:tab title="Genel tanımlama bilgileri">
                         <h6>Mülkiyet durumu</h6>
@@ -190,12 +189,6 @@
                                          maxlength="118"/>
                             <p:outputLabel for="@previous"
                                            value="Arazinin köyü"/>
-                        </span>
-                        <span class="ui-float-label mt-5">
-                            <p:inputText value="#{plantationListController.selectedPlantationView.neighborhood}"
-                                         maxlength="118"/>
-                            <p:outputLabel for="@previous"
-                                           value="Arazinin mahallesi"/>
                         </span>
                         <span class="ui-float-label mt-5">
                             <p:inputNumber value="#{plantationListController.selectedPlantationView.adaNumber}"
@@ -432,7 +425,7 @@
                                     <p:linkButton outcome="/secured/plantation-plan-list"
                                                   styleClass="ml-1"
                                                   disabled="#{pdtVar.selectedStatus eq 'PASSIVE'}"
-                                                  value="Planlar">
+                                                  value="Planlamaya başla">
                                         <f:param name="userPlantationId"
                                                  value="#{pdtVar.userPlantationId}"/>
                                     </p:linkButton>

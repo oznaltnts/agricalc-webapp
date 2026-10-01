@@ -1,0 +1,160 @@
+package tr.ozanbey.agricalc.webapp.webapp.controller.plantation;
+
+
+import jakarta.faces.view.ViewScoped;
+import lombok.Getter;
+import lombok.Setter;
+import org.springframework.stereotype.Component;
+import software.xdev.chartjs.model.charts.PieChart;
+import software.xdev.chartjs.model.color.RGBAColor;
+import software.xdev.chartjs.model.data.PieData;
+import software.xdev.chartjs.model.dataset.PieDataset;
+import tr.ozanbey.agricalc.webapp.service.enumtype.plantation.EnumAllocationType;
+import tr.ozanbey.agricalc.webapp.service.enumtype.plantation.EnumPlantationQuestionType;
+import tr.ozanbey.agricalc.webapp.service.service.plantation.CostAllocationService;
+import tr.ozanbey.agricalc.webapp.service.service.plantation.CostCalculationService;
+import tr.ozanbey.agricalc.webapp.service.service.plantation.QuestionService;
+import tr.ozanbey.agricalc.webapp.service.service.plantation.UserPlantationPlanService;
+import tr.ozanbey.agricalc.webapp.webapp.view.plantation.PlanAllocationResultView;
+
+import java.io.IOException;
+import java.math.BigDecimal;
+import java.math.RoundingMode;
+import java.util.ArrayList;
+import java.util.List;
+
+@Component
+@ViewScoped
+@Getter
+@Setter
+public class PlantAssetController extends PlanProfileController {
+
+    private String pieModelForExpense;
+    private String pieModelForAllocation;
+    private BigDecimal totalExpense = BigDecimal.ZERO;
+    private List<ResultShowView> resultShowViewList = new ArrayList<>();
+    private List<PlanAllocationResultView> planAllocationList;
+    public PlantAssetController(UserPlantationPlanService userPlantationPlanService,
+                                QuestionService questionService,
+                                CostCalculationService costCalculationService,
+                                CostAllocationService costAllocationService) {
+        super(userPlantationPlanService, questionService, costCalculationService, costAllocationService);
+    }
+
+    public List<PlanAllocationResultView> getPlanAllocationList() {
+        return planAllocationList.stream().filter(a -> EnumAllocationType.getAllocationCostTypes().contains(a.getAllocationType())).toList();
+    }
+
+    public PlanAllocationResultView getPlanAllocation(EnumAllocationType allocationType) {
+        return planAllocationList.stream().filter(a -> a.getAllocationType() == allocationType).findFirst().orElse(null);
+    }
+
+    public void createResultPageValues() throws IOException {
+        if (super.getPlantationPlanId() == null || !checkPlanIdForUser(super.getPlantationPlanId())) {
+            super.navigationController.redirectToUrl("/secured/plantation-list");
+            return;
+        }
+        createPieChartExpenseModel();
+        createPieChartAllocationModel();
+    }
+
+    public String convertRGBAColorToHex(RGBAColor rgbaColor) {
+        if (rgbaColor == null) return "#FCFCFC";
+        if (rgbaColor.getAlpha() >= 1.0)
+            return String.format("#%02X%02X%02X", rgbaColor.getR(), rgbaColor.getG(), rgbaColor.getB());
+        int a = (int) Math.round(rgbaColor.getAlpha() * 255);
+        return String.format("#%02X%02X%02X%02X", rgbaColor.getR(), rgbaColor.getG(), rgbaColor.getB(), a);
+    }
+
+    private void createPieChartExpenseModel() {
+        resultShowViewList.add(new ResultShowView(EnumPlantationQuestionType.EXPENSE_SOIL, super.getUserPlantationPlan().getSoilPrepCost()));
+        resultShowViewList.add(new ResultShowView(EnumPlantationQuestionType.EXPENSE_PLANTING, super.getUserPlantationPlan().getPlantingCost()));
+        resultShowViewList.add(new ResultShowView(EnumPlantationQuestionType.EXPENSE_FERTILIZER, super.getUserPlantationPlan().getFertilizerCost()));
+        resultShowViewList.add(new ResultShowView(EnumPlantationQuestionType.EXPENSE_WEED, super.getUserPlantationPlan().getWeedControlCost()));
+        resultShowViewList.add(new ResultShowView(EnumPlantationQuestionType.EXPENSE_IRRIGATION, super.getUserPlantationPlan().getIrrigationCost()));
+        resultShowViewList.add(new ResultShowView(EnumPlantationQuestionType.EXPENSE_CULTURAL, super.getUserPlantationPlan().getCulturalCost()));
+        resultShowViewList.add(new ResultShowView(EnumPlantationQuestionType.EXPENSE_PROTECTION, super.getUserPlantationPlan().getProtectionCost()));
+        resultShowViewList.add(new ResultShowView(EnumPlantationQuestionType.EXPENSE_HARVEST, super.getUserPlantationPlan().getHarvestCost()));
+        resultShowViewList.add(new ResultShowView(EnumPlantationQuestionType.EXPENSE_BLEND, super.getUserPlantationPlan().getBlendCost()));
+        resultShowViewList.add(new ResultShowView(EnumPlantationQuestionType.EXPENSE_DRYING, super.getUserPlantationPlan().getDryingCost()));
+        resultShowViewList.add(new ResultShowView(EnumPlantationQuestionType.EXPENSE_BALING, super.getUserPlantationPlan().getBalingCost()));
+        resultShowViewList.add(new ResultShowView(EnumPlantationQuestionType.EXPENSE_PACKAGING, super.getUserPlantationPlan().getTransportationCost()));
+        pieModelForExpense = new PieChart()
+                .setData(new PieData()
+                        .addDataset(new PieDataset()
+                                .setData(resultShowViewList.stream()
+                                        .filter(v -> v.getCostValueCost() != null && v.getCostValueCost().compareTo(BigDecimal.ZERO) > 0)
+                                        .map(ResultShowView::getCostValueCost)
+                                        .toList().toArray(new BigDecimal[0]))
+                                .setLabel("Gider grafiği")
+                                .addBackgroundColors(resultShowViewList.stream()
+                                        .filter(v -> v.getCostValueCost() != null && v.getCostValueCost().compareTo(BigDecimal.ZERO) > 0)
+                                        .map(v -> v.getCostValueName().getColor())
+                                        .toList().toArray(new Object[0]))
+                        )
+                        .setLabels(resultShowViewList.stream()
+                                .filter(v -> v.getCostValueCost() != null && v.getCostValueCost().compareTo(BigDecimal.ZERO) > 0)
+                                .map(v -> v.getCostValueName().name())
+                                .toList().toArray(new String[0])))
+                .toJson();
+    }
+
+    private void createPieChartAllocationModel() {
+        planAllocationList = getCostAllocationService().getAllocationListByPlanId(super.getPlantationPlanId(), EnumAllocationType.values());
+
+        pieModelForAllocation = new PieChart()
+                .setData(new PieData()
+                        .addDataset(new PieDataset()
+                                .setData(planAllocationList.stream()
+                                        .filter(v -> v.getCalculatedValue() != null
+                                                && EnumAllocationType.getAllocationCostTypes().contains(v.getAllocationType())
+                                                && v.getCalculatedValue().compareTo(BigDecimal.ZERO) > 0)
+                                        .map(PlanAllocationResultView::getCalculatedValue)
+                                        .toList().toArray(new BigDecimal[0]))
+                                .setLabel("Gider dağılımı")
+                                .addBackgroundColors(planAllocationList.stream()
+                                        .filter(v -> v.getCalculatedValue() != null
+                                                && EnumAllocationType.getAllocationCostTypes().contains(v.getAllocationType())
+                                                && v.getCalculatedValue().compareTo(BigDecimal.ZERO) > 0)
+                                        .map(v -> v.getAllocationType().getColor())
+                                        .toList().toArray(new Object[0]))
+                        )
+                        .setLabels(planAllocationList.stream()
+                                .filter(v -> v.getCalculatedValue() != null
+                                        && EnumAllocationType.getAllocationCostTypes().contains(v.getAllocationType())
+                                        && v.getCalculatedValue().compareTo(BigDecimal.ZERO) > 0)
+                                .map(v -> v.getAllocationType().toString())
+                                .toList().toArray(new String[0])))
+                .toJson();
+    }
+
+    public void previousSaveExpense() throws IOException {
+        goToPreviousPageFromResult();
+    }
+
+    private Double calculateValueRate(BigDecimal costValueCost) {
+        return costValueCost != null
+                && super.getUserPlantationPlan().getTotalExpense().compareTo(BigDecimal.ZERO) > 0
+                ? costValueCost.multiply(BigDecimal.valueOf(100)).divide(super.getUserPlantationPlan().getTotalExpense(), 2, RoundingMode.HALF_UP).doubleValue()
+                : 0d;
+    }
+
+    @Getter
+    public class ResultShowView {
+        private final EnumPlantationQuestionType costValueName;
+        private BigDecimal costValueCost = BigDecimal.ZERO;
+
+        public ResultShowView(EnumPlantationQuestionType costValueName, BigDecimal costValueCost) {
+            this.costValueName = costValueName;
+            this.costValueCost = costValueCost == null ? this.costValueCost.setScale(3, RoundingMode.HALF_UP) : costValueCost;
+        }
+
+        public String getCostValueHexColor() {
+            return convertRGBAColorToHex(costValueName.getColor());
+        }
+
+        public Double getCostValueRate() {
+            return calculateValueRate(costValueCost);
+        }
+    }
+}

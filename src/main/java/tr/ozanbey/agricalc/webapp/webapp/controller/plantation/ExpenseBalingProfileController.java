@@ -29,9 +29,13 @@ public class ExpenseBalingProfileController extends PlanProfileController {
 
     private static final List<Long> X_BALING_QUESTIONS = List.of(274L);
     private static final List<Long> BALING_QUESTIONS = List.of(273L);
-    private static final List<Long> A_BALING_QUESTIONS = List.of(275L);
+    private static final List<Long> BALING_OWNING_QUESTIONS = List.of(275L);
     private static final List<Long> ONE_BALING_QUESTIONS = List.of(276L, 277L, 278L, 279L);
     private static final List<Long> TWO_BALING_QUESTIONS = List.of(280L, 281L);
+
+    private static final List<Long> X_BALING_PRODUCTS = List.of(172L);
+    private static final List<Long> A_BALING_PRODUCTS = List.of(10L, 42L, 45L, 46L, 47L, 51L, 52L, 54L, 55L, 79L, 91L, 110L, 115L, 126L, 151L, 156L, 212L, 213L, 217L, 220L);
+    private static final List<Long> B_BALING_PRODUCTS = List.of(9L, 11L, 12L, 21L, 23L, 40L, 41L, 43L, 44L, 50L, 218L, 219L, 221L);
 
     public ExpenseBalingProfileController(UserPlantationPlanService userPlantationPlanService,
                                           QuestionService questionService,
@@ -87,13 +91,22 @@ public class ExpenseBalingProfileController extends PlanProfileController {
     private boolean checkPreviousQuestionAnswerAccordingly(PlantationProductQuestion question) {
         Optional<PlantationProductQuestion> optionalQuestion = super.getUserPlantationPlan().getPrimaryProduct().getProductQuestionList().stream().filter(pq -> BALING_QUESTIONS.contains(pq.getPlantationQuestion().getId())).findFirst();
         if (X_BALING_QUESTIONS.contains(question.getPlantationQuestion().getId())) {
-            return optionalQuestion.map(plantationProductQuestion -> plantationProductQuestion.getSelectedAnswerId() != null && List.of(193L).contains(plantationProductQuestion.getSelectedAnswerId())).orElse(true);
+            if (X_BALING_PRODUCTS.contains(question.getPlantationProduct().getId())) {
+                return optionalQuestion.map(plantationProductQuestion -> plantationProductQuestion.getSelectedAnswerId() != null && List.of(193L).contains(plantationProductQuestion.getSelectedAnswerId())).orElse(true);
+            } else if (A_BALING_PRODUCTS.contains(question.getPlantationProduct().getId())) {
+                question.setSelectedAnswerId(195L);
+            } else if (B_BALING_PRODUCTS.contains(question.getPlantationProduct().getId())) {
+                question.setSelectedAnswerId(196L);
+            }
+            return false;
         }
         optionalQuestion = super.getUserPlantationPlan().getPrimaryProduct().getProductQuestionList().stream().filter(pq -> X_BALING_QUESTIONS.contains(pq.getPlantationQuestion().getId())).findFirst();
-        if (A_BALING_QUESTIONS.contains(question.getPlantationQuestion().getId())) {
-            return optionalQuestion.map(plantationProductQuestion -> plantationProductQuestion.getSelectedAnswerId() != null && List.of(195L).contains(plantationProductQuestion.getSelectedAnswerId())).orElse(true);
+        if (BALING_OWNING_QUESTIONS.contains(question.getPlantationQuestion().getId())) {
+            return optionalQuestion.map(plantationProductQuestion -> plantationProductQuestion.getSelectedAnswerId() != null && List.of(195L, 196L).contains(plantationProductQuestion.getSelectedAnswerId())).orElse(true);
         }
-        optionalQuestion = super.getUserPlantationPlan().getPrimaryProduct().getProductQuestionList().stream().filter(pq -> A_BALING_QUESTIONS.contains(pq.getPlantationQuestion().getId())).findFirst();
+        optionalQuestion = super.getUserPlantationPlan().getPrimaryProduct().getProductQuestionList().stream()
+                .filter(pq -> BALING_OWNING_QUESTIONS.contains(pq.getPlantationQuestion().getId()))
+                .findFirst();
         if (ONE_BALING_QUESTIONS.contains(question.getPlantationQuestion().getId())) {
             return optionalQuestion.map(plantationProductQuestion -> plantationProductQuestion.getSelectedAnswerId() != null && List.of(197L).contains(plantationProductQuestion.getSelectedAnswerId())).orElse(true);
         } else if (TWO_BALING_QUESTIONS.contains(question.getPlantationQuestion().getId())) {

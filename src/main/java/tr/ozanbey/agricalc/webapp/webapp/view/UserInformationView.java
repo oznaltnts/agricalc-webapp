@@ -35,11 +35,10 @@ public class UserInformationView implements Serializable {
     private String cityName;
     private String district;
     private String village;
-    private String neighborhood;
 
     private boolean editInfo = false;
 
-    public UserInformationView(Long userId, EnumStatus status, String phone, EnumRole role, LocalDateTime lastLogin, String tckn, String name, String email, Long userCityId, String cityName, String district, String village, String neighborhood) {
+    public UserInformationView(Long userId, EnumStatus status, String phone, EnumRole role, LocalDateTime lastLogin, String tckn, String name, String email, Long userCityId, String cityName, String district, String village) {
         this.userId = userId;
         this.status = status;
         this.phone = phone;
@@ -52,6 +51,5 @@ public class UserInformationView implements Serializable {
         this.cityName = cityName;
         this.district = district;
         this.village = village;
-        this.neighborhood = neighborhood;
     }
 }

@@ -2,7 +2,7 @@ package tr.ozanbey.agricalc.webapp.service.domain.plantation;
 
 import jakarta.persistence.*;
 import lombok.*;
-import tr.ozanbey.agricalc.webapp.service.domain.AbstractEntity;
+import tr.ozanbey.agricalc.webapp.service.domain.AbstractStatusEntity;
 import tr.ozanbey.agricalc.webapp.service.enumtype.plantation.EnumIrrigationType;
 
 import java.math.BigDecimal;
@@ -14,7 +14,7 @@ import java.math.BigDecimal;
 @NoArgsConstructor
 @AllArgsConstructor
 @ToString(onlyExplicitlyIncluded = true)
-public class PlantationIrrigationValue extends AbstractEntity {
+public class PlantationIrrigationValue extends AbstractStatusEntity {
 
     @Column(name = "price_type", nullable = false)
     @Enumerated(EnumType.STRING)

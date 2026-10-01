@@ -30,15 +30,20 @@ public class CostCalculationService extends CostCommonService {
     @Autowired
     private UserPlantationPlanAnswerRepository planAnswerRepository;
 
+    @Autowired
+    private CostMedicineService costMedicineService;
+
     //Gider- Toprak Hazırlığı
     //300
     private BigDecimal soilPrepLumpSumCost(Integer soilPrepLumpSumAmount, BigDecimal soilPrepLumpSumPrice) {
         return BigDecimal.valueOf(soilPrepLumpSumAmount).multiply(soilPrepLumpSumPrice);
     }
+
     //300
     private BigDecimal soilPrepLaserCostPerDecare(Integer soilPrepLaserOperationCount, Integer soilPrepLumpSumAmount, BigDecimal soilPrepLumpSumPrice) {
         return BigDecimal.valueOf(soilPrepLaserOperationCount).multiply(soilPrepLumpSumCost(soilPrepLumpSumAmount, soilPrepLumpSumPrice));
     }
+
     //211,667
     private BigDecimal soilPrepBlastingCostPerDecare(Integer soilPrepBlastingOperationCount,
                                                      Double soilPrepBlastingFrequency, Double soilPrepBlastingDieselRate, BigDecimal cityDieselPrice,
@@ -47,6 +52,7 @@ public class CostCalculationService extends CostCommonService {
                 BigDecimal.valueOf(soilPrepBlastingEnergyAmount(soilPrepBlastingFrequency, soilPrepBlastingDieselRate)).multiply(cityDieselPrice)
                         .add(BigDecimal.valueOf(soilPrepBlastingLaborAmount(soilPrepBlastingLaborRate, soilPrepBlastingFrequency)).multiply(soilPrepLaborPrice)));
     }
+
     //250
     private BigDecimal soilPrepDeepPlowCostPerDecare(Integer soilPrepDeepPlowOperationCount,
                                                      Double soilPrepDeepPlowDieselRate, BigDecimal cityDieselPrice,
@@ -55,6 +61,7 @@ public class CostCalculationService extends CostCommonService {
                 BigDecimal.valueOf(soilPrepDeepPlowDieselRate).multiply(cityDieselPrice)
                         .add(BigDecimal.valueOf(soilPrepDeepPlowLaborRate).multiply(soilPrepLaborPrice)));
     }
+
     //375
     private BigDecimal soilPrepSecondaryCostPerDecare(Double soilPrepSecondaryOperationCount,
                                                       Double soilPrepSecondaryDieselRate, BigDecimal cityDieselPrice,
@@ -63,6 +70,7 @@ public class CostCalculationService extends CostCommonService {
                 BigDecimal.valueOf(soilPrepSecondaryDieselRate).multiply(cityDieselPrice)
                         .add(BigDecimal.valueOf(soilPrepSecondaryLaborRate).multiply(soilPrepLaborPrice)));
     }
+
     //Gider- Toprak Hazırlığı
     //1136,667
     private BigDecimal soilPrepTotalCost(Integer soilPrepLaserOperationCount, Integer soilPrepLumpSumAmount, BigDecimal soilPrepLumpSumPrice,
@@ -110,19 +118,23 @@ public class CostCalculationService extends CostCommonService {
         return BigDecimal.valueOf(plantingYearEnergyAmount(seedUsageYear, seederEnergyPerDecare)).multiply(cityDieselPrice)
                 .add(BigDecimal.valueOf(plantingYearLaborAmount(seedUsageYear, seederLaborPerDecare)).multiply(workingManLaborPrice));
     }
+
     //120
     private BigDecimal plantingSeederRentalCostPerDecare(Integer plantingSeederLumpSumAmount, BigDecimal plantingLumpSumPrice) {
         return BigDecimal.valueOf(plantingSeederLumpSumAmount).multiply(plantingLumpSumPrice);
     }
+
     //500
     private BigDecimal plantingSeedCostPerDecare(Double seedHandHourPerDecare, Double seedUsageYear, BigDecimal workingManLaborPrice) {
         if (seedUsageYear == 0) return BigDecimal.ZERO;
         return BigDecimal.valueOf(plantingHandLaborAmount(seedHandHourPerDecare, seedUsageYear)).multiply(workingManLaborPrice);
     }
+
     //280
     private BigDecimal plantingDroneCostPerDecare(Integer plantingDroneLumpSumAmount, BigDecimal plantingDroneLumpSumPrice) {
         return BigDecimal.valueOf(plantingDroneLumpSumAmount).multiply(plantingDroneLumpSumPrice);
     }
+
     //100
     private BigDecimal plantByHandCostPerDecare(Double plantingSeedlingPerDecare, Double averagePlantingHandPerPerson, Integer seedlingUsageYear,
                                                 BigDecimal workingWomanLaborPrice) {
@@ -587,9 +599,7 @@ public class CostCalculationService extends CostCommonService {
                                           Integer tractorWeedingCount, Double averageTractorLaborAmount, Double tractorWeedingLabor,
                                           Integer machineWeedingCount, Double averageMachineLaborAmount, Double machineWeedingLabor,
                                           Integer medicineCount, Double medicineEnergyAmount, Double medicineLaborAmount,
-
                                           BigDecimal productMedicinePrice,
-
                                           Integer handCountFrequency, Double averageLaborHourAmount, Double maleCostRate, Double femaleCostRate,
                                           Double totalMulchingHour, Double mulchUsageYear, Double mulchAmountPerDecare, BigDecimal mulchCostPricePerKg,
                                           Integer weedToolCount, Double averageWeedToolLaborAmount, BigDecimal cityFuelPrice, Double weedToolLaborDecareAmountPerDay,
@@ -604,11 +614,7 @@ public class CostCalculationService extends CostCommonService {
                 .add(weedingByHandCostPerDecare(handWeedingCount, averageHandLaborAmount, workingWomanLaborPrice))
                 .add(weedingByTractorCostPerDecare(tractorWeedingCount, averageTractorLaborAmount, cityDieselPrice, tractorWeedingLabor, workingManLaborPrice))
                 .add(weedingByMachineCostPerDecare(machineWeedingCount, averageMachineLaborAmount, cityDieselPrice, machineWeedingLabor, workingManLaborPrice))
-                .add(medicineCostPerDecare(medicineCount, medicineEnergyAmount, cityDieselPrice, medicineLaborAmount, workingManLaborPrice,
-
-                        productMedicinePrice
-
-                ))
+                .add(medicineCostPerDecare(medicineCount, medicineEnergyAmount, cityDieselPrice, medicineLaborAmount, workingManLaborPrice, productMedicinePrice))
                 .add(byHandCostPerDecare(handCountFrequency, averageLaborHourAmount, workingMixedLaborPrice))
                 .add(mulchingCostPerDecare(totalMulchingHour, mulchUsageYear, workingMixedLaborPrice, mulchAmountPerDecare, mulchCostPricePerKg))
                 .add(weedToolCostPerDecare(weedToolCount, averageWeedToolLaborAmount, cityFuelPrice, weedToolLaborDecareAmountPerDay, workingManLaborPrice))
@@ -637,7 +643,12 @@ public class CostCalculationService extends CostCommonService {
         Integer medicineCount = integerValueSetter(productQuestionList, 136L);
         Double medicineEnergyAmount = coefficientList.stream().filter(c -> c.getEnumCoefficientType().equals(EnumCoefficientType.WEED_CONTROL)).findFirst().get().getDieselValue();
         Double medicineLaborAmount = coefficientList.stream().filter(c -> c.getEnumCoefficientType().equals(EnumCoefficientType.WEED_CONTROL)).findFirst().get().getLaborValue();
-        BigDecimal productMedicinePrice = BigDecimal.valueOf(8.115076667d);
+
+        Long plantationQuestionId = productQuestionList.stream()
+                .filter(q -> q.getPlantationQuestion().getId().equals(136L))
+                .findAny().get().getId();
+
+        BigDecimal productMedicinePrice = costMedicineService.calculateTotalMedicineCost(plantationQuestionId);
         Integer handCountFrequency = integerValueSetter(productQuestionList, 138L);
         Double averageLaborHourAmount = doubleValueSetter(productQuestionList, 137L);
         Double maleCostRate = coefficientList.stream().filter(c -> c.getEnumCoefficientType().equals(EnumCoefficientType.MALE_WORKER_RATIO)).findFirst().get().getLaborValue();
@@ -659,9 +670,7 @@ public class CostCalculationService extends CostCommonService {
                 tractorWeedingCount, averageTractorLaborAmount, tractorWeedingLabor,
                 machineWeedingCount, averageMachineLaborAmount, machineWeedingLabor,
                 medicineCount, medicineEnergyAmount, medicineLaborAmount,
-
                 productMedicinePrice,
-
                 handCountFrequency, averageLaborHourAmount, maleCostRate, femaleCostRate,
                 totalMulchingHour, mulchUsageYear, mulchAmountPerDecare, mulchCostPricePerKg,
                 weedToolCount, averageWeedToolLaborAmount, cityFuelPrice, weedToolLaborDecareAmountPerDay,
@@ -714,8 +723,8 @@ public class CostCalculationService extends CostCommonService {
                                                    BigDecimal amortizationForSelectedIrrigation) {
         if (pumpWorkingHour == 0d) return BigDecimal.ZERO;
         return BigDecimal.valueOf(irrigationCountForDieselPump).multiply(
-                BigDecimal.valueOf(dieselInputAmountForDieselPump(specificConstantRate, pumpWorkingHour, waterAmountPerHour, waterPumpHeight, gravity, pumpMotorEfficiencyRate, irrigationArea)).multiply(cityDieselPrice)
-                        .add(BigDecimal.valueOf(irrigationLaborRateForSelectedIrrigation).multiply(workingManLaborPrice)))
+                        BigDecimal.valueOf(dieselInputAmountForDieselPump(specificConstantRate, pumpWorkingHour, waterAmountPerHour, waterPumpHeight, gravity, pumpMotorEfficiencyRate, irrigationArea)).multiply(cityDieselPrice)
+                                .add(BigDecimal.valueOf(irrigationLaborRateForSelectedIrrigation).multiply(workingManLaborPrice)))
                 .add(amortizationForSelectedIrrigation);
     }
 
@@ -1254,17 +1263,20 @@ public class CostCalculationService extends CostCommonService {
     }
 
     //2500
-    private BigDecimal lumpSumHarvestCostPerDecare(Integer harvestCount, BigDecimal lumpSumHarvestCostPerTonne) {
+    private BigDecimal lumpSumHarvestCostPerDecare(Long productId, Integer harvestCount, BigDecimal lumpSumHarvestCostPerTonne) {
+        if (productId != 126L && productId != 191L) return lumpSumHarvestCostPerTonne;
         return BigDecimal.valueOf(harvestCount).multiply(lumpSumHarvestCostPerTonne);
     }
 
     //937,5
-    private BigDecimal mowingCostPerDecare(Integer harvestCount,
+    private BigDecimal mowingCostPerDecare(Long productId, Integer harvestCount,
                                            Double mowingDieselAmountPerDecare, BigDecimal cityDieselPrice,
                                            Double mowingLaborAmountPerDecare, BigDecimal workingManLaborPrice) {
-        return BigDecimal.valueOf(harvestCount).multiply(
-                BigDecimal.valueOf(mowingDieselAmountPerDecare).multiply(cityDieselPrice)
-                        .add(BigDecimal.valueOf(mowingLaborAmountPerDecare).multiply(workingManLaborPrice)));
+        if (productId == 126L || productId == 191L || productId == 217L)
+            mowingLaborAmountPerDecare = harvestCount * mowingLaborAmountPerDecare;
+        if (productId == 217L) mowingDieselAmountPerDecare = harvestCount * mowingDieselAmountPerDecare;
+        return BigDecimal.valueOf(mowingDieselAmountPerDecare).multiply(cityDieselPrice)
+                .add(BigDecimal.valueOf(mowingLaborAmountPerDecare).multiply(workingManLaborPrice));
     }
 
     //950,0
@@ -1300,7 +1312,8 @@ public class CostCalculationService extends CostCommonService {
                                         BigDecimal lumpSumCostPerTonne,
                                         BigDecimal lumpSumHarvestCostPerTonne,
                                         Double mowingDieselAmountPerDecare, Double mowingLaborAmountPerDecare,
-                                        Double motorizedCuttingDieselAmount, Double motorizedCuttingLaborAmount, BigDecimal pruneDailyWage) {
+                                        Double motorizedCuttingDieselAmount, Double motorizedCuttingLaborAmount, BigDecimal pruneDailyWage,
+                                        Long productId) {
 
         BigDecimal workingManLaborPrice = workingManLaborPrice(maleDailyWage, workHoursPerDay);
         BigDecimal workingPruneLaborPrice = workingPruneLaborPrice(pruneDailyWage, workHoursPerDay);
@@ -1326,14 +1339,14 @@ public class CostCalculationService extends CostCommonService {
                 .add(machineShakingCostPerDecare(harvestCount, machineShakingDieselInputAmount, cityDieselPrice, averageYieldAsKgPerDecare, machineShakingInputAmount, workingMixedLaborPrice))
                 .add(uprootAndHarvestCostPerDecare(harvestCount, uprootDieselAmountPerDecare, cityDieselPrice, uprootHarvestLaborAmountPerDecare, workingMixedLaborPrice))
                 .add(lumpSumCostPerDecare(harvestCount, lumpSumCostPerTonne))
-                .add(lumpSumHarvestCostPerDecare(harvestCount, lumpSumHarvestCostPerTonne))
-                .add(mowingCostPerDecare(harvestCount, mowingDieselAmountPerDecare, cityDieselPrice, mowingLaborAmountPerDecare, workingManLaborPrice))
+                .add(lumpSumHarvestCostPerDecare(productId, harvestCount, lumpSumHarvestCostPerTonne))
+                .add(mowingCostPerDecare(productId, harvestCount, mowingDieselAmountPerDecare, cityDieselPrice, mowingLaborAmountPerDecare, workingManLaborPrice))
                 .add(motorizedCuttingCostPerDecare(harvestCount, motorizedCuttingDieselAmount, cityDieselPrice, motorizedCuttingLaborAmount, workingPruneLaborPrice));
     }
 
     public BigDecimal calculateHarvestCost(List<PlantationProductQuestion> productQuestionList, Long plantationPlanId, City city) {
         List<PlantationCoefficient> coefficientList = coefficientRepository.findByEnumCoefficientTypeIn(EnumCoefficientType.values());
-        List<UserPlantationPlanAnswer> previousAnswerList = planAnswerRepository.findByUserPlantationPlan_IdAndProductQuestion_PlantationQuestion_IdIn(plantationPlanId, List.of(11L, 12L, 13L, 14L, 15L, 16L, 17L, 24L, 41L, 42L, 43L));
+        List<UserPlantationPlanAnswer> previousAnswerList = planAnswerRepository.findByUserPlantationPlan_IdAndProductQuestion_PlantationQuestion_IdIn(plantationPlanId, List.of(12L, 13L, 14L, 15L, 16L, 17L, 24L, 41L, 42L, 43L));
 
         Integer harvestCount = integerValueSetter(productQuestionList, 209L);
         Double averageYieldAsKgPerDecare = doubleAnswerSetter(previousAnswerList, 12L);
@@ -1376,6 +1389,7 @@ public class CostCalculationService extends CostCommonService {
         Double motorizedCuttingDieselAmount = doubleValueSetter(productQuestionList, 245L);
         Double motorizedCuttingLaborAmount = doubleValueSetter(productQuestionList, 246L);
         BigDecimal pruneDailyWage = decimalAnswerSetter(previousAnswerList, 43L);
+        Long productId = productQuestionList.getFirst().getPlantationProduct().getId();
 
         return harvestTotalCost(harvestCount, averageYieldAsKgPerDecare, byHandHarvestAmountPerDay, maleDailyWage, maleCostRate, femaleDailyWage, femaleCostRate, workHoursPerDay,
                 byMachineHarvestAmountPerDay, mainProductKgYieldAsUnitPerDecare,
@@ -1399,7 +1413,8 @@ public class CostCalculationService extends CostCommonService {
                 lumpSumCostPerTonne,
                 lumpSumHarvestCostPerTonne,
                 mowingDieselAmountPerDecare, mowingLaborAmountPerDecare,
-                motorizedCuttingDieselAmount, motorizedCuttingLaborAmount, pruneDailyWage);
+                motorizedCuttingDieselAmount, motorizedCuttingLaborAmount, pruneDailyWage,
+                productId);
     }
 
     //Gider- Harman
@@ -1452,7 +1467,7 @@ public class CostCalculationService extends CostCommonService {
 
     public BigDecimal calculateBlendCost(List<PlantationProductQuestion> productQuestionList, Long plantationPlanId, City city) {
         List<PlantationCoefficient> coefficientList = coefficientRepository.findByEnumCoefficientTypeIn(EnumCoefficientType.values());
-        List<UserPlantationPlanAnswer> previousAnswerList = planAnswerRepository.findByUserPlantationPlan_IdAndProductQuestion_PlantationQuestion_IdIn(plantationPlanId, List.of(11L, 12L, 13L, 14L, 15L, 16L, 17L, 41L, 42L, 43L));
+        List<UserPlantationPlanAnswer> previousAnswerList = planAnswerRepository.findByUserPlantationPlan_IdAndProductQuestion_PlantationQuestion_IdIn(plantationPlanId, List.of(12L, 13L, 14L, 15L, 16L, 17L, 41L, 42L, 43L));
 
         Double transportKmAmount = doubleValueSetter(productQuestionList, 247L);
         Double averageYieldAsKgPerDecare = doubleAnswerSetter(previousAnswerList, 12L);

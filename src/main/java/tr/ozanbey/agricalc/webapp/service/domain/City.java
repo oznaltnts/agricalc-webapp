@@ -19,7 +19,7 @@ public class City extends AbstractEntity {
 
     @Column(name = "code", columnDefinition = "TINYINT", nullable = false)
     @ToString.Include
-    private int code;
+    private String code;
 
     @Column(name = "name", nullable = false)
     @ToString.Include

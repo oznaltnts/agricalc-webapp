@@ -19,12 +19,11 @@
 
     <ui:define name="content">
         <div class="grid">
-            <h:form id="updateForm" class="col">
+            <h:form id="literacyForm" class="col">
+                <p:growl id="growl" showDetail="false" severity="info warn error">
+                    <p:autoUpdate/>
+                </p:growl>
                 <div class="card">
-                    <p:growl id="growl" showDetail="false" severity="info warn error">
-                        <p:autoUpdate/>
-                    </p:growl>
-
                     <h5 class="mt-0" style="font-weight: bold">Finansal okuryazarlık testi</h5>
 
                     <p:focus context="@next"/>
@@ -42,7 +41,7 @@
                             <p:selectOneRadio required="true"
                                               requiredMessage="#{question.value} seçiniz."
                                               value="#{question.selectedAnswerId}">
-                                <p:ajax process="@this" update="updateForm"/>
+                                <p:ajax process="@this" update="literacyForm"/>
                                 <f:selectItems var="onebutton"
                                                itemLabel="#{onebutton.value}"
                                                itemValue="#{onebutton.id}"
@@ -51,8 +50,19 @@
                         </p:panelGrid>
                     </ui:repeat>
                 </div>
+                <p:outputPanel styleClass="card"
+                               rendered="#{financialLiteracyController.calculatedValue > 1}">
+                    <h5 class="mt-0" style="font-weight: bold">Finansal okuryazarlık sonuçları</h5>
+
+                </p:outputPanel>
+                <div class="card">
+
+                </div>
 
                 <p:outputPanel style="display: flex; justify-content: space-between; flex-direction: row-reverse;">
+                    <p:commandButton value="Hesapla"
+                                     action="#{financialLiteracyController.calculateLiteracy()}"
+                                     process="literacyForm"/>
                 </p:outputPanel>
                 <p>Sorunuz mu var? <a href="#">Buraya</a> basın ve bize bildirin.</p>
             </h:form>

@@ -35,9 +35,7 @@ public abstract class PlanProfileController extends BaseController {
     private final QuestionService questionService;
     private final CostCalculationService costCalculationService;
     private final CostAllocationService costAllocationService;
-    @Setter
-    private UserPlantationPlan userPlantationPlan;
-    private Long plantationPlanId;
+
     public PlanProfileController(UserPlantationPlanService userPlantationPlanService,
                                  QuestionService questionService,
                                  CostCalculationService costCalculationService,
@@ -47,6 +45,10 @@ public abstract class PlanProfileController extends BaseController {
         this.costCalculationService = costCalculationService;
         this.costAllocationService = costAllocationService;
     }
+
+    @Setter
+    private UserPlantationPlan userPlantationPlan;
+    private Long plantationPlanId;
 
     public void setPlantationPlanId(Long plantationPlanId) {
         if (Objects.equals(this.plantationPlanId, plantationPlanId)) {

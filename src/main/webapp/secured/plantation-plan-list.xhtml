@@ -49,7 +49,7 @@
     <ui:define name="content">
         <h:form id="sidebarForm">
             <p:sidebar widgetVar="sidebarWidgetVar"
-                       styleClass="plantation-plan-sidebar"
+                       styleClass="plantation-plan-sidebar" modal="false"
                        baseZIndex="-1"
                        position="right">
                 <p:ajax event="close" listener="#{plantationPlanListController.handleClose}" update="@this"/>
@@ -207,7 +207,7 @@
                                     <p:linkButton outcome="/secured/plantation/income-profile"
                                                   styleClass="ml-1"
                                                   rendered="#{ppdtVar.selectedStatus eq 'ACTIVE'}"
-                                                  value="Süreç">
+                                                  value="Süreci başlat">
                                         <f:param name="plantationPlanId"
                                                  value="#{ppdtVar.plantationPlanId}"/>
                                     </p:linkButton>

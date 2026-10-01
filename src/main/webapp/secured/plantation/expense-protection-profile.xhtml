@@ -5,7 +5,7 @@
                 xmlns:p="http://primefaces.org/ui"
                 template="/templates/template.xhtml">
 
-    <ui:define name="title">Gelir Bilgilerim</ui:define>
+    <ui:define name="title">Bitki Koruma Giderleri</ui:define>
 
     <ui:define name="metadata">
         <f:metadata>
@@ -17,6 +17,9 @@
 
     <ui:define name="head">
         <style type="text/css">
+            .ui-selectmanycheckbox label {
+                margin: auto 16px auto 8px;
+            }
         </style>
     </ui:define>
 
@@ -24,12 +27,12 @@
         <div class="grid">
             <div class="col">
                 <div class="card">
-                    <p:steps activeIndex="3">
+                    <p:steps activeIndex="4">
+                        <p:menuitem value="Bitkisel demirbaşlar"/>
+                        <p:menuitem value="Üretim alanları"/>
                         <p:menuitem value="Üretim planları"/>
-                        <p:menuitem value="Demirbaş bilgileri"/>
-                        <p:menuitem value="Arazi bilgileri"/>
                         <p:menuitem value="Gelir bilgileri"/>
-                        <p:menuitem value="Gider bilgileri"/>
+                        <p:menuitem value="Gider bilgileri (bitki koruma)"/>
                         <p:menuitem value="Sonuçlar" containerStyleClass="steps-desktop"/>
                     </p:steps>
                 </div>
@@ -43,12 +46,56 @@
                         <p:autoUpdate/>
                     </p:growl>
 
-                    <h5 class="mt-0" style="font-weight: bold">Gelir profili</h5>
+                    <h5 class="mt-0" style="font-weight: bold">Bikti koruma gideri bilgileri</h5>
 
                     <p:focus context="@next"/>
 
-                    <ui:repeat value="#{expenseProtectionProfileController.userPlantationPlan.primaryProduct.productQuestionList}"
-                               var="question">
+                    <ui:repeat value="#{expenseProtectionProfileController.diseaseQuestionList}"
+                               var="disease">
+                        <p:panelGrid layout="flex"
+                                     rendered="#{disease.plantationQuestion.id ne '194' and disease.plantationQuestion.id ne '196'}"
+                                     contentStyleClass="ui-fluid"
+                                     columnClasses="col-12 md:col-3 xl:col-3 mt-3, col-12 md:col-9 xl:col-9"
+                                     columns="2">
+                            <p:outputLabel for="@next"
+                                           value="#{disease.plantationQuestion.value}"/>
+                            <p:selectManyCheckbox layout="responsive" columns="3" style="width: 100%"
+                                                  requiredMessage="#{disease.plantationQuestion.value} seçiniz."
+                                                  value="#{disease.selectedAnswerIds}">
+                                <p:ajax process="@this" update="selectedDisease"
+                                        listener="#{expenseProtectionProfileController.handleDiseaseSelect(disease)}"/>
+                                <f:selectItems var="checkboxDisease"
+                                               value="#{disease.productQuestionDiseaseList}"
+                                               itemValue="#{checkboxDisease.id}"
+                                               itemLabel="#{checkboxDisease.disease.name}"/>
+                            </p:selectManyCheckbox>
+                        </p:panelGrid>
+
+                        <p:outputPanel id="selectedDisease">
+                            <ui:repeat value="#{disease.selectedDiseaseList}"
+                                       var="selectedDisease">
+                                <p:panelGrid layout="flex"
+                                             contentStyle="align-items: center;"
+                                             contentStyleClass="ui-fluid"
+                                             columnClasses="col-12 md:col-3 xl:col-3, col-12 md:col-9 xl:col-9"
+                                             columns="4">
+                                    <p:outputLabel for="@next"
+                                                   value="#{selectedDisease.disease.name}"/>
+                                    <p:inputNumber minValue="0"
+                                                   required="#{selectedDisease.productQuestion.plantationQuestion.isRequired}"
+                                                   requiredMessage="#{selectedDisease.productQuestion.plantationQuestion.value} ilaçlama sayısı giriniz."
+                                                   decimalPlaces="0"
+                                                   value="#{selectedDisease.integerValue}">
+                                        <p:ajax process="@this"/>
+                                    </p:inputNumber>
+
+                                </p:panelGrid>
+                            </ui:repeat>
+                        </p:outputPanel>
+                    </ui:repeat>
+
+                    <ui:repeat var="question"
+                               value="#{expenseProtectionProfileController.userPlantationPlan.primaryProduct.productQuestionList}">
                         <ui:fragment rendered="#{!question.dontAskAgain}">
                             <p:panelGrid layout="flex"
                                          contentStyle="align-items: center;"
@@ -62,6 +109,7 @@
 
                                     <p:selectOneRadio required="#{question.plantationQuestion.isRequired}"
                                                       requiredMessage="#{question.plantationQuestion.value} seçiniz."
+                                                      layout="responsive" columns="4" style="width: 100%"
                                                       rendered="#{expenseProtectionProfileController.oneRadioRenderer(question)}"
                                                       value="#{question.selectedAnswerId}">
                                         <p:ajax process="@this" update="updateForm"/>
@@ -73,13 +121,14 @@
 
                                     <p:selectManyCheckbox required="#{question.plantationQuestion.isRequired}"
                                                           requiredMessage="#{question.plantationQuestion.value} seçiniz."
+                                                          layout="responsive" columns="4" style="width: 100%"
                                                           rendered="#{expenseProtectionProfileController.manyCheckboxRenderer(question)}"
                                                           value="#{question.selectedAnswerIds}">
                                         <p:ajax process="@this" update="updateForm"/>
                                         <f:selectItems var="checkbox"
-                                                       value="#{expenseProtectionProfileController.manyCheckboxSelectItems(question).entrySet()}"
-                                                       itemValue="#{checkbox.key}"
-                                                       itemLabel="#{checkbox.value}"/>
+                                                       value="#{question.plantationQuestion.questionOptionList}"
+                                                       itemLabel="#{checkbox.value}"
+                                                       itemValue="#{checkbox.id}"/>
                                     </p:selectManyCheckbox>
 
                                     <p:inputNumber required="#{question.plantationQuestion.isRequired}"
@@ -101,7 +150,8 @@
                                     </p:inputNumber>
 
                                     <ui:fragment rendered="#{expenseProtectionProfileController.booleanCheckboxRenderer(question)}">
-                                        <div class="ui-inputgroup-addon" style="white-space: nowrap;max-height: 35px;min-width: 140px">
+                                        <div class="ui-inputgroup-addon"
+                                             style="white-space: nowrap;max-height: 35px;min-width: 140px">
                                             <p:selectBooleanCheckbox value="#{question.dontAskAgain}"
                                                                      itemLabel="Tekrar sorma"/>
                                         </div>

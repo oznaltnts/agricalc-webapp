@@ -49,6 +49,8 @@ public class PlantationPlanListController extends BaseController {
     public void init() {
         openFieldProductList = productService.getProductListByPlantationTypeAndStatus(
                 EnumPlantationType.OPEN_FIELD, EnumStatus.ACTIVE);
+        if (plantationPlanList.isEmpty())
+            PrimeFaces.current().executeScript("PF('sidebarWidgetVar').show()");
     }
 
     public void setUserPlantationId(Long userPlantationId) {

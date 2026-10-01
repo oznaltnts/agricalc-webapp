@@ -32,7 +32,6 @@ public class PlantationView implements Serializable {
     private Long selectedCityDistrictId;
     private String selectedDistrictName;
     private String village;
-    private String neighborhood;
     private Integer adaNumber;
     private Integer paftaNumber;
     private Long selectedPrimaryProductId;
@@ -67,7 +66,6 @@ public class PlantationView implements Serializable {
         this.selectedCityDistrictId = selected.getSelectedCityDistrictId();
         this.selectedDistrictName = selected.getSelectedDistrictName();
         this.village = selected.getVillage();
-        this.neighborhood = selected.getNeighborhood();
         this.adaNumber = selected.getAdaNumber();
         this.paftaNumber = selected.getPaftaNumber();
         this.selectedPrimaryProductId = selected.getSelectedPrimaryProductId();

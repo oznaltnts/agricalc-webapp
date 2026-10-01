@@ -50,10 +50,6 @@ public class UserPlantation extends AbstractStatusEntity {
     @ToString.Include
     private String village;
 
-    @Column(name = "neighborhood", length = 118)
-    @ToString.Include
-    private String neighborhood;
-
     @Column(name = "ada_number")
     @ToString.Include
     private Integer adaNumber;

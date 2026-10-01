@@ -2,7 +2,7 @@ package tr.ozanbey.agricalc.webapp.service.domain.plantation;
 
 import jakarta.persistence.*;
 import lombok.*;
-import tr.ozanbey.agricalc.webapp.service.domain.AbstractEntity;
+import tr.ozanbey.agricalc.webapp.service.domain.AbstractStatusEntity;
 
 import java.math.BigDecimal;
 import java.util.List;
@@ -14,7 +14,7 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @ToString(onlyExplicitlyIncluded = true)
-public class PlantationProductQuestion extends AbstractEntity {
+public class PlantationProductQuestion extends AbstractStatusEntity {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "plantation_product_id", referencedColumnName = "id", nullable = false)
@@ -46,6 +46,9 @@ public class PlantationProductQuestion extends AbstractEntity {
 
     @Transient
     private List<Long> selectedAnswerIds;
+
+    @Transient
+    private List<PlantationProductQuestionDisease> selectedDiseaseList;
 
     @Transient
     private Integer integerValue;

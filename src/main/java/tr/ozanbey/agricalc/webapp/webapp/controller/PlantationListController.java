@@ -52,6 +52,8 @@ public class PlantationListController extends BaseController {
         productList = productService.getProductListByPlantationTypeAndStatus(
                 EnumPlantationType.ORCHARD, EnumStatus.ACTIVE);
         fillPlantationList();
+        if (plantationList.isEmpty())
+            PrimeFaces.current().executeScript("PF('sidebarWidgetVar').show()");
     }
 
     private void fillPlantationList() {

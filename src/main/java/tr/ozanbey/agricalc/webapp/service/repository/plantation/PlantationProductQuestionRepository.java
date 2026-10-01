@@ -1,6 +1,7 @@
 package tr.ozanbey.agricalc.webapp.service.repository.plantation;
 
 
+import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -11,6 +12,9 @@ import tr.ozanbey.agricalc.webapp.service.enumtype.plantation.EnumPlantationQues
 import java.util.List;
 
 public interface PlantationProductQuestionRepository extends JpaRepository<PlantationProductQuestion, Long> {
+
+    @EntityGraph(attributePaths = {"plantationQuestion", "productQuestionDiseaseList.disease"})
+    List<PlantationProductQuestion> findByPlantationProduct_IdAndPlantationQuestion_IdInAndStatus(Long productId, List<Long> questionIdList, EnumStatus status);
 
     @Query("""
                 SELECT DISTINCT ppq

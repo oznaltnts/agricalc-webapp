@@ -2,7 +2,7 @@ package tr.ozanbey.agricalc.webapp.service.domain.plantation;
 
 import jakarta.persistence.*;
 import lombok.*;
-import tr.ozanbey.agricalc.webapp.service.domain.AbstractEntity;
+import tr.ozanbey.agricalc.webapp.service.domain.AbstractStatusEntity;
 import tr.ozanbey.agricalc.webapp.service.enumtype.plantation.EnumCoefficientType;
 
 @Getter
@@ -12,7 +12,7 @@ import tr.ozanbey.agricalc.webapp.service.enumtype.plantation.EnumCoefficientTyp
 @NoArgsConstructor
 @AllArgsConstructor
 @ToString(onlyExplicitlyIncluded = true)
-public class PlantationCoefficient extends AbstractEntity {
+public class PlantationCoefficient extends AbstractStatusEntity {
 
     @Column(name = "coef_type", nullable = false)
     @Enumerated(EnumType.STRING)

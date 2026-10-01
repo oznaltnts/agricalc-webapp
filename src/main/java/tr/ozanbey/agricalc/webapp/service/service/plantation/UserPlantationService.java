@@ -69,7 +69,6 @@ public class UserPlantationService extends BaseService {
             returnView.setSelectedDistrictName(userPlantation.getDistrict().getName());
         }
         returnView.setVillage(userPlantation.getVillage());
-        returnView.setNeighborhood(userPlantation.getNeighborhood());
         returnView.setAdaNumber(userPlantation.getAdaNumber());
         returnView.setPaftaNumber(userPlantation.getPaftaNumber());
         if (userPlantation.getOrchardProduct() != null && Hibernate.isInitialized(userPlantation.getOrchardProduct())) {
@@ -107,7 +106,6 @@ public class UserPlantationService extends BaseService {
         returnEntity.setSellOrRentPrice(plantationView.getSellOrRentPrice());
         returnEntity.setDistrict(cityDistrictRepository.getReferenceById(plantationView.getSelectedCityDistrictId()));
         returnEntity.setVillage(plantationView.getVillage());
-        returnEntity.setNeighborhood(plantationView.getNeighborhood());
         returnEntity.setAdaNumber(plantationView.getAdaNumber());
         returnEntity.setPaftaNumber(plantationView.getPaftaNumber());
         if (plantationView.getSelectedType().equals(EnumPlantationType.ORCHARD))

@@ -22,7 +22,7 @@ public enum EnumPlantationQuestionType {
     EXPENSE_DRYING(10, RGBAColor.GOLD),
     EXPENSE_BALING(11, RGBAColor.TURQUOISE),
     EXPENSE_PACKAGING(12, RGBAColor.PALE_TURQUOISE),
-    GENERAL(13, RGBAColor.DEEP_PINK);
+    GENERAL_PLANTATION(13, RGBAColor.DEEP_PINK);
 
     private final int value;
     private final RGBAColor color;

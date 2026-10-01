@@ -11,9 +11,9 @@ public enum EnumFeedCategory {
     ROUGHAGE(0, new EnumFeedType[]{EnumFeedType.DRY_ROUGHAGE, EnumFeedType.SILAGE, EnumFeedType.FORAGE, EnumFeedType.OTHER_FEED}), // Kaba Yemler
     CONCENTRATE(1, new EnumFeedType[]{EnumFeedType.ENERGY, EnumFeedType.PROTEIN, EnumFeedType.OTHER_FEED}),                        // Kesif Yemler
     COMPOUND(2, new EnumFeedType[]{EnumFeedType.DAIRY, EnumFeedType.CATTLE, EnumFeedType.OTHER_FEED}),                             // Karma Fabrika Yemleri
-    SUCCULENT(3, new EnumFeedType[]{EnumFeedType.GENERAL, EnumFeedType.OTHER_FEED}),                                               // Sulu Yemler
+    SUCCULENT(3, new EnumFeedType[]{EnumFeedType.GENERAL_FEED, EnumFeedType.OTHER_FEED}),                                               // Sulu Yemler
     MINERAL_VITAMIN(4, new EnumFeedType[]{EnumFeedType.MINERAL, EnumFeedType.VITAMIN, EnumFeedType.OTHER_FEED}),                   // Mineral ve Vitamin Katkıları
-    ADDITIVE(5, new EnumFeedType[]{EnumFeedType.GENERAL, EnumFeedType.OTHER_FEED}),                                                // Yem Katkıları
+    ADDITIVE(5, new EnumFeedType[]{EnumFeedType.GENERAL_FEED, EnumFeedType.OTHER_FEED}),                                                // Yem Katkıları
     OTHER_CATEGORY(6, new EnumFeedType[]{EnumFeedType.OTHER_FEED});                                                                // Diğer Yemler
 
     private final int value;

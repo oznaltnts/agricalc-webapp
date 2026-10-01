@@ -15,7 +15,7 @@ public enum EnumFeedType {
     PROTEIN(4),         // Protein Yemleri
     DAIRY(5),           // Süt Yemleri
     CATTLE(6),          // Besi Yemleri
-    GENERAL(7),         // Genel
+    GENERAL_FEED(7),    // Genel
     MINERAL(8),         // Mineraller
     VITAMIN(9),         // Vitaminler
     OTHER_FEED(10);     // Diğer Türler
